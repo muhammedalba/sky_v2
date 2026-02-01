@@ -1,0 +1,12 @@
+{
+      "nav": {
+            "home": "Home",
+            "products": "Products",
+            "contact": "Contact",
+            "login": "Log In",
+            "admin": "Admin Panel"
+      },
+      "footer": {
+            "rights": "All rights reserved."
+      }
+}

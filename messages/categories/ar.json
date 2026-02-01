@@ -1,0 +1,21 @@
+{
+      "title": "الفئات",
+      "createCategory": "إنشاء فئة",
+      "editCategory": "تعديل الفئة",
+      "categoryList": "قائمة الفئات",
+      "fields": {
+            "name": "اسم الفئة",
+            "description": "الوصف",
+            "productsCount": "عدد المنتجات"
+      },
+      "placeholders": {
+            "name": "أدخل اسم الفئة",
+            "description": "أدخل وصف الفئة"
+      },
+      "messages": {
+            "createSuccess": "تم إنشاء الفئة بنجاح",
+            "updateSuccess": "تم تحديث الفئة بنجاح",
+            "deleteSuccess": "تم حذف الفئة بنجاح",
+            "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذه الفئة؟"
+      }
+}

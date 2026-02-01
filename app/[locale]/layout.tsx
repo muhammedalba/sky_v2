@@ -1,0 +1,56 @@
+
+import { getMessages } from 'next-intl/server';
+import { ReactNode } from 'react';
+import { locales } from '@/i18n';
+import { notFound } from 'next/navigation';
+import LocaleProvider from './LocaleProvider';
+import ToastProvider from '@/components/ui/toast/ToastProvider';
+import '../globals.css';
+
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  if (!locales.includes(locale as any)) {
+    notFound();
+  }
+
+  const direction = locale === 'ar' ? 'rtl' : 'ltr';
+
+  const messages = await getMessages();
+
+  return (
+    <html lang={locale} dir={direction} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('theme');
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="antialiased">
+        <LocaleProvider locale={locale} messages={messages}>
+          <ToastProvider />
+          {children}
+        </LocaleProvider>
+      </body>
+    </html>
+  );
+}

@@ -1,0 +1,21 @@
+{
+      "hero": {
+            "title": "Manage Your Store with Next-Gen Intelligence",
+            "subtitle": "Experience the future of e-commerce management. Powerful tools, real-time analytics, and seamless control for your business growth.",
+            "cta_dashboard": "Go to Dashboard",
+            "cta_learn_more": "Learn More"
+      },
+      "features": {
+            "secure_title": "Secure Access",
+            "secure_desc": "Enterprise-grade security for your data and role-based permissions.",
+            "stats_title": "Real-time Stats",
+            "stats_desc": "Monitor your sales, products, and categories in real-time.",
+            "global_title": "Global reach",
+            "global_desc": "Full RTL support and multiple language translations included."
+      },
+      "featured_products": "Featured Products",
+      "meta": {
+            "title": "Welcome to Sky Galaxy",
+            "description": "Experience the future of e-commerce management with Sky Galaxy's intelligent dashboard."
+      }
+}

@@ -1,0 +1,132 @@
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { getAuthToken, getRefreshToken, setTokens, clearTokens } from '@/lib/auth';
+import { useToastStore } from '@/store/toast-store';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://e-commerce-nestjs-g12u.onrender.com';
+
+const REFRESH_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT_AUTH_REFRESH || '/auth/refresh-token';
+
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // ضروري جداً لإرسال واستقبال الكوكيز تلقائياً
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+interface PendingRequest {
+  resolve: (value: any) => void;
+  reject: (reason?: any) => void;
+  config: InternalAxiosRequestConfig;
+}
+
+let isRefreshing = false;
+let failedQueue: PendingRequest[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.config.headers.Authorization = `Bearer ${token}`;
+      prom.resolve(apiClient(prom.config));
+    }
+  });
+  failedQueue = [];
+};
+
+// Request interceptor
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (typeof window !== 'undefined' && window.location.pathname.includes('/login')) {
+         return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject, config: originalRequest });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      // الحصول على التوكن من Cookies أو LocalStorage
+      const currentToken = getRefreshToken() || getAuthToken();
+
+      if (!currentToken) {
+        isRefreshing = false;
+        handleLogout();
+        return Promise.reject(error);
+      }
+
+      try {
+        // طلب التجديد - السيرفر سيعالج الكوكيز تلقائياً بسبب withCredentials
+        const response = await axios.get(`${API_BASE_URL}${REFRESH_ENDPOINT}`, {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${currentToken}`, // احتياطاً إذا كان السيرفر يطلبه في الهيدر أيضاً
+          },
+        });
+
+        // الهيكل المتوقع بناءً على رسائلك: { status, message, access_token }
+        const resData = response.data;
+        const newAccessToken = resData.access_token || resData.data?.access_token || resData.token || resData.accessToken;
+        
+        // تحديث التوكنات (سيتم تحديث الكوكيز تلقائياً من المتصفح، ونحن نحدث الذاكرة المحلية)
+        if (newAccessToken) {
+          setTokens(newAccessToken, currentToken);
+          
+          apiClient.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          
+          processQueue(null, newAccessToken);
+          return apiClient(originalRequest);
+        } else {
+          throw new Error('No access token in response');
+        }
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        handleLogout();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+function handleLogout() {
+  if (typeof window !== 'undefined') {
+    clearTokens();
+    
+    useToastStore.getState().addToast({
+      title: 'انتهت الجلسة',
+      message: 'عذراً، يجب عليك تسجيل الدخول مرة أخرى.',
+      type: 'error',
+    });
+    
+    const defaultLocale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'en';
+    if (!window.location.pathname.includes('/login')) {
+      window.location.href = `/${defaultLocale}/login`;
+    }
+  }
+}

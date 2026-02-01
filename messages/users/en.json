@@ -1,0 +1,21 @@
+{
+      "title": "Users",
+      "userList": "User List",
+      "fields": {
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "createdAt": "Created At"
+      },
+      "roles": {
+            "admin": "Admin",
+            "manager": "Manager",
+            "user": "User"
+      },
+      "actions": {
+            "updateRole": "Update Role"
+      },
+      "messages": {
+            "roleUpdated": "User role updated successfully"
+      }
+}

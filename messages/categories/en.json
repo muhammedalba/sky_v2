@@ -1,0 +1,21 @@
+{
+      "title": "Categories",
+      "createCategory": "Create Category",
+      "editCategory": "Edit Category",
+      "categoryList": "Category List",
+      "fields": {
+            "name": "Category Name",
+            "description": "Description",
+            "productsCount": "Products Count"
+      },
+      "placeholders": {
+            "name": "Enter category name",
+            "description": "Enter category description"
+      },
+      "messages": {
+            "createSuccess": "Category created successfully",
+            "updateSuccess": "Category updated successfully",
+            "deleteSuccess": "Category deleted successfully",
+            "deleteConfirm": "Are you sure you want to delete this category?"
+      }
+}

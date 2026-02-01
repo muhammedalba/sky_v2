@@ -1,0 +1,13 @@
+{
+      "title": "Dashboard",
+      "welcome": "Welcome to your dashboard",
+      "stats": {
+            "totalProducts": "Total Products",
+            "totalOrders": "Total Orders",
+            "totalRevenue": "Total Revenue",
+            "totalUsers": "Total Users"
+      },
+      "recentOrders": "Recent Orders",
+      "topProducts": "Top Products",
+      "viewAll": "View All"
+}

@@ -1,0 +1,21 @@
+{
+      "title": "إعدادات الملف الشخصي",
+      "personalInfo": "المعلومات الشخصية",
+      "changePassword": "تغيير كلمة المرور",
+      "fields": {
+            "name": "الاسم الكامل",
+            "email": "البريد الإلكتروني",
+            "role": "دور الحساب",
+            "currentPassword": "كلمة المرور الحالية",
+            "newPassword": "كلمة المرور الجديدة",
+            "confirmPassword": "تأكيد كلمة المرور الجديدة"
+      },
+      "buttons": {
+            "saveChanges": "حفظ التغييرات",
+            "updatePassword": "تحديث كلمة المرور"
+      },
+      "messages": {
+            "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+            "passwordChanged": "تم تغيير كلمة المرور بنجاح!"
+      }
+}

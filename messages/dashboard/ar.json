@@ -1,0 +1,13 @@
+{
+      "title": "لوحة التحكم",
+      "welcome": "مرحباً بك في لوحة التحكم",
+      "stats": {
+            "totalProducts": "إجمالي المنتجات",
+            "totalOrders": "إجمالي الطلبات",
+            "totalRevenue": "إجمالي الإيرادات",
+            "totalUsers": "إجمالي المستخدمين"
+      },
+      "recentOrders": "الطلبات الأخيرة",
+      "topProducts": "المنتجات الأكثر مبيعاً",
+      "viewAll": "عرض الكل"
+}

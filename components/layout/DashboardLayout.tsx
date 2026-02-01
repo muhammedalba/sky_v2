@@ -1,0 +1,58 @@
+'use client';
+
+import { ReactNode, useState } from 'react';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
+import { useUIStore } from '@/store/ui-store';
+import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet/Sheet';
+import { Icons } from '@/components/ui/Icons';
+
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { sidebarCollapsed } = useUIStore();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+      <div className="min-h-screen bg-background">
+        {/* Desktop Sidebar (hidden on mobile) */}
+        <div className="hidden md:block">
+          <Sidebar mode="desktop" />
+        </div>
+
+        {/* Mobile Sidebar (Sheet) */}
+        <SheetContent side="left" className="p-0 border-none w-72">
+          <Sidebar mode="mobile" onNavigate={() => setMobileOpen(false)} />
+        </SheetContent>
+
+        <div
+          className={cn(
+            'transition-all duration-500',
+            sidebarCollapsed ? 'md:ms-20' : 'md:ms-72',
+            'ms-0'
+          )}
+        >
+          {/* Custom Topbar wrapper to inject Mobile Trigger */}
+          <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border pl-4 md:pl-0">
+            <div className="flex items-center">
+              <SheetTrigger className="md:hidden p-2 mr-2 text-muted-foreground hover:bg-secondary rounded-lg">
+                <Icons.Menu className="w-6 h-6" />
+              </SheetTrigger>
+              <div className="flex-1">
+                 <Topbar />
+              </div>
+            </div>
+          </div>
+
+          <main className="p-4 md:p-8 max-w-[1600px] mx-auto overflow-x-hidden">
+            {children}
+          </main>
+        </div>
+      </div>
+    </Sheet>
+  );
+}

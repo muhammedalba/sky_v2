@@ -1,0 +1,3445 @@
+{
+  "info": {
+    "_postman_id": "30cd1cfe-ea75-4567-906d-16ea9ce237a7",
+    "name": "nest-file-upload",
+    "description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34117778",
+    "_collection_link": "https://go.postman.co/collection/34117778-30cd1cfe-ea75-4567-906d-16ea9ce237a7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "creat-user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "البااا بل",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "ssssdsq@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "type": "text"
+                },
+                {
+                  "key": "confirmPassword",
+                  "value": "123456",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                },
+                {
+                  "key": "role",
+                  "value": "admin",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}users/create-user",
+              "host": [
+                "{{driv}}users"
+              ],
+              "path": [
+                "create-user"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-user",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "czxczds sss",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "dvas@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "confirmPassword",
+                  "value": "123456",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "user",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}users/6872ace652505c89bdc0d14e",
+              "host": [
+                "{{driv}}users"
+              ],
+              "path": [
+                "6872ace652505c89bdc0d14e"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-users",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}users",
+              "host": [
+                "{{driv}}users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-users Statistics",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}users/statistics",
+              "host": [
+                "{{driv}}users"
+              ],
+              "path": [
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-user-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}users/6872ace652505c89bdc0d14e",
+              "host": [
+                "{{driv}}users"
+              ],
+              "path": [
+                "6872ace652505c89bdc0d14e"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "256dabba-e1ca-4277-8220-f5bdf8d6ab8e",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b5f6b3bd-5de6-4775-9068-3900b122009c",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}users/67dfe5bf6e4e04be650ed9a9",
+              "host": [
+                "{{driv}}users"
+              ],
+              "path": [
+                "67dfe5bf6e4e04be650ed9a9"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "supplier",
+      "item": [
+        {
+          "name": "creat-supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "البااا بلdcdffd",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "ssssdsq@gmail.comssfkoerd",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "123456",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                },
+                {
+                  "key": "role",
+                  "value": "admin",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "contactName",
+                  "value": "contactName",
+                  "type": "text",
+                  "uuid": "d0b90894-705e-41a2-8a7c-f441bf29d2fa"
+                },
+                {
+                  "key": "address",
+                  "value": "address",
+                  "type": "text",
+                  "uuid": "925077a8-9489-4f0f-93c4-6ffe4db15bba"
+                },
+                {
+                  "key": "website",
+                  "value": "https://chatgpt.com",
+                  "type": "text",
+                  "uuid": "c0512aa5-573d-4d8d-9b04-4e2be25bd680"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}supplier",
+              "host": [
+                "{{driv}}supplier"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-supplier",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "البااا بلdcdffx",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "dvas@gmail.com",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                },
+                {
+                  "key": "role",
+                  "value": "user",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "inactive",
+                  "type": "text",
+                  "uuid": "73cb1aec-1f37-424e-a574-b59e6a11ea74"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}supplier/685c6dd02348c6426298e2b5",
+              "host": [
+                "{{driv}}supplier"
+              ],
+              "path": [
+                "685c6dd02348c6426298e2b5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-supplier",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}supplier",
+              "host": [
+                "{{driv}}supplier"
+              ],
+              "query": [
+                {
+                  "key": "keywords",
+                  "value": "بلdcdff",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-supplier-Statistics",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}supplier/statistics",
+              "host": [
+                "{{driv}}supplier"
+              ],
+              "path": [
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-supplier-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "256dabba-e1ca-4277-8220-f5bdf8d6ab8e",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2",
+                  "disabled": true
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b5f6b3bd-5de6-4775-9068-3900b122009c",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}supplier/681e28d40f7f2c565d14d830",
+              "host": [
+                "{{driv}}supplier"
+              ],
+              "path": [
+                "681e28d40f7f2c565d14d830"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-supplier",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}supplier/685c6de62348c6426298e2d1",
+              "host": [
+                "{{driv}}supplier"
+              ],
+              "path": [
+                "685c6de62348c6426298e2d1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "brands",
+      "item": [
+        {
+          "name": "creat-brand",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name[ar]",
+                  "type": "text",
+                  "uuid": "f0a975c6-37b0-4666-abf5-4429c6110527",
+                  "value": "arabicv"
+                },
+                {
+                  "key": "name[en]",
+                  "value": "brandsv",
+                  "type": "text",
+                  "uuid": "5fbfd1f7-15e2-49a9-982a-e520c366abe8"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "61a52f26-a2f1-4bef-ba9e-3b92e9db84f9",
+                  "src": "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}brands",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-Brand",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name[en]",
+                  "value": "mm dasas s dssss",
+                  "type": "text"
+                },
+                {
+                  "key": "name[ar]",
+                  "value": "اتلبتبلتيب",
+                  "type": "text",
+                  "uuid": "235acc43-74f8-4644-af12-0de82005c1c5"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "39953cd4-bd6b-42d0-80d8-ac445729e842",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}brands/6872aeec52505c89bdc0d184",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "path": [
+                "6872aeec52505c89bdc0d184"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-brands",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}brands?lang=en",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-brands statistics",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}brands/statistics",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "path": [
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-brand-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}brands/685a8e5cf5a42387369c64b5",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "path": [
+                "685a8e5cf5a42387369c64b5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-brand",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}brands/6820f117f9c8f9e31648b572",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "path": [
+                "6820f117f9c8f9e31648b572"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "promo-banner",
+      "item": [
+        {
+          "name": "creat-promo-banner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"text\":{\r\n    \"ar\":\"arabick a\",\r\n    \"en\":\"asdas\"}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}promo-banner",
+              "host": [
+                "{{driv}}promo-banner"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-promo-banner",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"text\":{\r\n    \"ar\":\"arabick asdadasdcccccccccccccccccccccccccccccccccccccccccccc ccc\",\r\n    \"en\":\"asdas dsadasdacccccccccccccccccccccccc \"},\r\n    \"isActive\":false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}promo-banner/685ac080c4b31e05641199a3",
+              "host": [
+                "{{driv}}promo-banner"
+              ],
+              "path": [
+                "685ac080c4b31e05641199a3"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-promo-banner",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}promo-banner",
+              "host": [
+                "{{driv}}promo-banner"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-active-promo-banner",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "256dabba-e1ca-4277-8220-f5bdf8d6ab8e",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b5f6b3bd-5de6-4775-9068-3900b122009c",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}brands/statistics",
+              "host": [
+                "{{driv}}brands"
+              ],
+              "path": [
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-promo-banner-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}promo-banner/685ac0197557cdbd16c47e45",
+              "host": [
+                "{{driv}}promo-banner"
+              ],
+              "path": [
+                "685ac0197557cdbd16c47e45"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-promo-banner",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}promo-banner/685ac080c4b31e05641199a3",
+              "host": [
+                "{{driv}}promo-banner"
+              ],
+              "path": [
+                "685ac080c4b31e05641199a3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Coupon",
+      "item": [
+        {
+          "name": "creat-Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"Wrethc\",\"type\":\"fixed\",\r\n\r\n    \"expires\":\"09-08-2025\",\r\n    \"discount\":50\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}coupons",
+              "host": [
+                "{{driv}}coupons"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-coupons",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"Wret h\",\r\n    \"expires\":\"2025-08-01\",\r\n    \"discount\":50\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}coupons/684d4e2b703f55e2f96d8f96",
+              "host": [
+                "{{driv}}coupons"
+              ],
+              "path": [
+                "684d4e2b703f55e2f96d8f96"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-coupons",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}coupons",
+              "host": [
+                "{{driv}}coupons"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-coupon-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}coupons/684d4e2b703f55e2f96d8f96",
+              "host": [
+                "{{driv}}coupons"
+              ],
+              "path": [
+                "684d4e2b703f55e2f96d8f96"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-coupon",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "256dabba-e1ca-4277-8220-f5bdf8d6ab8e",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b5f6b3bd-5de6-4775-9068-3900b122009c",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}coupons/684d4e2b703f55e2f96d8f96",
+              "host": [
+                "{{driv}}coupons"
+              ],
+              "path": [
+                "684d4e2b703f55e2f96d8f96"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "categories",
+      "item": [
+        {
+          "name": "creat-category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name[ar]",
+                  "value": "arabicf",
+                  "type": "text",
+                  "uuid": "69d722c1-ed25-4bde-b204-e01a1c7a790e"
+                },
+                {
+                  "key": "name[en]",
+                  "value": "xvcxvcxvfx",
+                  "type": "text",
+                  "uuid": "b87fb654-6a9b-4510-83b1-6b52819c6806"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a607212b-d437-4894-ae35-3f5efc6d9bcd",
+                  "src": "postman-cloud:///1f02cf2a-508c-4ad0-9e9b-536d004fa5f9"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}categories?lang=ar",
+              "host": [
+                "{{driv}}categories"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "ar"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name[en]",
+                  "value": "dasdasd dasasf",
+                  "type": "text"
+                },
+                {
+                  "key": "name[ar]",
+                  "value": "اتلبتبلتيب",
+                  "type": "text",
+                  "uuid": "235acc43-74f8-4644-af12-0de82005c1c5"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "39953cd4-bd6b-42d0-80d8-ac445729e842",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}categories/6872c84a6aa36478d5c9d8a7?lang=en",
+              "host": [
+                "{{driv}}categories"
+              ],
+              "path": [
+                "6872c84a6aa36478d5c9d8a7"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-categories",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}categories?lang=en",
+              "host": [
+                "{{driv}}categories"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-categories Statistics",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}categories/Statistics",
+              "host": [
+                "{{driv}}categories"
+              ],
+              "path": [
+                "Statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-category-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "256dabba-e1ca-4277-8220-f5bdf8d6ab8e",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b5f6b3bd-5de6-4775-9068-3900b122009c",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}categories/6872c84a6aa36478d5c9d8a7?lang=en",
+              "host": [
+                "{{driv}}categories"
+              ],
+              "path": [
+                "6872c84a6aa36478d5c9d8a7"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}categories/6872c84a6aa36478d5c9d8a7",
+              "host": [
+                "{{driv}}categories"
+              ],
+              "path": [
+                "6872c84a6aa36478d5c9d8a7"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sup Categories",
+      "item": [
+        {
+          "name": "creat-sup-category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n\t{\r\n\t\t\"name\": {\r\n\t\t\t\"ar\": \"arabicx\",\r\n\t\t\t\"en\": \"hallo enx vc dd\"\r\n\t\t},\r\n        \"category\":\"6820f212f9c8f9e31648b58c\"\r\n\t}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}sup-category?lang=en",
+              "host": [
+                "{{driv}}sup-category"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-sup-category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\t{\r\n\t\t\"name\": {\r\n\t\t\t\"ar\": \"arabic\",\r\n\t\t\t\"en\": \"hallo en vc m\"\r\n\t\t},\r\n        \"category\":\"6820f1fdf9c8f9e31648b585\"\r\n\t}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}sup-category/685bf2595133da7b78bb90ca?lang=en",
+              "host": [
+                "{{driv}}sup-category"
+              ],
+              "path": [
+                "685bf2595133da7b78bb90ca"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-sup-categories",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}sup-category?page=1&limit=15&lang=en",
+              "host": [
+                "{{driv}}sup-category"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "15"
+                },
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-sup-category Statistics",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}sup-category/Statistics",
+              "host": [
+                "{{driv}}sup-category"
+              ],
+              "path": [
+                "Statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-sup-category-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}sup-category/685d4fa623c3bb2f9281bcf3?lang=en",
+              "host": [
+                "{{driv}}sup-category"
+              ],
+              "path": [
+                "685d4fa623c3bb2f9281bcf3"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-sup-category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}sup-category/685d4fa623c3bb2f9281bcf3",
+              "host": [
+                "{{driv}}sup-category"
+              ],
+              "path": [
+                "685d4fa623c3bb2f9281bcf3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "item": [
+        {
+          "name": "create-multi-fields-carousel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "carouselLg",
+                  "type": "file",
+                  "uuid": "cfa04afc-ed14-458c-a892-cb8f286a9c38",
+                  "src": "postman-cloud:///1ef1ff2d-27cd-4dc0-b98e-bc0fa0994ddf"
+                },
+                {
+                  "key": "carouselMd",
+                  "type": "file",
+                  "uuid": "9c427b3f-20f3-4e93-b71c-987bf762a6bf",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "carouselSm",
+                  "type": "file",
+                  "uuid": "030c4344-a5b4-4c61-99cf-66e7f1861f34",
+                  "src": "postman-cloud:///1ef1ff2d-27cd-4dc0-b98e-bc0fa0994ddf"
+                },
+                {
+                  "key": "description[en]",
+                  "value": "gfdgdgd",
+                  "type": "text",
+                  "uuid": "528f5c17-7d4f-4a93-af30-45b1fb1ca0a7"
+                },
+                {
+                  "key": "description[ar]",
+                  "value": "الايلل",
+                  "type": "text",
+                  "uuid": "9cb6413e-5b9b-46a3-97a1-62949df51348"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}carousel",
+              "host": [
+                "{{driv}}carousel"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-carousel",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "description[en]",
+                  "value": "dasdasd dasasgfdg dfs ",
+                  "type": "text"
+                },
+                {
+                  "key": "description[ar]",
+                  "value": "اتلبتبلتيب hgjg hj",
+                  "type": "text",
+                  "uuid": "235acc43-74f8-4644-af12-0de82005c1c5"
+                },
+                {
+                  "key": "carouselSm",
+                  "type": "file",
+                  "uuid": "39953cd4-bd6b-42d0-80d8-ac445729e842",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "carouselMd",
+                  "type": "file",
+                  "uuid": "75902dce-f35f-431e-8ece-e3a5b4e172b5",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                },
+                {
+                  "key": "carouselLg",
+                  "type": "file",
+                  "uuid": "32862110-1548-425b-9e65-7ee50b535ab0",
+                  "src": "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}carousel/6872ca6d59a781180056fec8",
+              "host": [
+                "{{driv}}carousel"
+              ],
+              "path": [
+                "6872ca6d59a781180056fec8"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-carousels",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}carousel?lang=en",
+              "host": [
+                "{{driv}}carousel"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-carousel-by-id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}carousel/685a94a3081923b76dbc8243",
+              "host": [
+                "{{driv}}carousel"
+              ],
+              "path": [
+                "685a94a3081923b76dbc8243"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-carousel",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{driv}}carousel/6872ca6d59a781180056fec8",
+              "host": [
+                "{{driv}}carousel"
+              ],
+              "path": [
+                "6872ca6d59a781180056fec8"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.environment.set(\"JWT\", pm.response.json().access_token);\r",
+                  "// pm.environment.set(\"refresh_Token\", pm.response.json().Tokens.refresh_Token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "tetst",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "cws@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "type": "text"
+                },
+                {
+                  "key": "confirmPassword",
+                  "value": "123456",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}auth/register",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"JWT\", pm.response.json().access_token);\r",
+                  "// pm.environment.set(\"refresh_Token\", pm.response.json().Tokens.refresh_Token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    // \"email\":\"vsvv@gmail.comdssesa\",\r\n    \"email\":\"mm2487653@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/login",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "google",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"JWT\", pm.response.json().access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/google",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "google"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "facebook",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"JWT\", pm.response.json().access_token);\r",
+                  "// pm.environment.set(\"refresh_Token\", pm.response.json().Tokens.refresh_Token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/facebook",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "facebook"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/logout",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Password-Reset-Service",
+      "item": [
+        {
+          "name": "reset-password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"JWT\", pm.response.json().access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"mm2487653@gmail.com\", \r\n    \"password\":\"111111\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/reset-password",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"mm2487653@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/forgot-password",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "forgot-password"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-Pass-Reset-Code",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"resetCode\":\"917399\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/verify-Pass-Reset-Code",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "verify-Pass-Reset-Code"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user-Profile-Service",
+      "item": [
+        {
+          "name": "refresh-token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"JWT\", pm.response.json().access_token);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              },
+              {
+                "key": "x-lang",
+                "value": "en",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/refresh-token",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "me-profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/me-profile",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "me-profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-Me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "muhamed alb FDS",
+                  "type": "text",
+                  "uuid": "a28f336b-79ad-40b2-802c-d128371258e9"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "64ea9696-c833-4234-865e-1be56ac21bde",
+                  "src": "postman-cloud:///1ef1ff2d-27cd-4dc0-b98e-bc0fa0994ddf"
+                },
+                {
+                  "key": "email",
+                  "value": "mm2487653@gmail.com",
+                  "type": "text",
+                  "uuid": "a07852d8-2fda-4009-b7a3-3fc47c110b29",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}auth/updateMe",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "updateMe"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change-My-Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"password\":\"123456\",\r\n    \"confirmPassword\":\"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}auth/changeMyPassword",
+              "host": [
+                "{{driv}}auth"
+              ],
+              "path": [
+                "changeMyPassword"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "item": [
+        {
+          "name": "get-products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{driv}}products",
+              "host": [
+                "{{driv}}products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "3",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "2",
+                  "disabled": true
+                },
+                {
+                  "key": "price[lt]",
+                  "value": " 50",
+                  "disabled": true
+                },
+                {
+                  "key": "sold[gt]",
+                  "value": "50",
+                  "disabled": true
+                },
+                {
+                  "key": "keywords",
+                  "value": "سامسونج",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "price",
+                  "disabled": true
+                },
+                {
+                  "key": "fields",
+                  "value": "-price",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-products numbers Of products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{driv}}products/ProductsStatistics",
+              "host": [
+                "{{driv}}products"
+              ],
+              "path": [
+                "ProductsStatistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-product-byid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driv}}products/6825d8b8383c6b3b32be49b4",
+              "host": [
+                "{{driv}}products"
+              ],
+              "path": [
+                "6825d8b8383c6b3b32be49b4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title[en]",
+                  "value": "يxTo-nShixrtscvvxv xxxlيرknx",
+                  "type": "text"
+                },
+                {
+                  "key": "title[ar]",
+                  "value": "arabic aarab",
+                  "type": "text",
+                  "uuid": "e4c68627-2950-400f-a402-0485c9480293"
+                },
+                {
+                  "key": "quantity",
+                  "value": "20",
+                  "type": "text"
+                },
+                {
+                  "key": "sold",
+                  "value": "30",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "22.3",
+                  "type": "text"
+                },
+                {
+                  "key": "priceAfterDiscount",
+                  "value": "20",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing. And Solid stitched shirts with round neck made for durability and a great fit for casual fashion wear and diehard baseball fans. The Henley style round neckline includes a three-button placket.",
+                  "type": "text"
+                },
+                {
+                  "key": "imageCover",
+                  "type": "file",
+                  "src": "postman-cloud:///1ef1ff2d-27cd-4dc0-b98e-bc0fa0994ddf"
+                },
+                {
+                  "key": "ratingsAverage",
+                  "value": "4.4",
+                  "type": "text"
+                },
+                {
+                  "key": "ratingsQuantity",
+                  "value": "23",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [
+                    "postman-cloud:///1ef205b5-f841-4860-869d-5fd26587b3a2",
+                    "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                  ]
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "6820f212f9c8f9e31648b58c",
+                  "type": "text"
+                },
+                {
+                  "key": "supCategories",
+                  "value": "685bea629631c19e73d6855d",
+                  "type": "text",
+                  "uuid": "ff6bbf5b-5aaa-42bf-9ceb-98e2c8028901",
+                  "disabled": true
+                },
+                {
+                  "key": "supCategories",
+                  "value": "685bea629631c19e73d6855d",
+                  "type": "text",
+                  "uuid": "98c7135f-1f74-474c-bb1a-2ef9aa210058",
+                  "disabled": true
+                },
+                {
+                  "key": "supCategories",
+                  "value": "685bea5c9631c19e73d68557",
+                  "type": "text",
+                  "uuid": "3823ba03-782d-4d41-94d8-26a4176fc443",
+                  "disabled": true
+                },
+                {
+                  "key": "supplier",
+                  "value": "685c6dd02348c6426298e2b5",
+                  "type": "text",
+                  "uuid": "cfbc56c9-ced4-4cf4-9cde-3984eaf5c633"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}products",
+              "host": [
+                "{{driv}}products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-product",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "imageCover",
+                  "type": "file",
+                  "src": "postman-cloud:///1eefc732-790b-4e60-b229-45c916c241c7",
+                  "disabled": true
+                },
+                {
+                  "key": "title",
+                  "value": "update0",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [
+                    "postman-cloud:///1eefc732-790b-4e60-b229-45c916c241c7",
+                    "postman-cloud:///1ef1c61a-b6d5-47d0-a021-0bed3c2ed6a4"
+                  ],
+                  "disabled": true
+                },
+                {
+                  "key": "quantity",
+                  "value": "555",
+                  "type": "text",
+                  "uuid": "428bc8bf-c04e-4cff-be48-9ca6c56fe881"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}products/6825d8b8383c6b3b32be49b4",
+              "host": [
+                "{{driv}}products"
+              ],
+              "path": [
+                "6825d8b8383c6b3b32be49b4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delet-product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/products/6664888999ae775d42c539a7",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "6664888999ae775d42c539a7"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "order",
+      "item": [
+        {
+          "name": "PaymentByBankTransfer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              },
+              {
+                "key": "lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "couponCode",
+                  "value": "fixed",
+                  "type": "text",
+                  "uuid": "910a4a56-d75d-4343-aa1d-0102dae476ed",
+                  "disabled": true
+                },
+                {
+                  "key": "transferReceiptImg",
+                  "type": "file",
+                  "uuid": "f93f7fc3-55ec-4eef-a272-8674627fcff6",
+                  "src": "postman-cloud:///1f02cf2a-508c-4ad0-9e9b-536d004fa5f9"
+                },
+                {
+                  "key": "shippingAddress[lastName]",
+                  "value": "muham",
+                  "type": "text",
+                  "uuid": "611c9506-03ff-47ab-8e41-478289c960a2"
+                },
+                {
+                  "key": "shippingAddress[firsName]",
+                  "value": "czxcz",
+                  "type": "text",
+                  "uuid": "59b20853-4d12-45a8-afd0-fbff5a7f8732"
+                },
+                {
+                  "key": "items[0][productId]",
+                  "value": "6825d8b8383c6b3b32be49b4",
+                  "type": "text",
+                  "uuid": "09ce8dc7-f465-4b3d-af4c-e5e4bec5d3e8"
+                },
+                {
+                  "key": "items[0][quantity]",
+                  "value": "10",
+                  "type": "text",
+                  "uuid": "bee3cd8f-67f3-4674-8d87-85e2bb190acf"
+                },
+                {
+                  "key": "items[1][productId]",
+                  "value": "6825e7d7aa96007f917a88f9",
+                  "type": "text",
+                  "uuid": "039b84c7-9f91-47fd-94b9-c8e636551977"
+                },
+                {
+                  "key": "items[1][quantity]",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "151c7960-666e-47c1-9c93-089f7ec7d621"
+                },
+                {
+                  "key": "shippingAddress[phone]",
+                  "value": "963912345678",
+                  "type": "text",
+                  "uuid": "af75fef0-d88b-45fb-8c28-717c5239aa34"
+                },
+                {
+                  "key": "shippingAddress[country]",
+                  "value": "سوريا",
+                  "type": "text",
+                  "uuid": "481090bb-3f19-49da-b055-80c07d9446bb"
+                },
+                {
+                  "key": "shippingAddress[city]",
+                  "value": "دمشق",
+                  "type": "text",
+                  "uuid": "94b62fc9-b56f-4ab4-a413-7bd9515b8be8"
+                },
+                {
+                  "key": "shippingAddress[building]",
+                  "value": "مبنى الزهراء، الطابق 3",
+                  "type": "text",
+                  "uuid": "48d426ef-c599-4d73-836d-6613e8edfa17"
+                },
+                {
+                  "key": "shippingAddress[street]",
+                  "value": "شارع الثورة",
+                  "type": "text",
+                  "uuid": "ee2bfeee-28e2-4381-b573-dd1a0fc5f12d"
+                },
+                {
+                  "key": "shippingAddress[postalCode]",
+                  "value": "12345",
+                  "type": "text",
+                  "uuid": "930a9f48-0f05-496b-acef-b9deff439293"
+                },
+                {
+                  "key": "shippingAddress[additionalInfo]",
+                  "value": "قرب مستشفى المجتهد",
+                  "type": "text",
+                  "uuid": "8190f7d1-514d-4ee0-b462-f4083b6a2d26"
+                },
+                {
+                  "key": "shippingAddress[addressType]",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "62ef3f38-f84d-4301-9cb2-5ecc23f77df4",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[companyName]",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "64a7cb0d-de38-45e1-b0cc-44e1cdbd3212",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[location][coordinates]",
+                  "value": "36.2764",
+                  "type": "text",
+                  "uuid": "c8896500-1851-42d2-a68a-a6c3c8e23950",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[location][coordinates]",
+                  "value": "33.5134",
+                  "type": "text",
+                  "uuid": "9a9f2038-1652-46d0-b3d5-4d400de01ddb",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[location][type]",
+                  "value": "Point",
+                  "type": "text",
+                  "uuid": "91919efe-2412-4b27-aba6-7b85c04157da",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}order/PaymentByBankTransfer?lang",
+              "host": [
+                "{{driv}}order"
+              ],
+              "path": [
+                "PaymentByBankTransfer"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              },
+              {
+                "key": "lang",
+                "value": "en",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "couponCode",
+                  "value": "all",
+                  "type": "text",
+                  "uuid": "910a4a56-d75d-4343-aa1d-0102dae476ed",
+                  "disabled": true
+                },
+                {
+                  "key": "transferReceiptImg",
+                  "type": "file",
+                  "uuid": "f93f7fc3-55ec-4eef-a272-8674627fcff6",
+                  "src": "postman-cloud:///1f02cf2a-508c-4ad0-9e9b-536d004fa5f9"
+                },
+                {
+                  "key": "shippingAddress[lastName]",
+                  "value": "dsaasdsa",
+                  "type": "text",
+                  "uuid": "611c9506-03ff-47ab-8e41-478289c960a2",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[firsName]",
+                  "value": "czxcz",
+                  "type": "text",
+                  "uuid": "59b20853-4d12-45a8-afd0-fbff5a7f8732",
+                  "disabled": true
+                },
+                {
+                  "key": "items[0][productId]",
+                  "value": "6825d8b8383c6b3b32be49b4",
+                  "type": "text",
+                  "uuid": "09ce8dc7-f465-4b3d-af4c-e5e4bec5d3e8",
+                  "disabled": true
+                },
+                {
+                  "key": "items[0][quantity]",
+                  "value": "10",
+                  "type": "text",
+                  "uuid": "bee3cd8f-67f3-4674-8d87-85e2bb190acf",
+                  "disabled": true
+                },
+                {
+                  "key": "items[1][productId]",
+                  "value": "6825e7d7aa96007f917a88f9",
+                  "type": "text",
+                  "uuid": "039b84c7-9f91-47fd-94b9-c8e636551977",
+                  "disabled": true
+                },
+                {
+                  "key": "items[1][quantity]",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "151c7960-666e-47c1-9c93-089f7ec7d621",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[phone]",
+                  "value": "963912345678",
+                  "type": "text",
+                  "uuid": "af75fef0-d88b-45fb-8c28-717c5239aa34",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[country]",
+                  "value": "سوريا",
+                  "type": "text",
+                  "uuid": "481090bb-3f19-49da-b055-80c07d9446bb",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[city]",
+                  "value": "دمشق",
+                  "type": "text",
+                  "uuid": "94b62fc9-b56f-4ab4-a413-7bd9515b8be8",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[building]",
+                  "value": "مبنى الزهراء، الطابق 3",
+                  "type": "text",
+                  "uuid": "48d426ef-c599-4d73-836d-6613e8edfa17",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[street]",
+                  "value": "شارع الثورة",
+                  "type": "text",
+                  "uuid": "ee2bfeee-28e2-4381-b573-dd1a0fc5f12d",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[postalCode]",
+                  "value": "12345",
+                  "type": "text",
+                  "uuid": "930a9f48-0f05-496b-acef-b9deff439293",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[additionalInfo]",
+                  "value": "قرب مستشفى المجتهد",
+                  "type": "text",
+                  "uuid": "8190f7d1-514d-4ee0-b462-f4083b6a2d26",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[addressType]",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "62ef3f38-f84d-4301-9cb2-5ecc23f77df4",
+                  "disabled": true
+                },
+                {
+                  "key": "shippingAddress[companyName]",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "64a7cb0d-de38-45e1-b0cc-44e1cdbd3212",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "processing",
+                  "type": "text",
+                  "uuid": "3ee92d67-36d3-4a37-a0bb-183e311fee77"
+                },
+                {
+                  "key": "shippingMethod",
+                  "value": "express",
+                  "type": "text",
+                  "uuid": "3ada2418-1bc9-4c22-a72f-4ac25b2005ff"
+                },
+                {
+                  "key": "InvoicePdf",
+                  "type": "file",
+                  "uuid": "e094fb6c-e070-4736-b583-e369754f34ac",
+                  "src": "postman-cloud:///1f02d071-18cd-4a70-b8d6-428c301fd484"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{driv}}order/685927ffa9f30c7b04e1a9d3",
+              "host": [
+                "{{driv}}order"
+              ],
+              "path": [
+                "685927ffa9f30c7b04e1a9d3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driv}}order?status=completed",
+              "host": [
+                "{{driv}}order"
+              ],
+              "query": [
+                {
+                  "key": "keywords",
+                  "value": "muh",
+                  "disabled": true
+                },
+                {
+                  "key": "user",
+                  "value": "681a3b8cf8b507cb3bcf2cf5",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "user",
+                  "value": "681cc44f5d58680c6e08eb2d",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "completed",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get numbers Of Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driv}}order/statistics",
+              "host": [
+                "{{driv}}order"
+              ],
+              "path": [
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get order",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driv}}order/68592795a9f30c7b04e1a9c2",
+              "host": [
+                "{{driv}}order"
+              ],
+              "path": [
+                "68592795a9f30c7b04e1a9c2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete order",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driv}}order/685927ffa9f30c7b04e1a9d3",
+              "host": [
+                "{{driv}}order"
+              ],
+              "path": [
+                "685927ffa9f30c7b04e1a9d3"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Coupon to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6825d47d97d01a1ffb927229\",\r\n      \"quantity\":4\r\n    },\r\n        {\r\n      \"productId\": \"6825e7d7aa96007f917a88f9\",\r\n      \"quantity\": 3\r\n    }\r\n    ,\r\n        {\r\n      \"productId\": \"6825d8b8383c6b3b32be49b4\",\r\n      \"quantity\": 2\r\n    }\r\n    ,\r\n        {\r\n      \"productId\": \"684dadc76fa28d88f44149c5\",\r\n      \"quantity\": 5\r\n    }\r\n  ],\r\n  \"couponCode\":\"brands\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driv}}order/applyCoupon?lang=en",
+              "host": [
+                "{{driv}}order"
+              ],
+              "path": [
+                "applyCoupon"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "base_url",
+      "value": "https://postman-rest-api-learner.glitch.me/"
+    }
+  ]
+}

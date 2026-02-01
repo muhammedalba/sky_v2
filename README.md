@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌌 Sky Galaxy - Premium E-commerce Admin Dashboard
 
-## Getting Started
+A powerful, modern, and high-performance e-commerce management dashboard built with **Next.js 15 (App Router)**, **TypeScript**, and **TailwindCSS**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Key Features
+
+- **Premium Design**: Modern UI with dark mode, glassmorphism, and smooth animations.
+- **Role-Based Security**: Strict protection for admin routes.
+- **Internationalization (i18n)**: Full support for English and Arabic with automatic RTL detection.
+- **Modular API Architecture**: Clean separation of API logic with centralized environment variables.
+- **State Management**: Performance-optimized using Zustand.
+- **Server State**: Robust data fetching and caching with React Query.
+
+---
+
+## 📂 Project Structure
+
+```text
+sky_v2/
+├── app/                  # Next.js App Router (Pages & Layouts)
+│   ├── [locale]/         # Multilingual routes (ar/en)
+│   │   ├── home/         # 🏠 Landing Page
+│   │   ├── dashboard/    # 🔒 Protected Admin Dashboard
+│   │   ├── login/        # Auth Pages
+│   │   └── ...
+├── components/           # UI & Layout Components
+│   ├── layout/           # Sidebar, Topbar, DashboardLayout
+│   └── ui/               # Reusable atomic components & Icons
+├── hooks/                # Custom React Hooks (API & Business logic)
+├── lib/                  # Core Utilities & Configuration
+│   ├── api/              # 🛰️ Modular API Client & Modules
+│   ├── auth.ts           # Authentication & Authorization helpers
+│   └── utils.ts          # Helper functions (Currency, Date formatting)
+├── messages/             # Translation files (JSON)
+├── store/                # Global state (Zustand)
+└── types/                # TypeScript interfaces and types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## �️ API System & Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project uses a **Modular API Layer**. All endpoints are configurable via `.env` to ensure zero code modification when moving environments.
 
-## Learn More
+### Authentication Endpoints
+- `POST` Login: `${NEXT_PUBLIC_ENDPOINT_AUTH_LOGIN}`
+- `POST` Register: `${NEXT_PUBLIC_ENDPOINT_AUTH_REGISTER}`
+- `GET` Profile: `${NEXT_PUBLIC_ENDPOINT_AUTH_ME}`
 
-To learn more about Next.js, take a look at the following resources:
+### Core Modules
+- **Products**: Manage catalog, inventory, and statistics.
+- **Orders**: Real-time order tracking and management.
+- **Categories**: Organize products and view department stats.
+- **Users**: Admin-level user management and role assignment.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔐 Environment Variables (`.env`)
 
-## Deploy on Vercel
+Configuration is managed entirely through environment variables. Copy `.env.example` to `.env` before starting.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_API_URL` | Base API URL | - |
+| `NEXT_PUBLIC_APP_NAME` | Website Name | Sky Galaxy |
+| `NEXT_PUBLIC_DEFAULT_LOCALE`| Default Language | en |
+| `NEXT_PUBLIC_DEFAULT_CURRENCY`| Formatting Currency | USD |
+| `NEXT_PUBLIC_ENDPOINT_*` | API Route paths | (Configurable) |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## �️ Tech Stack
+
+- **Framework**: [Next.js 15+](https://nextjs.org/)
+- **Styling**: [TailwindCSS 4](https://tailwindcss.com/)
+- **Data Fetching**: [TanStack Query v5](https://tanstack.com/query)
+- **i18n**: [next-intl](https://next-intl-docs.vercel.app/)
+- **Logic/Forms**: React Hook Form + Zod
+- **Icons**: Custom SVG managed through `Icons.tsx`
+
+---
+
+## � Getting Started
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment**:
+   ```bash
+   cp .env.example .env
+   # Update your NEXT_PUBLIC_API_URL and other variables
+   ```
+
+3. **Run in development**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🛡️ Security Logic
+
+- **Guest**: Can only access `home`, `login`, and `signup`.
+- **Authenticated User**: Can access `home` and `profile`.
+- **Admin/Manager**: Has full access to the `dashboard` and management tools.
+- *Any unauthorized attempt to access `/dashboard` will redirect the user to `/login` or `/home` based on their auth status.*
+
+---
+
+## 🎨 Design System
+
+We use a premium color palette centered around the **Primary (Blue/Indigo)** and **Secondary (Slate/Zinc)** scales, optimized for both high-contrast light mode and deep-space dark mode.
+
+---
+
+Built with ❤️ by **Antigravity AI**

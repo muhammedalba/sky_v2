@@ -1,0 +1,29 @@
+{
+      "title": "الطلبات",
+      "orderList": "قائمة الطلبات",
+      "orderDetails": "تفاصيل الطلب",
+      "orderNumber": "رقم الطلب",
+      "fields": {
+            "customer": "العميل",
+            "total": "الإجمالي",
+            "status": "الحالة",
+            "paymentMethod": "طريقة الدفع",
+            "shippingAddress": "عنوان الشحن",
+            "items": "العناصر",
+            "date": "التاريخ"
+      },
+      "status": {
+            "pending": "قيد الانتظار",
+            "processing": "قيد المعالجة",
+            "shipped": "تم الشحن",
+            "delivered": "تم التسليم",
+            "cancelled": "ملغي"
+      },
+      "actions": {
+            "updateStatus": "تحديث الحالة",
+            "viewDetails": "عرض التفاصيل"
+      },
+      "messages": {
+            "statusUpdated": "تم تحديث حالة الطلب بنجاح"
+      }
+}

@@ -1,0 +1,29 @@
+{
+      "title": "Orders",
+      "orderList": "Order List",
+      "orderDetails": "Order Details",
+      "orderNumber": "Order Number",
+      "fields": {
+            "customer": "Customer",
+            "total": "Total",
+            "status": "Status",
+            "paymentMethod": "Payment Method",
+            "shippingAddress": "Shipping Address",
+            "items": "Items",
+            "date": "Date"
+      },
+      "status": {
+            "pending": "Pending",
+            "processing": "Processing",
+            "shipped": "Shipped",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled"
+      },
+      "actions": {
+            "updateStatus": "Update Status",
+            "viewDetails": "View Details"
+      },
+      "messages": {
+            "statusUpdated": "Order status updated successfully"
+      }
+}

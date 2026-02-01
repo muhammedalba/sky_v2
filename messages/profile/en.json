@@ -1,0 +1,21 @@
+{
+      "title": "Profile Settings",
+      "personalInfo": "Personal Information",
+      "changePassword": "Change Password",
+      "fields": {
+            "name": "Full Name",
+            "email": "Email Address",
+            "role": "Account Role",
+            "currentPassword": "Current Password",
+            "newPassword": "New Password",
+            "confirmPassword": "Confirm New Password"
+      },
+      "buttons": {
+            "saveChanges": "Save Changes",
+            "updatePassword": "Update Password"
+      },
+      "messages": {
+            "profileUpdated": "Profile updated successfully!",
+            "passwordChanged": "Password changed successfully!"
+      }
+}
