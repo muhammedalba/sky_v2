@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Carousel } from '@/types';
+
 import { useToast } from '@/hooks/useToast';
 
 export function useCarousel(params?: { page?: number; limit?: number }) {
@@ -39,7 +39,7 @@ export function useCreateCarousel() {
       queryClient.invalidateQueries({ queryKey: ['carousel'] });
       toast.success('Carousel item created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to create carousel item');
     },
   });
@@ -59,7 +59,7 @@ export function useUpdateCarousel() {
       queryClient.invalidateQueries({ queryKey: ['carousel', variables.id] });
       toast.success('Carousel item updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to update carousel item');
     },
   });
@@ -78,7 +78,7 @@ export function useDeleteCarousel() {
       queryClient.invalidateQueries({ queryKey: ['carousel'] });
       toast.success('Carousel item deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to delete carousel item');
     },
   });

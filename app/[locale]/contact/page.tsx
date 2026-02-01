@@ -85,7 +85,7 @@ export default function ContactPage() {
                             <Icons.Menu className="w-8 h-8" />
                         </div>
                         <h3 className="text-2xl font-bold text-green-700 mb-2">{t('form.success')}</h3>
-                        <p className="text-muted-foreground">We'll get back to you shortly.</p>
+                        <p className="text-muted-foreground">We&apos;ll get back to you shortly.</p>
                         <Button variant="outline" className="mt-8" onClick={() => setSuccess(false)}>Send another message</Button>
                    </div>
                ) : (

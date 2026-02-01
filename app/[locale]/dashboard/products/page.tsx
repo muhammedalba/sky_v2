@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { use, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -8,7 +7,7 @@ import Link from 'next/link';
 import { useProducts, useDeleteProduct } from '@/hooks/api/useProducts';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import Pagination from '@/components/ui/Pagination';
 import { Badge } from '@/components/ui/Badge';
@@ -48,11 +47,6 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         refetch();
       },
     });
-  };
-
-  const getCategoryName = (name: string | { en: string; ar: string }) => {
-    if (typeof name === 'string') return name;
-    return name?.en || name?.ar || '';
   };
 
   return (
@@ -133,13 +127,9 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="rounded-lg bg-secondary/30 border-none font-medium text-xs">
-                        {(() => {
-                           const catName = (typeof product.category === 'object' && product.category !== null) ? product.category.name : '-';
-                           if (typeof catName === 'object' && catName !== null) {
-                              return (catName as any)[locale] || (catName as any)['en'] || '-';
-                           }
-                           return typeof catName === 'string' ? catName : '-';
-                        })()}
+                        {product.category && typeof product.category === 'object' && 'name' in product.category
+                          ? getTrans(product.category.name)
+                          : typeof product.category === 'string' ? product.category : '-'}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-black text-sm">{formatCurrency(product.price)}</TableCell>

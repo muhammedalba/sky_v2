@@ -1,11 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent, CardFooter } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Icons } from '@/components/ui/Icons';
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/types';
 import ImageWithFallback from '@/components/ui/image/ImageWithFallback';

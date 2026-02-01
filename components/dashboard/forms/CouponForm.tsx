@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { useCreateCoupon, useUpdateCoupon } from '@/hooks/api/useCoupons';
 import { useRouter } from 'next/navigation';
 import { Coupon } from '@/types';
-import { useState } from 'react';
+
 
 const couponSchema = z.object({
   name: z.string().min(3, 'Coupon code is required (min 3 characters)'),

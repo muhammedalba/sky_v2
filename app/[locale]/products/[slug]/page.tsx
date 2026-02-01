@@ -1,9 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { useState, use } from 'react';
 import { useProduct } from '@/hooks/api/useProducts';
 import StoreLayout from '@/components/layout/StoreLayout';
 import { Button } from '@/components/ui/Button';
@@ -12,14 +9,13 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { Icons } from '@/components/ui/Icons';
 import { formatCurrency } from '@/lib/utils';
 import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
-import { use }  from 'react';
+import { Product } from '@/types';
 
 import { useTrans } from '@/hooks/useTrans';
 import { useToast } from '@/hooks/useToast';
 
 export default function ProductDetailsPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = use(params);
-  const t = useTranslations('products'); // reuse products or common
   const getTrans = useTrans();
   const toast = useToast();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -63,7 +59,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ local
     // LocalStorage Logic
     try {
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const existingItemIndex = cart.findIndex((item: any) => item._id === product._id);
+        const existingItemIndex = cart.findIndex((item: Product) => item._id === product._id);
         
         if (existingItemIndex > -1) {
             cart[existingItemIndex].quantity += quantity;

@@ -1,10 +1,10 @@
 'use client';
 
 import { use, useState } from 'react';
-import { useTranslations } from 'next-intl';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSuppliers, useDeleteSupplier, useSupplier } from '@/hooks/api/useSuppliers';
+import { useSuppliers, useDeleteSupplier } from '@/hooks/api/useSuppliers';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -13,7 +13,7 @@ import Pagination from '@/components/ui/Pagination';
 import { Icons } from '@/components/ui/Icons';
 import { Skeleton } from '@/components/ui/Skeleton';
 import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
-import { useTrans } from '@/hooks/useTrans';
+
 import { debounce } from '@/lib/utils';
 import { Supplier } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
@@ -24,7 +24,6 @@ export default function SuppliersPage({ params }: { params: Promise<{ locale: st
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const router = useRouter();
-  const getTrans = useTrans();
   const confirmDialog = useConfirmDialog();
 
   const { data, isLoading, refetch } = useSuppliers({ page, limit: 10, search });

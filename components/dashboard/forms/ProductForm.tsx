@@ -12,8 +12,10 @@ import { useCategories } from '@/hooks/api/useCategories';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ImageUpload from '@/components/ui/form/ImageUpload';
-import { Product } from '@/types';
+import { Product, Category } from '@/types';
 import { Icons } from '@/components/ui/Icons';
+
+
 
 const productSchema = z.object({
   titleEn: z.string().min(3, 'English title is required'),
@@ -47,15 +49,15 @@ export default function ProductForm({ initialData, locale }: ProductFormProps) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      titleEn: (initialData?.title && typeof initialData.title === 'object') ? (initialData.title as any).en : (typeof initialData?.title === 'string' ? initialData.title : ''),
-      titleAr: (initialData?.title && typeof initialData.title === 'object') ? (initialData.title as any).ar : '',
-      descriptionEn: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as any).en : (typeof initialData?.description === 'string' ? initialData.description : ''),
-      descriptionAr: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as any).ar : '',
+      titleEn: (initialData?.title && typeof initialData.title === 'object') ? (initialData.title as { en: string }).en : (typeof initialData?.title === 'string' ? initialData.title : ''),
+      titleAr: (initialData?.title && typeof initialData.title === 'object') ? (initialData.title as { ar: string }).ar : '',
+      descriptionEn: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as { en: string }).en : (typeof initialData?.description === 'string' ? initialData.description : ''),
+      descriptionAr: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as { ar: string }).ar : '',
       price: initialData?.price || 0,
       priceAfterDiscount: initialData?.priceAfterDiscount || undefined,
       quantity: initialData?.quantity || 0,
-      category: (initialData?.category && typeof initialData.category === 'object') ? (initialData.category as any)._id : (typeof initialData?.category === 'string' ? initialData.category : ''),
-      brand: (initialData?.brand && typeof initialData.brand === 'object') ? (initialData.brand as any)._id : (typeof initialData?.brand === 'string' ? initialData.brand : ''),
+      category: (initialData?.category && typeof initialData.category === 'object') ? (initialData.category as { _id: string })._id : (typeof initialData?.category === 'string' ? initialData.category : ''),
+      brand: (initialData?.brand && typeof initialData.brand === 'object') ? (initialData.brand as { _id: string })._id : (typeof initialData?.brand === 'string' ? initialData.brand : ''),
       sku: initialData?.sku || '',
     },
   });
@@ -261,8 +263,9 @@ export default function ProductForm({ initialData, locale }: ProductFormProps) {
                   const input = document.createElement('input');
                   input.type = 'file';
                   input.accept = 'image/*';
-                  input.onchange = (e: any) => {
-                    const file = e.target.files?.[0];
+                  input.onchange = (e: Event) => {
+                    const target = e.target as HTMLInputElement;
+                    const file = target.files?.[0];
                     if (file) handleAdditionalImageAdd(file);
                   };
                   input.click();
@@ -286,7 +289,7 @@ export default function ProductForm({ initialData, locale }: ProductFormProps) {
                   className="w-full h-10 border rounded-lg px-3 bg-background"
                 >
                   <option value="">Select Category</option>
-                  {categoriesData?.data?.map((cat: any) => (
+                  {categoriesData?.data?.map((cat: Category) => (
                     <option key={cat._id} value={cat._id}>
                       {typeof cat.name === 'object' ? cat.name.en : cat.name}
                     </option>

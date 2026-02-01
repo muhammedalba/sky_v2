@@ -3,7 +3,7 @@
 import { use, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useOrder, useUpdateOrderStatus } from '@/hooks/api/useOrders';
 import { orderStatusSchema, type OrderStatusInput } from '@/lib/validations/schemas';
@@ -14,15 +14,17 @@ import { Icons } from '@/components/ui/Icons';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
 import { formatCurrency, formatDateTime, getStatusColor, cn } from '@/lib/utils';
-import ErrorMessage from '@/components/ui/ErrorMessage';
+import { Product } from '@/types';
+import { useTrans } from '@/hooks/useTrans';
 
 export default function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const t = useTranslations('orders');
-  const tCommon = useTranslations('buttons');
   const tErrors = useTranslations('errors');
   const router = useRouter();
+  const getTrans = useTrans();
 
   const { data: order, isLoading } = useOrder(id);
   const updateStatusMutation = useUpdateOrderStatus();
@@ -31,7 +33,6 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<OrderStatusInput>({
     resolver: zodResolver(orderStatusSchema),
@@ -40,7 +41,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
     },
   });
 
-  const currentStatus = watch('status');
+  const currentStatus = useWatch({ control, name: 'status' });
 
   useEffect(() => {
     if (order?.status) {
@@ -113,7 +114,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
         </div>
         <div className="flex items-center gap-3">
            <Button variant="outline" className="rounded-xl px-6 font-bold flex items-center gap-2">
-              <Icons.Menu className="w-4 h-4" /> {/* Print icon replacement */}
+              <Icons.Menu className="w-4 h-4" />{/* Print icon replacement */}
               Invoice
            </Button>
         </div>
@@ -138,19 +139,27 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                        </TableRow>
                     </TableHeader>
                     <TableBody>
-                       {order.cartItems?.map((item: any, i: number) => (
+                       {order.cartItems?.map((item: { product?: Product, color?: string, price: number, count?: number }, i: number) => (
                          <TableRow key={i} className="border-b last:border-0">
                            <TableCell>
                              <div className="flex items-center gap-4 py-2">
                                 <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden flex-shrink-0">
+                                   {/* Product Image Logic */}
                                    {item.product?.imageCover ? (
-                                      <img src={item.product.imageCover} alt={item.product.title} className="w-full h-full object-cover" />
+                                      <div className="relative w-full h-full">
+                                        <ImageWithFallback 
+                                          src={item.product.imageCover} 
+                                          alt={getTrans(item.product.title) || 'Product Image'} 
+                                          fill
+                                          className="object-cover" 
+                                        />
+                                      </div>
                                    ) : (
                                       <Icons.Products className="w-6 h-6 m-3 text-muted-foreground" />
                                    )}
                                 </div>
                                 <div>
-                                   <p className="font-bold text-sm">{item.product?.title || 'Unknown Product'}</p>
+                                   <p className="font-bold text-sm">{getTrans(item.product?.title) || 'Unknown Product'}</p>
                                    <p className="text-xs text-muted-foreground font-medium capitalize">{item.color || 'Default Color'}</p>
                                 </div>
                              </div>
@@ -187,7 +196,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
              </CardHeader>
              <CardContent>
                 <div className="p-4 rounded-2xl bg-secondary/30 italic text-muted-foreground text-sm">
-                   "No special instructions provided by the customer for this order."
+                   &quot;No special instructions provided by the customer for this order.&quot;
                 </div>
              </CardContent>
            </Card>
@@ -215,7 +224,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                       <span className="text-foreground">{order.user?.phone || 'No phone number'}</span>
                    </div>
                    <div className="flex items-start gap-3 text-sm font-medium leading-relaxed">
-                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:bg-primary transition-colors mt-0.5 whitespace-nowrap"><Icons.Menu className="w-4 h-4" /></div> {/* Map pin icon replacement */}
+                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:bg-primary transition-colors mt-0.5 whitespace-nowrap"><Icons.Menu className="w-4 h-4" /></div>{/* Map pin icon replacement */}
                       <span className="text-foreground">
                          {order.shippingAddress?.details}, {order.shippingAddress?.city} <br />
                          {order.shippingAddress?.phone}
@@ -233,7 +242,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                  <div className="flex items-center justify-between p-4 rounded-2xl bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/50">
                     <div className="flex items-center gap-3">
                        <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center">
-                          <Icons.Menu className="w-4 h-4" /> {/* Checkmark replacement */}
+                          <Icons.Menu className="w-4 h-4" />{/* Checkmark replacement */}
                        </div>
                        <span className="text-green-700 dark:text-green-400 font-black text-sm uppercase tracking-wider">{order.paymentMethodType || 'CARD'}</span>
                     </div>

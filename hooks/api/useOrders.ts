@@ -18,7 +18,7 @@ export function useOrder(id: string) {
     queryKey: ['orders', id],
     queryFn: async () => {
       const response = await api.orders.getOne(id);
-      return response.data;
+      return response.data.data;
     },
     enabled: !!id,
   });
@@ -29,7 +29,7 @@ export function useUpdateOrderStatus() {
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const response = await api.orders.updateStatus(id, status);
+      const response = await api.orders.updateStatus(id, { status });
       return response.data;
     },
     onSuccess: (_, variables) => {

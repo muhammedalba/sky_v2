@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Brand } from '@/types';
+
 import { useToast } from '@/hooks/useToast';
 
 export function useBrands(params?: { page?: number; limit?: number; search?: string }) {
@@ -39,7 +39,7 @@ export function useCreateBrand() {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
       toast.success('Brand created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to create brand');
     },
   });
@@ -59,7 +59,7 @@ export function useUpdateBrand() {
       queryClient.invalidateQueries({ queryKey: ['brands', variables.id] });
       toast.success('Brand updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to update brand');
     },
   });
@@ -78,7 +78,7 @@ export function useDeleteBrand() {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
       toast.success('Brand deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to delete brand');
     },
   });

@@ -15,15 +15,15 @@ export const apiClient = axios.create({
 });
 
 interface PendingRequest {
-  resolve: (value: any) => void;
-  reject: (reason?: any) => void;
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
   config: InternalAxiosRequestConfig;
 }
 
 let isRefreshing = false;
 let failedQueue: PendingRequest[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);

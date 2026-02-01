@@ -7,6 +7,7 @@ export interface User {
   email: string;
   role: 'admin' | 'user' | 'manager';
   avatar?: string;
+  phone?: string;
   active?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -27,8 +28,8 @@ export interface Product {
   imageCover?: string;
   images?: string[];
   category: Category | string;
-  subcategories?: any[];
-  brand?: any;
+  subcategories?: (Category | string)[];
+  brand?: Brand | string;
   ratingsAverage?: number;
   ratingsQuantity?: number;
   createdAt?: string;
@@ -178,6 +179,15 @@ export interface ApiResponse<T> {
 export interface ApiError {
   status?: string;
   message: string;
-  error?: any;
+  error?: unknown;
   stack?: string;
+}
+
+export interface SubCategory {
+  _id: string;
+  name: LocalizedString;
+  category: Category | string;
+  slug?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

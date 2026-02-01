@@ -1,20 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useLocale } from 'next-intl';
 import StoreLayout from '@/components/layout/StoreLayout';
 import ProductCard from '@/components/store/ProductCard';
 import { Input } from '@/components/ui/Input';
 import { Icons } from '@/components/ui/Icons';
-import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Pagination from '@/components/ui/Pagination';
 import { useProducts } from '@/hooks/api/useProducts';
 import { debounce } from '@/lib/utils';
+import { Product } from '@/types';
 // Accordion import removed
 
 export default function ProductsPage() {
-  const t = useTranslations('products'); // reuse dashboard products translations or create store ones
   const locale = useLocale();
   
   const [page, setPage] = useState(1);
@@ -70,7 +69,7 @@ export default function ProductsPage() {
             </div>
          ) : data?.data?.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-               {data.data.map((product: any) => (
+               {data.data.map((product: Product) => (
                   <ProductCard key={product._id} product={product} locale={locale} />
                ))}
             </div>

@@ -1,7 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePromoBanners, useDeletePromoBanner } from '@/hooks/api/usePromoBanner';
@@ -75,8 +74,7 @@ export default function PromoBannersPage({ params }: { params: Promise<{ locale:
                   <TableRow key={item._id} className="group hover:bg-secondary/20 transition-colors">
                     <TableCell>
                       <div className="font-medium text-foreground">
-                         {/* Fallback to English if string/object mix */}
-                         {typeof item.text === 'string' ? item.text : (item.text as any)?.['en'] || ''}
+                         {getTrans(item.text)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -98,7 +96,7 @@ export default function PromoBannersPage({ params }: { params: Promise<{ locale:
                             size="sm"
                             variant="destructive"
                             className="rounded-lg px-4"
-                            onClick={() => handleDelete(item._id, typeof item.text === 'string' ? item.text : (item.text as any)?.['en'] || 'Banner')}
+                            onClick={() => handleDelete(item._id, getTrans(item.text))}
                             isLoading={deleteMutation.isPending}
                           >
                             Delete

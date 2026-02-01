@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState } from 'react';
-import { useTranslations } from 'next-intl';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSubCategories, useDeleteSubCategory } from '@/hooks/api/useSubCategories';
@@ -14,7 +14,7 @@ import { Icons } from '@/components/ui/Icons';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useTrans } from '@/hooks/useTrans';
 import { debounce } from '@/lib/utils';
-import { SubCategory } from '@/hooks/api/useSubCategories';
+import { SubCategory, Category } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
@@ -99,7 +99,7 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
                     <TableCell>
                        {/* Assuming API returns populated category or just ID */}
                        <div className="text-sm text-muted-foreground">
-                          {sub.category && typeof sub.category === 'object' ? getTrans((sub.category as any).name) : sub.category || '-'}
+                          {sub.category && typeof sub.category === 'object' ? getTrans((sub.category as Category).name) : sub.category || '-'}
                        </div>
                     </TableCell>
                     <TableCell className="text-right">

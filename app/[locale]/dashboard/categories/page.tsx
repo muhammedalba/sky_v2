@@ -7,16 +7,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/hooks/api/useCategories';
 import { categorySchema, type CategoryInput } from '@/lib/validations/schemas';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
 import { Icons } from '@/components/ui/Icons';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Category } from '@/types';
-import ErrorMessage from '@/components/ui/ErrorMessage';
+
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { useTrans } from '@/hooks/useTrans';
@@ -40,7 +39,6 @@ export default function CategoriesPage() {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<CategoryInput>({
     resolver: zodResolver(categorySchema),
@@ -50,10 +48,7 @@ export default function CategoriesPage() {
     },
   });
 
-  const getCategoryName = (name: string | { en: string; ar: string }) => {
-    if (typeof name === 'string') return name;
-    return name?.en || name?.ar || '';
-  };
+
 
   const handleOpenModal = (category?: Category) => {
     if (category) {
@@ -182,11 +177,11 @@ export default function CategoriesPage() {
                   <TableRow key={category._id} className="group hover:bg-secondary/20 transition-colors">
                     <TableCell>
                       <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black">
-                         {getCategoryName(category.name).charAt(0).toUpperCase()}
+                       {getTrans(category.name).charAt(0).toUpperCase()}
                       </div>
                     </TableCell>
                     <TableCell className="font-bold text-foreground group-hover:text-primary transition-colors">
-                      {getCategoryName(category.name)}
+                      {getTrans(category.name)}
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm max-w-[300px] truncate">
                       {category.description || '-'}

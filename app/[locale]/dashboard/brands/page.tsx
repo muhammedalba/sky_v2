@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState } from 'react';
-import { useTranslations } from 'next-intl';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useBrands, useDeleteBrand } from '@/hooks/api/useBrands';
@@ -23,8 +23,6 @@ export default function BrandsPage({ params }: { params: Promise<{ locale: strin
   const { locale } = use(params);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const t = useTranslations('brands'); // You'll need to add this namespace or use 'common'
-  const tCommon = useTranslations('buttons');
   const router = useRouter();
   const getTrans = useTrans();
   const confirmDialog = useConfirmDialog();

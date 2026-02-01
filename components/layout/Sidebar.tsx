@@ -117,7 +117,18 @@ export default function Sidebar({ mode = 'desktop', className, onNavigate }: Sid
   );
 }
 
-function SidebarItem({ item, isActive, isCollapsed, onClick }: any) {
+interface SidebarItemProps {
+  item: {
+    name: string;
+    href: string;
+    icon: React.ElementType;
+  };
+  isActive: boolean;
+  isCollapsed: boolean;
+  onClick?: () => void;
+}
+
+function SidebarItem({ item, isActive, isCollapsed, onClick }: SidebarItemProps) {
   const Icon = item.icon;
   
   return (

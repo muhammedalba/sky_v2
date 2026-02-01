@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Button } from '@/components/ui/Button';
+
 import { Icons } from '@/components/ui/Icons';
 import Image from 'next/image';
 

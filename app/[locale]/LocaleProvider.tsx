@@ -1,13 +1,13 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl';
 import { ReactNode, useState } from 'react';
 
 interface LocaleProviderProps {
   children: ReactNode;
   locale: string;
-  messages: any;
+  messages: AbstractIntlMessages;
 }
 
 export default function LocaleProvider({ children, locale, messages }: LocaleProviderProps) {

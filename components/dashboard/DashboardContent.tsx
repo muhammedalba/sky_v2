@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
+// Image import removed
 import { useDashboardStats } from '@/hooks/api/useDashboard';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { Icons } from '@/components/ui/Icons';
 import { Badge } from '@/components/ui/Badge';
 import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
+import { Order, Product } from '@/types';
 
 export default function DashboardContent() {
   const t = useTranslations('dashboard');
@@ -135,7 +136,7 @@ export default function DashboardContent() {
                  Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-xl" />)
                ) : (
                  data?.recentOrders?.length ? (
-                   data.recentOrders.map((order: any) => (
+                   data.recentOrders.map((order: Order) => (
                     <div key={order._id} className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-colors group">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center text-sm font-bold border border-border group-hover:bg-primary group-hover:text-white transition-colors">
@@ -147,7 +148,7 @@ export default function DashboardContent() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-black text-sm">{formatCurrency(order.totalOrderPrice || order.total || 0)}</p>
+                        <p className="font-black text-sm">{formatCurrency(order.totalOrderPrice || 0)}</p>
                         <div className="mt-1">
                           <Badge variant={order.isPaid ? "default" : "secondary"} className="text-[10px] px-1.5 py-0 uppercase tracking-tighter">
                             {order.isPaid ? 'Paid' : 'Pending'}
@@ -186,20 +187,20 @@ export default function DashboardContent() {
                  ))
               ) : (
                 data?.topProducts?.length ? (
-                  data.topProducts.map((product: any) => (
+                  data.topProducts.map((product: Product) => (
                     <div key={product._id} className="flex items-center gap-4 group">
                       <div className="relative h-12 w-12 rounded-xl bg-secondary overflow-hidden flex-shrink-0 ring-1 ring-border/50">
                          <ImageWithFallback 
                            src={product.imageCover || ''} 
-                           alt={product.title || product.name || 'Product'} 
+                           alt={typeof product.title === 'string' ? product.title : (product.title?.en || 'Product')} 
                            fill
                            sizes="48px"
                            className="object-cover transform group-hover:scale-110 transition-transform duration-300" 
                          />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm truncate">{product.title || product.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{product.category?.name}</p>
+                        <p className="font-bold text-sm truncate">{typeof product.title === 'string' ? product.title : (product.title?.en || '')}</p>
+                        <p className="text-xs text-muted-foreground truncate">{typeof product.category === 'object' ? (typeof product.category.name === 'string' ? product.category.name : product.category.name?.en) : ''}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-black text-sm">{formatCurrency(product.price)}</p>

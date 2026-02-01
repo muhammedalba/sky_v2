@@ -32,8 +32,8 @@ export default function PromoBannerForm({ initialData, locale }: PromoBannerForm
   const form = useForm<PromoBannerFormValues>({
     resolver: zodResolver(promoBannerSchema),
     defaultValues: {
-      textEn: (initialData?.text && typeof initialData.text === 'object') ? (initialData.text as any).en : (typeof initialData?.text === 'string' ? initialData.text : ''),
-      textAr: (initialData?.text && typeof initialData.text === 'object') ? (initialData.text as any).ar : '',
+      textEn: (initialData?.text && typeof initialData.text === 'object') ? (initialData.text as { en: string }).en : (typeof initialData?.text === 'string' ? initialData.text : ''),
+      textAr: (initialData?.text && typeof initialData.text === 'object') ? (initialData.text as { ar: string }).ar : '',
       link: initialData?.link || '',
       isActive: initialData?.isActive ?? true,
     },

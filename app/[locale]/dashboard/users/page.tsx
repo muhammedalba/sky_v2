@@ -8,8 +8,8 @@ import { Card } from '@/components/ui/Card';
 import Pagination from '@/components/ui/Pagination';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { Icons } from '@/components/ui/Icons';
-import { formatDate } from '@/lib/utils';
+
+import { cn, formatDate } from '@/lib/utils';
 import { User } from '@/types';
 
 export default function UsersPage() {
@@ -18,12 +18,12 @@ export default function UsersPage() {
 
   const { data, isLoading } = useUsers({ page, limit: 10 });
 
-  const getRoleBadgeVariant = (role: string): any => {
+  const getRoleBadgeVariant = (role: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (role) {
       case 'admin':
-        return 'danger';
+        return 'destructive';
       case 'manager':
-        return 'warning';
+        return 'outline';
       default:
         return 'secondary';
     }
@@ -119,7 +119,4 @@ export default function UsersPage() {
   );
 }
 
-// Inline helper because it was missing in scope in previous snippets
-function cn(...inputs: any[]) {
-    return inputs.filter(Boolean).join(' ');
-}
+

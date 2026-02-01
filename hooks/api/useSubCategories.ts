@@ -4,14 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useToast } from '@/hooks/useToast';
 
-// Define a type locally if not in types/index.ts yet, or use 'any' temporarily if unsure
-export interface SubCategory {
-  _id: string;
-  name: string | { en: string; ar: string };
-  category: string; // ID of parent category
-  // add other fields
-}
-
 export function useSubCategories(params?: { page?: number; limit?: number; search?: string }) {
   return useQuery({
     queryKey: ['subCategories', params],
@@ -38,7 +30,7 @@ export function useCreateSubCategory() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Record<string, unknown>) => {
       const response = await api.supCategories.create(data);
       return response.data;
     },
@@ -46,7 +38,7 @@ export function useCreateSubCategory() {
       queryClient.invalidateQueries({ queryKey: ['subCategories'] });
       toast.success('Sub-category created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to create sub-category');
     },
   });
@@ -57,7 +49,7 @@ export function useUpdateSubCategory() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Record<string, unknown> }) => {
       const response = await api.supCategories.update(id, data);
       return response.data;
     },
@@ -66,7 +58,7 @@ export function useUpdateSubCategory() {
       queryClient.invalidateQueries({ queryKey: ['subCategories', variables.id] });
       toast.success('Sub-category updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to update sub-category');
     },
   });
@@ -85,7 +77,7 @@ export function useDeleteSubCategory() {
       queryClient.invalidateQueries({ queryKey: ['subCategories'] });
       toast.success('Sub-category deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to delete sub-category');
     },
   });

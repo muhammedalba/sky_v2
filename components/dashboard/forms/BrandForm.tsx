@@ -8,15 +8,14 @@ import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { useCreateBrand, useUpdateBrand } from '@/hooks/api/useBrands';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ImageUpload from '@/components/ui/form/ImageUpload';
 import { Brand } from '@/types';
-import { useTranslations } from 'next-intl';
 
 const brandSchema = z.object({
   nameEn: z.string().min(2, 'English name is required'),
   nameAr: z.string().min(2, 'Arabic name is required'),
-  image: z.any().optional(), // File or string URL
+  image: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
 });
 
 type BrandFormValues = z.infer<typeof brandSchema>;
@@ -35,8 +34,8 @@ export default function BrandForm({ initialData, locale }: BrandFormProps) {
   const form = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
-      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as any).en || '' : (typeof initialData?.name === 'string' ? initialData.name : ''),
-      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as any).ar || '' : '',
+      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { en?: string }).en || '' : (typeof initialData?.name === 'string' ? initialData.name : ''),
+      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { ar?: string }).ar || '' : '',
       image: initialData?.image || '',
     },
   });
@@ -91,7 +90,7 @@ export default function BrandForm({ initialData, locale }: BrandFormProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Logo</label>
           <ImageUpload
-            value={imageFile ? URL.createObjectURL(imageFile) : (typeof form.getValues('image') === 'string' ? form.getValues('image') : '')}
+            value={imageFile ? URL.createObjectURL(imageFile) : ((form.getValues('image') && typeof form.getValues('image') === 'string') ? form.getValues('image') as string : '')}
             onChange={(file) => setImageFile(file)}
             onRemove={() => {
               setImageFile(null);

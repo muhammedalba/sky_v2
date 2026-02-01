@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Supplier } from '@/types';
+
 import { useToast } from '@/hooks/useToast';
 
 export function useSuppliers(params?: { page?: number; limit?: number; search?: string }) {
@@ -39,7 +39,7 @@ export function useCreateSupplier() {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
       toast.success('Supplier created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to create supplier');
     },
   });
@@ -59,7 +59,7 @@ export function useUpdateSupplier() {
       queryClient.invalidateQueries({ queryKey: ['suppliers', variables.id] });
       toast.success('Supplier updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to update supplier');
     },
   });
@@ -78,7 +78,7 @@ export function useDeleteSupplier() {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
       toast.success('Supplier deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to delete supplier');
     },
   });

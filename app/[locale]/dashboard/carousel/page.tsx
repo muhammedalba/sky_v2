@@ -1,7 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCarousel, useDeleteCarousel } from '@/hooks/api/useCarousel';
@@ -87,11 +86,8 @@ export default function CarouselPage({ params }: { params: Promise<{ locale: str
                       </div>
                     </TableCell>
                     <TableCell>
-                      {/* Assuming description is localized, but types say string or object. Need safe renderer. */}
-                      {/* Ideally use hook, but keeping it simple for now or strictly string */}
                       <div className="font-medium text-foreground max-w-xs truncate">
-                         {/* Simple fallback */}
-                        {typeof item.description === 'string' ? item.description : (item.description as any)?.['en'] || ''}
+                        {getTrans(item.description)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -113,7 +109,7 @@ export default function CarouselPage({ params }: { params: Promise<{ locale: str
                             size="sm"
                             variant="destructive"
                             className="rounded-lg px-4"
-                            onClick={() => handleDelete(item._id, typeof item.description === 'string' ? item.description : (item.description as any)?.['en'] || 'Slide')}
+                            onClick={() => handleDelete(item._id, getTrans(item.description))}
                             isLoading={deleteMutation.isPending}
                           >
                             Delete

@@ -34,10 +34,9 @@ const Sheet = ({
 
 const SheetTrigger = ({
   children,
-  asChild,
   className,
   ...props
-}: React.HTMLAttributes<HTMLButtonElement> & { asChild?: boolean }) => {
+}: React.HTMLAttributes<HTMLButtonElement>) => {
   const context = React.useContext(SheetContext);
   
   if (!context) throw new Error("SheetTrigger must be used within a Sheet");

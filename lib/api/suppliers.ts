@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { ApiResponse, Supplier } from '@/types';
 
 const ENDPOINTS = {
   BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUPPLIERS || '/supplier',
@@ -6,14 +7,14 @@ const ENDPOINTS = {
 };
 
 export const suppliersApi = {
-  getAll: (params?: any) => apiClient.get(ENDPOINTS.BASE, { params }),
-  getOne: (id: string) => apiClient.get(`${ENDPOINTS.BASE}/${id}`),
-  create: (data: FormData) => apiClient.post(ENDPOINTS.BASE, data, {
+  getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Supplier[]>>(ENDPOINTS.BASE, { params }),
+  getOne: (id: string) => apiClient.get<ApiResponse<Supplier>>(ENDPOINTS.BASE + '/' + id),
+  create: (data: FormData) => apiClient.post<ApiResponse<Supplier>>(ENDPOINTS.BASE, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  update: (id: string, data: FormData) => apiClient.patch(`${ENDPOINTS.BASE}/${id}`, data, {
+  update: (id: string, data: FormData) => apiClient.patch<ApiResponse<Supplier>>(ENDPOINTS.BASE + '/' + id, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  delete: (id: string) => apiClient.delete(`${ENDPOINTS.BASE}/${id}`),
+  delete: (id: string) => apiClient.delete(ENDPOINTS.BASE + '/' + id),
   getStats: () => apiClient.get(ENDPOINTS.STATS),
 };

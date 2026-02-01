@@ -18,7 +18,7 @@ const supplierSchema = z.object({
   email: z.string().email().optional().or(z.literal('')),
   phone: z.string().optional(),
   address: z.string().optional(),
-  avatar: z.any().optional(),
+  avatar: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
 });
 
 type SupplierFormValues = z.infer<typeof supplierSchema>;
@@ -37,8 +37,8 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
   const form = useForm<SupplierFormValues>({
     resolver: zodResolver(supplierSchema),
     defaultValues: {
-      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as any).en : (typeof initialData?.name === 'string' ? initialData.name : ''),
-      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as any).ar : '',
+      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { en: string }).en : (typeof initialData?.name === 'string' ? initialData.name : ''),
+      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { ar: string }).ar : '',
       email: initialData?.email || '',
       phone: initialData?.phone || '',
       address: initialData?.address || '',
@@ -107,11 +107,11 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
         <div className="space-y-2">
           <label className="text-sm font-medium">Logo / Avatar</label>
           <ImageUpload
-            value={imageFile ? URL.createObjectURL(imageFile) : (typeof form.getValues('avatar') === 'string' ? form.getValues('avatar') : '')}
+            value={imageFile ? URL.createObjectURL(imageFile) : ((form.getValues('avatar') && typeof form.getValues('avatar') === 'string') ? form.getValues('avatar') as string : '')}
             onChange={(file) => setImageFile(file)}
             onRemove={() => {
               setImageFile(null);
-              form.setValue('avatar', '');
+              form.setValue('avatar', null);
             }}
           />
         </div>

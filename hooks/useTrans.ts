@@ -17,7 +17,7 @@ export function useTrans() {
 
     if (typeof content === 'object') {
       // Try current locale, then fallback to 'en', then 'ar', then empty
-      return (content as any)[locale] || content.en || content.ar || '';
+      return (content as Record<string, string>)[locale] || content.en || content.ar || '';
     }
 
     return '';

@@ -88,6 +88,15 @@
             "backToLogin": "Back to login",
             "passwordMismatch": "Wait, the passwords don't match. Please check again.",
             "forgotPasswordLink": "Forgot password?",
-            "orContinueWith": "OR CONTINUE WITH"
+            "orContinueWith": "OR CONTINUE WITH",
+            "branding": {
+                  "appName": "Sky Galaxy",
+                  "titleStart": "Unlock Your",
+                  "titleEnd": "Full Potential.",
+                  "description": "Experience a powerful, intuitive platform designed to help you manage, analyze, and scale your business globally.",
+                  "totalRevenue": "Total Revenue",
+                  "new": "New",
+                  "activeOrders": "Active Orders"
+            }
       }
 }

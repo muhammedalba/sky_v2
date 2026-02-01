@@ -24,8 +24,8 @@ const ToastItem = ({ toast }: { toast: ToastType }) => {
   };
 
   const icons = {
-    success: <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400"><Icons.Menu className="w-5 h-5 rtl:rotate-180" /></div>, // Replacing Check with available Icon
-    error: <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400"><Icons.Menu className="w-5 h-5 rotate-45" /></div>, // Cross (Menu rotated)
+    success: <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400"><Icons.Check className="w-5 h-5" /></div>,
+    error: <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400"><Icons.Error className="w-5 h-5" /></div>,
     warning: <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400"><Icons.Dashboard className="w-5 h-5" /></div>,
     info: <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400"><Icons.Products className="w-5 h-5" /></div>,
   };
@@ -58,7 +58,7 @@ const ToastItem = ({ toast }: { toast: ToastType }) => {
           onClick={handleRemove}
           className="shrink-0 text-muted-foreground hover:text-foreground transition-colors p-1"
         >
-          <Icons.Menu className="w-4 h-4 rotate-45" />
+          <Icons.Error className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -67,13 +67,6 @@ const ToastItem = ({ toast }: { toast: ToastType }) => {
 
 export default function ToastContainer() {
   const { toasts } = useToastStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   return createPortal(
     <div className="fixed top-4 right-4 z-[100] flex flex-col items-end gap-3 w-full max-w-sm pointer-events-none px-4 sm:px-0">

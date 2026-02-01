@@ -15,9 +15,9 @@ import { Carousel } from '@/types';
 const carouselSchema = z.object({
   descriptionEn: z.string().optional(),
   descriptionAr: z.string().optional(),
-  carouselLg: z.any().optional(),
-  carouselMd: z.any().optional(),
-  carouselSm: z.any().optional(),
+  carouselLg: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
+  carouselMd: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
+  carouselSm: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
 });
 
 type CarouselFormValues = z.infer<typeof carouselSchema>;
@@ -39,8 +39,8 @@ export default function CarouselForm({ initialData, locale }: CarouselFormProps)
   const form = useForm<CarouselFormValues>({
     resolver: zodResolver(carouselSchema),
     defaultValues: {
-      descriptionEn: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as any).en : (typeof initialData?.description === 'string' ? initialData.description : ''),
-      descriptionAr: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as any).ar : '',
+      descriptionEn: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as { en: string }).en : (typeof initialData?.description === 'string' ? initialData.description : ''),
+      descriptionAr: (initialData?.description && typeof initialData.description === 'object') ? (initialData.description as { ar: string }).ar : '',
       carouselLg: initialData?.carouselLg || '',
       carouselMd: initialData?.carouselMd || '',
       carouselSm: initialData?.carouselSm || '',
@@ -94,11 +94,11 @@ export default function CarouselForm({ initialData, locale }: CarouselFormProps)
           <div className="space-y-2">
             <label className="text-sm font-medium">Large (Desktop)</label>
             <ImageUpload
-              value={imageLg ? URL.createObjectURL(imageLg) : form.getValues('carouselLg') as string}
+              value={imageLg ? URL.createObjectURL(imageLg) : ((form.getValues('carouselLg') && typeof form.getValues('carouselLg') === 'string') ? form.getValues('carouselLg') as string : '')}
               onChange={(file) => setImageLg(file)}
               onRemove={() => {
                 setImageLg(null);
-                form.setValue('carouselLg', '');
+                form.setValue('carouselLg', null);
               }}
             />
           </div>
@@ -106,11 +106,11 @@ export default function CarouselForm({ initialData, locale }: CarouselFormProps)
           <div className="space-y-2">
             <label className="text-sm font-medium">Medium (Tablet)</label>
             <ImageUpload
-              value={imageMd ? URL.createObjectURL(imageMd) : form.getValues('carouselMd') as string}
+              value={imageMd ? URL.createObjectURL(imageMd) : ((form.getValues('carouselMd') && typeof form.getValues('carouselMd') === 'string') ? form.getValues('carouselMd') as string : '')}
               onChange={(file) => setImageMd(file)}
               onRemove={() => {
                 setImageMd(null);
-                form.setValue('carouselMd', '');
+                form.setValue('carouselMd', null);
               }}
             />
           </div>
@@ -118,11 +118,11 @@ export default function CarouselForm({ initialData, locale }: CarouselFormProps)
           <div className="space-y-2">
             <label className="text-sm font-medium">Small (Mobile)</label>
             <ImageUpload
-              value={imageSm ? URL.createObjectURL(imageSm) : form.getValues('carouselSm') as string}
+              value={imageSm ? URL.createObjectURL(imageSm) : ((form.getValues('carouselSm') && typeof form.getValues('carouselSm') === 'string') ? form.getValues('carouselSm') as string : '')}
               onChange={(file) => setImageSm(file)}
               onRemove={() => {
                 setImageSm(null);
-                form.setValue('carouselSm', '');
+                form.setValue('carouselSm', null);
               }}
             />
           </div>

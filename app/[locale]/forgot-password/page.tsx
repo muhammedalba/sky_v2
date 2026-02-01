@@ -6,7 +6,7 @@ import SEO from '@/components/ui/SEO';
 import { useTranslations } from 'next-intl';
 
 export default function ForgotPasswordPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
+  use(params);
   const t = useTranslations('auth');
 
   return (

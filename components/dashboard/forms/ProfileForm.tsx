@@ -13,7 +13,7 @@ import ImageUpload from '@/components/ui/form/ImageUpload';
 import { useState } from 'react';
 import { User } from '@/types';
 import { useToastStore } from '@/store/toast-store';
-import { Icons } from '@/components/ui/Icons';
+
 
 interface ProfileFormProps {
   user: User;

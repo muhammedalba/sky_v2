@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { ApiResponse, Order } from '@/types';
 
 const ENDPOINTS = {
   BASE: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS || '/order',
@@ -8,13 +9,13 @@ const ENDPOINTS = {
 };
 
 export const ordersApi = {
-  getAll: (params?: any) => apiClient.get(ENDPOINTS.BASE, { params }),
-  getOne: (id: string) => apiClient.get(`${ENDPOINTS.BASE}/${id}`),
-  updateStatus: (id: string, data: any) =>
-    apiClient.patch(`${ENDPOINTS.BASE}/${id}`, data),
-  delete: (id: string) => apiClient.delete(`${ENDPOINTS.BASE}/${id}`),
+  getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Order[]>>(ENDPOINTS.BASE, { params }),
+  getOne: (id: string) => apiClient.get<ApiResponse<Order>>(ENDPOINTS.BASE + '/' + id),
+  updateStatus: (id: string, data: Record<string, unknown>) =>
+    apiClient.patch<ApiResponse<Order>>(ENDPOINTS.BASE + '/' + id, data),
+  delete: (id: string) => apiClient.delete(ENDPOINTS.BASE + '/' + id),
   getStats: () => apiClient.get(ENDPOINTS.STATS),
-  applyCoupon: (data: { items: any[]; couponCode: string }) =>
+  applyCoupon: (data: { items: Record<string, unknown>[]; couponCode: string }) =>
     apiClient.post(ENDPOINTS.COUPON, data),
   createBankTransfer: (data: FormData) =>
     apiClient.post(ENDPOINTS.BANK_TRANSFER, data, {

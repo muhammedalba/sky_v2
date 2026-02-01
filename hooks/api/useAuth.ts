@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { setAuthToken, setUser, removeAuthToken, setTokens } from '@/lib/auth';
+import { User } from '@/types';
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -12,7 +13,21 @@ export function useLogin() {
       const response = await api.auth.login(credentials);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: { 
+      access_token?: string; 
+      token?: string; 
+      accessToken?: string; 
+      refresh_token?: string; 
+      refreshToken?: string; 
+      data?: { 
+        token?: string; 
+        accessToken?: string; 
+        refreshToken?: string; 
+        refresh_token?: string; 
+        user?: User;
+      }; 
+      user?: User;
+    }) => {
       const accessToken = data.access_token || data.token || data.accessToken || data.data?.token || data.data?.accessToken;
       const refreshToken = data.refresh_token || data.refreshToken || data.data?.refreshToken || data.data?.refresh_token;
       
@@ -22,9 +37,9 @@ export function useLogin() {
         setAuthToken(accessToken);
       }
       
-      const userData = data.data || data.user;
-      if (userData) {
-        setUser(userData);
+      const userData = data.data?.user || data.data || data.user;
+      if (userData && 'role' in userData) {
+        setUser(userData as User);
       }
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
     },
@@ -50,7 +65,21 @@ export function useRegister() {
       const response = await api.auth.register(data);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: { 
+      access_token?: string; 
+      token?: string; 
+      accessToken?: string; 
+      refresh_token?: string; 
+      refreshToken?: string; 
+      data?: { 
+        token?: string; 
+        accessToken?: string; 
+        refreshToken?: string; 
+        refresh_token?: string; 
+        user?: User;
+      }; 
+      user?: User;
+    }) => {
       const accessToken = data.access_token || data.token || data.accessToken || data.data?.token || data.data?.accessToken;
       const refreshToken = data.refresh_token || data.refreshToken || data.data?.refreshToken || data.data?.refresh_token;
       
@@ -60,9 +89,9 @@ export function useRegister() {
         setAuthToken(accessToken);
       }
 
-      const userData = data.data || data.user;
-      if (userData) {
-        setUser(userData);
+      const userData = data.data?.user || data.data || data.user;
+      if (userData && 'role' in userData) {
+        setUser(userData as User);
       }
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
     },

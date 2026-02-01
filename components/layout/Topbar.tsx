@@ -6,7 +6,7 @@ import { useRouter, usePathname, useParams } from 'next/navigation';
 import { logout, getUser } from '@/lib/auth';
 import { Icons } from '@/components/ui/Icons';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/Badge';
+
 import Link from 'next/link';
 
 export default function Topbar() {

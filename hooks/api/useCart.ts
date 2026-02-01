@@ -29,7 +29,7 @@ export function useAddToCart() {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       toast.success('Added to cart');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to add to cart');
     },
   });
@@ -48,7 +48,7 @@ export function useRemoveFromCart() {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       toast.success('Removed from cart');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to remove from cart');
     },
   });
@@ -67,7 +67,7 @@ export function useClearCart() {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       toast.success('Cart cleared');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to clear cart');
     },
   });

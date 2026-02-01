@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { ApiResponse, Brand } from '@/types';
 
 const ENDPOINTS = {
   BASE: process.env.NEXT_PUBLIC_ENDPOINT_BRANDS || '/brands',
@@ -6,7 +7,7 @@ const ENDPOINTS = {
 };
 
 export const brandsApi = {
-  getAll: (params?: any) => apiClient.get(ENDPOINTS.BASE, { params }),
+  getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Brand[]>>(ENDPOINTS.BASE, { params }),
   getOne: (id: string) => apiClient.get(`${ENDPOINTS.BASE}/${id}`),
   create: (data: FormData) => apiClient.post(ENDPOINTS.BASE, data, {
     headers: { 'Content-Type': 'multipart/form-data' },

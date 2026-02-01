@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { ApiResponse, SubCategory } from '@/types';
 
 const ENDPOINTS = {
   BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES || '/sup-category',
@@ -6,10 +7,10 @@ const ENDPOINTS = {
 };
 
 export const supCategoriesApi = {
-  getAll: (params?: any) => apiClient.get(ENDPOINTS.BASE, { params }),
-  getOne: (id: string) => apiClient.get(`${ENDPOINTS.BASE}/${id}`),
-  create: (data: any) => apiClient.post(ENDPOINTS.BASE, data),
-  update: (id: string, data: any) => apiClient.patch(`${ENDPOINTS.BASE}/${id}`, data),
-  delete: (id: string) => apiClient.delete(`${ENDPOINTS.BASE}/${id}`),
+  getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<SubCategory[]>>(ENDPOINTS.BASE, { params }),
+  getOne: (id: string) => apiClient.get<ApiResponse<SubCategory>>(ENDPOINTS.BASE + '/' + id),
+  create: (data: FormData | Record<string, unknown>) => apiClient.post<ApiResponse<SubCategory>>(ENDPOINTS.BASE, data),
+  update: (id: string, data: FormData | Record<string, unknown>) => apiClient.patch<ApiResponse<SubCategory>>(ENDPOINTS.BASE + '/' + id, data),
+  delete: (id: string) => apiClient.delete(ENDPOINTS.BASE + '/' + id),
   getStats: () => apiClient.get(ENDPOINTS.STATS),
 };

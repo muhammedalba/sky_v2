@@ -49,7 +49,7 @@ export function useCreatePromoBanner() {
       queryClient.invalidateQueries({ queryKey: ['promoBanners'] });
       toast.success('Promo banner created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to create promo banner');
     },
   });
@@ -69,7 +69,7 @@ export function useUpdatePromoBanner() {
       queryClient.invalidateQueries({ queryKey: ['promoBanners', variables.id] });
       toast.success('Promo banner updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to update promo banner');
     },
   });
@@ -88,7 +88,7 @@ export function useDeletePromoBanner() {
       queryClient.invalidateQueries({ queryKey: ['promoBanners'] });
       toast.success('Promo banner deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to delete promo banner');
     },
   });

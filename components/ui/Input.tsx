@@ -1,30 +1,73 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import ErrorMessage from "./ErrorMessage";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
+    className?: string;
+    error?: string;
+    disabled?: boolean;
+    placeholder?: string;
+    labelClassName?: string;
+    name?: string;
+    type?: string;  
+    value?: string;
+    icon?: React.ComponentType<{ className?: string }>;
   }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, ...props }, ref) => {
-    return (
-      <div className="w-full space-y-2">
+  ({ className, type, label, error, name, placeholder, labelClassName, disabled=false, value, icon, ...props }, ref) => {
+      const IconComponent = icon;
+      const [isFocused, setIsFocused] = React.useState(false);
+      
+      // Determine if label should float
+      const shouldFloat = isFocused || (value && value.length > 0);
+      
+    return (<>  
+      <div className="w-full space-y-2 relative">
         {label && (
-          <label className="text-sm font-bold text-foreground ml-1">
-            {label}
+          <label 
+            htmlFor={name} 
+            className={cn(
+              `pointer-events-none absolute start-1 flex items-center gap-x-1 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500 ` ,
+              shouldFloat 
+                ? '-top-4 text-xs text-foreground/80  w-fit' 
+                : 'top-1/2 -translate-y-1/2 text-sm text-gray-400 w-1/2 bg-transparent',
+                
+              labelClassName
+            )}
+          >
+         
+             {IconComponent && (
+                    <IconComponent className={` ${shouldFloat ? 'text-blue-700' : 'text-gray-400'} inline h-4 text-blue-500`} />
+                )}   {label}
           </label>
         )}
         <input
           type={type}
+          placeholder={placeholder}
+          name={name}
+          disabled={disabled}
+          value={value}
+          onFocus={(e) => {
+            setIsFocused(true);
+            props.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur?.(e);
+          }}
           className={cn(
-            "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50",
+            `w-full rounded-lg border px-4 py-3 text-lg leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
             className
           )}
           ref={ref}
           {...props}
         />
       </div>
+     {error && <ErrorMessage message={error} className="" />}
+      </>
     )
   }
 )

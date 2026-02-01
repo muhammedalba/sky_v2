@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { useCategories } from '@/hooks/api/useCategories';
 import { useCreateSubCategory, useUpdateSubCategory } from '@/hooks/api/useSubCategories';
 import { useRouter } from 'next/navigation';
-import { SubCategory } from '@/hooks/api/useSubCategories';
+import { SubCategory, Category } from '@/types';
 
 const subCategorySchema = z.object({
   nameEn: z.string().min(2, 'English name is required'),
@@ -33,9 +33,9 @@ export default function SubCategoryForm({ initialData, locale }: SubCategoryForm
   const form = useForm<SubCategoryFormValues>({
     resolver: zodResolver(subCategorySchema),
     defaultValues: {
-      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as any).en : (typeof initialData?.name === 'string' ? initialData.name : ''),
-      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as any).ar : '',
-      category: (initialData?.category && typeof initialData.category === 'object') ? (initialData.category as any)._id : (typeof initialData?.category === 'string' ? initialData.category : ''),
+      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { en: string }).en : (typeof initialData?.name === 'string' ? initialData.name : ''),
+      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { ar: string }).ar : '',
+      category: (initialData?.category && typeof initialData.category === 'object') ? (initialData.category as { _id: string })._id : (typeof initialData?.category === 'string' ? initialData.category : ''),
     },
   });
 
@@ -84,9 +84,9 @@ export default function SubCategoryForm({ initialData, locale }: SubCategoryForm
             className="w-full h-10 border rounded-lg px-3 bg-background"
           >
             <option value="">Select Parent Category</option>
-            {categoriesData?.data?.map((cat: any) => (
+            {categoriesData?.data?.map((cat: Category) => (
               <option key={cat._id} value={cat._id}>
-                {typeof cat.name === 'object' ? cat.name.en : cat.name}
+                {typeof cat.name === 'object' ? (cat.name as { en: string }).en : cat.name}
               </option>
             ))}
           </select>

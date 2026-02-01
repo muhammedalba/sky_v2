@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Pagination from '@/components/ui/Pagination';
 import { Icons } from '@/components/ui/Icons';
 import { Skeleton } from '@/components/ui/Skeleton';
