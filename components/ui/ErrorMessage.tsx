@@ -10,7 +10,7 @@ interface ErrorMessageProps {
 export default function ErrorMessage({ message, retry, className, showIcon=false }: ErrorMessageProps) {
   return (
     <div className={cn(
-      `flex items-center p-2 rounded-2xl ${showIcon ? 'bg-red-50 dark:bg-red-900/20 text-red-700  dark:border-red-800' : 'text-red-400  '}  text-sm font-semibold`, 
+      `flex items-center  p-2 rounded-2xl ${showIcon ? 'bg-red-50 dark:bg-red-900/20 text-red-700  dark:border-red-800 font-semibold ' : 'text-red-400 font-thin'}  text-sm`, 
       className
     )}>
       {showIcon && <svg className="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

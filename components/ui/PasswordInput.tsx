@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './Input';
 import { Icons } from './Icons';
@@ -16,6 +16,8 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ className,  label, error,icon,...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 const IconComponent = icon;
+const [isFocused, setIsFocused] = React.useState(false);
+const shouldFloat = isFocused || (props.value && props.value.length > 0);
     return (<>
       <div className="relative w-full space-y-2 mt-5">
         {label && (
@@ -23,9 +25,9 @@ const IconComponent = icon;
                     htmlFor={props.name} 
                     className={cn(
                       ` pointer-events-none absolute start-1 flex items-center gap-x-1 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500  ` ,
-                      props.value && props.value.length > 0 
-                        ? '-top-4 text-xs text-foreground/80  w-fit ' 
-                        : 'top-1/2 -translate-y-1/2 text-sm text-gray-400 w-1/2 bg-transparent ',
+                      shouldFloat
+                        ? '-top-4 text-xs text-foreground/80 w-fit  ' 
+                        : 'top-1/2 -translate-y-1/2 text-sm text-gray-400  bg-transparent w-auto',
                         
                       props.labelClassName
                     )}
@@ -40,12 +42,20 @@ const IconComponent = icon;
           {...props}
           ref={ref}
           type={showPassword ? 'text' : 'password'}
+            onFocus={(e) => {
+            setIsFocused(true);
+            props.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur?.(e);
+          }}
           className={cn(
                       `w-full rounded-lg border px-4 py-3 text-lg leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
                       className
                     )}
         />
-        {props.value && <button
+        {shouldFloat && <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
           className="absolute end-3 top-1/2 -translate-y-1/2 focus:outline-none text-muted-foreground hover:text-primary transition-colors"
