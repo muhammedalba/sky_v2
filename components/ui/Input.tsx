@@ -24,8 +24,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       // Determine if label should float
       const shouldFloat = isFocused || (value && value.length > 0);
       
-    return (<>  
-      <div className="w-full space-y-2 relative">
+    return (<div className="w-full space-y-2">  
+      <div className=" relative">
         {label && (
           <label 
             htmlFor={name} 
@@ -66,8 +66,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
       </div>
-     {error && <ErrorMessage message={error} className="" />}
-      </>
+     {error && <ErrorMessage message={error} />}
+      </div>
     )
   }
 )

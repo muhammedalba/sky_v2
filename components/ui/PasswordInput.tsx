@@ -18,8 +18,8 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 const IconComponent = icon;
 const [isFocused, setIsFocused] = React.useState(false);
 const shouldFloat = isFocused || (props.value && props.value.length > 0);
-    return (<>
-      <div className="relative w-full space-y-2 mt-5">
+    return (<div  className="w-full space-y-2 mt-5">
+      <div className="relative ">
         {label && (
                   <label 
                     htmlFor={props.name} 
@@ -68,8 +68,8 @@ const shouldFloat = isFocused || (props.value && props.value.length > 0);
           )}
         </button>}
       </div>
-      {error && <ErrorMessage message={error} className="" />}
-   </> );
+      {error && <ErrorMessage message={error}  />}
+   </div> );
   }
 );
 

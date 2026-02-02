@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { queryKeys } from '@/lib/api/query-keys';
 import { setAuthToken, setUser, removeAuthToken, setTokens } from '@/lib/auth';
 import { User } from '@/types';
 
@@ -41,14 +42,14 @@ export function useLogin() {
       if (userData && 'role' in userData) {
         setUser(userData as User);
       }
-      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
     },
   });
 }
 
 export function useMe() {
   return useQuery({
-    queryKey: ['auth', 'me'],
+    queryKey: queryKeys.auth.me(),
     queryFn: async () => {
       const response = await api.auth.me();
       return response.data;
@@ -93,7 +94,7 @@ export function useRegister() {
       if (userData && 'role' in userData) {
         setUser(userData as User);
       }
-      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
     },
   });
 }

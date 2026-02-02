@@ -1,15 +1,14 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useResetPassword } from '@/hooks/api/useAuth';
 import { resetPasswordSchema, type ResetPasswordInput } from '@/lib/validations/schemas';
-import PasswordInput from '@/components/ui/PasswordInput';
 import { Button } from '@/components/ui/Button';
 import { useTranslations } from 'next-intl';
 import { Lock } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
+import { SmartForm, useSmartMutation } from '@/components/ui/form/SmartForm';
+import { SmartPasswordInput } from '@/components/ui/form/SmartFields';
 
 interface ResetStepProps {
   email: string;
@@ -18,67 +17,51 @@ interface ResetStepProps {
 
 const ResetStep = ({ email, onError }: ResetStepProps) => {
   const t = useTranslations('auth');
-  const tErrors = useTranslations('errors');
   const router = useRouter();
   const { locale } = useParams();
-  const resetMutation = useResetPassword();
   const toast = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<ResetPasswordInput>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
+  const resetMutation = useSmartMutation(useResetPassword(), {
+    onSuccess: () => {
+      toast.success(t('successReset'));
+      router.push(`/${locale}/login?reset=success`);
+    },
+    onError: (error: any) => {
+      onError(error);
     },
   });
 
-  const passwordValue = watch('password');
-  const confirmPasswordValue = watch('confirmPassword');
-
   const onSubmit = (data: ResetPasswordInput) => {
     if (!email) {
-      onError({ response: { data: { message: 'Email is missing. Please restart the process.' } } });
+      const error = { response: { data: { message: 'Email is missing. Please restart the process.' } } };
+      onError(error);
+      resetMutation.setServerError(error.response.data.message);
       return;
     }
-    resetMutation.mutate({ email, password: data.password }, {
-      onSuccess: () => {
-        toast.success(t('successReset'));
-        router.push(`/${locale}/login?reset=success`);
-      },
-      onError: (error: any) => {
-        onError(error);
-        toast.error(error?.response?.data?.message || tErrors('serverError'));
-      },
-    });
+    resetMutation.mutate({ email, password: data.password });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 animate-in fade-in slide-in-from-right-4">
-      <div className="space-y-2">
-        <PasswordInput
+    <SmartForm
+      schema={resetPasswordSchema}
+      defaultValues={{ password: '', confirmPassword: '' }}
+      onSubmit={onSubmit}
+      className="space-y-5 animate-in fade-in slide-in-from-right-4"
+    >
+      <div className="space-y-4">
+        <SmartPasswordInput
+          name="password"
           icon={Lock}
-          value={passwordValue}
+          disabled={resetMutation.isPending}
           label={t('newPassword')}
-          disabled={resetMutation.isPending}
-          error={errors.password?.message ? tErrors(errors.password.message) : undefined}
           className="h-12 px-4"
-          {...register('password')}
         />
-      </div>
-      <div className="space-y-2">
-        <PasswordInput
+        <SmartPasswordInput
+          name="confirmPassword"
           icon={Lock}
-          value={confirmPasswordValue}
-          label={t('confirmPassword')}
           disabled={resetMutation.isPending}
-          error={errors.confirmPassword?.message ? tErrors(errors.confirmPassword.message) : undefined}
+          label={t('confirmPassword')}
           className="h-12 px-4"
-          {...register('confirmPassword')}
         />
       </div>
       <Button 
@@ -89,7 +72,7 @@ const ResetStep = ({ email, onError }: ResetStepProps) => {
       >
         {t('resetPasswordButton')}
       </Button>
-    </form>
+    </SmartForm>
   );
 };
 
