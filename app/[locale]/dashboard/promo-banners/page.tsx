@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePromoBanners, useDeletePromoBanner } from '@/hooks/api/usePromoBanner';
 import { Button } from '@/components/ui/Button';
+import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Card } from '@/components/ui/Card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icons';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -36,86 +36,80 @@ export default function PromoBannersPage({ params }: { params: Promise<{ locale:
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Promo Banners</h1>
-          <p className="text-muted-foreground">Manage top-bar announcements</p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Promo Banners
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium">
+            Manage top-bar announcements
+          </p>
         </div>
         <Link href={`/${locale}/dashboard/promo-banners/create`}>
-          <Button className="font-semibold flex items-center gap-2">
-            <Icons.Menu className="w-4 h-4 rotate-45" /> 
+          <Button className="h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95">
+            <Icons.Plus className="w-5 h-5" /> 
             Add Banner
           </Button>
         </Link>
       </div>
 
-      <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-secondary/30">
-              <TableRow>
-                <TableHead className="font-bold">Text (Preview)</TableHead>
-                <TableHead className="font-bold">Status</TableHead>
-                <TableHead className="text-right font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array(3).fill(0).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-60" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              ) : data?.data?.length ? (
-                data.data.map((item: PromoBanner) => (
-                  <TableRow key={item._id} className="group hover:bg-secondary/20 transition-colors">
-                    <TableCell>
-                      <div className="font-medium text-foreground">
-                         {getTrans(item.text)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                       <Badge variant={item.isActive ? 'default' : 'secondary'}>
-                          {item.isActive ? 'Active' : 'Inactive'}
-                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <Button
-                            size="sm"
-                            variant="secondary"
-                            className="bg-background hover:bg-primary hover:text-white rounded-lg px-4"
-                            onClick={() => router.push(`/${locale}/dashboard/promo-banners/${item._id}/edit`)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="rounded-lg px-4"
-                            onClick={() => handleDelete(item._id, getTrans(item.text))}
-                            isLoading={deleteMutation.isPending}
-                          >
-                            Delete
-                          </Button>
-                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={3} className="h-32 text-center text-muted-foreground font-medium">
-                     No banners found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
+      <EntityDataTable<PromoBanner>
+        data={data?.data}
+        isLoading={isLoading}
+        page={1}
+        onPageChange={() => {}}
+        columns={[
+          {
+            header: "Text (Preview)",
+            className: "pl-6",
+            render: (item: PromoBanner) => (
+              <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                {getTrans(item.text)}
+              </span>
+            )
+          },
+          {
+            header: "Status",
+            render: (item: PromoBanner) => (
+              <Badge variant={item.isActive ? 'secondary' : 'destructive'} className="rounded-full px-3 py-0.5 font-bold text-[10px] uppercase tracking-wider">
+                {item.isActive ? 'Active' : 'Inactive'}
+              </Badge>
+            )
+          },
+          {
+            header: "Actions",
+            className: "pr-6 text-right",
+            render: (item: PromoBanner) => (
+              <div className="flex justify-end gap-2.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95"
+                  onClick={() => router.push(`/${locale}/dashboard/promo-banners/${item._id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
+                  onClick={() => handleDelete(item._id, getTrans(item.text))}
+                  isLoading={deleteMutation.isPending}
+                >
+                  Delete
+                </Button>
+              </div>
+            )
+          }
+        ]}
+        emptyState={{
+          title: "No banners found",
+          description: "Announce seasonal offers or important news at the top of your shop.",
+          createLink: `/${locale}/dashboard/promo-banners/create`,
+          createLabel: "Add Banner"
+        }}
+      />
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}

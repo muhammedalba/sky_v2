@@ -1,9 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, Carousel } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_CAROUSEL || '/carousel',
-};
+const ENDPOINTS = env.ENDPOINTS.CAROUSEL;
 
 export const carouselApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Carousel[]>>(ENDPOINTS.BASE, { params }),

@@ -1,11 +1,12 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/navigation';
 
-export default function StoreFooter({ locale }: { locale: string }) {
+export default function StoreFooter() {
   const t = useTranslations('store.footer');
   const navT = useTranslations('store.nav');
+  const locale = useLocale();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -20,9 +21,9 @@ export default function StoreFooter({ locale }: { locale: string }) {
           </div>
           
           <div className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
-             <Link href={`/${locale}/home`} className="hover:text-primary transition-colors">{navT('home')}</Link>
-             <Link href={`/${locale}/products`} className="hover:text-primary transition-colors">{navT('products')}</Link>
-             <Link href={`/${locale}/contact`} className="hover:text-primary transition-colors">{navT('contact')}</Link>
+             <Link href="/home" className="hover:text-primary transition-colors">{navT('home')}</Link>
+             <Link href="/products" className="hover:text-primary transition-colors">{navT('products')}</Link>
+             <Link href="/contact" className="hover:text-primary transition-colors">{navT('contact')}</Link>
           </div>
         </div>
       </div>

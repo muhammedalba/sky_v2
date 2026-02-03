@@ -1,10 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, Category } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES || '/categories',
-  STATS: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES_STATS || '/categories/Statistics',
-};
+const ENDPOINTS = env.ENDPOINTS.CATEGORIES;
 
 export const categoriesApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Category[]>>(ENDPOINTS.BASE, { params }),

@@ -1,10 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, Product } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS || '/products',
-  STATS: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS_STATS || '/products/ProductsStatistics',
-};
+const ENDPOINTS = env.ENDPOINTS.PRODUCTS;
 
 export const productsApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Product[]>>(ENDPOINTS.BASE, { params }),

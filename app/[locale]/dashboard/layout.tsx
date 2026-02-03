@@ -1,43 +1,34 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { isAuthenticated, isAdmin } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getServerUser, getAuthToken } from '@/lib/auth';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
-export default function DashboardLayoutWrapper({
+export default async function DashboardLayoutWrapper({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const { locale } = await params;
+  const cookieStore = await cookies();
+  
+  // Server-side check
+  const user = getServerUser(cookieStore);
+  const token = cookieStore.get('auth_token')?.value;
 
-  useEffect(() => {
-    const checkAuth = () => {
-      if (!isAuthenticated()) {
-        const locale = pathname.split('/')[1];
-        router.push(`/${locale}/login`);
-      } else if (!isAdmin()) {
-        // If user is authenticated but not an admin/manager, redirect to home
-        const locale = pathname.split('/')[1];
-        router.push(`/${locale}/home`);
-      } else {
-        setIsAuthorized(true);
-      }
-    };
-
-    checkAuth();
-  }, [router, pathname]);
-
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
-      </div>
-    );
+  if (!token || !user) {
+    redirect(`/${locale}/login`);
   }
 
-  return <DashboardLayout>{children}</DashboardLayout>;
+  const isAdmin = user.role === 'admin' || user.role === 'manager';
+  if (!isAdmin) {
+    redirect(`/${locale}/home`);
+  }
+
+  return (
+    <DashboardLayout locale={locale}>
+      {children}
+    </DashboardLayout>
+  );
 }

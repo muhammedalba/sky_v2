@@ -79,7 +79,7 @@ export default async function AuthBrandingSection({ locale, isRTL, type }: AuthB
   const config = configs[type];
 
   return (
-    <section className={`hidden lg:flex relative bg-gradient-to-br ${config.bgGradient} items-center justify-center overflow-hidden`}>
+    <section className={` hidden lg:flex relative bg-gradient-to-br ${config.bgGradient} items-center justify-center overflow-hidden`}>
       {/* Animated Background Orbs */}
       <div className="absolute inset-0 overflow-hidden">
         {config.orbs.map((orb, idx) => (
@@ -94,7 +94,7 @@ export default async function AuthBrandingSection({ locale, isRTL, type }: AuthB
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]" />
       
-      <div className={`relative z-10 px-12 text-center max-w-2xl ${isRTL ? 'rtl' : 'ltr'}`}>
+      <div className={`relative z-10 px-12 mt-16 text-center max-w-2xl ${isRTL ? 'rtl' : 'ltr'}`}>
         {/* Logo Badge */}
         <div className={`inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl px-8 py-4 rounded-3xl border border-white/20 mb-12 shadow-2xl ${config.badgeShadow} animate-in slide-in-from-top-4 duration-700 hover:scale-105 transition-transform`}>
           <div className={`w-12 h-12 bg-gradient-to-br ${config.badgeGradient} rounded-2xl flex items-center justify-center font-black text-white shadow-lg shadow-white/20 text-xl`}>

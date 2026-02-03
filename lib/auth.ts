@@ -1,4 +1,5 @@
 import { User } from '@/types';
+import { env } from './env';
 
 const isServer = typeof window === 'undefined';
 
@@ -11,22 +12,30 @@ const getCookie = (name: string): string | null => {
   return null;
 };
 
+// Client-side cookie setter
+const setCookie = (name: string, value: string, days = 7) => {
+  if (isServer) return;
+  const date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = "; expires=" + date.toUTCString();
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+};
+
 export const setAuthToken = (token: string): void => {
   if (isServer) return;
   localStorage.setItem('auth_token', token);
-  // Note: If server sets cookie, we don't necessarily need to set it here 
-  // unless we want to manually manage it. Usually server-side cookies are better.
+  setCookie('auth_token', token);
 };
 
 export const getAuthToken = (): string | null => {
   if (isServer) return null;
-  // Try local storage first, then fall back to cookie
-  return localStorage.getItem('auth_token') || getCookie('access_token');
+  return localStorage.getItem('auth_token') || getCookie('auth_token');
 };
 
 export const setRefreshToken = (token: string): void => {
   if (isServer) return;
   localStorage.setItem('refresh_token', token);
+  setCookie('refresh_token', token);
 };
 
 export const getRefreshToken = (): string | null => {
@@ -44,9 +53,11 @@ export const clearTokens = (): void => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('refresh_token');
   localStorage.removeItem('user');
-  // Clear cookies if they are not HttpOnly
-  document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  
+  // Clear cookies
+  document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 };
 
 export const removeAuthToken = (): void => {
@@ -55,15 +66,17 @@ export const removeAuthToken = (): void => {
 
 export const setUser = (user: User): void => {
   if (isServer) return;
-  localStorage.setItem('user', JSON.stringify(user));
+  const userStr = JSON.stringify(user);
+  localStorage.setItem('user', userStr);
+  setCookie('user', encodeURIComponent(userStr));
 };
 
 export const getUser = (): User | null => {
   if (isServer) return null;
-  const userStr = localStorage.getItem('user');
+  const userStr = localStorage.getItem('user') || getCookie('user');
   if (!userStr) return null;
   try {
-    return JSON.parse(userStr);
+    return JSON.parse(decodeURIComponent(userStr));
   } catch {
     return null;
   }
@@ -81,6 +94,17 @@ export const isAdmin = (): boolean => {
 export const logout = (): void => {
   if (isServer) return;
   clearTokens();
-  const defaultLocale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'en';
+  const defaultLocale = env.DEFAULT_LOCALE;
   window.location.href = `/${defaultLocale}/login`;
+};
+
+// Server-side safe helpers
+export const getServerUser = (cookieStore: any): User | null => {
+  const userCookie = cookieStore.get('user')?.value;
+  if (!userCookie) return null;
+  try {
+    return JSON.parse(decodeURIComponent(userCookie));
+  } catch {
+    return null;
+  }
 };

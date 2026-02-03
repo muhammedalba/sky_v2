@@ -1,11 +1,12 @@
 import { apiClient } from './client';
+import { env } from '../env';
 
 const ENDPOINTS = {
-  PRODUCT_STATS: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS_STATS || '/products/ProductsStatistics',
-  CATEGORY_STATS: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES_STATS || '/categories/Statistics',
-  USER_STATS: process.env.NEXT_PUBLIC_ENDPOINT_USERS_STATS || '/users/statistics',
-  ORDER_STATS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_STATS || '/order/statistics',
-  RECENT_ORDERS: '/order/allOrders?limit=5', // Manual override if not in env
+  PRODUCT_STATS: env.ENDPOINTS.PRODUCTS.STATS,
+  CATEGORY_STATS: env.ENDPOINTS.CATEGORIES.STATS,
+  USER_STATS: env.ENDPOINTS.USERS.STATS,
+  ORDER_STATS: env.ENDPOINTS.ORDERS.STATS,
+  RECENT_ORDERS: '/order/allOrders?limit=5',
   TOP_PRODUCTS: '/products/allProducts?limit=5&sort=-sold',
 };
 

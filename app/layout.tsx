@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_NAME || "E-Commerce Admin Dashboard",
-  description: process.env.NEXT_PUBLIC_META_DESCRIPTION || "Manage your e-commerce store",
+  title: env.APP_NAME,
+  description: env.APP_DESCRIPTION,
 };
 
 export default function RootLayout({

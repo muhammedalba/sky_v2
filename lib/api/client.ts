@@ -1,14 +1,14 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { getAuthToken, getRefreshToken, setTokens, clearTokens } from '@/lib/auth';
 import { useToastStore } from '@/store/toast-store';
+import { env } from '@/lib/env';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://e-commerce-nestjs-g12u.onrender.com';
-
-const REFRESH_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT_AUTH_REFRESH || '/auth/refresh-token';
+const API_BASE_URL = env.API_URL;
+const REFRESH_ENDPOINT = env.ENDPOINTS.AUTH.REFRESH;
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // ضروري جداً لإرسال واستقبال الكوكيز تلقائياً
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -124,7 +124,7 @@ function handleLogout() {
       type: 'error',
     });
     
-    const defaultLocale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'en';
+    const defaultLocale = env.DEFAULT_LOCALE;
     if (!window.location.pathname.includes('/login')) {
       window.location.href = `/${defaultLocale}/login`;
     }

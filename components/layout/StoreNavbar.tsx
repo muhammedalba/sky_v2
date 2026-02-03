@@ -1,12 +1,12 @@
 'use client';
 
 import { Link } from '@/navigation';
-import { useSelectedLayoutSegment, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useSelectedLayoutSegment } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { Icons } from '@/components/ui/Icons';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useUIStore } from '@/store/ui-store';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 import { getUser, isAuthenticated, logout } from '@/lib/auth';
@@ -15,13 +15,12 @@ import Image from 'next/image';
 export default function StoreNavbar() {
   const t = useTranslations('store.nav');
   const segment = useSelectedLayoutSegment();
-  const router = useRouter();
+  const locale = useLocale();
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useUIStore();
   
-  // Load user state only on client-side to avoid hydration errors
   const [user, setUser] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -35,235 +34,314 @@ export default function StoreNavbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+      setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close dropdowns on click outside
+  // Close dropdowns on click outside or escape
   useEffect(() => {
-    const handleClickOutside = () => {
-      setUserMenuOpen(false);
+    const handleEvents = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent && e.key === 'Escape') {
+        setUserMenuOpen(false);
+        setMobileMenuOpen(false);
+      }
+      if (e instanceof MouseEvent) {
+        setUserMenuOpen(false);
+      }
     };
-    if (userMenuOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+    
+    if (userMenuOpen || mobileMenuOpen) {
+      document.addEventListener('click', handleEvents as any);
+      document.addEventListener('keydown', handleEvents as any);
+      return () => {
+        document.removeEventListener('click', handleEvents as any);
+        document.removeEventListener('keydown', handleEvents as any);
+      }
     }
-  }, [userMenuOpen]);
+  }, [userMenuOpen, mobileMenuOpen]);
 
   const navItems = [
-    { name: t('home'), href: '/home', active: segment === 'home' || !segment },
-    { name: t('products'), href: '/products', active: segment === 'products' },
-    { name: t('contact'), href: '/contact', active: segment === 'contact' },
+    { name: t('home'), href: '/home', active: segment === 'home' || !segment, icon: Icons.Dashboard },
+    { name: t('products'), href: '/products', active: segment === 'products', icon: Icons.Products },
+    { name: t('contact'), href: '/contact', active: segment === 'contact', icon: Icons.Users },
   ];
 
-  const handleLogout = () => {
-    logout();
-  };
-
   return (
-    <nav
-      className={cn(
-        'fixed top-0 w-full z-50 transition-all duration-300',
-        scrolled
-          ? 'bg-background/95 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-black/5'
-          : 'bg-background/80 backdrop-blur-md border-b border-border/30'
-      )}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
-          <Link href="/home" className="flex items-center gap-2.5 group select-none flex-shrink-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary via-indigo-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25 group-hover:shadow-primary/40 group-hover:scale-105 transition-all duration-300">
-              <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white/30 backdrop-blur-sm" />
-            </div>
-            <span className="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-              Sky Galaxy
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'relative text-sm font-semibold transition-colors duration-200 group',
-                  item.active
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                {item.name}
-                {item.active && (
-                  <span className="absolute -bottom-7 left-0 right-0 h-0.5 bg-primary rounded-full" />
-                )}
-                {!item.active && (
-                  <span className="absolute -bottom-7 left-0 right-0 h-0.5 bg-primary rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Search Icon */}
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-              aria-label="Search"
-            >
-              <Icons.Menu className="h-4 w-4" />
-            </button>
-
-            {/* Language Switcher */}
-            <LanguageSwitcher className="hidden sm:inline-flex" />
-
-            {/* Theme Toggle */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? (
-                <Icons.Moon className="h-4 w-4" />
-              ) : (
-                <Icons.Sun className="h-4 w-4" />
-              )}
-            </button>
-
-            {/* Shopping Cart */}
-            <Link
-              href="/cart"
-              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-            >
-              <Icons.Menu className="h-4 w-4" />
-              {/* Cart Badge */}
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
-                0
-              </span>
+    <>
+        <nav
+        className={cn(
+            'fixed top-0 w-full z-[1000] transition-all duration-500 ease-in-out',
+            scrolled
+            ? 'py-3 bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
+            : 'py-5 bg-transparent'
+        )}
+        >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-12">
+            {/* Logo */}
+            <Link href="/home" className="flex items-center gap-3 group relative z-[110]">
+                <div className="w-10 h-10 bg-gradient-to-tr from-primary via-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:shadow-primary/50 group-hover:scale-110 transition-all duration-500 rotate-3 group-hover:rotate-12">
+                <div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white bg-white/20 animate-spin-slow" />
+                </div>
+                <div className="flex flex-col text-left rtl:text-right">
+                <span className="text-xl font-black tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+                    Sky Galaxy
+                </span>
+                <span className="text-[10px] font-bold text-primary/80 uppercase tracking-widest -mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Premium Tech</span>
+                </div>
             </Link>
 
-            <div className="h-6 w-px bg-border/60 mx-1 hidden sm:block" />
-
-            {/* User Menu or Login */}
-            {!mounted ? (
-              // Show skeleton during hydration
-              <div className="w-24 h-9 bg-accent/50 rounded-full animate-pulse" />
-            ) : isLoggedIn ? (
-              <div className="relative">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setUserMenuOpen(!userMenuOpen);
-                  }}
-                  className="flex items-center gap-2 sm:gap-3 hover:bg-accent rounded-full p-1 pr-2 sm:pr-3 transition-colors group"
-                >
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-border group-hover:ring-primary transition-all">
-                    {user?.avatar ? (
-                      <Image
-                        src={user.avatar}
-                        alt={user.name || 'User'}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold text-sm">
-                        {user?.name?.charAt(0).toUpperCase() || 'U'}
-                      </div>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center bg-muted/30 backdrop-blur-md rounded-full px-2 py-1 border border-white/5 shadow-inner">
+                {navItems.map((item) => (
+                <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                    'px-6 py-2 text-sm font-bold transition-all duration-300 rounded-full relative overflow-hidden',
+                    item.active
+                        ? 'text-white bg-primary shadow-lg shadow-primary/20'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/40'
                     )}
-                  </div>
-                  <span className="hidden sm:block text-sm font-semibold text-foreground">
-                    {user?.name?.split(' ')[0] || 'User'}
-                  </span>
-                  <Icons.Menu className="hidden sm:block h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:rotate-180" />
-                </button>
+                >
+                    {item.name}
+                </Link>
+                ))}
+            </div>
 
-                {/* Dropdown Menu */}
-                {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-2xl shadow-xl shadow-black/10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                    {/* User Info */}
-                    <div className="p-4 border-b border-border bg-accent/50">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-border">
-                          {user?.avatar ? (
-                            <Image
-                              src={user.avatar}
-                              alt={user.name || 'User'}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold">
-                              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            {/* Actions */}
+            <div className="flex items-center gap-2 relative z-[110]">
+                <div className="hidden sm:flex items-center gap-1.5 p-1 bg-muted/40 backdrop-blur-md border border-white/5 rounded-full shadow-inner">
+                    <LanguageSwitcher />
+                    <button
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-all duration-300 text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95 shadow-sm"
+                    aria-label="Toggle theme"
+                    >
+                    {theme === 'light' ? (
+                        <Icons.Moon className="h-4 w-4" />
+                    ) : (
+                        <Icons.Sun className="h-4 w-4" />
+                    )}
+                    </button>
+                </div>
+
+                {/* Shopping Cart */}
+                <Link
+                href="/cart"
+                className="relative w-11 h-11 rounded-full flex items-center justify-center bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-110 transition-all duration-300 group"
+                >
+                <Icons.Menu className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-primary text-[10px] font-black rounded-full flex items-center justify-center shadow-md animate-bounce-subtle">
+                    0
+                </span>
+                </Link>
+
+                {/* User Menu */}
+                {mounted && (
+                <div className="relative">
+                    <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setUserMenuOpen(!userMenuOpen);
+                    }}
+                    className="w-11 h-11 rounded-full overflow-hidden border-2 border-white/20 hover:border-primary transition-all duration-300 shadow-lg active:scale-95 group flex items-center justify-center bg-muted/40"
+                    >
+                    {isLoggedIn ? (
+                        user?.avatar ? (
+                            <Image src={user.avatar} alt={user.name} fill className="object-cover" />
+                        ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center text-white font-black">
+                                {user?.name?.charAt(0).toUpperCase()}
                             </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-foreground truncate">{user?.name || 'User'}</p>
-                          <p className="text-xs text-muted-foreground truncate">{user?.email || ''}</p>
-                        </div>
-                      </div>
-                    </div>
+                        )
+                    ) : (
+                        <Icons.Users className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    )}
+                    </button>
 
-                    {/* Menu Items */}
-                    <div className="p-2">
-                      <Link
-                        href="/profile"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm font-medium"
-                      >
-                        <Icons.Users className="w-4 h-4 text-muted-foreground" />
-                        <span>Profile</span>
-                      </Link>
-                      <Link
-                        href="/orders"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm font-medium"
-                      >
-                        <Icons.Menu className="w-4 h-4 text-muted-foreground" />
-                        <span>My Orders</span>
-                      </Link>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm font-medium"
-                      >
-                        <Icons.Menu className="w-4 h-4 text-muted-foreground" />
-                        <span>Dashboard</span>
-                      </Link>
-                    </div>
-
-                    <div className="p-2 border-t border-border">
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-sm font-medium text-red-600 dark:text-red-400"
-                      >
-                        <Icons.Menu className="w-4 h-4" />
-                        <span>Logout</span>
-                      </button>
-                    </div>
-                  </div>
+                    {/* Unified Dropdown Menu */}
+                    {userMenuOpen && (
+                        <div 
+                            className={cn(
+                                "absolute top-full mt-3 w-64 bg-background border border-border/50 rounded-3xl shadow-2xl p-2 z-[120] animate-in fade-in zoom-in-95 duration-200",
+                                locale === 'ar' ? "left-0" : "right-0"
+                            )}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {isLoggedIn ? (
+                                <>
+                                    <div className="p-4 border-b border-border/50 flex items-center gap-3 bg-accent/10 rounded-t-2xl">
+                                        <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-black shadow-md">
+                                            {user?.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-black truncate">{user?.name}</p>
+                                            <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="py-2">
+                                        <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-accent/50 transition-colors group">
+                                            <Icons.Users className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                                            <span className="text-sm font-bold">{t('profile')}</span>
+                                        </Link>
+                                        <Link href="/orders" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-accent/50 transition-colors group">
+                                            <Icons.Products className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                                            <span className="text-sm font-bold">{t('orders')}</span>
+                                        </Link>
+                                        <button 
+                                            onClick={() => { logout(); setUserMenuOpen(false); }} 
+                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-colors group"
+                                        >
+                                            <Icons.X className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                            <span className="text-sm font-bold text-left rtl:text-right">{t('logout')}</span>
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="p-2 space-y-1">
+                                    <Link href="/login" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-4 rounded-2xl bg-primary text-white shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all group">
+                                        <Icons.Dashboard className="w-5 h-5" />
+                                        <span className="font-bold">{t('login')}</span>
+                                    </Link>
+                                    <Link href="/signup" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-accent/50 text-foreground transition-all group">
+                                        <Icons.Users className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
+                                        <span className="font-bold">{t('signup')}</span>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
                 )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="hidden sm:inline-flex font-semibold rounded-full px-5">
-                    {t('login')}
-                  </Button>
-                </Link>
-                <Link href="/signup">
-                  <Button size="sm" className="font-bold shadow-lg shadow-primary/20 rounded-full px-4 sm:px-6 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* Mobile Menu Button - can be added later */}
-    </nav>
+                {/* Mobile Menu Toggle */}
+                <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setMobileMenuOpen(true);
+                }}
+                className="lg:hidden w-11 h-11 rounded-full flex items-center justify-center bg-muted/40 border border-white/5 backdrop-blur-md hover:bg-accent transition-all shadow-sm"
+                >
+                <Icons.Menu className="h-5 w-5" />
+                </button>
+            </div>
+            </div>
+        </div>
+        </nav>
+
+        {/* Mobile Sidebar (Drawer) */}
+        <div 
+        className={cn(
+            "fixed inset-0 z-[9999] lg:hidden transition-all duration-500",
+            mobileMenuOpen ? "visible" : "invisible pointer-events-none"
+        )}
+        >
+        {/* Overlay */}
+        <div 
+            className={cn(
+                "absolute inset-0 bg-background/80 backdrop-blur-md transition-opacity duration-500",
+                mobileMenuOpen ? "opacity-100" : "opacity-0"
+            )}
+            onClick={() => setMobileMenuOpen(false)}
+        />
+        
+        {/* Sidebar Panel */}
+        <div 
+            className={cn(
+                "absolute top-0 bottom-0 w-[85%] max-w-[340px] bg-background border-r border-border/50 shadow-2xl transition-transform duration-500 ease-out flex flex-col z-[10001]",
+                locale === 'ar' 
+                    ? (mobileMenuOpen ? "right-0 translate-x-0" : "right-0 translate-x-full")
+                    : (mobileMenuOpen ? "left-0 translate-x-0" : "left-0 translate-x-[-100%]")
+            )}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+        >
+            <div className="p-6 border-b border-border/50 flex items-center justify-between bg-accent/20">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
+                        <div className="w-3 h-3 rounded-full border border-white/40" />
+                    </div>
+                    <span className="font-black tracking-tight">Sky Galaxy</span>
+                </div>
+                <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
+                >
+                    <Icons.X className="h-5 w-5" />
+                </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+                <div className="space-y-2">
+                    <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">{t('menu')}</p>
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={cn(
+                                "flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 font-bold",
+                                item.active 
+                                    ? "bg-primary text-white shadow-xl shadow-primary/20" 
+                                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                            )}
+                        >
+                            <item.icon className="w-5 h-5" />
+                            <span>{item.name}</span>
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="pt-6 border-t border-border/50 space-y-4">
+                    <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">{t('preference')}</p>
+                    
+                    {/* Theme Toggle */}
+                    <div className="flex items-center justify-between px-4">
+                        <span className="text-sm font-bold">{t('theme')}</span>
+                        <button
+                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            className="w-12 h-6 rounded-full bg-accent relative transition-colors duration-300"
+                        >
+                            <div className={cn(
+                                "absolute top-1 w-4 h-4 rounded-full transition-all duration-300 flex items-center justify-center shadow-sm",
+                                theme === 'dark' ? "left-7 bg-primary" : "left-1 bg-muted-foreground"
+                            )}>
+                                {theme === 'dark' ? <Icons.Moon className="w-2.5 h-2.5 text-white" /> : <Icons.Sun className="w-2.5 h-2.5 text-white" />}
+                            </div>
+                        </button>
+                    </div>
+
+                    {/* Language Switcher */}
+                    <div className="flex items-center justify-between px-4">
+                        <span className="text-sm font-bold">{t('language')}</span>
+                        <LanguageSwitcher variant="secondary" className="rounded-xl h-10 px-4" />
+                    </div>
+                </div>
+            </div>
+
+            <div className="p-6 border-t border-border/50 bg-accent/10">
+                {isLoggedIn ? (
+                    <div className="flex items-center gap-4 p-3 rounded-2xl bg-background border border-border/50 shadow-sm">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-black shadow-md">
+                            {user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0 text-left rtl:text-right">
+                            <p className="text-sm font-black truncate">{user?.name}</p>
+                            <button onClick={() => logout()} className="text-[10px] font-bold text-red-500 uppercase tracking-wider hover:opacity-80 transition-opacity">{t('logout')}</button>
+                        </div>
+                    </div>
+                ) : (
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                        <Button className="w-full h-14 rounded-2xl font-black text-md shadow-xl shadow-primary/20">
+                            {t('login_to_account')}
+                        </Button>
+                    </Link>
+                )}
+            </div>
+        </div>
+        </div>
+    </>
   );
 }

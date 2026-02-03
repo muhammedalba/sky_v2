@@ -14,7 +14,8 @@
             "next": "التالي",
             "previous": "السابق",
             "close": "إغلاق",
-            "confirm": "تأكيد"
+            "confirm": "تأكيد",
+            "retry": "المحاولة مرة أخرى"
       },
       "errors": {
             "required": "هذا الحقل مطلوب",
@@ -29,9 +30,13 @@
       "messages": {
             "success": "تمت العملية بنجاح",
             "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+            "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+            "deleteItem": "حذف {item}",
             "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد المغادرة؟",
             "loading": "جاري التحميل...",
-            "noData": "لا توجد بيانات متاحة"
+            "noData": "لا توجد بيانات متاحة",
+            "showingPage": "عرض الصفحة {page} من {total}",
+            "showingResults": "عرض {count} نتيجة"
       },
       "navigation": {
             "dashboard": "لوحة القيادة",
@@ -41,7 +46,13 @@
             "users": "المستخدمين",
             "settings": "الإعدادات",
             "logout": "تسجيل الخروج",
-            "profile": "الملف الشخصي"
+            "profile": "الملف الشخصي",
+            "subCategories": "الفئات الفرعية",
+            "brands": "العلامات التجارية",
+            "suppliers": "الموردين",
+            "coupons": "القسائم",
+            "carousel": "شريط الصور",
+            "promoBanners": "البانرات الترويجية"
       },
       "auth": {
             "login": "تسجيل الدخول",

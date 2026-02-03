@@ -8,8 +8,8 @@ import { useSubCategories, useDeleteSubCategory } from '@/hooks/api/useSubCatego
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import Pagination from '@/components/ui/Pagination';
+import EntityDataTable from '@/components/dashboard/EntityDataTable';
+import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icons';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useTrans } from '@/hooks/useTrans';
@@ -46,107 +46,92 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Sub Categories</h1>
-          <p className="text-muted-foreground">Manage hierarchy levels</p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Sub Categories
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium">
+            Manage hierarchy levels
+          </p>
         </div>
         <Link href={`/${locale}/dashboard/sub-categories/create`}>
-          <Button className="font-semibold flex items-center gap-2">
-            <Icons.Menu className="w-4 h-4 rotate-45" /> 
+          <Button className="h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95">
+            <Icons.Plus className="w-5 h-5" /> 
             Create Sub Category
           </Button>
         </Link>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-           <Icons.Menu className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl">
+        <div className="relative flex-1 group">
+           <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
            <Input
              placeholder="Search sub-categories..."
-             className="pl-9 h-10 w-full"
+             className="pl-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
              onChange={(e) => handleSearch(e.target.value)}
            />
         </div>
       </div>
 
-      <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-secondary/30">
-              <TableRow>
-                <TableHead className="font-bold">Name</TableHead>
-                <TableHead className="font-bold">Parent Category</TableHead>
-                <TableHead className="text-right font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array(5).fill(0).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              ) : data?.data?.length ? (
-                data.data.map((sub: SubCategory) => (
-                  <TableRow key={sub._id} className="group hover:bg-secondary/20 transition-colors">
-                    <TableCell>
-                      <div className="font-bold text-foreground">{getTrans(sub.name)}</div>
-                    </TableCell>
-                    <TableCell>
-                       {/* Assuming API returns populated category or just ID */}
-                       <div className="text-sm text-muted-foreground">
-                          {sub.category && typeof sub.category === 'object' ? getTrans((sub.category as Category).name) : sub.category || '-'}
-                       </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <Button
-                            size="sm"
-                            variant="secondary"
-                            className="bg-background hover:bg-primary hover:text-white rounded-lg px-4"
-                            onClick={() => router.push(`/${locale}/dashboard/sub-categories/${sub._id}/edit`)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="rounded-lg px-4"
-                            onClick={() => handleDelete(sub._id, getTrans(sub.name))}
-                            isLoading={deleteMutation.isPending}
-                          >
-                            Delete
-                          </Button>
-                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={3} className="h-32 text-center text-muted-foreground font-medium">
-                     No sub-categories found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {data?.metadata && data.metadata.numberOfPages > 1 && (
-          <div className="p-4 border-t border-border bg-secondary/10 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground font-medium">Page {page}</p>
-            <Pagination
-              currentPage={page}
-              totalPages={data.metadata.numberOfPages}
-              onPageChange={setPage}
-            />
-          </div>
-        )}
-      </Card>
+      <EntityDataTable<SubCategory>
+        data={data?.data}
+        isLoading={isLoading}
+        metadata={data?.metadata}
+        page={page}
+        onPageChange={setPage}
+        columns={[
+          {
+            header: "Name",
+            className: "pl-6",
+            render: (sub: SubCategory) => (
+              <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                {getTrans(sub.name)}
+              </span>
+            )
+          },
+          {
+            header: "Parent Category",
+            render: (sub: SubCategory) => (
+              <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                {sub.category && typeof sub.category === 'object' ? getTrans((sub.category as Category).name) : sub.category || '-'}
+              </Badge>
+            )
+          },
+          {
+            header: "Actions",
+            className: "pr-6 text-right",
+            render: (sub: SubCategory) => (
+              <div className="flex justify-end gap-2.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95"
+                  onClick={() => router.push(`/${locale}/dashboard/sub-categories/${sub._id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
+                  onClick={() => handleDelete(sub._id, getTrans(sub.name))}
+                  isLoading={deleteMutation.isPending}
+                >
+                  Delete
+                </Button>
+              </div>
+            )
+          }
+        ]}
+        emptyState={{
+          title: "No sub-categories found",
+          description: "Organize your catalog by creating sub-categories under main categories.",
+          createLink: `/${locale}/dashboard/sub-categories/create`,
+          createLabel: "Create Sub Category"
+        }}
+      />
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}

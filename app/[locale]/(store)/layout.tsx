@@ -1,22 +1,21 @@
 'use client';
 
 import { ReactNode } from 'react';
-import StoreNavbar from './StoreNavbar';
-import StoreFooter from './StoreFooter';
+import StoreNavbar from '@/components/layout/StoreNavbar';
+import StoreFooter from '@/components/layout/StoreFooter';
 
 interface StoreLayoutProps {
   children: ReactNode;
-  locale: string;
 }
 
-export default function StoreLayout({ children, locale }: StoreLayoutProps) {
+export default function StoreLayout({ children }: StoreLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
-      <StoreNavbar locale={locale} />
+      <StoreNavbar />
       <main className="flex-1 pt-16">
         {children}
       </main>
-      <StoreFooter locale={locale} />
+      <StoreFooter />
     </div>
   );
 }

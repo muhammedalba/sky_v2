@@ -1,9 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, Coupon } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_COUPONS || '/coupons',
-};
+const ENDPOINTS = env.ENDPOINTS.COUPONS;
 
 export const couponsApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Coupon[]>>(ENDPOINTS.BASE, { params }),

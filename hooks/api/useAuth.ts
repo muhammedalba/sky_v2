@@ -15,30 +15,17 @@ export function useLogin() {
       return response.data;
     },
     onSuccess: (data: { 
-      access_token?: string; 
-      token?: string; 
-      accessToken?: string; 
-      refresh_token?: string; 
-      refreshToken?: string; 
-      data?: { 
-        token?: string; 
-        accessToken?: string; 
-        refreshToken?: string; 
-        refresh_token?: string; 
-        user?: User;
-      }; 
-      user?: User;
+      access_token?: string;
+      status?: string;
+      message?: string;
+      data?: User; 
     }) => {
-      const accessToken = data.access_token || data.token || data.accessToken || data.data?.token || data.data?.accessToken;
-      const refreshToken = data.refresh_token || data.refreshToken || data.data?.refreshToken || data.data?.refresh_token;
-      
-      if (accessToken && refreshToken) {
-        setTokens(accessToken, refreshToken);
-      } else if (accessToken) {
+      const accessToken = data.access_token;
+      if (accessToken) {
         setAuthToken(accessToken);
-      }
+      } 
       
-      const userData = data.data?.user || data.data || data.user;
+      const userData = data.data;
       if (userData && 'role' in userData) {
         setUser(userData as User);
       }
@@ -67,30 +54,19 @@ export function useRegister() {
       return response.data;
     },
     onSuccess: (data: { 
-      access_token?: string; 
-      token?: string; 
-      accessToken?: string; 
-      refresh_token?: string; 
-      refreshToken?: string; 
-      data?: { 
-        token?: string; 
-        accessToken?: string; 
-        refreshToken?: string; 
-        refresh_token?: string; 
-        user?: User;
-      }; 
-      user?: User;
+      message: string;
+      status: string;
+      data: User; 
+      access_token: string; 
+
     }) => {
-      const accessToken = data.access_token || data.token || data.accessToken || data.data?.token || data.data?.accessToken;
-      const refreshToken = data.refresh_token || data.refreshToken || data.data?.refreshToken || data.data?.refresh_token;
+      const accessToken = data.access_token;
       
-      if (accessToken && refreshToken) {
-        setTokens(accessToken, refreshToken);
-      } else if (accessToken) {
+      if (accessToken) {
         setAuthToken(accessToken);
       }
 
-      const userData = data.data?.user || data.data || data.user;
+      const userData = data.data;
       if (userData && 'role' in userData) {
         setUser(userData as User);
       }

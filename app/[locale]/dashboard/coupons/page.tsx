@@ -7,7 +7,7 @@ import { useCoupons, useDeleteCoupon } from '@/hooks/api/useCoupons';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Badge } from '@/components/ui/Badge';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Pagination from '@/components/ui/Pagination';
@@ -45,112 +45,116 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Coupons</h1>
-          <p className="text-muted-foreground">Manage discounts and promo codes</p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Coupons
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium">
+            Manage discounts and promo codes
+          </p>
         </div>
         <Link href={`/${locale}/dashboard/coupons/create`}>
-          <Button className="font-semibold flex items-center gap-2">
-            <Icons.Menu className="w-4 h-4 rotate-45" /> 
+          <Button className="h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95">
+            <Icons.Plus className="w-5 h-5" /> 
             Create Coupon
           </Button>
         </Link>
       </div>
 
-      <div className="flex items-center gap-4">
-         <div className="relative flex-1 max-w-sm">
-           <Icons.Menu className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl">
+        <div className="relative flex-1 group">
+           <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
            <Input
              placeholder="Search coupons..."
-             className="pl-9 h-10 w-full"
+             className="pl-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
              onChange={(e) => handleSearch(e.target.value)}
            />
         </div>
       </div>
 
-      <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-secondary/30">
-              <TableRow>
-                <TableHead className="font-bold">Code / Name</TableHead>
-                <TableHead className="font-bold">Discount</TableHead>
-                <TableHead className="font-bold">Usage</TableHead>
-                <TableHead className="font-bold">Expiry</TableHead>
-                <TableHead className="font-bold">Status</TableHead>
-                <TableHead className="text-right font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array(5).fill(0).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              ) : data?.data?.length ? (
-                data.data.map((coupon: Coupon) => (
-                  <TableRow key={coupon._id} className="group hover:bg-secondary/20 transition-colors">
-                    <TableCell>
-                      <div className="font-bold text-foreground font-mono">{coupon.name}</div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-bold text-primary">
-                         {coupon.discount}{coupon.type === 'percentage' ? '%' : ' OFF'}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                       <div className="text-sm text-muted-foreground">{coupon.used || 0} / {coupon.limit || '∞'}</div>
-                    </TableCell>
-                    <TableCell>
-                       <div className="text-sm">{formatDate(coupon.expires)}</div>
-                    </TableCell>
-                    <TableCell>
-                       <Badge variant={coupon.active ? 'secondary' : 'destructive'}>
-                          {coupon.active ? 'Active' : 'Inactive'}
-                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <Button
-                            size="sm"
-                            variant="secondary"
-                            className="bg-background hover:bg-primary hover:text-white rounded-lg px-4"
-                            onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="rounded-lg px-4"
-                            onClick={() => handleDelete(coupon._id, coupon.name)}
-                            isLoading={deleteMutation.isPending}
-                          >
-                            Delete
-                          </Button>
-                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-32 text-center text-muted-foreground font-medium">
-                     No coupons found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
+      <EntityDataTable<Coupon>
+        data={data?.data}
+        isLoading={isLoading}
+        metadata={data?.metadata}
+        page={page}
+        onPageChange={setPage}
+        columns={[
+          {
+            header: "Code / Name",
+            className: "pl-6",
+            render: (coupon: Coupon) => (
+              <div className="font-bold text-base text-foreground font-mono group-hover:text-primary transition-colors">
+                {coupon.name}
+              </div>
+            )
+          },
+          {
+            header: "Discount",
+            render: (coupon: Coupon) => (
+              <span className="font-black text-primary text-base">
+                {coupon.discount}{coupon.type === 'percentage' ? '%' : ' OFF'}
+              </span>
+            )
+          },
+          {
+            header: "Usage",
+            render: (coupon: Coupon) => (
+              <div className="text-sm font-medium text-muted-foreground">
+                <span className="text-foreground font-bold">{coupon.used || 0}</span> / <span className="opacity-60">{coupon.limit || '∞'}</span>
+              </div>
+            )
+          },
+          {
+            header: "Expiry",
+            render: (coupon: Coupon) => (
+              <div className="text-sm font-bold text-foreground/80 lowercase tracking-tight">
+                {formatDate(coupon.expires)}
+              </div>
+            )
+          },
+          {
+            header: "Status",
+            render: (coupon: Coupon) => (
+              <Badge variant={coupon.active ? 'secondary' : 'destructive'} className="rounded-full px-3 py-0.5 font-bold text-[10px] uppercase tracking-wider">
+                {coupon.active ? 'Active' : 'Inactive'}
+              </Badge>
+            )
+          },
+          {
+            header: "Actions",
+            className: "pr-6 text-right",
+            render: (coupon: Coupon) => (
+              <div className="flex justify-end gap-2.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95"
+                  onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
+                  onClick={() => handleDelete(coupon._id, coupon.name)}
+                  isLoading={deleteMutation.isPending}
+                >
+                  Delete
+                </Button>
+              </div>
+            )
+          }
+        ]}
+        emptyState={{
+          title: "No coupons found",
+          description: "Start rewarding your customers by creating discount codes.",
+          createLink: `/${locale}/dashboard/coupons/create`,
+          createLabel: "Create Coupon"
+        }}
+      />
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}

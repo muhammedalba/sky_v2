@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { env } from './env';
 
 interface GenerateMetadataProps {
   locale: string;
@@ -17,7 +18,7 @@ export async function generatePageMetadata({
   noIndex = false,
 }: GenerateMetadataProps): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace });
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://skygalaxy.com';
+  const baseUrl = env.APP_URL;
   const path = canonicalPath || '';
 
   return {

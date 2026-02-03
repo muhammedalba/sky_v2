@@ -1,17 +1,16 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/navigation';
 import { Icons } from '@/components/ui/Icons';
-import StoreLayout from '@/components/layout/StoreLayout';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
-export default function HomeClient({ locale }: { locale: string }) {
+export default function HomeClient() {
   const t = useTranslations('home');
 
   return (
-    <StoreLayout locale={locale}>
+    <>
       {/* Hero Section */}
       <section className="relative pt-20 pb-20 lg:pt-32 lg:pb-32 overflow-hidden">
         {/* Background Gradients */}
@@ -37,7 +36,7 @@ export default function HomeClient({ locale }: { locale: string }) {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in slide-in-from-bottom-10 fade-in duration-700 delay-300">
-              <Link href={`/${locale}/dashboard`}>
+              <Link href="/dashboard">
                 <Button size="lg" className="h-12 px-8 rounded-full text-base shadow-xl shadow-primary/20">
                   {t('hero.cta_dashboard')}
                   <Icons.Menu className="w-4 h-4 ml-2 rtl:rotate-180" />
@@ -117,13 +116,13 @@ export default function HomeClient({ locale }: { locale: string }) {
       <section className="py-24">
          <div className="max-w-7xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-black mb-12">{t('featured_products')}</h2>
-            <Link href={`/${locale}/products`}>
+            <Link href="/products">
                <Button size="lg" variant="secondary" className="rounded-full px-8">
                   View All Products
                </Button>
             </Link>
          </div>
       </section>
-    </StoreLayout>
+    </>
   );
 }

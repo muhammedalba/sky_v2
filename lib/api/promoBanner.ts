@@ -1,10 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, PromoBanner } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER || '/promo-banner',
-  ACTIVE: process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER_ACTIVE || '/promo-banner/active',
-};
+const ENDPOINTS = env.ENDPOINTS.PROMO_BANNER;
 
 export const promoBannerApi = {
   getBanners: () => apiClient.get<ApiResponse<PromoBanner[]>>(ENDPOINTS.BASE),

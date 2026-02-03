@@ -4,7 +4,16 @@
             "products": "Products",
             "contact": "Contact",
             "login": "Log In",
-            "admin": "Admin Panel"
+            "admin": "Admin Panel",
+            "profile": "Profile",
+            "orders": "My Orders",
+            "logout": "Logout",
+            "signup": "Create Account",
+            "preference": "Preference",
+            "theme": "Theme",
+            "language": "Language",
+            "menu": "Menu",
+            "login_to_account": "Login To Account"
       },
       "footer": {
             "rights": "All rights reserved."

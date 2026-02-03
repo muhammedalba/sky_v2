@@ -1,11 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, User } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_USERS || '/users',
-  CREATE: process.env.NEXT_PUBLIC_ENDPOINT_USERS_CREATE || '/users/create-user',
-  STATS: process.env.NEXT_PUBLIC_ENDPOINT_USERS_STATS || '/users/statistics',
-};
+const ENDPOINTS = env.ENDPOINTS.USERS;
 
 export const usersApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<User[]>>(ENDPOINTS.BASE, { params }),

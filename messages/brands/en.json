@@ -1,0 +1,15 @@
+{
+      "title": "Brands",
+      "createBrand": "Create Brand",
+      "entityLabel": "Brand",
+      "editBrand": "Edit Brand",
+      "fields": {
+            "image": "Image",
+            "name": "Brand Name",
+            "actions": "Actions"
+      },
+      "buttons": {
+            "edit": "Edit",
+            "delete": "Delete"
+      }
+}

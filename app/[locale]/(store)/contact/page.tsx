@@ -4,7 +4,6 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import StoreLayout from '@/components/layout/StoreLayout';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -44,7 +43,7 @@ export default function ContactPage() {
   };
 
   return (
-    <StoreLayout locale={locale}>
+    <>
       <div className="bg-secondary/5 py-16 lg:py-24">
         <div className="max-w-4xl mx-auto px-4 text-center">
             <h1 className="text-4xl lg:text-6xl font-black text-foreground mb-6 leading-tight">
@@ -134,6 +133,6 @@ export default function ContactPage() {
             </Card>
          </div>
       </div>
-    </StoreLayout>
+    </>
   );
 }

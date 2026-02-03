@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useLocale } from 'next-intl';
-import StoreLayout from '@/components/layout/StoreLayout';
 import ProductCard from '@/components/store/ProductCard';
 import { Input } from '@/components/ui/Input';
 import { Icons } from '@/components/ui/Icons';
@@ -28,7 +27,7 @@ export default function ProductsPage() {
   }, 500);
 
   return (
-    <StoreLayout locale={locale}>
+    <>
       <div className="bg-muted/30 py-12 border-b border-border/50">
          <div className="max-w-7xl mx-auto px-4 text-center">
             <h1 className="text-4xl font-black mb-4">Shop All Products</h1>
@@ -84,16 +83,16 @@ export default function ProductsPage() {
          )}
 
          {/* Pagination */}
-         {data?.metadata?.numberOfPages > 1 && (
+          {(data?.metadata?.numberOfPages ?? 0) > 1 && (
             <div className="mt-16 flex justify-center">
                <Pagination 
                   currentPage={page}
-                  totalPages={data.metadata.numberOfPages}
+                  totalPages={data?.metadata?.numberOfPages || 1}
                   onPageChange={setPage}
                />
             </div>
-         )}
+          )}
       </div>
-    </StoreLayout>
+    </>
   );
 }

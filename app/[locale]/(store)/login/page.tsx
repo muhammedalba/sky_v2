@@ -20,7 +20,7 @@ export default function LoginPage({ params }: { params: Promise<{ locale: string
   const isRTL = locale === 'ar';
 
   return (
-    <main className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-gradient-to-br from-background via-background to-secondary/5">
+    <main className="min-h-screen  grid grid-cols-1 lg:grid-cols-2 bg-gradient-to-br from-background via-background to-secondary/5">
       
       {/* Left Side: Enhanced Branding Section */}
       <AuthBrandingSection locale={locale} isRTL={isRTL} type="login" />

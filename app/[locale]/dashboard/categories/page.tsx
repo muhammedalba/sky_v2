@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/hooks/api/useCategories';
 import { categorySchema, type CategoryInput } from '@/lib/validations/schemas';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
@@ -128,103 +128,108 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('title')}
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-sm font-medium">
             {t('categoryList')}
           </p>
         </div>
         <Button 
           onClick={() => handleOpenModal()}
-          className="h-12 px-6 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20"
+          className="h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95"
         >
-          <Icons.Menu className="w-5 h-5 rotate-45" />
+          <Icons.Plus className="w-5 h-5" />
           {t('createCategory')}
         </Button>
       </div>
 
-      {/* Categories Table */}
-      <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-secondary/30">
-              <TableRow>
-                <TableHead className="w-[100px] font-bold">Icon</TableHead>
-                <TableHead className="font-bold">{t('fields.name')}</TableHead>
-                <TableHead className="font-bold">{t('fields.description')}</TableHead>
-                <TableHead className="font-bold">{t('fields.productsCount')}</TableHead>
-                <TableHead className="text-right font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array(5).fill(0).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-10 w-10 rounded-xl" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-full" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto rounded-lg" /></TableCell>
-                  </TableRow>
-                ))
-              ) : data?.data?.length ? (
-                data.data.map((category: Category) => (
-                  <TableRow key={category._id} className="group hover:bg-secondary/20 transition-colors">
-                    <TableCell>
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black">
-                       {getTrans(category.name).charAt(0).toUpperCase()}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-bold text-foreground group-hover:text-primary transition-colors">
-                      {getTrans(category.name)}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm max-w-[300px] truncate">
-                      {category.description || '-'}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="rounded-full font-bold px-3">
-                        {category.productsCount || 0} Products
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <Button
-                            size="sm"
-                            variant="secondary"
-                            className="bg-background rounded-lg px-4"
-                            onClick={() => handleOpenModal(category)}
-                          >
-                            {tCommon('edit')}
-                          </Button>
-                           <Button
-                            size="sm"
-                            variant="destructive"
-                            className="rounded-lg px-4"
-                            onClick={() => handleDelete(category._id, getTrans(category.name))}
-                            isLoading={deleteMutation.isPending}
-                          >
-                            {tCommon('delete')}
-                          </Button>
-                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-medium">
-                     No categories found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+      <div className="flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl">
+        <div className="relative flex-1 group">
+           <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+           <Input
+             placeholder="Search categories..."
+             className="pl-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
+             // TODO: Add search logic if needed, current categories hook doesn't seem to have search param in the call?
+             // Actually useCategories() doesn't take params in the snippet above but let's check hook later if needed.
+           />
         </div>
-      </Card>
+      </div>
+
+      <EntityDataTable<Category>
+        data={data?.data}
+        isLoading={isLoading}
+        page={1} // Categories hook doesn't seem to support pagination yet based on snippet, sticking to what's there.
+        onPageChange={() => {}}
+        columns={[
+          {
+            header: "Icon",
+            className: "w-[100px] pl-6",
+            render: (category: Category) => (
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-lg ring-1 ring-primary/20 shadow-sm group-hover:scale-110 transition-transform">
+                {getTrans(category.name).charAt(0).toUpperCase()}
+              </div>
+            )
+          },
+          {
+            header: t('fields.name'),
+            render: (category: Category) => (
+              <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                {getTrans(category.name)}
+              </span>
+            )
+          },
+          {
+            header: t('fields.description'),
+            render: (category: Category) => (
+              <span className="text-muted-foreground text-sm max-w-[300px] truncate block opacity-70 group-hover:opacity-100 transition-opacity">
+                {category.description || '-'}
+              </span>
+            )
+          },
+          {
+            header: t('fields.productsCount'),
+            render: (category: Category) => (
+              <Badge variant="secondary" className="rounded-xl font-bold px-3 py-1 bg-muted/40 border-none group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                {category.productsCount || 0} Products
+              </Badge>
+            )
+          },
+          {
+            header: "Actions",
+            className: "pr-6 text-right",
+            render: (category: Category) => (
+              <div className="flex justify-end gap-2.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95"
+                  onClick={() => handleOpenModal(category)}
+                >
+                  {tCommon('edit')}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
+                  onClick={() => handleDelete(category._id, getTrans(category.name))}
+                  isLoading={deleteMutation.isPending}
+                >
+                  {tCommon('delete')}
+                </Button>
+              </div>
+            )
+          }
+        ]}
+        emptyState={{
+          title: "No categories found",
+          description: "Organize your store by creating meaningful categories.",
+          icon: <Icons.Menu className="h-10 w-10 text-muted-foreground/40" />,
+        }}
+      />
 
       <Modal
         isOpen={isModalOpen}

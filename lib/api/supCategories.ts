@@ -1,10 +1,8 @@
 import { apiClient } from './client';
 import { ApiResponse, SubCategory } from '@/types';
+import { env } from '../env';
 
-const ENDPOINTS = {
-  BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES || '/sup-category',
-  STATS: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES_STATS || '/sup-category/Statistics',
-};
+const ENDPOINTS = env.ENDPOINTS.SUP_CATEGORIES;
 
 export const supCategoriesApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<SubCategory[]>>(ENDPOINTS.BASE, { params }),

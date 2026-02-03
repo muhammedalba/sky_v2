@@ -3,9 +3,9 @@
 import { use, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useOrders } from '@/hooks/api/useOrders';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+import EntityDataTable from '@/components/dashboard/EntityDataTable';
+import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import Pagination from '@/components/ui/Pagination';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icons';
 import { formatCurrency, formatDate, getStatusColor, cn } from '@/lib/utils';
@@ -21,114 +21,96 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
   const { data, isLoading } = useOrders({ page, limit: 10 });
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-       {/* Header */}
-       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('title')}
           </h1>
-          <p className="text-muted-foreground text-lg font-medium">
+          <p className="text-muted-foreground text-sm font-medium">
             {t('orderList')}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-           <button className="px-5 py-2.5 bg-secondary/50 border border-border rounded-xl font-bold text-sm hover:bg-secondary transition-all flex items-center gap-2">
-             <Icons.Menu className="w-4 h-4" /> {/* Filter/Export replacement */}
-             Export CSV
-           </button>
-        </div>
+        <Button className="h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 bg-secondary text-secondary-foreground border border-border/60">
+          <Icons.Menu className="w-5 h-5" /> 
+          Export CSV
+        </Button>
       </div>
 
-      {/* Orders Table */}
-      <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-secondary/30">
-              <TableRow>
-                <TableHead className="font-bold">{t('orderNumber') || 'Order ID'}</TableHead>
-                <TableHead className="font-bold">{t('fields.customer')}</TableHead>
-                <TableHead className="font-bold">{t('fields.date')}</TableHead>
-                <TableHead className="font-bold">{t('fields.total')}</TableHead>
-                <TableHead className="font-bold">{t('fields.status')}</TableHead>
-                <TableHead className="text-right font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array(6).fill(0).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto rounded-lg" /></TableCell>
-                  </TableRow>
-                ))
-              ) : data?.data?.length ? (
-                data.data.map((order: Order) => (
-                  <TableRow key={order._id} className="group hover:bg-secondary/10 transition-colors">
-                    <TableCell className="font-black text-sm text-foreground">
-                      #{order._id?.slice(-8).toUpperCase()}
-                    </TableCell>
-                    <TableCell>
-                       <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center font-bold text-xs">
-                             {order.user?.name?.charAt(0) || 'G'}
-                          </div>
-                          <span className="font-bold text-sm">{order.user?.name || 'Guest Customer'}</span>
-                       </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm font-medium">
-                      {formatDate(order.createdAt)}
-                    </TableCell>
-                    <TableCell className="font-black text-sm">
-                      {formatCurrency(order.totalOrderPrice || 0)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={cn("rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-tighter border-none", getStatusColor(order.status))}>
-                        {order.status || 'Pending'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <Link
-                          href={`/${locale}/dashboard/orders/${order._id}`}
-                          className="inline-flex items-center justify-center px-4 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white font-bold text-xs transition-all"
-                        >
-                          View
-                        </Link>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-40 text-center">
-                     <div className="flex flex-col items-center justify-center space-y-2">
-                        <Icons.Orders className="w-10 h-10 text-muted-foreground/30" />
-                        <p className="text-muted-foreground font-medium">No orders found in your store yet.</p>
-                     </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Footer with Pagination */}
-        {data?.metadata && data.metadata.numberOfPages > 1 && (
-          <div className="p-4 border-t border-border bg-secondary/10 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground font-medium">
-               Displaying {data.data.length} orders
-            </p>
-            <Pagination
-              currentPage={page}
-              totalPages={data.metadata.numberOfPages}
-              onPageChange={setPage}
-            />
-          </div>
-        )}
-      </Card>
+      <EntityDataTable<Order>
+        data={data?.data}
+        isLoading={isLoading}
+        metadata={data?.metadata}
+        page={page}
+        onPageChange={setPage}
+        columns={[
+          {
+            header: t('orderNumber') || 'Order ID',
+            className: "pl-6",
+            render: (order: Order) => (
+              <span className="font-black text-sm text-foreground font-mono">
+                #{order._id?.slice(-8).toUpperCase()}
+              </span>
+            )
+          },
+          {
+            header: t('fields.customer'),
+            render: (order: Order) => (
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shadow-sm ring-1 ring-primary/20">
+                  {order.user?.name?.charAt(0) || 'G'}
+                </div>
+                <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                  {order.user?.name || 'Guest Customer'}
+                </span>
+              </div>
+            )
+          },
+          {
+            header: t('fields.date'),
+            render: (order: Order) => (
+              <span className="text-muted-foreground text-sm font-bold lowercase tracking-tight italic">
+                {formatDate(order.createdAt)}
+              </span>
+            )
+          },
+          {
+            header: t('fields.total'),
+            render: (order: Order) => (
+              <span className="font-black text-sm text-foreground bg-muted/30 px-2 py-1 rounded-lg">
+                {formatCurrency(order.totalOrderPrice || 0)}
+              </span>
+            )
+          },
+          {
+            header: t('fields.status'),
+            render: (order: Order) => (
+              <Badge className={cn("rounded-full px-3 py-0.5 font-bold text-[10px] uppercase tracking-wider border-none shadow-sm", getStatusColor(order.status))}>
+                {order.status || 'Pending'}
+              </Badge>
+            )
+          },
+          {
+            header: "Actions",
+            className: "pr-6 text-right",
+            render: (order: Order) => (
+              <div className="flex justify-end translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                <Link
+                  href={`/${locale}/dashboard/orders/${order._id}`}
+                  className="h-9 px-6 inline-flex items-center justify-center rounded-xl bg-primary text-white hover:bg-primary/90 font-bold text-xs transition-all active:scale-95 shadow-lg shadow-primary/20"
+                >
+                  View
+                </Link>
+              </div>
+            )
+          }
+        ]}
+        emptyState={{
+          title: "No orders found",
+          description: "Your shop's sales journey starts here. Promote your products to get sales!",
+          icon: <Icons.Orders className="h-10 w-10 text-muted-foreground/40" />,
+        }}
+      />
     </div>
   );
 }

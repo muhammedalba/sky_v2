@@ -14,7 +14,8 @@
             "next": "Next",
             "previous": "Previous",
             "close": "Close",
-            "confirm": "Confirm"
+            "confirm": "Confirm",
+            "retry": "Try Again"
       },
       "errors": {
             "required": "This field is required",
@@ -29,9 +30,13 @@
       "messages": {
             "success": "Operation completed successfully",
             "deleteConfirm": "Are you sure you want to delete this item?",
+            "deleteConfirmWithName": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+            "deleteItem": "Delete {item}",
             "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
             "loading": "Loading...",
-            "noData": "No data available"
+            "noData": "No data available",
+            "showingPage": "Showing Page {page} of {total}",
+            "showingResults": "Showing {count} results"
       },
       "navigation": {
             "dashboard": "Dashboard",
@@ -41,7 +46,13 @@
             "users": "Users",
             "settings": "Settings",
             "logout": "Logout",
-            "profile": "Profile"
+            "profile": "Profile",
+            "subCategories": "Sub Categories",
+            "brands": "Brands",
+            "suppliers": "Suppliers",
+            "coupons": "Coupons",
+            "carousel": "Carousel",
+            "promoBanners": "Promo Banners"
       },
       "auth": {
             "login": "Login",
