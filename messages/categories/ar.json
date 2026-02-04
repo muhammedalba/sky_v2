@@ -1,16 +1,24 @@
 {
+      "searchPlaceholder": "البحث في الفئات...",
       "title": "الفئات",
+      "subtitle": "نظم متجرك من خلال إنشاء فئات ذات معنى.",
+      "entityLabel": "الفئة",
       "createCategory": "إنشاء فئة",
       "editCategory": "تعديل الفئة",
       "categoryList": "قائمة الفئات",
       "fields": {
             "name": "اسم الفئة",
-            "description": "الوصف",
-            "productsCount": "عدد المنتجات"
+            "productsCount": "عدد المنتجات",
+            "subCategoriesCount": "عدد الفئات الفرعية",
+            "image": "صورة الفئة"
       },
       "placeholders": {
             "name": "أدخل اسم الفئة",
             "description": "أدخل وصف الفئة"
+      },
+      "emptyState": {
+            "title": "لم يتم العثور على فئات",
+            "description": "نظم متجرك من خلال إنشاء فئات ذات معنى."
       },
       "messages": {
             "createSuccess": "تم إنشاء الفئة بنجاح",

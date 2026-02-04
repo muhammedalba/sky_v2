@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/Table';
 import { Card } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
-import Pagination from '@/components/ui/Pagination';
+import Pagination, { PaginationData } from '@/components/ui/Pagination';
 import { Icons } from '@/components/ui/Icons';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
@@ -31,8 +31,9 @@ interface EntityDataTableProps<T> {
     numberOfPages: number;
     count?: number;
   };
-  page: number;
-  onPageChange: (page: number) => void;
+  pagination?: PaginationData;
+  page?: number;
+  onPageChange?: (page: number) => void;
   emptyState?: {
     title?: string;
     description?: string;
@@ -47,11 +48,13 @@ export default function EntityDataTable<T extends { _id: string }>({
   isLoading,
   columns,
   metadata,
+  pagination,
   page,
   onPageChange,
   emptyState,
 }: EntityDataTableProps<T>) {
   const tCommon = useTranslations('common');
+
 
   return (
     <Card className="border-none shadow-xl shadow-foreground/5 bg-background/50 backdrop-blur-md ring-1 ring-border/40 overflow-hidden rounded-3xl">
@@ -137,14 +140,27 @@ export default function EntityDataTable<T extends { _id: string }>({
         </Table>
       </div>
 
-      {metadata && metadata.numberOfPages > 1 && (
+      {/* Pagination - New Structure */}
+      {pagination && pagination.numberOfPages > 1 && onPageChange && (
+        <div className="p-5 border-t border-border/20 bg-muted/20 backdrop-blur-sm">
+          <Pagination pagination={pagination} onPageChange={onPageChange} />
+        </div>
+      )}
+
+      {/* Pagination - Legacy Structure (for backward compatibility) */}
+      {!pagination && metadata && metadata.numberOfPages > 1 && page && onPageChange && (
         <div className="p-5 border-t border-border/20 bg-muted/20 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest opacity-60">
             {tCommon('messages.showingPage', { page, total: metadata.numberOfPages })}
           </p>
           <Pagination
-            currentPage={page}
-            totalPages={metadata.numberOfPages}
+            pagination={{
+              currentPage: page,
+              numberOfPages: metadata.numberOfPages,
+              limit: 10,
+              nextPage: page < metadata.numberOfPages ? page + 1 : undefined,
+              prevPage: page > 1 ? page - 1 : undefined,
+            }}
             onPageChange={onPageChange}
           />
         </div>

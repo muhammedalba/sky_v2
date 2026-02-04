@@ -1,0 +1,13 @@
+{
+      "title": "Promo Banners",
+      "addBanner": "Add Banner",
+      "editBanner": "Edit Banner",
+      "searchPlaceholder": "Search banners...",
+      "subtitle": "Manage top-bar announcements",
+      "fields": {
+            "text": "Banner Text",
+            "link": "Link URL",
+            "status": "Status",
+            "active": "Active (Show on website)"
+      }
+}

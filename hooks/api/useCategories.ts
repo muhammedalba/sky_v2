@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Category } from '@/types';
 
-export function useCategories(params?: { page?: number; limit?: number }) {
+export function useCategories(params?: { page?: number; limit?: number; search?: string }) {
   return useQuery({
     queryKey: ['categories', params],
     queryFn: async () => {
@@ -30,11 +30,16 @@ export function useCreateCategory() {
 
   return useMutation({
     mutationFn: async (data: Partial<Category> | FormData) => {
-      const response = await api.categories.create(data);
+      const response = await api.categories.create(data); 
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error: any) => {
+      console.error('Create Category Error:', error);
+      console.error('Error Response:', error.response?.data);
+      console.error('Error Status:', error.response?.status);
     },
   });
 }

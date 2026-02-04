@@ -5,12 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
 import { useCreateBrand, useUpdateBrand } from '@/hooks/api/useBrands';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ImageUpload from '@/components/ui/form/ImageUpload';
 import { Brand } from '@/types';
+import { useTranslations } from 'next-intl';
 
 const brandSchema = z.object({
   nameEn: z.string().min(2, 'English name is required'),
@@ -21,22 +20,30 @@ const brandSchema = z.object({
 type BrandFormValues = z.infer<typeof brandSchema>;
 
 interface BrandFormProps {
-  initialData?: Brand;
-  locale: string;
+  editingBrand: Brand | null;
+  onSuccess: () => void;
+  onCancel: () => void;
 }
 
-export default function BrandForm({ initialData, locale }: BrandFormProps) {
-  const router = useRouter();
+export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFormProps) {
+  const t = useTranslations('brands');
+  const tCommon = useTranslations('buttons');
   const createMutation = useCreateBrand();
   const updateMutation = useUpdateBrand();
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const form = useForm<BrandFormValues>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors }
+  } = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
-      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { en?: string }).en || '' : (typeof initialData?.name === 'string' ? initialData.name : ''),
-      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { ar?: string }).ar || '' : '',
-      image: initialData?.image || '',
+      nameEn: (editingBrand?.name && typeof editingBrand.name === 'object') ? (editingBrand.name as { en?: string }).en || '' : (typeof editingBrand?.name === 'string' ? editingBrand.name : ''),
+      nameAr: (editingBrand?.name && typeof editingBrand.name === 'object') ? (editingBrand.name as { ar?: string }).ar || '' : '',
+      image: editingBrand?.image || '',
     },
   });
 
@@ -55,66 +62,82 @@ export default function BrandForm({ initialData, locale }: BrandFormProps) {
     }
 
     try {
-      if (initialData) {
-        await updateMutation.mutateAsync({ id: initialData._id, data: formData });
+      if (editingBrand) {
+        await updateMutation.mutateAsync({ id: editingBrand._id, data: formData });
       } else {
         await createMutation.mutateAsync(formData);
       }
-      router.push(`/${locale}/dashboard/brands`);
+      onSuccess();
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Name (English)</label>
-            <Input {...form.register('nameEn')} placeholder="Brand Name" />
-            {form.formState.errors.nameEn && (
-              <p className="text-red-500 text-sm">{form.formState.errors.nameEn.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Name (Arabic)</label>
-            <Input {...form.register('nameAr')} placeholder="اسم العلامة التجارية" dir="rtl" />
-            {form.formState.errors.nameAr && (
-              <p className="text-red-500 text-sm">{form.formState.errors.nameAr.message}</p>
-            )}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            {t('fields.name')} (English)
+          </label>
+          <Input 
+            {...register('nameEn')} 
+            placeholder="e.g. Apple" 
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameEn ? 'ring-2 ring-red-500' : ''}`}
+          />
+          {errors.nameEn && (
+            <p className="text-red-500 text-xs mt-1">{errors.nameEn.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Logo</label>
-          <ImageUpload
-            value={imageFile ? URL.createObjectURL(imageFile) : ((form.getValues('image') && typeof form.getValues('image') === 'string') ? form.getValues('image') as string : '')}
-            onChange={(file) => setImageFile(file)}
-            onRemove={() => {
-              setImageFile(null);
-              form.setValue('image', '');
-            }}
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            {t('fields.name')} (Arabic)
+          </label>
+          <Input 
+            {...register('nameAr')} 
+            placeholder="مثال: أبل" 
+            dir="rtl" 
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameAr ? 'ring-2 ring-red-500' : ''}`}
           />
+          {errors.nameAr && (
+            <p className="text-red-500 text-xs mt-1">{errors.nameAr.message}</p>
+          )}
         </div>
+      </div>
 
-        <div className="flex justify-end gap-4 pt-4">
-           <Button 
-             type="button" 
-             variant="outline" 
-             onClick={() => router.back()}
-           >
-             Cancel
-           </Button>
-           <Button 
-             type="submit" 
-             isLoading={createMutation.isPending || updateMutation.isPending}
-           >
-             {initialData ? 'Update Brand' : 'Create Brand'}
-           </Button>
-        </div>
-      </form>
-    </Card>
+      <div className="space-y-2">
+        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+          {t('fields.image')}
+        </label>
+        <ImageUpload
+          value={imageFile ? URL.createObjectURL(imageFile) : ((getValues('image') && typeof getValues('image') === 'string') ? getValues('image') as string : '')}
+          onChange={(file) => setImageFile(file)}
+          onRemove={() => {
+            setImageFile(null);
+            setValue('image', '');
+          }}
+          className="bg-secondary/10 p-4 rounded-2xl border-none"
+        />
+      </div>
+
+      <div className="flex gap-3 pt-4">
+          <Button
+            className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
+            type="submit"
+            isLoading={createMutation.isPending || updateMutation.isPending}
+          >
+            {tCommon('save')}
+          </Button>
+          <Button 
+              type="button" 
+              variant="outline" 
+              className="h-12 rounded-xl px-6 font-bold" 
+              onClick={onCancel}
+          >
+            {tCommon('cancel')}
+          </Button>
+      </div>
+    </form>
   );
 }

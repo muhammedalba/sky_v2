@@ -5,10 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
 import { useCreatePromoBanner, useUpdatePromoBanner } from '@/hooks/api/usePromoBanner';
-import { useRouter } from 'next/navigation';
 import { PromoBanner } from '@/types';
+import { useTranslations } from 'next-intl';
 
 const promoBannerSchema = z.object({
   textEn: z.string().min(5, 'English text is required (min 5 characters)'),
@@ -20,22 +19,28 @@ const promoBannerSchema = z.object({
 type PromoBannerFormValues = z.infer<typeof promoBannerSchema>;
 
 interface PromoBannerFormProps {
-  initialData?: PromoBanner;
-  locale: string;
+  editingPromoBanner: PromoBanner | null;
+  onSuccess: () => void;
+  onCancel: () => void;
 }
 
-export default function PromoBannerForm({ initialData, locale }: PromoBannerFormProps) {
-  const router = useRouter();
+export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCancel }: PromoBannerFormProps) {
+  const t = useTranslations('navigation.promoBanners');
+  const tCommon = useTranslations('buttons');
   const createMutation = useCreatePromoBanner();
   const updateMutation = useUpdatePromoBanner();
 
-  const form = useForm<PromoBannerFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<PromoBannerFormValues>({
     resolver: zodResolver(promoBannerSchema),
     defaultValues: {
-      textEn: (initialData?.text && typeof initialData.text === 'object') ? (initialData.text as { en: string }).en : (typeof initialData?.text === 'string' ? initialData.text : ''),
-      textAr: (initialData?.text && typeof initialData.text === 'object') ? (initialData.text as { ar: string }).ar : '',
-      link: initialData?.link || '',
-      isActive: initialData?.isActive ?? true,
+      textEn: (editingPromoBanner?.text && typeof editingPromoBanner.text === 'object') ? (editingPromoBanner.text as { en: string }).en : (typeof editingPromoBanner?.text === 'string' ? editingPromoBanner.text : ''),
+      textAr: (editingPromoBanner?.text && typeof editingPromoBanner.text === 'object') ? (editingPromoBanner.text as { ar: string }).ar : '',
+      link: editingPromoBanner?.link || '',
+      isActive: editingPromoBanner?.isActive ?? true,
     },
   });
 
@@ -50,67 +55,88 @@ export default function PromoBannerForm({ initialData, locale }: PromoBannerForm
     };
 
     try {
-      if (initialData) {
-        await updateMutation.mutateAsync({ id: initialData._id, data: payload });
+      if (editingPromoBanner) {
+        await updateMutation.mutateAsync({ id: editingPromoBanner._id, data: payload });
       } else {
         await createMutation.mutateAsync(payload);
       }
-      router.push(`/${locale}/dashboard/promo-banners`);
+      onSuccess();
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Banner Text (English)</label>
-            <Input 
-              {...form.register('textEn')} 
-              placeholder="🎉 Free Shipping on orders over $50!" 
-            />
-            {form.formState.errors.textEn && <p className="text-red-500 text-sm">{form.formState.errors.textEn.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Banner Text (Arabic)</label>
-            <Input 
-              {...form.register('textAr')} 
-              placeholder="🎉 شحن مجاني للطلبات فوق 50 دولار!"
-              dir="rtl"
-            />
-            {form.formState.errors.textAr && <p className="text-red-500 text-sm">{form.formState.errors.textAr.message}</p>}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            {t('fields.text') || 'Banner Text'} (English)
+          </label>
+          <Input 
+            {...register('textEn')} 
+            placeholder="🎉 Free Shipping on orders over $50!" 
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.textEn ? 'ring-2 ring-red-500' : ''}`}
+          />
+          {errors.textEn && <p className="text-red-500 text-xs mt-1">{errors.textEn.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Link URL (optional)</label>
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            {t('fields.text') || 'Banner Text'} (Arabic)
+          </label>
           <Input 
-            {...form.register('link')} 
-            placeholder="https://example.com/sale" 
-            type="url"
+            {...register('textAr')} 
+            placeholder="🎉 شحن مجاني للطلبات فوق 50 دولار!"
+            dir="rtl"
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.textAr ? 'ring-2 ring-red-500' : ''}`}
           />
-          {form.formState.errors.link && <p className="text-red-500 text-sm">{form.formState.errors.link.message}</p>}
+          {errors.textAr && <p className="text-red-500 text-xs mt-1">{errors.textAr.message}</p>}
         </div>
+      </div>
 
-        <div className="flex items-center gap-3">
-          <input 
-            type="checkbox" 
-            {...form.register('isActive')} 
-            className="w-4 h-4 rounded border-gray-300"
-          />
-          <label className="text-sm font-medium">Active (Show on website)</label>
-        </div>
+      <div className="space-y-2">
+        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+          {t('fields.link') || 'Link URL'} (optional)
+        </label>
+        <Input 
+          {...register('link')} 
+          placeholder="https://example.com/sale" 
+          type="url"
+          className="h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold"
+        />
+        {errors.link && <p className="text-red-500 text-xs mt-1">{errors.link.message}</p>}
+      </div>
 
-        <div className="flex justify-end gap-4 pt-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-          <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
-            {initialData ? 'Update Banner' : 'Create Banner'}
-          </Button>
-        </div>
-      </form>
-    </Card>
+      <div className="flex items-center gap-3 bg-secondary/10 p-4 rounded-xl border-none">
+        <input 
+          type="checkbox" 
+          {...register('isActive')} 
+          id="isActive"
+          className="w-5 h-5 rounded-lg border-none bg-background text-primary focus:ring-primary/20 cursor-pointer"
+        />
+        <label htmlFor="isActive" className="text-sm font-bold text-muted-foreground cursor-pointer select-none">
+          {t('fields.active') || 'Active (Show on website)'}
+        </label>
+      </div>
+
+      <div className="flex gap-3 pt-4">
+        <Button
+          className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
+          type="submit"
+          isLoading={createMutation.isPending || updateMutation.isPending}
+        >
+          {tCommon('save')}
+        </Button>
+        <Button 
+            type="button" 
+            variant="outline" 
+            className="h-12 rounded-xl px-6 font-bold" 
+            onClick={onCancel}
+        >
+          {tCommon('cancel')}
+        </Button>
+      </div>
+    </form>
   );
 }

@@ -1,0 +1,11 @@
+{
+      "title": "الفئات الفرعية",
+      "createSubCategory": "إنشاء فئة فرعية",
+      "editSubCategory": "تعديل الفئة الفرعية",
+      "searchPlaceholder": "البحث في الفئات الفرعية...",
+      "subtitle": "إدارة مستويات التسلسل الهرمي",
+      "fields": {
+            "name": "الاسم",
+            "parentCategory": "الفئة الأب"
+      }
+}

@@ -1,5 +1,7 @@
 {
       "title": "Brands",
+      "subtitle": "Manage and organize your product brands with ease",
+      "searchPlaceholder": "Search by brand name...",
       "createBrand": "Create Brand",
       "entityLabel": "Brand",
       "editBrand": "Edit Brand",

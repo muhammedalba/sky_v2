@@ -17,11 +17,10 @@ export default function ImageWithFallback({
   ...props 
 }: ImageWithFallbackProps) {
   const [error, setError] = useState(false);
-
   if (error || !src) {
     return (
       <div className={cn("flex items-center justify-center bg-secondary/50", className)}>
-        {fallback || <Icons.Products className="w-6 h-6 text-muted-foreground" />}
+        {fallback || <Icons.Products className="w-6 h-6 text-muted-foreground m-auto" />}
       </div>
     );
   }

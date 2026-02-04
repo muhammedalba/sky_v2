@@ -1,0 +1,12 @@
+{
+      "title": "Carousel",
+      "addSlide": "Add Slide",
+      "editSlide": "Edit Slide",
+      "searchPlaceholder": "Search slides...",
+      "subtitle": "Manage your home page slider",
+      "fields": {
+            "description": "Description",
+            "status": "Status",
+            "image": "Slide Image"
+      }
+}

@@ -5,11 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
 import { useCategories } from '@/hooks/api/useCategories';
 import { useCreateSubCategory, useUpdateSubCategory } from '@/hooks/api/useSubCategories';
-import { useRouter } from 'next/navigation';
 import { SubCategory, Category } from '@/types';
+import { useTranslations } from 'next-intl';
+import { useTrans } from '@/hooks/useTrans';
 
 const subCategorySchema = z.object({
   nameEn: z.string().min(2, 'English name is required'),
@@ -20,22 +20,29 @@ const subCategorySchema = z.object({
 type SubCategoryFormValues = z.infer<typeof subCategorySchema>;
 
 interface SubCategoryFormProps {
-  initialData?: SubCategory;
-  locale: string;
+  editingSubCategory: SubCategory | null;
+  onSuccess: () => void;
+  onCancel: () => void;
 }
 
-export default function SubCategoryForm({ initialData, locale }: SubCategoryFormProps) {
-  const router = useRouter();
+export default function SubCategoryForm({ editingSubCategory, onSuccess, onCancel }: SubCategoryFormProps) {
+  const t = useTranslations('subCategories');
+  const tCommon = useTranslations('buttons');
+  const getTrans = useTrans();
   const createMutation = useCreateSubCategory();
   const updateMutation = useUpdateSubCategory();
   const { data: categoriesData } = useCategories();
 
-  const form = useForm<SubCategoryFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<SubCategoryFormValues>({
     resolver: zodResolver(subCategorySchema),
     defaultValues: {
-      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { en: string }).en : (typeof initialData?.name === 'string' ? initialData.name : ''),
-      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { ar: string }).ar : '',
-      category: (initialData?.category && typeof initialData.category === 'object') ? (initialData.category as { _id: string })._id : (typeof initialData?.category === 'string' ? initialData.category : ''),
+      nameEn: (editingSubCategory?.name && typeof editingSubCategory.name === 'object') ? (editingSubCategory.name as { en: string }).en : (typeof editingSubCategory?.name === 'string' ? editingSubCategory.name : ''),
+      nameAr: (editingSubCategory?.name && typeof editingSubCategory.name === 'object') ? (editingSubCategory.name as { ar: string }).ar : '',
+      category: (editingSubCategory?.category && typeof editingSubCategory.category === 'object') ? (editingSubCategory.category as { _id: string })._id : (typeof editingSubCategory?.category === 'string' ? editingSubCategory.category : ''),
     },
   });
 
@@ -49,57 +56,81 @@ export default function SubCategoryForm({ initialData, locale }: SubCategoryForm
     };
 
     try {
-      if (initialData) {
-        await updateMutation.mutateAsync({ id: initialData._id, data: payload });
+      if (editingSubCategory) {
+        await updateMutation.mutateAsync({ id: editingSubCategory._id, data: payload });
       } else {
         await createMutation.mutateAsync(payload);
       }
-      router.push(`/${locale}/dashboard/sub-categories`);
+      onSuccess();
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Name (English)</label>
-            <Input {...form.register('nameEn')} placeholder="Smartphones" />
-            {form.formState.errors.nameEn && <p className="text-red-500 text-sm">{form.formState.errors.nameEn.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Name (Arabic)</label>
-            <Input {...form.register('nameAr')} placeholder="الهواتف الذكية" dir="rtl" />
-            {form.formState.errors.nameAr && <p className="text-red-500 text-sm">{form.formState.errors.nameAr.message}</p>}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            {t('fields.name') || 'Name'} (English)
+          </label>
+          <Input 
+            {...register('nameEn')} 
+            placeholder="e.g. Smartphones" 
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameEn ? 'ring-2 ring-red-500' : ''}`}
+          />
+          {errors.nameEn && <p className="text-red-500 text-xs mt-1">{errors.nameEn.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Parent Category</label>
-          <select 
-            {...form.register('category')} 
-            className="w-full h-10 border rounded-lg px-3 bg-background"
-          >
-            <option value="">Select Parent Category</option>
-            {categoriesData?.data?.map((cat: Category) => (
-              <option key={cat._id} value={cat._id}>
-                {typeof cat.name === 'object' ? (cat.name as { en: string }).en : cat.name}
-              </option>
-            ))}
-          </select>
-          {form.formState.errors.category && <p className="text-red-500 text-sm">{form.formState.errors.category.message}</p>}
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            {t('fields.name') || 'Name'} (Arabic)
+          </label>
+          <Input 
+            {...register('nameAr')} 
+            placeholder="مثال: الهواتف الذكية" 
+            dir="rtl" 
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameAr ? 'ring-2 ring-red-500' : ''}`}
+          />
+          {errors.nameAr && <p className="text-red-500 text-xs mt-1">{errors.nameAr.message}</p>}
         </div>
+      </div>
 
-        <div className="flex justify-end gap-4 pt-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-          <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
-            {initialData ? 'Update Sub-Category' : 'Create Sub-Category'}
-          </Button>
-        </div>
-      </form>
-    </Card>
+      <div className="space-y-2">
+        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+          Parent Category
+        </label>
+        <select 
+          {...register('category')} 
+          className={`w-full h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold px-4 appearance-none hover:bg-secondary/20 transition-colors cursor-pointer ${errors.category ? 'ring-2 ring-red-500' : ''}`}
+        >
+          <option value="">Select Parent Category</option>
+          {categoriesData?.data?.map((cat: Category) => (
+            <option key={cat._id} value={cat._id}>
+              {getTrans(cat.name)}
+            </option>
+          ))}
+        </select>
+        {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
+      </div>
+
+      <div className="flex gap-3 pt-4">
+        <Button
+          className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
+          type="submit"
+          isLoading={createMutation.isPending || updateMutation.isPending}
+        >
+          {tCommon('save')}
+        </Button>
+        <Button 
+            type="button" 
+            variant="outline" 
+            className="h-12 rounded-xl px-6 font-bold" 
+            onClick={onCancel}
+        >
+          {tCommon('cancel')}
+        </Button>
+      </div>
+    </form>
   );
 }

@@ -1,16 +1,24 @@
 {
+      "searchPlaceholder": "Search categories...",
       "title": "Categories",
+      "subtitle": "Organize your store by creating meaningful categories.",
+      "entityLabel": "Category",
       "createCategory": "Create Category",
       "editCategory": "Edit Category",
       "categoryList": "Category List",
       "fields": {
             "name": "Category Name",
-            "description": "Description",
-            "productsCount": "Products Count"
+            "productsCount": "Products Count",
+            "subCategoriesCount": "Sub Categories Count",
+            "image": "Category Image"
       },
       "placeholders": {
             "name": "Enter category name",
             "description": "Enter category description"
+      },
+      "emptyState": {
+            "title": "No categories found",
+            "description": "Organize your store by creating meaningful categories."
       },
       "messages": {
             "createSuccess": "Category created successfully",

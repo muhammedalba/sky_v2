@@ -45,6 +45,8 @@ export interface Category {
   slug?: string;
   image?: string;
   productsCount?: number;
+  subCategoriesCount?: number;
+  supCategories?: Category[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -165,11 +167,13 @@ export interface PaginationMeta {
   limit: number;
   numberOfPages: number;
   nextPage?: number;
+  prevPage?: number;
 }
 
 export interface ApiResponse<T> {
   results?: number;
   metadata?: PaginationMeta;
+  pagination?: PaginationMeta;
   data: T;
   status?: string;
   message?: string;

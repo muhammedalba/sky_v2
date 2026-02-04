@@ -1,0 +1,11 @@
+{
+      "title": "Sub Categories",
+      "createSubCategory": "Create Sub Category",
+      "editSubCategory": "Edit Sub Category",
+      "searchPlaceholder": "Search sub-categories...",
+      "subtitle": "Manage hierarchy levels",
+      "fields": {
+            "name": "Name",
+            "parentCategory": "Parent Category"
+      }
+}
