@@ -7,10 +7,9 @@ import { LocalizedString } from '@/types';
  */
 export function useTrans() {
   const locale = useLocale();
-
   const getTrans = (content: LocalizedString | undefined | null): string => {
-    if (!content) return '';
-
+    if (!content) return '-';
+    // console.log("useTrans",content);
     if (typeof content === 'string') {
       return content;
     }

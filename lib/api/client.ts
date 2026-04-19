@@ -35,6 +35,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
+
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
@@ -42,20 +43,62 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    if (typeof window !== 'undefined') {
+      const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+        return null;
+      };
+      
+      const pathSegment = window.location.pathname.split('/')[1];
+      const isLikelyLocale = pathSegment && pathSegment.length >= 2 && pathSegment.length <= 5;
+      const pathLocale = isLikelyLocale ? pathSegment : null;
+      
+      const cookieLocale = getCookie('NEXT_LOCALE');
+      const htmlLang = document.documentElement.lang;
+      
+      // Prioritize pathLocale > cookieLocale > htmlLang
+      const locale = pathLocale || cookieLocale || htmlLang || env.DEFAULT_LOCALE;
+      
+      config.headers['x-lang'] = locale;
+      config.headers['Accept-Language'] = locale;
+    } else {
+      config.headers['x-lang'] = env.DEFAULT_LOCALE;
+      config.headers['Accept-Language'] = env.DEFAULT_LOCALE;
+    }
+
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    // console.log('request error', error);
+    return Promise.reject(error)}
 );
 
 // Response interceptor
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const resData = response.data;
+
+    // If the backend returns our standard ApiResponse structure
+    if (
+      resData &&
+      typeof resData === 'object' &&
+      'success' in resData &&
+      'data' in resData
+    ) {
+      return resData;
+    }
+    return response;
+  },
   async (error: AxiosError) => {
+
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (typeof window !== 'undefined' && window.location.pathname.includes('/login')) {
-         return Promise.reject(error);
+        return Promise.reject(error);
       }
 
       if (isRefreshing) {
@@ -88,14 +131,14 @@ apiClient.interceptors.response.use(
         // الهيكل المتوقع بناءً على رسائلك: { status, message, access_token }
         const resData = response.data;
         const newAccessToken = resData.access_token || resData.data?.access_token || resData.token || resData.accessToken;
-        
+
         // تحديث التوكنات (سيتم تحديث الكوكيز تلقائياً من المتصفح، ونحن نحدث الذاكرة المحلية)
         if (newAccessToken) {
           setTokens(newAccessToken, currentToken);
-          
+
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          
+
           processQueue(null, newAccessToken);
           return apiClient(originalRequest);
         } else {
@@ -110,6 +153,20 @@ apiClient.interceptors.response.use(
       }
     }
 
+    // Handle standardized error response from AllExceptionsFilter
+    if (error.response?.data) {
+      const data = error.response.data as any;
+      
+      // Prioritize the translated errors array from the backend
+      if (Array.isArray(data.errors) && data.errors.length > 0) {
+        error.message = data.errors.map((m: string) => `• ${m}`).join('\n');
+      } else if (data.message) {
+        error.message = data.message;
+      } else {
+        error.message = 'حدث خطأ يرجى المحاولة مرة أخرى.';
+      }
+    }
+
     return Promise.reject(error);
   }
 );
@@ -117,13 +174,13 @@ apiClient.interceptors.response.use(
 function handleLogout() {
   if (typeof window !== 'undefined') {
     clearTokens();
-    
+
     useToastStore.getState().addToast({
       title: 'انتهت الجلسة',
       message: 'عذراً، يجب عليك تسجيل الدخول مرة أخرى.',
       type: 'error',
     });
-    
+
     const defaultLocale = env.DEFAULT_LOCALE;
     if (!window.location.pathname.includes('/login')) {
       window.location.href = `/${defaultLocale}/login`;

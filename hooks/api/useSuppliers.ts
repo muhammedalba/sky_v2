@@ -5,22 +5,27 @@ import { api } from '@/lib/api';
 
 import { useToast } from '@/hooks/useToast';
 
-export function useSuppliers(params?: { page?: number; limit?: number; search?: string }) {
+export function useSuppliers(
+  params?: { page?: number; limit?: number; keywords?: string },
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['suppliers', params],
     queryFn: async () => {
       const response = await api.suppliers.getAll(params);
-      return response.data;
+      return response;
     },
+    enabled: options?.enabled !== undefined ? options.enabled : true,
   });
 }
 
-export function useSupplier(id: string) {
+export function useSupplier(id: string, options?: { allLangs?: boolean }) {
   return useQuery({
-    queryKey: ['suppliers', id],
+    queryKey: ['suppliers', id, options?.allLangs],
     queryFn: async () => {
-      const response = await api.suppliers.getOne(id);
-      return response.data.data;
+      const params = options?.allLangs ? { all_langs: true } : {};
+      const response = await api.suppliers.getOne(id, params);
+      return response.data;
     },
     enabled: !!id,
   });
@@ -41,6 +46,7 @@ export function useCreateSupplier() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to create supplier');
+      console.log("Backend Error:", error);
     },
   });
 }
@@ -61,6 +67,7 @@ export function useUpdateSupplier() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to update supplier');
+      console.log("Backend Error:", error);
     },
   });
 }

@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 import { Coupon } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
-export function useCoupons(params?: { page?: number; limit?: number; search?: string }) {
+export function useCoupons(params?: { page?: number; limit?: number; keywords?: string }) {
   return useQuery({
     queryKey: ['coupons', params],
     queryFn: async () => {
@@ -15,12 +15,13 @@ export function useCoupons(params?: { page?: number; limit?: number; search?: st
   });
 }
 
-export function useCoupon(id: string) {
+export function useCoupon(id: string, options?: { allLangs?: boolean }) {
   return useQuery({
-    queryKey: ['coupons', id],
+    queryKey: ['coupons', id, options?.allLangs],
     queryFn: async () => {
-      const response = await api.coupons.getOne(id);
-      return response.data.data;
+      const params = options?.allLangs ? { all_langs: true } : {};
+      const response = await api.coupons.getOne(id, params);
+      return response.data;
     },
     enabled: !!id,
   });
@@ -33,7 +34,7 @@ export function useCreateCoupon() {
   return useMutation({
     mutationFn: async (data: Partial<Coupon>) => {
       const response = await api.coupons.create(data);
-      return response.data;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coupons'] });

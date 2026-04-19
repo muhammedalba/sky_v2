@@ -6,7 +6,7 @@ const ENDPOINTS = env.ENDPOINTS.CATEGORIES;
 
 export const categoriesApi = {
   getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Category[]>>(ENDPOINTS.BASE, { params }),
-  getOne: (id: string) => apiClient.get(`${ENDPOINTS.BASE}/${id}`),
+  getOne: (id: string, params?: Record<string, unknown>) => apiClient.get(`${ENDPOINTS.BASE}/${id}`, { params }),
   create: (data: Record<string, unknown> | FormData) =>
     apiClient.post(ENDPOINTS.BASE, data, {
       headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,

@@ -27,12 +27,7 @@ interface EntityDataTableProps<T> {
   data?: T[];
   isLoading: boolean;
   columns: Column<T>[];
-  metadata?: {
-    numberOfPages: number;
-    count?: number;
-  };
   pagination?: PaginationData;
-  page?: number;
   onPageChange?: (page: number) => void;
   emptyState?: {
     title?: string;
@@ -47,14 +42,11 @@ export default function EntityDataTable<T extends { _id: string }>({
   data,
   isLoading,
   columns,
-  metadata,
   pagination,
-  page,
   onPageChange,
   emptyState,
 }: EntityDataTableProps<T>) {
   const tCommon = useTranslations('common');
-
 
   return (
     <Card className="border-none shadow-xl shadow-foreground/5 bg-background/50 backdrop-blur-md ring-1 ring-border/40 overflow-hidden rounded-3xl">
@@ -66,10 +58,10 @@ export default function EntityDataTable<T extends { _id: string }>({
                 <TableHead
                   key={idx}
                   className={cn(
-                    "h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground/80",
-                    idx === 0 && "pl-6",
-                    idx === columns.length - 1 && "pr-6 text-right",
-                    col.className
+                    'h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground/80',
+                    idx === 0 && 'pl-6',
+                    idx === columns.length - 1 && 'pr-6 text-right',
+                    col.className,
                   )}
                 >
                   {col.header}
@@ -79,15 +71,33 @@ export default function EntityDataTable<T extends { _id: string }>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array(6).fill(0).map((_, i) => (
-                <TableRow key={i} className="border-b border-border/20 last:border-0 h-20">
-                  {columns.map((_, idx) => (
-                    <TableCell key={idx} className={cn(idx === 0 && "pl-6", idx === columns.length - 1 && "pr-6")}>
-                      <Skeleton className={cn("h-6 rounded-lg", idx === 0 ? "w-14 h-14 rounded-2xl" : "w-full")} />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              Array(6)
+                .fill(0)
+                .map((_, i) => (
+                  <TableRow
+                    key={i}
+                    className="border-b border-border/20 last:border-0 h-20"
+                  >
+                    {columns.map((_, idx) => (
+                      <TableCell
+                        key={idx}
+                        className={cn(
+                          idx === 0 && 'pl-6',
+                          idx === columns.length - 1 && 'pr-6',
+                        )}
+                      >
+                        <Skeleton
+                          className={cn(
+                            'h-6 rounded-lg',
+                            idx === 0
+                              ? 'w-14 h-14 rounded-2xl'
+                              : 'w-full',
+                          )}
+                        />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
             ) : data?.length ? (
               data.map((item) => (
                 <TableRow
@@ -98,12 +108,16 @@ export default function EntityDataTable<T extends { _id: string }>({
                     <TableCell
                       key={idx}
                       className={cn(
-                        idx === 0 && "pl-6",
-                        idx === columns.length - 1 && "pr-6 text-right",
-                        col.className
+                        idx === 0 && 'pl-6',
+                        idx === columns.length - 1 && 'pr-6 text-right',
+                        col.className,
                       )}
                     >
-                      {col.render ? col.render(item) : (col.accessor ? String(item[col.accessor]) : null)}
+                      {col.render
+                        ? col.render(item)
+                        : col.accessor
+                          ? String(item[col.accessor])
+                          : null}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -113,7 +127,9 @@ export default function EntityDataTable<T extends { _id: string }>({
                 <TableCell colSpan={columns.length} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95 duration-500">
                     <div className="p-4 rounded-3xl bg-muted/30 ring-1 ring-border/20">
-                      {emptyState?.icon || <Icons.Brands className="h-10 w-10 text-muted-foreground/40" />}
+                      {emptyState?.icon || (
+                        <Icons.Brands className="h-10 w-10 text-muted-foreground/40" />
+                      )}
                     </div>
                     <div className="space-y-1">
                       <p className="text-lg font-bold text-foreground">
@@ -127,7 +143,11 @@ export default function EntityDataTable<T extends { _id: string }>({
                     </div>
                     {emptyState?.createLink && (
                       <Link href={emptyState.createLink}>
-                        <Button variant="outline" size="sm" className="rounded-xl px-6">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-xl px-6"
+                        >
                           {emptyState.createLabel || tCommon('buttons.create')}
                         </Button>
                       </Link>
@@ -140,29 +160,15 @@ export default function EntityDataTable<T extends { _id: string }>({
         </Table>
       </div>
 
-      {/* Pagination - New Structure */}
       {pagination && pagination.numberOfPages > 1 && onPageChange && (
-        <div className="p-5 border-t border-border/20 bg-muted/20 backdrop-blur-sm">
-          <Pagination pagination={pagination} onPageChange={onPageChange} />
-        </div>
-      )}
-
-      {/* Pagination - Legacy Structure (for backward compatibility) */}
-      {!pagination && metadata && metadata.numberOfPages > 1 && page && onPageChange && (
         <div className="p-5 border-t border-border/20 bg-muted/20 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest opacity-60">
-            {tCommon('messages.showingPage', { page, total: metadata.numberOfPages })}
+            {tCommon('messages.showingPage', {
+              page: pagination.currentPage,
+              total: pagination.numberOfPages,
+            })}
           </p>
-          <Pagination
-            pagination={{
-              currentPage: page,
-              numberOfPages: metadata.numberOfPages,
-              limit: 10,
-              nextPage: page < metadata.numberOfPages ? page + 1 : undefined,
-              prevPage: page > 1 ? page - 1 : undefined,
-            }}
-            onPageChange={onPageChange}
-          />
+          <Pagination pagination={pagination} onPageChange={onPageChange} />
         </div>
       )}
     </Card>

@@ -2,7 +2,6 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -11,17 +10,10 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ImageUpload from '@/components/ui/form/ImageUpload';
 import { Supplier } from '@/types';
+import { SupplierFormValues, supplierSchema } from '@/lib/validations/schemas';
+import { Switch } from '@/components/ui/Switch';
 
-const supplierSchema = z.object({
-  nameEn: z.string().min(2, 'English name is required'),
-  nameAr: z.string().min(2, 'Arabic name is required'),
-  email: z.string().email().optional().or(z.literal('')),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  avatar: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-});
 
-type SupplierFormValues = z.infer<typeof supplierSchema>;
 
 interface SupplierFormProps {
   initialData?: Supplier;
@@ -37,31 +29,35 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
   const form = useForm<SupplierFormValues>({
     resolver: zodResolver(supplierSchema),
     defaultValues: {
-      nameEn: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { en: string }).en : (typeof initialData?.name === 'string' ? initialData.name : ''),
-      nameAr: (initialData?.name && typeof initialData.name === 'object') ? (initialData.name as { ar: string }).ar : '',
+      name: initialData?.name || '',
       email: initialData?.email || '',
       phone: initialData?.phone || '',
       address: initialData?.address || '',
-      avatar: initialData?.avatar || '',
+      avatar: initialData?.avatar || null,
+      contactName: initialData?.contactName || '',
+      website: initialData?.website ? String(initialData.website) : '',
+      active: initialData?.active ?? true,
     },
   });
 
   const onSubmit = async (data: SupplierFormValues) => {
+    console.log(data);
+    
     const formData = new FormData();
-    
+
     // Send name as nested object
-    const nameObject = {
-      en: data.nameEn,
-      ar: data.nameAr,
-    };
-    formData.append('name', JSON.stringify(nameObject));
-    
+
+    formData.append('name', data.name);
+
     if (data.email) formData.append('email', data.email);
     if (data.phone) formData.append('phone', data.phone);
     if (data.address) formData.append('address', data.address);
-    
+    if (data.contactName) formData.append('contactName', data.contactName);
+    if (data.website) formData.append('website', data.website);
+    if (data.active !== undefined) formData.append('active', String(data.active));
+
     if (imageFile) {
-      formData.append('image', imageFile);
+      formData.append('avatar', imageFile);
     }
 
     try {
@@ -80,28 +76,42 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
     <Card className="p-6 max-w-2xl mx-auto">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div className="space-y-2">
-                <label className="text-sm font-medium">Name (English)</label>
-                <Input {...form.register('nameEn')} placeholder="Supplier Name" />
-                {form.formState.errors.nameEn && <p className="text-red-500 text-sm">{form.formState.errors.nameEn.message}</p>}
-            </div>
-             <div className="space-y-2">
-                <label className="text-sm font-medium">Name (Arabic)</label>
-                <Input {...form.register('nameAr')} placeholder="اسم المورد" dir="rtl" />
-                {form.formState.errors.nameAr && <p className="text-red-500 text-sm">{form.formState.errors.nameAr.message}</p>}
-            </div>
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Email</label>
-                <Input {...form.register('email')} placeholder="Email Address" type="email" />
-            </div>
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Phone</label>
-                <Input {...form.register('phone')} placeholder="Phone Number" />
-            </div>
-             <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium">Address</label>
-                <Input {...form.register('address')} placeholder="Full Address" />
-            </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Supplier Name</label>
+            <Input {...form.register('name')} placeholder="Supplier Name" />
+            {form.formState.errors?.name && <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Email</label>
+            <Input {...form.register('email')} placeholder="Email Address" type="email" />
+            {form.formState.errors?.email && <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Phone</label>
+            <Input {...form.register('phone')} placeholder="Phone Number" />
+            {form.formState.errors?.phone && <p className="text-red-500 text-sm">{form.formState.errors.phone.message}</p>}
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-sm font-medium">Address</label>
+            <Input {...form.register('address')} placeholder="Full Address" />
+            {form.formState.errors?.address && <p className="text-red-500 text-sm">{form.formState.errors.address.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Contact Name</label>
+            <Input {...form.register('contactName')} placeholder="Contact Name" />
+            {form.formState.errors?.contactName && <p className="text-red-500 text-sm">{form.formState.errors.contactName.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Website</label>
+            <Input {...form.register('website')} placeholder="https://example.com" />
+            {form.formState.errors?.website && <p className="text-red-500 text-sm">{form.formState.errors.website.message}</p>}
+            
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Status</label>
+            <Switch {...form.register('active')} label={'active'} className="p-2 gap-2 bg-background border rounded-xl" />
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -114,13 +124,14 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
               form.setValue('avatar', null);
             }}
           />
+          {form.formState.errors?.avatar && <p className="text-red-500 text-sm">{form.formState.errors.avatar.message}</p>}
         </div>
 
         <div className="flex justify-end gap-4 pt-4">
-           <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-           <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
-             {initialData ? 'Update Supplier' : 'Create Supplier'}
-           </Button>
+          <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
+          <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
+            {initialData ? 'Update Supplier' : 'Create Supplier'}
+          </Button>
         </div>
       </form>
     </Card>

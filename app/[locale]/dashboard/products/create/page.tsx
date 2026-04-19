@@ -1,10 +1,10 @@
 'use client';
 
 import { use } from 'react';
-import ProductForm from '@/components/dashboard/forms/ProductForm';
+import CreateProductForm from '@/components/dashboard/products/CreateProductForm';
 
 export default function CreateProductPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);
 
-  return <ProductForm locale={locale} />;
+  return <CreateProductForm locale={locale} />;
 }

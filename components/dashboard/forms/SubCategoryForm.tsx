@@ -1,23 +1,18 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useCategories } from '@/hooks/api/useCategories';
 import { useCreateSubCategory, useUpdateSubCategory } from '@/hooks/api/useSubCategories';
-import { SubCategory, Category } from '@/types';
+import { Category, SubCategory } from '@/types';
 import { useTranslations } from 'next-intl';
 import { useTrans } from '@/hooks/useTrans';
+import { useState } from 'react';
+import Spinner from '@/components/ui/Spinner';
+import { SubCategoryFormValues, subCategorySchema } from '@/lib/validations/schemas';
 
-const subCategorySchema = z.object({
-  nameEn: z.string().min(2, 'English name is required'),
-  nameAr: z.string().min(2, 'Arabic name is required'),
-  category: z.string().min(1, 'Parent category is required'),
-});
-
-type SubCategoryFormValues = z.infer<typeof subCategorySchema>;
 
 interface SubCategoryFormProps {
   editingSubCategory: SubCategory | null;
@@ -31,26 +26,43 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
   const getTrans = useTrans();
   const createMutation = useCreateSubCategory();
   const updateMutation = useUpdateSubCategory();
-  const { data: categoriesData } = useCategories();
+  const [search, setSearch] = useState<string>(
+    editingSubCategory?.category ? getTrans(editingSubCategory.category.name) : ''
+  );
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const { data: categoriesData, isFetching: isCategoriesFetching } = useCategories(
+    { fields: "name id", keywords: search },
+    { enabled: isDropdownOpen }
+  );
 
   const {
     register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors }
   } = useForm<SubCategoryFormValues>({
     resolver: zodResolver(subCategorySchema),
     defaultValues: {
-      nameEn: (editingSubCategory?.name && typeof editingSubCategory.name === 'object') ? (editingSubCategory.name as { en: string }).en : (typeof editingSubCategory?.name === 'string' ? editingSubCategory.name : ''),
-      nameAr: (editingSubCategory?.name && typeof editingSubCategory.name === 'object') ? (editingSubCategory.name as { ar: string }).ar : '',
+      name: {
+        en: editingSubCategory ? (typeof editingSubCategory.name === 'string' ? editingSubCategory.name : editingSubCategory.name?.en || '') : '',
+        ar: editingSubCategory ? (typeof editingSubCategory.name === 'string' ? editingSubCategory.name : editingSubCategory.name?.ar || '') : '',
+      },
       category: (editingSubCategory?.category && typeof editingSubCategory.category === 'object') ? (editingSubCategory.category as { _id: string })._id : (typeof editingSubCategory?.category === 'string' ? editingSubCategory.category : ''),
     },
+  });
+
+  const selectedCategoryId = useWatch({
+    control,
+    name: 'category',
   });
 
   const onSubmit = async (data: SubCategoryFormValues) => {
     const payload = {
       name: {
-        en: data.nameEn,
-        ar: data.nameAr,
+        en: data.name.en,
+        ar: data.name.ar,
       },
       category: data.category,
     };
@@ -74,43 +86,80 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
           <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
             {t('fields.name') || 'Name'} (English)
           </label>
-          <Input 
-            {...register('nameEn')} 
-            placeholder="e.g. Smartphones" 
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameEn ? 'ring-2 ring-red-500' : ''}`}
+          <Input
+            {...register('name.en')}
+            placeholder="e.g. Smartphones"
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.en ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.nameEn && <p className="text-red-500 text-xs mt-1">{errors.nameEn.message}</p>}
+          {errors.name?.en && <p className="text-red-500 text-xs mt-1">{errors.name.en.message}</p>}
         </div>
 
         <div className="space-y-2">
           <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
             {t('fields.name') || 'Name'} (Arabic)
           </label>
-          <Input 
-            {...register('nameAr')} 
-            placeholder="مثال: الهواتف الذكية" 
-            dir="rtl" 
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameAr ? 'ring-2 ring-red-500' : ''}`}
+          <Input
+            {...register('name.ar')}
+            placeholder="مثال: الهواتف الذكية"
+            dir="rtl"
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.ar ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.nameAr && <p className="text-red-500 text-xs mt-1">{errors.nameAr.message}</p>}
+          {errors.name?.ar && <p className="text-red-500 text-xs mt-1">{errors.name.ar.message}</p>}
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 relative">
         <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
           Parent Category
         </label>
-        <select 
-          {...register('category')} 
-          className={`w-full h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold px-4 appearance-none hover:bg-secondary/20 transition-colors cursor-pointer ${errors.category ? 'ring-2 ring-red-500' : ''}`}
-        >
-          <option value="">Select Parent Category</option>
-          {categoriesData?.data?.map((cat: Category) => (
-            <option key={cat._id} value={cat._id}>
-              {getTrans(cat.name)}
-            </option>
-          ))}
-        </select>
+        <Input
+          placeholder="Search for a category..."
+          value={search}
+          autoComplete="off"
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setIsDropdownOpen(true);
+            setValue('category', '', { shouldValidate: true });
+          }}
+          onFocus={() => setIsDropdownOpen(true)}
+          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+          className={`w-full h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.category ? 'ring-2 ring-red-500' : ''}`}
+        />
+        <input type="hidden" {...register('category')} />
+
+        {isDropdownOpen && (
+          <div className="absolute z-10 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+            {isCategoriesFetching ? (
+              <div className="p-4 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <Spinner className="w-4 h-4" /> Loading categories...
+              </div>
+            ) : categoriesData?.data && categoriesData.data.length > 0 ? (
+              <ul className="p-1">
+                {categoriesData.data.map((cat: Category) => (
+                  <li
+                    key={cat._id}
+                    onClick={() => {
+                      setValue('category', cat._id, { shouldValidate: true });
+                      setSearch(getTrans(cat.name));
+                      setIsDropdownOpen(false);
+                    }}
+                    className={`px-4 py-3 rounded-lg text-sm font-bold cursor-pointer transition-colors ${
+                      selectedCategoryId === cat._id 
+                        ? 'bg-primary/10 text-primary' 
+                        : 'hover:bg-secondary/20'
+                    }`}
+                  >
+                    {getTrans(cat.name)}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="p-4 text-center text-sm text-muted-foreground">
+                No categories found.
+              </div>
+            )}
+          </div>
+        )}
         {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
       </div>
 
@@ -122,11 +171,11 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
         >
           {tCommon('save')}
         </Button>
-        <Button 
-            type="button" 
-            variant="outline" 
-            className="h-12 rounded-xl px-6 font-bold" 
-            onClick={onCancel}
+        <Button
+          type="button"
+          variant="outline"
+          className="h-12 rounded-xl px-6 font-bold"
+          onClick={onCancel}
         >
           {tCommon('cancel')}
         </Button>

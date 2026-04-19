@@ -1,13 +1,14 @@
 'use client';
 
 import { use } from 'react';
-import ProductForm from '@/components/dashboard/forms/ProductForm';
+import EditProductForm from '@/components/dashboard/products/EditProductForm';
 import { useProduct } from '@/hooks/api/useProducts';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { Product, ProductVariant } from '@/types';
 
 export default function EditProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = use(params);
-  const { data: product, isLoading } = useProduct(id);
+  const { data: productRes, isLoading } = useProduct(id, { all_langs: true });
 
   if (isLoading) {
     return (
@@ -21,5 +22,24 @@ export default function EditProductPage({ params }: { params: Promise<{ locale: 
     );
   }
 
-  return <ProductForm locale={locale} initialData={product} />;
+  if (!productRes?.data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground font-medium">Product not found</p>
+      </div>
+    );
+  }
+
+  // Handle API response structure
+  const data = productRes.data as any;
+  const product = (data.product || data) as Product;
+  const variants = (data.variants || product.variants || []) as ProductVariant[];
+
+  return (
+    <EditProductForm
+      locale={locale}
+      initialData={product}
+      initialVariants={variants}
+    />
+  );
 }

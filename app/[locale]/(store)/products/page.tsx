@@ -19,7 +19,7 @@ export default function ProductsPage() {
   const [search, setSearch] = useState('');
   // const [sort, setSort] = useState('newest');
 
-  const { data, isLoading } = useProducts({ page, limit: 12, search });
+  const { data, isLoading } = useProducts({ page, limit: 12, keywords: search });
   
   const handleSearch = debounce((value: string) => {
     setSearch(value);
@@ -48,50 +48,49 @@ export default function ProductsPage() {
                  onChange={(e) => handleSearch(e.target.value)}
                />
             </div>
-            <div className="flex items-center gap-2">
-               <span className="text-sm font-medium text-muted-foreground">
-                  {isLoading ? 'Loading...' : `${data?.results || 0} Products`}
-               </span>
-            </div>
-         </div>
+             <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-muted-foreground">
+                   {isLoading ? 'Loading...' : `${data?.meta?.total || 0} Products`}
+                </span>
+             </div>
+          </div>
 
-         {/* Grid */}
-         {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-               {Array(8).fill(0).map((_, i) => (
-                  <div key={i} className="space-y-4">
-                     <Skeleton className="aspect-[4/3] rounded-xl" />
-                     <Skeleton className="h-4 w-2/3" />
-                     <Skeleton className="h-4 w-1/3" />
-                  </div>
-               ))}
-            </div>
-         ) : data?.data?.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-               {data.data.map((product: Product) => (
-                  <ProductCard key={product._id} product={product} locale={locale} />
-               ))}
-            </div>
-         ) : (
-            <div className="text-center py-24">
-               <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Icons.Products className="w-10 h-10 text-muted-foreground" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">No products found</h3>
-               <p className="text-muted-foreground">Try adjusting your search terms.</p>
-            </div>
-         )}
-
-         {/* Pagination */}
-          {(data?.metadata?.numberOfPages ?? 0) > 1 && (
-            <div className="mt-16 flex justify-center">
-               <Pagination 
-                  currentPage={page}
-                  totalPages={data?.metadata?.numberOfPages || 1}
-                  onPageChange={setPage}
-               />
-            </div>
+          {/* Grid */}
+          {isLoading ? (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {Array(8).fill(0).map((_, i) => (
+                   <div key={i} className="space-y-4">
+                      <Skeleton className="aspect-4/3 rounded-xl" />
+                      <Skeleton className="h-4 w-2/3" />
+                      <Skeleton className="h-4 w-1/3" />
+                   </div>
+                ))}
+             </div>
+          ) : data?.data?.length ? (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {data.data.map((product: Product) => (
+                   <ProductCard key={product._id} product={product} locale={locale} />
+                ))}
+             </div>
+          ) : (
+             <div className="text-center py-24">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                   <Icons.Products className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">No products found</h3>
+                <p className="text-muted-foreground">Try adjusting your search terms.</p>
+             </div>
           )}
+
+          {/* Pagination */}
+           {data?.meta?.pagination && data.meta.pagination.numberOfPages > 1 && (
+             <div className="mt-16 flex justify-center">
+                <Pagination 
+                   pagination={data.meta.pagination}
+                   onPageChange={setPage}
+                />
+             </div>
+           )}
       </div>
     </>
   );

@@ -1,7 +1,6 @@
 'use client';
 
-import { use, useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCarousel, useDeleteCarousel } from '@/hooks/api/useCarousel';
 import { Button } from '@/components/ui/Button';
@@ -19,9 +18,7 @@ import Modal from '@/components/ui/Modal';
 import CarouselForm from '@/components/dashboard/forms/CarouselForm';
 import { useToast } from '@/hooks/useToast';
 
-export default function CarouselPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
-  const router = useRouter();
+export default function CarouselPage() {
   const confirmDialog = useConfirmDialog();
   const getTrans = useTrans();
   const t = useTranslations('carousel');
@@ -32,7 +29,7 @@ export default function CarouselPage({ params }: { params: Promise<{ locale: str
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCarousel, setEditingCarousel] = useState<CarouselType | null>(null);
 
-  const { data, isLoading, refetch } = useCarousel();
+  const { data, isLoading, refetch } = useCarousel({ all_langs: true });
   const deleteMutation = useDeleteCarousel();
 
   const handleOpenModal = useCallback((carousel?: CarouselType) => {
@@ -59,7 +56,7 @@ export default function CarouselPage({ params }: { params: Promise<{ locale: str
         refetch();
       },
     });
-  }, [confirmDialog, deleteMutation, refetch, tCommon, toast]);
+  }, [confirmDialog, deleteMutation, refetch, tCommon, toast, t, getTrans]);
 
   const columns = useMemo(() => [
     {
@@ -140,7 +137,7 @@ export default function CarouselPage({ params }: { params: Promise<{ locale: str
       <EntityDataTable<CarouselType>
         data={data?.data}
         isLoading={isLoading}
-        page={1}
+        pagination={data?.meta?.pagination}
         onPageChange={() => {}}
         columns={columns}
         emptyState={{

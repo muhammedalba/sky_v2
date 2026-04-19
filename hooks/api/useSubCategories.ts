@@ -4,22 +4,27 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useToast } from '@/hooks/useToast';
 
-export function useSubCategories(params?: { page?: number; limit?: number; search?: string }) {
+export function useSubCategories(
+  params?: { page?: number; limit?: number; keywords?: string, all_langs?: boolean },
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['subCategories', params],
     queryFn: async () => {
       const response = await api.supCategories.getAll(params);
-      return response.data;
+      return response;
     },
+    enabled: options?.enabled !== undefined ? options.enabled : true,
   });
 }
 
-export function useSubCategory(id: string) {
+export function useSubCategory(id: string, options?: { all_langs?: boolean }) {
   return useQuery({
-    queryKey: ['subCategories', id],
+    queryKey: ['subCategories', id, options?.all_langs],
     queryFn: async () => {
-      const response = await api.supCategories.getOne(id);
-      return response.data.data;
+      const params = options?.all_langs ? { all_langs: 'true' } : {};
+      const response = await api.supCategories.getOne(id, params);
+      return response.data;
     },
     enabled: !!id,
   });

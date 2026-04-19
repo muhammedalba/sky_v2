@@ -17,24 +17,22 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, locale }: ProductCardProps) {
   const getTrans = useTrans();
-  const hasDiscount = product.priceAfterDiscount && product.priceAfterDiscount < product.price;
+  const minPrice = product.priceRange?.min || 0;
+  const maxPrice = product.priceRange?.max || 0;
+  const hasRange = minPrice !== maxPrice;
+  const stock = product.stockSummary ?? 0;
 
-  const title = getTrans(product.title) || getTrans(product.name) || 'Product';
-  const categoryName = (product.category && typeof product.category === 'object') ? getTrans(product.category.name) : 'Uncategorized';
+  const title = getTrans(product.title) || 'Product';
+  const categoryName = (product.category && typeof product.category === 'object' && 'name' in product.category) ? getTrans(product.category.name) : 'Uncategorized';
 
   return (
     <Link href={`/${locale}/products/${product._id}`} className="group h-full">
       <Card className="h-full border-border/50 overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-background flex flex-col">
         {/* Image Container */}
         <div className="relative aspect-[4/3] bg-secondary/20 overflow-hidden border-b border-border/50">
-           {product.quantity <= 0 && (
+           {stock <= 0 && (
               <div className="absolute top-2 right-2 z-10">
                  <Badge variant="destructive" className="font-bold">Out of Stock</Badge>
-              </div>
-           )}
-           {product.quantity > 0 && hasDiscount && (
-              <div className="absolute top-2 right-2 z-10">
-                 <Badge variant="secondary" className="font-bold bg-green-500/10 text-green-600 border-none">Sale</Badge>
               </div>
            )}
            
@@ -63,13 +61,8 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
            </h3>
            <div className="mt-auto pt-2 flex items-baseline gap-2">
               <span className="text-lg font-black text-foreground">
-                 {formatCurrency(hasDiscount ? product.priceAfterDiscount! : product.price)}
+                 {hasRange ? `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}` : formatCurrency(minPrice)}
               </span>
-              {hasDiscount && (
-                 <span className="text-sm text-muted-foreground line-through decoration-red-500/50">
-                    {formatCurrency(product.price)}
-                 </span>
-              )}
            </div>
         </CardContent>
       </Card>

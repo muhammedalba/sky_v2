@@ -8,15 +8,8 @@ import { Input } from '@/components/ui/Input';
 import { useCreatePromoBanner, useUpdatePromoBanner } from '@/hooks/api/usePromoBanner';
 import { PromoBanner } from '@/types';
 import { useTranslations } from 'next-intl';
+import { PromoBannerFormValues, promoBannerSchema } from '@/lib/validations/schemas';
 
-const promoBannerSchema = z.object({
-  textEn: z.string().min(5, 'English text is required (min 5 characters)'),
-  textAr: z.string().min(5, 'Arabic text is required (min 5 characters)'),
-  link: z.string().url().optional().or(z.literal('')),
-  isActive: z.boolean(),
-});
-
-type PromoBannerFormValues = z.infer<typeof promoBannerSchema>;
 
 interface PromoBannerFormProps {
   editingPromoBanner: PromoBanner | null;

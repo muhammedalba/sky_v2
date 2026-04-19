@@ -5,22 +5,27 @@ import { api } from '@/lib/api';
 
 import { useToast } from '@/hooks/useToast';
 
-export function useBrands(params?: { page?: number; limit?: number; search?: string }) {
+export function useBrands(
+  params?: { page?: number; limit?: number; keywords?: string, all_langs?: boolean },
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['brands', params],
     queryFn: async () => {
       const response = await api.brands.getAll(params);
-      return response.data;
+      return response;
     },
+    enabled: options?.enabled !== undefined ? options.enabled : true,
   });
 }
 
-export function useBrand(id: string) {
+export function useBrand(id: string, options?: { all_langs?: boolean }) {
   return useQuery({
-    queryKey: ['brands', id],
+    queryKey: ['brands', id, options?.all_langs],
     queryFn: async () => {
-      const response = await api.brands.getOne(id);
-      return response.data.data;
+      const params = options?.all_langs ? { all_langs: 'true' } : {};
+      const response = await api.brands.getOne(id, params);
+      return response.data;
     },
     enabled: !!id,
   });
@@ -41,6 +46,7 @@ export function useCreateBrand() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to create brand');
+      console.log(error.message);
     },
   });
 }

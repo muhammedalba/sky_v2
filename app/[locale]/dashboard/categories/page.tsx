@@ -20,7 +20,7 @@ import EntitySearchBar from '@/components/dashboard/EntitySearchBar';
 export default function CategoriesPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const { data, isLoading, refetch } = useCategories({ page, limit: 10, search });
+  const { data, isLoading, refetch } = useCategories({ page, limit: 10, keywords: search, all_langs: true });
   const getTrans = useTrans();
   const t = useTranslations('categories');
   const tMessages = useTranslations('messages');
@@ -31,6 +31,7 @@ export default function CategoriesPage() {
   const confirmDialog = useConfirmDialog();
   const toast = useToast();
 
+  console.log('category data ', data);
   const handleOpenModal = useCallback((category?: Category) => {
     if (category) {
       setEditingCategory(category);
@@ -63,11 +64,11 @@ export default function CategoriesPage() {
       className: "w-[100px] pl-6",
       render: (category: Category) => (
         <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-muted/60 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative ">
-          <ImageWithFallback 
-            src={category.image || ''} 
-            alt={getTrans(category.name)} 
+          <ImageWithFallback
+            src={category.image || ''}
+            alt={getTrans(category.name)}
             fill
-            className="object-contain p-2 group-hover:scale-110 transition-transform duration-500" 
+            className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
           />
         </div>
       )
@@ -88,11 +89,11 @@ export default function CategoriesPage() {
     //     </Badge>
     //   )
     // },
-        {
+    {
       header: t('fields.subCategoriesCount'),
       render: (category: Category) => (
         <Badge variant="secondary" className="rounded-xl font-bold px-3 py-1 bg-muted/40 border-none group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-          {category.supCategories?.length || category.subCategoriesCount|| 0} Sub Categories
+          {category.supCategories?.length || category.subCategoriesCount || 0} Sub Categories
         </Badge>
       )
     },
@@ -127,7 +128,7 @@ export default function CategoriesPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
-      <EntityPageHeader 
+      <EntityPageHeader
         title={t('title')}
         subtitle={t('subtitle')}
         action={{
@@ -136,9 +137,9 @@ export default function CategoriesPage() {
           onClick: () => handleOpenModal()
         }}
       />
-      
+
       {/* Search */}
-      <EntitySearchBar 
+      <EntitySearchBar
         placeholder={t('searchPlaceholder') || 'Search categories...'}
         onSearch={(value) => {
           setSearch(value);
@@ -150,7 +151,7 @@ export default function CategoriesPage() {
       <EntityDataTable<Category>
         data={data?.data}
         isLoading={isLoading}
-        pagination={data?.pagination}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={columns}
         emptyState={{
@@ -160,7 +161,7 @@ export default function CategoriesPage() {
         }}
       />
       {/* Table end */}
-      
+
       {/* Modal start */}
       <Modal
         isOpen={isModalOpen}
@@ -168,13 +169,13 @@ export default function CategoriesPage() {
         title={editingCategory ? t('editCategory') : t('createCategory')}
         description="Organize your store by creating meaningful categories."
       >
-        <CategoryForm 
-          editingCategory={editingCategory} 
+        <CategoryForm
+          editingCategory={editingCategory}
           onSuccess={() => {
             refetch();
             handleCloseModal();
-          }} 
-          onCancel={handleCloseModal} 
+          }}
+          onCancel={handleCloseModal}
         />
       </Modal>
       {/* Confirm Dialog start */}

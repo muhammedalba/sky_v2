@@ -6,13 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useCoupons, useDeleteCoupon } from '@/hooks/api/useCoupons';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
 import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Badge } from '@/components/ui/Badge';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Pagination from '@/components/ui/Pagination';
 import { Icons } from '@/components/ui/Icons';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { formatDate, debounce } from '@/lib/utils';
 import { Coupon } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
@@ -25,7 +21,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
 
-  const { data, isLoading, refetch } = useCoupons({ page, limit: 10, search });
+  const { data, isLoading, refetch } = useCoupons({ page, limit: 10, keywords: search });
   const deleteMutation = useDeleteCoupon();
 
   const handleSearch = debounce((value: string) => {
@@ -77,8 +73,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
       <EntityDataTable<Coupon>
         data={data?.data}
         isLoading={isLoading}
-        metadata={data?.metadata}
-        page={page}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={[
           {

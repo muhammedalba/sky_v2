@@ -5,22 +5,23 @@ import { api } from '@/lib/api';
 
 import { useToast } from '@/hooks/useToast';
 
-export function useCarousel(params?: { page?: number; limit?: number }) {
+export function useCarousel(params?: { page?: number; limit?: number,keywords?:string, all_langs?: boolean }) {
   return useQuery({
     queryKey: ['carousel', params],
     queryFn: async () => {
       const response = await api.carousel.getAll(params);
-      return response.data;
+      return response;
     },
   });
 }
 
-export function useCarouselItem(id: string) {
+export function useCarouselItem(id: string, options?: { all_langs?: boolean }) {
   return useQuery({
-    queryKey: ['carousel', id],
+    queryKey: ['carousel', id, options?.all_langs],
     queryFn: async () => {
-      const response = await api.carousel.getOne(id);
-      return response.data.data;
+      const params = options?.all_langs ? { all_langs: 'true' } : {};
+      const response = await api.carousel.getOne(id, params);
+      return response.data;
     },
     enabled: !!id,
   });

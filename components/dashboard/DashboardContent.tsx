@@ -203,8 +203,8 @@ export default function DashboardContent() {
                         <p className="text-xs text-muted-foreground truncate">{typeof product.category === 'object' ? (typeof product.category.name === 'string' ? product.category.name : product.category.name?.en) : ''}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-black text-sm">{formatCurrency(product.price)}</p>
-                        <p className="text-[10px] text-green-600 font-bold uppercase">{product.sold || 0} Sold</p>
+                        <p className="font-black text-sm">{formatCurrency(product.priceRange?.min || 0)}</p>
+                        <p className="text-[10px] text-green-600 font-bold uppercase">{(product as unknown as { sold?: number }).sold || 0} Sold</p>
                       </div>
                     </div>
                   ))

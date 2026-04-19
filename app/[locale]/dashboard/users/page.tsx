@@ -4,19 +4,24 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useUsers } from '@/hooks/api/useUsers';
 import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { Icons } from '@/components/ui/Icons';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
 
 import { cn, formatDate } from '@/lib/utils';
 import { User } from '@/types';
 
 export default function UsersPage() {
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
   const t = useTranslations('users');
 
-  const { data, isLoading } = useUsers({ page, limit: 10 });
+  const { data, isLoading } = useUsers({ page, limit: 10, keywords: search });
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
 
   const getRoleBadgeVariant = (role: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (role) {
@@ -33,7 +38,7 @@ export default function UsersPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('title')}
           </h1>
           <p className="text-muted-foreground text-sm font-medium">
@@ -42,11 +47,21 @@ export default function UsersPage() {
         </div>
       </div>
 
+      <div className="flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl">
+        <div className="relative flex-1 group">
+           <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+           <Input
+             placeholder="Search users by name or email..."
+             className="pl-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
+             onChange={(e) => handleSearch(e.target.value)}
+           />
+        </div>
+      </div>
+
       <EntityDataTable<User>
         data={data?.data}
         isLoading={isLoading}
-        metadata={data?.metadata}
-        page={page}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={[
           {
@@ -54,7 +69,7 @@ export default function UsersPage() {
             className: "pl-6",
             render: (user: User) => (
               <div className="flex items-center gap-3 py-1">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg ring-1 ring-primary/20 shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/80 text-white flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex flex-col gap-0.5">

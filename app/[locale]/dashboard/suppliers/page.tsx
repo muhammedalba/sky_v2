@@ -7,10 +7,8 @@ import { useRouter } from 'next/navigation';
 import { useSuppliers, useDeleteSupplier } from '@/hooks/api/useSuppliers';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
 import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Icons } from '@/components/ui/Icons';
-import { Skeleton } from '@/components/ui/Skeleton';
 import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
 
 import { debounce } from '@/lib/utils';
@@ -25,7 +23,7 @@ export default function SuppliersPage({ params }: { params: Promise<{ locale: st
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
 
-  const { data, isLoading, refetch } = useSuppliers({ page, limit: 10, search });
+  const { data, isLoading, refetch } = useSuppliers({ page, limit: 10, keywords: search });
   const deleteMutation = useDeleteSupplier();
 
   const handleSearch = debounce((value: string) => {
@@ -77,8 +75,7 @@ export default function SuppliersPage({ params }: { params: Promise<{ locale: st
       <EntityDataTable<Supplier>
         data={data?.data}
         isLoading={isLoading}
-        metadata={data?.metadata}
-        page={page}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={[
           {

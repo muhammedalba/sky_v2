@@ -1,23 +1,16 @@
 'use client';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useCreateBrand, useUpdateBrand } from '@/hooks/api/useBrands';
 import { useState } from 'react';
-import ImageUpload from '@/components/ui/form/ImageUpload';
 import { Brand } from '@/types';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { Icons } from '@/components/ui/Icons';
+import { BrandFormValues, brandSchema } from '@/lib/validations/schemas';
 
-const brandSchema = z.object({
-  nameEn: z.string().min(2, 'English name is required'),
-  nameAr: z.string().min(2, 'Arabic name is required'),
-  image: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-});
-
-type BrandFormValues = z.infer<typeof brandSchema>;
 
 interface BrandFormProps {
   editingBrand: Brand | null;
@@ -31,32 +24,29 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
   const createMutation = useCreateBrand();
   const updateMutation = useUpdateBrand();
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(editingBrand?.image||null);
+console.log(editingBrand);
 
   const {
     register,
     handleSubmit,
-    setValue,
-    getValues,
     formState: { errors }
   } = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
-      nameEn: (editingBrand?.name && typeof editingBrand.name === 'object') ? (editingBrand.name as { en?: string }).en || '' : (typeof editingBrand?.name === 'string' ? editingBrand.name : ''),
-      nameAr: (editingBrand?.name && typeof editingBrand.name === 'object') ? (editingBrand.name as { ar?: string }).ar || '' : '',
+      name: {
+        en: editingBrand ? (typeof editingBrand.name === 'string' ? editingBrand.name : editingBrand.name?.en || '') : '',
+        ar: editingBrand ? (typeof editingBrand.name === 'string' ? editingBrand.name : editingBrand.name?.ar || '') : '',
+      },
       image: editingBrand?.image || '',
     },
   });
 
   const onSubmit = async (data: BrandFormValues) => {
     const formData = new FormData();
-    
-    // Send name as nested object with ar/en
-    const nameObject = {
-      en: data.nameEn,
-      ar: data.nameAr,
-    };
-    formData.append('name', JSON.stringify(nameObject));
-    
+    formData.append('name[en]', data.name.en);
+    formData.append('name[ar]', data.name.ar);
+
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -80,13 +70,13 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
           <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
             {t('fields.name')} (English)
           </label>
-          <Input 
-            {...register('nameEn')} 
-            placeholder="e.g. Apple" 
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameEn ? 'ring-2 ring-red-500' : ''}`}
+          <Input
+            {...register('name.en')}
+            placeholder="e.g. Apple"
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.en ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.nameEn && (
-            <p className="text-red-500 text-xs mt-1">{errors.nameEn.message}</p>
+          {errors.name?.en && (
+            <p className="text-red-500 text-xs mt-1">{errors.name?.en.message}</p>
           )}
         </div>
 
@@ -94,14 +84,14 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
           <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
             {t('fields.name')} (Arabic)
           </label>
-          <Input 
-            {...register('nameAr')} 
-            placeholder="مثال: أبل" 
-            dir="rtl" 
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.nameAr ? 'ring-2 ring-red-500' : ''}`}
+          <Input
+            {...register('name.ar')}
+            placeholder="مثال: أبل"
+            dir="rtl"
+            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.ar ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.nameAr && (
-            <p className="text-red-500 text-xs mt-1">{errors.nameAr.message}</p>
+          {errors.name?.ar && (
+            <p className="text-red-500 text-xs mt-1">{errors.name?.ar.message}</p>
           )}
         </div>
       </div>
@@ -110,33 +100,58 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
         <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
           {t('fields.image')}
         </label>
-        <ImageUpload
-          value={imageFile ? URL.createObjectURL(imageFile) : ((getValues('image') && typeof getValues('image') === 'string') ? getValues('image') as string : '')}
-          onChange={(file) => setImageFile(file)}
-          onRemove={() => {
-            setImageFile(null);
-            setValue('image', '');
-          }}
-          className="bg-secondary/10 p-4 rounded-2xl border-none"
-        />
+        <div className="space-y-3">
+          <Input
+            type="file"
+            accept="image/*"
+            className="h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setImageFile(file);
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setImagePreview(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+           
+          />
+          {(imagePreview )&& (
+            <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-border/40 shadow-md">
+              <Image width={50}  height={50} src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => {
+                  setImagePreview(null);
+                  setImageFile(null);
+                }}
+                className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors shadow-lg"
+              >
+                <Icons.X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-3 pt-4">
-          <Button
-            className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
-            type="submit"
-            isLoading={createMutation.isPending || updateMutation.isPending}
-          >
-            {tCommon('save')}
-          </Button>
-          <Button 
-              type="button" 
-              variant="outline" 
-              className="h-12 rounded-xl px-6 font-bold" 
-              onClick={onCancel}
-          >
-            {tCommon('cancel')}
-          </Button>
+        <Button
+          className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
+          type="submit"
+          isLoading={createMutation.isPending || updateMutation.isPending}
+        >
+          {tCommon('save')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-12 rounded-xl px-6 font-bold"
+          onClick={onCancel}
+        >
+          {tCommon('cancel')}
+        </Button>
       </div>
     </form>
   );

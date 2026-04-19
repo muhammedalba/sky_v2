@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
-export function useOrders(params?: { page?: number; limit?: number; status?: string }) {
+export function useOrders(params?: { page?: number; limit?: number; status?: string,keywords?:string }) {
   return useQuery({
     queryKey: ['orders', params],
     queryFn: async () => {
@@ -18,7 +18,7 @@ export function useOrder(id: string) {
     queryKey: ['orders', id],
     queryFn: async () => {
       const response = await api.orders.getOne(id);
-      return response.data.data;
+      return response.data;
     },
     enabled: !!id,
   });

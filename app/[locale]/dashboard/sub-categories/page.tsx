@@ -1,14 +1,13 @@
 'use client';
 
-import { use, useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo, useCallback } from 'react';
 import { useSubCategories, useDeleteSubCategory } from '@/hooks/api/useSubCategories';
 import { Button } from '@/components/ui/Button';
 import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icons';
 import { useTrans } from '@/hooks/useTrans';
-import { SubCategory, Category } from '@/types';
+import { SubCategory } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { useTranslations } from 'next-intl';
@@ -18,11 +17,9 @@ import Modal from '@/components/ui/Modal';
 import SubCategoryForm from '@/components/dashboard/forms/SubCategoryForm';
 import { useToast } from '@/hooks/useToast';
 
-export default function SubCategoriesPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
+export default function SubCategoriesPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const router = useRouter();
   const getTrans = useTrans();
   const confirmDialog = useConfirmDialog();
   const t = useTranslations('subCategories');
@@ -33,7 +30,7 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubCategory, setEditingSubCategory] = useState<SubCategory | null>(null);
 
-  const { data, isLoading, refetch } = useSubCategories({ page, limit: 10, search });
+  const { data, isLoading, refetch } = useSubCategories({ page, limit: 10, keywords: search, all_langs: true });
   const deleteMutation = useDeleteSubCategory();
 
   const handleSearch = useCallback((value: string) => {
@@ -81,7 +78,7 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
       header: "Parent Category",
       render: (sub: SubCategory) => (
         <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-          {sub.category && typeof sub.category === 'object' ? getTrans((sub.category as Category).name) : sub.category || '-'}
+          {getTrans(sub.category.name)}
         </Badge>
       )
     },
@@ -114,7 +111,7 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <EntityPageHeader 
+      <EntityPageHeader
         title={t('title') || 'Sub Categories'}
         subtitle={t('subtitle')}
         action={{
@@ -124,7 +121,7 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
         }}
       />
 
-      <EntitySearchBar 
+      <EntitySearchBar
         placeholder={t('searchPlaceholder')}
         onSearch={handleSearch}
       />
@@ -132,7 +129,7 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
       <EntityDataTable<SubCategory>
         data={data?.data}
         isLoading={isLoading}
-        pagination={data?.pagination}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={columns}
         emptyState={{
@@ -149,13 +146,13 @@ export default function SubCategoriesPage({ params }: { params: Promise<{ locale
         title={editingSubCategory ? 'Edit Sub-Category' : 'Create Sub-Category'}
         description="Establish relationships between products and categories."
       >
-        <SubCategoryForm 
-          editingSubCategory={editingSubCategory} 
+        <SubCategoryForm
+          editingSubCategory={editingSubCategory}
           onSuccess={() => {
             refetch();
             handleCloseModal();
-          }} 
-          onCancel={handleCloseModal} 
+          }}
+          onCancel={handleCloseModal}
         />
       </Modal>
 

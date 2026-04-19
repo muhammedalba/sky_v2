@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/Input';
 import { Icons } from '@/components/ui/Icons';
 import { useCreateCategory, useUpdateCategory } from '@/hooks/api/useCategories';
 import { useToast } from '@/hooks/useToast';
+import Image from 'next/image';
 
 interface CategoryFormProps {
   editingCategory: Category | null;
@@ -118,7 +119,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           />
           {(imagePreview )&& (
             <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-border/40 shadow-md">
-              <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+              <Image width={50}  height={50}  src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => {

@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function EditSupplierPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = use(params);
-  const { data: supplier, isLoading } = useSupplier(id);
+  const { data: supplier, isLoading } = useSupplier(id, { allLangs: true });
 
   if (isLoading) return <Skeleton className="h-[400px] w-full max-w-2xl mx-auto rounded-xl" />;
 

@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
-export function useUsers(params?: { page?: number; limit?: number; role?: string }) {
+export function useUsers(params?: { page?: number; limit?: number; role?: string,keywords?:string }) {
   return useQuery({
     queryKey: ['users', params],
     queryFn: async () => {
       const response = await api.users.getAll(params);
-      return response.data;
+      return response;
     },
   });
 }

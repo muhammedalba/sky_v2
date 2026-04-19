@@ -10,16 +10,9 @@ import { useState } from 'react';
 import ImageUpload from '@/components/ui/form/ImageUpload';
 import { Carousel } from '@/types';
 import { useTranslations } from 'next-intl';
+import { CarouselFormValues, carouselSchema } from '@/lib/validations/schemas';
 
-const carouselSchema = z.object({
-  descriptionEn: z.string().optional(),
-  descriptionAr: z.string().optional(),
-  carouselLg: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-  carouselMd: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-  carouselSm: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-});
 
-type CarouselFormValues = z.infer<typeof carouselSchema>;
 
 interface CarouselFormProps {
   editingCarousel: Carousel | null;

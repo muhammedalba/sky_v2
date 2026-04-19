@@ -42,6 +42,7 @@ async function loadLocaleMessages(locale: string) {
     }
 
     return {
+      common,
       auth: common.auth,
       buttons: common.buttons,
       errors: common.errors,

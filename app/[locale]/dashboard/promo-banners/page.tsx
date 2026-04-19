@@ -1,7 +1,6 @@
 'use client';
 
-import { use, useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { usePromoBanners, useDeletePromoBanner } from '@/hooks/api/usePromoBanner';
 import { Button } from '@/components/ui/Button';
@@ -18,9 +17,7 @@ import Modal from '@/components/ui/Modal';
 import PromoBannerForm from '@/components/dashboard/forms/PromoBannerForm';
 import { useToast } from '@/hooks/useToast';
 
-export default function PromoBannersPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
-  const router = useRouter();
+export default function PromoBannersPage() {
   const confirmDialog = useConfirmDialog();
   const getTrans = useTrans();
   const t = useTranslations('promoBanners');
@@ -31,7 +28,7 @@ export default function PromoBannersPage({ params }: { params: Promise<{ locale:
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<PromoBanner | null>(null);
 
-  const { data, isLoading, refetch } = usePromoBanners();
+  const { data, isLoading, refetch } = usePromoBanners({ all_langs: true });
   const deleteMutation = useDeletePromoBanner();
 
   const handleOpenModal = useCallback((banner?: PromoBanner) => {
@@ -125,7 +122,7 @@ export default function PromoBannersPage({ params }: { params: Promise<{ locale:
       <EntityDataTable<PromoBanner>
         data={data?.data}
         isLoading={isLoading}
-        page={1}
+        pagination={data?.meta?.pagination}
         onPageChange={() => {}}
         columns={columns}
         emptyState={{

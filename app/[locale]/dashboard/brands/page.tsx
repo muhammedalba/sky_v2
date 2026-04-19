@@ -1,10 +1,8 @@
 'use client';
-import { use, useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useBrands, useDeleteBrand } from '@/hooks/api/useBrands';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Icons } from '@/components/ui/Icons';
 import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
@@ -17,19 +15,17 @@ import BrandForm from '@/components/dashboard/forms/BrandForm';
 import { useTrans } from '@/hooks/useTrans';
 import { Brand } from '@/types';
 
-export default function BrandsPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
+export default function BrandsPage() {
   const t = useTranslations('brands');
   const tCommon = useTranslations('messages');
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const router = useRouter();
   const getTrans = useTrans();
   const confirmDialog = useConfirmDialog();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
 
-  const { data, isLoading, refetch } = useBrands({ page, limit: 10, search });
+  const { data, isLoading, refetch } = useBrands({ page, limit: 10, keywords: search,all_langs:true});
   const deleteMutation = useDeleteBrand();
 
   const handleSearch = useCallback((value: string) => {
@@ -68,11 +64,11 @@ export default function BrandsPage({ params }: { params: Promise<{ locale: strin
       className: "w-[100px] pl-6",
       render: (brand: Brand) => (
         <div className="h-14 w-14 rounded-2xl bg-muted/60 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
-          <ImageWithFallback 
-            src={brand.image || ''} 
-            alt={getTrans(brand.name)} 
+          <ImageWithFallback
+            src={brand.image || ''}
+            alt={getTrans(brand.name)}
             fill
-            className="object-contain p-2 group-hover:scale-110 transition-transform duration-500" 
+            className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
           />
         </div>
       )
@@ -115,11 +111,11 @@ export default function BrandsPage({ params }: { params: Promise<{ locale: strin
         </div>
       )
     }
-  ], [getTrans, handleDelete, locale, router, t, deleteMutation.isPending]);
+  ], [t, getTrans, handleOpenModal, handleDelete, deleteMutation.isPending]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <EntityPageHeader 
+      <EntityPageHeader
         title={t('title')}
         subtitle={t('subtitle')}
         action={{
@@ -129,7 +125,7 @@ export default function BrandsPage({ params }: { params: Promise<{ locale: strin
         }}
       />
 
-      <EntitySearchBar 
+      <EntitySearchBar
         placeholder={t('searchPlaceholder')}
         onSearch={handleSearch}
       />
@@ -137,7 +133,7 @@ export default function BrandsPage({ params }: { params: Promise<{ locale: strin
       <EntityDataTable<Brand>
         data={data?.data}
         isLoading={isLoading}
-        pagination={data?.pagination}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={columns}
         emptyState={{
@@ -154,13 +150,13 @@ export default function BrandsPage({ params }: { params: Promise<{ locale: strin
         title={editingBrand ? t('editBrand') : t('createBrand')}
         description="Organize your store by creating meaningful product brands."
       >
-        <BrandForm 
-          editingBrand={editingBrand} 
+        <BrandForm
+          editingBrand={editingBrand}
           onSuccess={() => {
             refetch();
             handleCloseModal();
-          }} 
-          onCancel={handleCloseModal} 
+          }}
+          onCancel={handleCloseModal}
         />
       </Modal>
 

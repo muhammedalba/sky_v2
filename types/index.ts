@@ -9,39 +9,70 @@ export interface User {
   avatar?: string;
   phone?: string;
   active?: boolean;
-  createdAt?: string;
   updatedAt?: string;
+}
+
+export interface ProductVariant {
+  _id: string;
+  productId: string | Product;
+  sku: string;
+  barcode?: string;
+  price: number;
+  priceAfterDiscount?: number;
+  stock: number;
+  sold?: number;
+  attributes: Record<string, unknown>;
+  components?: Record<string, unknown>[];
+  label?: string;
+  image?: string;
+  isActive: boolean;
 }
 
 export interface Product {
   _id: string;
   id?: string;
   title: LocalizedString;
-  name?: LocalizedString; // Fallback alias
+  slug?: string;
   sku?: string;
   description: LocalizedString;
-  quantity: number;
-  sold?: number;
-  price: number;
-  priceAfterDiscount?: number;
-  colors?: string[];
+  stockSummary?: number;
+  variantCount?: number;
+  priceRange?: {
+    min: number;
+    max: number;
+  };
+  allowedAttributes?: {
+    name: string;
+    type: 'string' | 'number';
+    required?: boolean;
+    allowedUnits?: string[];
+    allowedValues?: string[];
+  }[];
+  variants?: ProductVariant[];
   imageCover?: string;
   images?: string[];
   category: Category | string;
-  subcategories?: (Category | string)[];
+  supCategories?: Category[]; 
   brand?: Brand | string;
+  supplier?: Supplier | string;
+  isUnlimitedStock?: boolean;
+  disabled?: boolean;
+  isFeatured?: boolean;
+  comparePrice?: number;
+  manual?: string;
+  infoProductPdf?: string;
   ratingsAverage?: number;
   ratingsQuantity?: number;
+  isDeleted?: boolean;
+  deletedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
-  comparePrice?: number; // Added to match frontend usage if API returns it
 }
 
 export interface Category {
   _id: string;
   id?: string;
   name: LocalizedString;
-  description?: string;
   slug?: string;
   image?: string;
   productsCount?: number;
@@ -49,6 +80,7 @@ export interface Category {
   supCategories?: Category[];
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: unknown;
 }
 
 export interface Order {
@@ -115,6 +147,7 @@ export interface Brand {
   image?: string;
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: unknown;
 }
 
 export interface Supplier {
@@ -123,10 +156,13 @@ export interface Supplier {
   email: string;
   phone: string;
   address: string;
-  description?: string;
+  contactName: string;
+  website: URL;
   avatar?: string;
+  active: boolean;
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: unknown;
 }
 
 export interface Coupon {
@@ -170,28 +206,37 @@ export interface PaginationMeta {
   prevPage?: number;
 }
 
-export interface ApiResponse<T> {
-  results?: number;
-  metadata?: PaginationMeta;
-  pagination?: PaginationMeta;
-  data: T;
-  status?: string;
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  statusCode: number;
   message?: string;
+  data: T;
+  meta?: {
+    total?: number;
+    pagination?: PaginationMeta;
+    [key: string]: unknown;
+  };
+  errors?: string[];
+  timestamp?: string;
+  path?: string;
   access_token?: string;
 }
 
 export interface ApiError {
-  status?: string;
+  success: false;
+  statusCode: number;
   message: string;
-  error?: unknown;
-  stack?: string;
+  errors?: string[];
+  timestamp: string;
+  path: string;
 }
 
 export interface SubCategory {
   _id: string;
   name: LocalizedString;
-  category: Category | string;
+  category: Category;
   slug?: string;
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: unknown;
 }

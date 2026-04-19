@@ -2,32 +2,21 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { useCreateCoupon, useUpdateCoupon } from '@/hooks/api/useCoupons';
-import { useRouter } from 'next/navigation';
 import { Coupon } from '@/types';
+import { CouponFormValues, couponSchema } from '@/lib/validations/schemas';
 
-
-const couponSchema = z.object({
-  name: z.string().min(3, 'Coupon code is required (min 3 characters)'),
-  discount: z.number().min(1, 'Discount must be at least 1'),
-  type: z.enum(['percentage', 'fixed']),
-  limit: z.number().optional(),
-  expires: z.string().optional(),
-});
-
-type CouponFormValues = z.infer<typeof couponSchema>;
 
 interface CouponFormProps {
   initialData?: Coupon;
-  locale: string;
+  onSuccess: () => void;
+  onCancel: () => void;
 }
 
-export default function CouponForm({ initialData, locale }: CouponFormProps) {
-  const router = useRouter();
+export default function CouponForm({ initialData, onSuccess, onCancel }: CouponFormProps) {
   const createMutation = useCreateCoupon();
   const updateMutation = useUpdateCoupon();
 
@@ -49,7 +38,7 @@ export default function CouponForm({ initialData, locale }: CouponFormProps) {
       } else {
         await createMutation.mutateAsync(data);
       }
-      router.push(`/${locale}/dashboard/coupons`);
+      onSuccess();
     } catch (error) {
       console.error(error);
     }
@@ -102,7 +91,7 @@ export default function CouponForm({ initialData, locale }: CouponFormProps) {
         </div>
 
         <div className="flex justify-end gap-4 pt-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
           <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
             {initialData ? 'Update Coupon' : 'Create Coupon'}
           </Button>

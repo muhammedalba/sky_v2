@@ -3,8 +3,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { queryKeys } from '@/lib/api/query-keys';
-import { setAuthToken, setUser, removeAuthToken, setTokens } from '@/lib/auth';
-import { User } from '@/types';
+import { setUser, removeAuthToken, setTokens, getRefreshToken } from '@/lib/auth';
+import { User, ApiResponse } from '@/types';
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -12,20 +12,16 @@ export function useLogin() {
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       const response = await api.auth.login(credentials);
-      return response.data;
+      console.log('login response', response);
+      return response;
     },
-    onSuccess: (data: { 
-      access_token?: string;
-      status?: string;
-      message?: string;
-      data?: User; 
-    }) => {
-      const accessToken = data.access_token;
+    onSuccess: (response: ApiResponse<User>) => {
+      const accessToken = response.access_token;
       if (accessToken) {
-        setAuthToken(accessToken);
+        setTokens(accessToken, getRefreshToken() || '');
       } 
       
-      const userData = data.data;
+      const userData = response.data;
       if (userData && 'role' in userData) {
         setUser(userData as User);
       }
@@ -51,22 +47,16 @@ export function useRegister() {
   return useMutation({
     mutationFn: async (data: FormData) => {
       const response = await api.auth.register(data);
-      return response.data;
+      return response;
     },
-    onSuccess: (data: { 
-      message: string;
-      status: string;
-      data: User; 
-      access_token: string; 
-
-    }) => {
-      const accessToken = data.access_token;
+    onSuccess: (response: ApiResponse<User>) => {
+      const accessToken = response.access_token;
       
       if (accessToken) {
-        setAuthToken(accessToken);
+        setTokens(accessToken, getRefreshToken() || '');
       }
 
-      const userData = data.data;
+      const userData = response.data;
       if (userData && 'role' in userData) {
         setUser(userData as User);
       }
@@ -112,6 +102,7 @@ export function useLogout() {
     onSettled: () => {
       removeAuthToken();
       queryClient.clear();
+      window.location.href = '/en/login';
     },
   });
 }

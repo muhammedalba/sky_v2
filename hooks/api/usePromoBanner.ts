@@ -5,12 +5,12 @@ import { api } from '@/lib/api';
 import { PromoBanner } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
-export function usePromoBanners() {
+export function usePromoBanners(params?: { all_langs?: boolean }) {
   return useQuery({
-    queryKey: ['promoBanners'],
+    queryKey: ['promoBanners', params],
     queryFn: async () => {
-      const response = await api.promoBanner.getBanners();
-      return response.data;
+      const response = await api.promoBanner.getBanners(params);
+      return response;
     },
   });
 }
@@ -25,12 +25,13 @@ export function useActivePromoBanner() {
   });
 }
 
-export function usePromoBanner(id: string) {
+export function usePromoBanner(id: string, options?: { all_langs?: boolean }) {
   return useQuery({
-    queryKey: ['promoBanners', id],
+    queryKey: ['promoBanners', id, options?.all_langs],
     queryFn: async () => {
-      const response = await api.promoBanner.getOne(id);
-      return response.data.data;
+      const params = options?.all_langs ? { all_langs: 'true' } : {};
+      const response = await api.promoBanner.getOne(id, params);
+      return response.data;
     },
     enabled: !!id,
   });

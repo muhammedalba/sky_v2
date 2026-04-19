@@ -5,13 +5,11 @@ import { useTranslations } from 'next-intl';
 import { useOrders } from '@/hooks/api/useOrders';
 import EntityDataTable from '@/components/dashboard/EntityDataTable';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icons';
 import { formatCurrency, formatDate, getStatusColor, cn } from '@/lib/utils';
 import { Order } from '@/types';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function OrdersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);
@@ -24,7 +22,7 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('title')}
           </h1>
           <p className="text-muted-foreground text-sm font-medium">
@@ -40,8 +38,7 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
       <EntityDataTable<Order>
         data={data?.data}
         isLoading={isLoading}
-        metadata={data?.metadata}
-        page={page}
+        pagination={data?.meta?.pagination}
         onPageChange={setPage}
         columns={[
           {
