@@ -1,9 +1,9 @@
 'use client';
 
 import { use } from 'react';
-import CouponForm from '@/components/dashboard/forms/CouponForm';
+import CouponForm from '@/features/marketing/components/dashboard/CouponForm';
 import { useCoupon } from '@/hooks/api/useCoupons';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/shared/ui/Skeleton';
 import { useRouter } from 'next/navigation';
 
 export default function EditCouponPage({ params }: { params: Promise<{ locale: string; id: string }> }) {

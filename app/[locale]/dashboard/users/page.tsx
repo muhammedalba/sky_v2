@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useUsers } from '@/hooks/api/useUsers';
-import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Icons } from '@/components/ui/Icons';
-import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
+import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
+import { Icons } from '@/shared/ui/Icons';
+import { Badge } from '@/shared/ui/Badge';
+import { Input } from '@/shared/ui/Input';
 
 import { cn, formatDate } from '@/lib/utils';
 import { User } from '@/types';

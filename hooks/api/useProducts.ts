@@ -22,7 +22,7 @@ export function useProduct(id: string, options?: { all_langs?: boolean }) {
     queryFn: async () => {
       const params = all_langs ? { all_langs: 'true' } : undefined;
       const response = await api.products.getOne(id, params);
-      return response as unknown as ApiResponse<Product>;
+      return response ;
     },
     enabled: !!id,
   });

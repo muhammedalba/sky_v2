@@ -1,9 +1,9 @@
 'use client';
 
 import { use } from 'react';
-import EditProductForm from '@/components/dashboard/products/EditProductForm';
+import EditProductForm from '@/features/products/components/dashboard/EditProductForm';
 import { useProduct } from '@/hooks/api/useProducts';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/shared/ui/Skeleton';
 import { Product, ProductVariant } from '@/types';
 
 export default function EditProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {

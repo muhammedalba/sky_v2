@@ -1,9 +1,9 @@
 'use client';
 
 import { use } from 'react';
-import PromoBannerForm from '@/components/dashboard/forms/PromoBannerForm';
+import PromoBannerForm from '@/features/marketing/components/dashboard/PromoBannerForm';
 import { usePromoBanner } from '@/hooks/api/usePromoBanner';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/shared/ui/Skeleton';
 import { useRouter } from 'next/navigation';
 
 export default function EditPromoBannerPage({ params }: { params: Promise<{ locale: string; id: string }> }) {

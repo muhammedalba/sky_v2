@@ -4,11 +4,11 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
-import { Card } from '@/components/ui/Card';
-import { Icons } from '@/components/ui/Icons';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { Textarea } from '@/shared/ui/Textarea';
+import { Card } from '@/shared/ui/Card';
+import { Icons } from '@/shared/ui/Icons';
 import { useState } from 'react';
 
 const contactSchema = z.object({

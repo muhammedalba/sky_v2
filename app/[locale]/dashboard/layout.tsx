@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getServerUser, getAuthToken } from '@/lib/auth';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/widgets/layout/DashboardLayout';
 
 export default async function DashboardLayoutWrapper({
   children,

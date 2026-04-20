@@ -5,16 +5,16 @@ import { use, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSuppliers, useDeleteSupplier } from '@/hooks/api/useSuppliers';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Icons } from '@/components/ui/Icons';
-import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
+import { Icons } from '@/shared/ui/Icons';
+import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
 import { debounce } from '@/lib/utils';
 import { Supplier } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 
 export default function SuppliersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

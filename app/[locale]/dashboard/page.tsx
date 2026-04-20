@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next';
-import DashboardContent from '@/components/dashboard/DashboardContent';
+import DashboardContent from '@/shared/ui/dashboard/DashboardContent';
 
 export const metadata: Metadata = {
   title: 'Dashboard | SkyGalaxy Admin',

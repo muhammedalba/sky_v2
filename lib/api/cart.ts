@@ -1,13 +1,1 @@
-import { apiClient } from './client';
-import { env } from '../env';
-
-const ENDPOINTS = env.ENDPOINTS.CART;
-
-export const cartApi = {
-  getCart: () => apiClient.get(ENDPOINTS.BASE),
-  addItem: (data: { productId: string; quantity: number }) => 
-    apiClient.post(ENDPOINTS.ADD, data),
-  removeItem: (productId: string) => 
-    apiClient.delete(`${ENDPOINTS.REMOVE}/${productId}`),
-  clearCart: () => apiClient.delete(ENDPOINTS.CLEAR),
-};
+export * from '@/features/cart/api';

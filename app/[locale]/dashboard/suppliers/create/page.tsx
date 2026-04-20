@@ -1,7 +1,7 @@
 'use client';
 
 import { use } from 'react';
-import SupplierForm from '@/components/dashboard/forms/SupplierForm';
+import SupplierForm from '@/features/suppliers/components/dashboard/SupplierForm';
 
 export default function CreateSupplierPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

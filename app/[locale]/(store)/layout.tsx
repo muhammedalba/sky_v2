@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import StoreNavbar from '@/components/layout/StoreNavbar';
-import StoreFooter from '@/components/layout/StoreFooter';
+import StoreNavbar from '@/widgets/layout/StoreNavbar';
+import StoreFooter from '@/widgets/layout/StoreFooter';
 
 interface StoreLayoutProps {
   children: ReactNode;

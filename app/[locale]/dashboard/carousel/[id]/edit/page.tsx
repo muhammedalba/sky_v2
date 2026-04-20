@@ -1,9 +1,9 @@
 'use client';
 
 import { use } from 'react';
-import CarouselForm from '@/components/dashboard/forms/CarouselForm';
+import CarouselForm from '@/features/marketing/components/dashboard/CarouselForm';
 import { useCarouselItem } from '@/hooks/api/useCarousel';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/shared/ui/Skeleton';
 import { useRouter } from 'next/navigation';
 
 export default function EditCarouselPage({ params }: { params: Promise<{ locale: string; id: string }> }) {

@@ -5,8 +5,8 @@ import { ReactNode } from 'react';
 import { locales } from '@/i18n';
 import { notFound } from 'next/navigation';
 import LocaleProvider from './LocaleProvider';
-import ThemeProvider from '@/components/providers/ThemeProvider';
-import ToastProvider from '@/components/ui/toast/ToastProvider';
+import ThemeProvider from '@/app/providers/ThemeProvider';
+import ToastProvider from '@/shared/ui/toast/ToastProvider';
 import '../globals.css';
 
 

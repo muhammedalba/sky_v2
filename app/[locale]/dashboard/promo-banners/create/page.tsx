@@ -1,7 +1,7 @@
 'use client';
 
 import { use } from 'react';
-import PromoBannerForm from '@/components/dashboard/forms/PromoBannerForm';
+import PromoBannerForm from '@/features/marketing/components/dashboard/PromoBannerForm';
 
 export default function CreatePromoBannerPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

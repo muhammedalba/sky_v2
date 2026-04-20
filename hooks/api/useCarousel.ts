@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 
 import { useToast } from '@/hooks/useToast';
 
-export function useCarousel(params?: { page?: number; limit?: number,keywords?:string, all_langs?: boolean }) {
+export function useCarousel(params?: { page?: number; limit?: number, keywords?: string, all_langs?: boolean }) {
   return useQuery({
     queryKey: ['carousel', params],
     queryFn: async () => {

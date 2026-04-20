@@ -2,20 +2,20 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCategories, useDeleteCategory } from '@/hooks/api/useCategories';
-import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Button } from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import { Icons } from '@/components/ui/Icons';
-import { Badge } from '@/components/ui/Badge';
+import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
+import { Button } from '@/shared/ui/Button';
+import Modal from '@/shared/ui/Modal';
+import { Icons } from '@/shared/ui/Icons';
+import { Badge } from '@/shared/ui/Badge';
 import { Category } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { useTrans } from '@/hooks/useTrans';
 import { useToast } from '@/hooks/useToast';
-import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
-import CategoryForm from '@/components/dashboard/forms/CategoryForm';
-import EntityPageHeader from '@/components/dashboard/EntityPageHeader';
-import EntitySearchBar from '@/components/dashboard/EntitySearchBar';
+import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
+import CategoryForm from '@/features/categories/components/dashboard/CategoryForm';
+import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
+import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 
 export default function CategoriesPage() {
   const [page, setPage] = useState(1);

@@ -1,9 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { Icons } from '@/components/ui/Icons';
-import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
+import { Icons } from '@/shared/ui/Icons';
+import { Button } from '@/shared/ui/Button';
 
 export default function SettingsPage() {
   const t = useTranslations('navigation');

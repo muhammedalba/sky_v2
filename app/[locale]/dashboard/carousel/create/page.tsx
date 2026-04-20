@@ -1,7 +1,7 @@
 'use client';
 
 import { use } from 'react';
-import CarouselForm from '@/components/dashboard/forms/CarouselForm';
+import CarouselForm from '@/features/marketing/components/dashboard/CarouselForm';
 
 export default function CreateCarouselPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

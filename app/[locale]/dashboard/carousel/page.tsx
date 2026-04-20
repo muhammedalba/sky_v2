@@ -3,19 +3,19 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCarousel, useDeleteCarousel } from '@/hooks/api/useCarousel';
-import { Button } from '@/components/ui/Button';
-import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Badge } from '@/components/ui/Badge';
-import { Icons } from '@/components/ui/Icons';
-import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
+import { Button } from '@/shared/ui/Button';
+import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
+import { Badge } from '@/shared/ui/Badge';
+import { Icons } from '@/shared/ui/Icons';
+import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { Carousel as CarouselType } from '@/types';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { useTrans } from '@/hooks/useTrans';
-import EntityPageHeader from '@/components/dashboard/EntityPageHeader';
-import EntitySearchBar from '@/components/dashboard/EntitySearchBar';
-import Modal from '@/components/ui/Modal';
-import CarouselForm from '@/components/dashboard/forms/CarouselForm';
+import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
+import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
+import Modal from '@/shared/ui/Modal';
+import CarouselForm from '@/features/marketing/components/dashboard/CarouselForm';
 import { useToast } from '@/hooks/useToast';
 
 export default function CarouselPage() {

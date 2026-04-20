@@ -2,16 +2,16 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useBrands, useDeleteBrand } from '@/hooks/api/useBrands';
-import { Button } from '@/components/ui/Button';
-import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Icons } from '@/components/ui/Icons';
-import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
+import { Button } from '@/shared/ui/Button';
+import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
+import { Icons } from '@/shared/ui/Icons';
+import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
-import EntityPageHeader from '@/components/dashboard/EntityPageHeader';
-import EntitySearchBar from '@/components/dashboard/EntitySearchBar';
-import Modal from '@/components/ui/Modal';
-import BrandForm from '@/components/dashboard/forms/BrandForm';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog';
+import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
+import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
+import Modal from '@/shared/ui/Modal';
+import BrandForm from '@/features/brands/components/dashboard/BrandForm';
 import { useTrans } from '@/hooks/useTrans';
 import { Brand } from '@/types';
 

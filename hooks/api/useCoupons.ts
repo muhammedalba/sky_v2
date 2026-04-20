@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Coupon } from '@/types';
+import { Coupon, ApiResponse } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 export function useCoupons(params?: { page?: number; limit?: number; keywords?: string }) {
@@ -10,7 +10,7 @@ export function useCoupons(params?: { page?: number; limit?: number; keywords?: 
     queryKey: ['coupons', params],
     queryFn: async () => {
       const response = await api.coupons.getAll(params);
-      return response.data;
+      return response as unknown as ApiResponse<Coupon[]>;
     },
   });
 }

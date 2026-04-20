@@ -1,7 +1,7 @@
 'use client';
 
 import { use } from 'react';
-import CouponForm from '@/components/dashboard/forms/CouponForm';
+import CouponForm from '@/features/marketing/components/dashboard/CouponForm';
 
 export default function CreateCouponPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

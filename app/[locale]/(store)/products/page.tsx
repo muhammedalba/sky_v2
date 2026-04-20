@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { useLocale } from 'next-intl';
-import ProductCard from '@/components/store/ProductCard';
-import { Input } from '@/components/ui/Input';
-import { Icons } from '@/components/ui/Icons';
-import { Skeleton } from '@/components/ui/Skeleton';
-import Pagination from '@/components/ui/Pagination';
+import ProductCard from '@/features/products/components/storefront/ProductCard';
+import { Input } from '@/shared/ui/Input';
+import { Icons } from '@/shared/ui/Icons';
+import { Skeleton } from '@/shared/ui/Skeleton';
+import Pagination from '@/shared/ui/Pagination';
 import { useProducts } from '@/hooks/api/useProducts';
 import { debounce } from '@/lib/utils';
 import { Product } from '@/types';

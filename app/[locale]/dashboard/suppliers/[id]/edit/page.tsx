@@ -1,9 +1,9 @@
 'use client';
 
 import { use } from 'react';
-import SupplierForm from '@/components/dashboard/forms/SupplierForm';
+import SupplierForm from '@/features/suppliers/components/dashboard/SupplierForm';
 import { useSupplier } from '@/hooks/api/useSuppliers';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/shared/ui/Skeleton';
 
 export default function EditSupplierPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = use(params);

@@ -3,10 +3,10 @@
 import { use, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useOrders } from '@/hooks/api/useOrders';
-import EntityDataTable from '@/components/dashboard/EntityDataTable';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Icons } from '@/components/ui/Icons';
+import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
+import { Button } from '@/shared/ui/Button';
+import { Badge } from '@/shared/ui/Badge';
+import { Icons } from '@/shared/ui/Icons';
 import { formatCurrency, formatDate, getStatusColor, cn } from '@/lib/utils';
 import { Order } from '@/types';
 import Link from 'next/link';

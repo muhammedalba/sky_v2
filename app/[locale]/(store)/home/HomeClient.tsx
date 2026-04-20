@@ -2,9 +2,9 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/navigation';
-import { Icons } from '@/components/ui/Icons';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Icons } from '@/shared/ui/Icons';
+import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 
 export default function HomeClient() {
   const t = useTranslations('home');

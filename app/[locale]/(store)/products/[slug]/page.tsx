@@ -2,13 +2,13 @@
 
 import { useState, use } from 'react';
 import { useProduct } from '@/hooks/api/useProducts';
-import StoreLayout from '@/components/layout/StoreLayout';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { Icons } from '@/components/ui/Icons';
+import StoreLayout from '@/widgets/layout/StoreLayout';
+import { Button } from '@/shared/ui/Button';
+import { Badge } from '@/shared/ui/Badge';
+import { Skeleton } from '@/shared/ui/Skeleton';
+import { Icons } from '@/shared/ui/Icons';
 import { formatCurrency } from '@/lib/utils';
-import ImageWithFallback from '@/components/ui/image/ImageWithFallback';
+import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { Product } from '@/types';
 
 import { useTrans } from '@/hooks/useTrans';

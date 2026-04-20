@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Category } from '@/types';
+import { Category, ApiResponse } from '@/types';
 import { useToast } from '../useToast';
 
 export function useCategories(

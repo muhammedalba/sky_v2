@@ -1,9 +1,9 @@
 'use client';
 
 import { useMe } from '@/hooks/api/useAuth';
-import ProfileForm from '@/components/dashboard/forms/ProfileForm';
-import { Skeleton } from '@/components/ui/Skeleton';
-import ErrorMessage from '@/components/ui/ErrorMessage';
+import ProfileForm from '@/features/users/components/dashboard/ProfileForm';
+import { Skeleton } from '@/shared/ui/Skeleton';
+import ErrorMessage from '@/shared/ui/ErrorMessage';
 import { useTranslations } from 'next-intl';
 
 export default function ProfilePage() {
