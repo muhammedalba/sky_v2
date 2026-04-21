@@ -25,6 +25,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
   const navigation: { name: string; href: string; icon: keyof typeof Icons; color: string }[] = [
     { name: t('dashboard'), href: `/${l}/dashboard`, icon: 'Dashboard' ,color: 'blue' },
     { name: t('products'), href: `/${l}/dashboard/products`, icon: 'Products', color: 'emerald' },
+    { name: t('productAnalytics'), href: `/${l}/dashboard/products/statistics`, icon: 'BarChart' ,color: 'indigo' },
     { name: t('categories'), href: `/${l}/dashboard/categories`, icon: 'Categories', color: 'orange' },
     { name: t('subCategories'), href: `/${l}/dashboard/sub-categories`, icon: 'SubCategories', color: 'amber' },
     { name: t('brands'), href: `/${l}/dashboard/brands`, icon: 'Brands', color: 'purple' },

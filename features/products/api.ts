@@ -1,6 +1,7 @@
-import { apiClient } from '@/lib/api';
+import { apiClient } from '@/lib/api/client';
 import { env } from '@/lib/env';
 import { ApiResponse, Product } from '@/types';
+import { ProductStatisticsData } from './statistics.types';
 
 const ENDPOINTS = env.ENDPOINTS.PRODUCTS;
 
@@ -19,5 +20,6 @@ export const productsApi = {
   delete: (id: string) => apiClient.delete(ENDPOINTS.BASE + '/' + id),
   restore: (id: string) => apiClient.patch(ENDPOINTS.BASE + '/' + id + '/restore'),
   hardDelete: (id: string) => apiClient.delete(ENDPOINTS.BASE + '/' + id + '/permanent'),
-  getStats: () => apiClient.get(ENDPOINTS.STATS),
+  getStats: (params?: { startDate?: string; endDate?: string }) => 
+    apiClient.get<ApiResponse<ProductStatisticsData>>(ENDPOINTS.STATS, { params }),
 };

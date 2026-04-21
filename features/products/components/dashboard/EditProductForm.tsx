@@ -69,8 +69,8 @@ function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
 }
 
 // Helper: يولد مفتاحاً فريداً لكل متغير لمنع التكرار ويدعم الكائنات
-const getVariantKey = (attrs: Record<string, any>) => {
-  return Object.entries(attrs)
+const getVariantKey = (attrs: Record<string, any> = {}) => {
+  return Object.entries(attrs || {})
     .sort()
     .map(([k, val]) => {
       if (typeof val === 'object' && val !== null && 'value' in val && 'unit' in val) {
@@ -87,6 +87,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   const getTrans = useTrans();
   const updateMutation = useUpdateProduct();
   console.log('initialData ', initialData);
+  console.log('initialVariants ', initialVariants);
   // ─── Derived initial values ──────────────────────────
   const defaultTitle = useMemo(() => {
     if (typeof initialData.title === 'object') return initialData.title;
@@ -127,14 +128,16 @@ export default function EditProductForm({ locale, initialData, initialVariants =
 
   // 🌟 استعادة الأرقام المفقودة من المتغيرات لعرضها في منشئ الخصائص 🌟
   const initialAttributes = useMemo(() => {
-    console.log("initialData allowedAttributes", initialData.allowedAttributes);
-
     const attrs = initialData.allowedAttributes || [];
+    console.log("attr ", attrs);
     return attrs.map(attr => {
-      if (attr.type === 'number') {
+      if (attr.type.toLocaleLowerCase().trim() === 'number') {
         const extractedValues = new Set<string>();
+        console.log("initialVariants --------------", initialVariants);
         initialVariants.forEach(v => {
-          const val = v.attributes[attr.name];
+          console.log("v.attributes", v);
+          const val = v.attributes?.[attr.name];
+          console.log("val", val);
           if (typeof val === 'object' && val !== null && 'value' in val) {
             extractedValues.add(String(val.value));
           }
@@ -270,9 +273,9 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     setNewVariants(newCombos.map(combo => {
       const skuParts = Object.values(combo).map(v => {
         if (typeof v === 'object' && v !== null && 'value' in v && 'unit' in v) {
-          return `${v.value}-${v.unit}`.toUpperCase();
+          return `${v.value}-${v.unit}`.toUpperCase().trim();
         }
-        return String(v).toUpperCase().replace(/\s+/g, '-');
+        return String(v).toUpperCase().replace(/\s+/g, '-').trim();
       });
 
       return {
@@ -349,9 +352,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   const handleGalleryRemove = (index: number) => {
     // 1. الحصول على الرابط/المعاينة التي نريد حذفها
     const targetUrl = galleryPreviews[index];
-    console.log(index, 'index');
-
-    console.log(existingImages.length, 'existingImages.length');
 
     // 2. إذا كان الرابط يبدأ بـ http أو / فهو غالباً صورة قديمة من السيرفر
     if (typeof targetUrl === 'string' && (targetUrl.startsWith('http') || targetUrl.startsWith('/'))) {
@@ -368,7 +368,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
 
   // ─── Submit ──────────────────────────────────────────
   const onSubmit = async (data: EditProductInput) => {
-    // console.log("data ....", data);
+    console.log("data ....", data);
     if (!coverFile && !initialData.imageCover) {
       setCoverError(t('coverImageRequired'));
       return;
@@ -425,7 +425,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     });
 
     if (pdfFile) formData.append('infoProductPdf', pdfFile);
-    console.log('formData images on submit', formData.getAll('images'));
     await updateMutation.mutateAsync({ id: initialData._id, data: formData });
     // router.push(`/${locale}/dashboard/products`);
   };

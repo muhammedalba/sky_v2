@@ -111,5 +111,40 @@
             "existingVariants": "المتغيرات الحالية",
             "newVariants": "متغيرات جديدة",
             "markedForDeletion": "مُعلَّم للحذف"
+      },
+      "statistics": {
+        "title": "تحليلات المنتجات",
+        "subtitle": "رؤى شاملة حول قائمة منتجاتك وأداء المخزون.",
+        "filters": {
+          "startDate": "تاريخ البدء",
+          "endDate": "تاريخ الانتهاء",
+          "apply": "تطبيق الفلاتر",
+          "reset": "إعادة تعيين"
+        },
+        "overview": {
+          "totalProducts": "إجمالي المنتجات",
+          "stockValue": "قيمة المخزون",
+          "unitsSold": "إجمالي الوحدات المباعة",
+          "stockHealth": "صحة المخزون"
+        },
+        "charts": {
+          "composition": "تكوين المنتجات",
+          "categories": "توزيع الفئات",
+          "inventory": "حالة المخزون",
+          "trends": "اتجاهات النشر",
+          "simple": "منتجات بسيطة",
+          "variable": "منتجات بمتغيرات"
+        },
+        "inventory": {
+          "outOfStock": "نفد من المخزون",
+          "lowStock": "عناصر بمخزون منخفض",
+          "totalValue": "القيمة الإجمالية"
+        },
+        "performer": {
+          "topSelling": "الأكثر مبيعاً",
+          "topVariants": "أقوى المتغيرات (SKU)",
+          "soldUnits": "وحدة مباعة",
+          "stockLeft": "المتبقي"
+        }
       }
 }

@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api';
+import { apiClient } from '@/lib/api/client';
 import { env } from '@/lib/env';
 import { User, ApiResponse } from '@/types';
 

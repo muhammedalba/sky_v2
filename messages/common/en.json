@@ -52,7 +52,8 @@
             "suppliers": "Suppliers",
             "coupons": "Coupons",
             "carousel": "Carousel",
-            "promoBanners": "Promo Banners"
+            "promoBanners": "Promo Banners",
+            "productAnalytics": "Product Analytics"
       },
       "auth": {
             "login": "Login",

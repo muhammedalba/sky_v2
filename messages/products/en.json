@@ -111,5 +111,40 @@
             "existingVariants": "Existing Variants",
             "newVariants": "New Variants",
             "markedForDeletion": "Marked for Deletion"
+      },
+      "statistics": {
+        "title": "Product Analytics",
+        "subtitle": "Comprehensive insights into your product catalog and inventory performance.",
+        "filters": {
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "apply": "Apply Filters",
+          "reset": "Reset"
+        },
+        "overview": {
+          "totalProducts": "Total Products",
+          "stockValue": "Stock Value",
+          "unitsSold": "Total Units Sold",
+          "stockHealth": "Inventory Health"
+        },
+        "charts": {
+          "composition": "Product Composition",
+          "categories": "Category Distribution",
+          "inventory": "Inventory Status",
+          "trends": "Publication Trends",
+          "simple": "Simple Products",
+          "variable": "Variable Products"
+        },
+        "inventory": {
+          "outOfStock": "Out of Stock",
+          "lowStock": "Low Stock Items",
+          "totalValue": "Total Worth"
+        },
+        "performer": {
+          "topSelling": "Top Selling Products",
+          "topVariants": "Power SKUs",
+          "soldUnits": "Units Sold",
+          "stockLeft": "Stock Left"
+        }
       }
 }

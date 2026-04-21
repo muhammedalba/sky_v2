@@ -52,7 +52,8 @@
             "suppliers": "الموردين",
             "coupons": "القسائم",
             "carousel": "شريط الصور",
-            "promoBanners": "البانرات الترويجية"
+            "promoBanners": "البانرات الترويجية",
+            "productAnalytics": "تحليلات المنتجات"
       },
       "auth": {
             "login": "تسجيل الدخول",
