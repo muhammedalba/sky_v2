@@ -34,8 +34,7 @@ export default function ProfilePage() {
     return <ErrorMessage message="Failed to load profile data" />;
   }
 
-  // The hook returns { data: user } or just user based on implementation
-  const user = data?.data || data;
+  const user = data;
 
   if (!user) {
     return <ErrorMessage message="User not found" />;

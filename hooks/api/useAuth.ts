@@ -34,7 +34,7 @@ export function useMe() {
   return useQuery({
     queryKey: queryKeys.auth.me(),
     queryFn: async () => {
-      const response = await api.auth.me();
+      const response = (await api.auth.me()) as unknown as ApiResponse<User>;
       return response.data;
     },
     retry: false,

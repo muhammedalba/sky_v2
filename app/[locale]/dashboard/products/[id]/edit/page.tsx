@@ -22,7 +22,7 @@ export default function EditProductPage({ params }: { params: Promise<{ locale: 
     );
   }
 
-  if (!productRes?.data) {
+  if (!productRes) {
     return (
       <div className="flex items-center justify-center h-64">
         <p className="text-muted-foreground font-medium">Product not found</p>
@@ -30,10 +30,8 @@ export default function EditProductPage({ params }: { params: Promise<{ locale: 
     );
   }
 
-  // Handle API response structure
-  const data = productRes.data as any;
-  const product = (data.product || data) as Product;
-  const variants = (data.variants || product.variants || []) as ProductVariant[];
+  const product = productRes as Product;
+  const variants = product.variants || [];
 
   return (
     <EditProductForm

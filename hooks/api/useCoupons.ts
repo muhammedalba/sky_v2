@@ -9,8 +9,8 @@ export function useCoupons(params?: { page?: number; limit?: number; keywords?: 
   return useQuery({
     queryKey: ['coupons', params],
     queryFn: async () => {
-      const response = await api.coupons.getAll(params);
-      return response as unknown as ApiResponse<Coupon[]>;
+      const response = (await api.coupons.getAll(params)) as unknown as ApiResponse<Coupon[]>;
+      return response;
     },
   });
 }
@@ -20,7 +20,7 @@ export function useCoupon(id: string, options?: { allLangs?: boolean }) {
     queryKey: ['coupons', id, options?.allLangs],
     queryFn: async () => {
       const params = options?.allLangs ? { all_langs: true } : {};
-      const response = await api.coupons.getOne(id, params);
+      const response = (await api.coupons.getOne(id, params)) as unknown as ApiResponse<Coupon>;
       return response.data;
     },
     enabled: !!id,

@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-
+import { Brand, ApiResponse } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 export function useBrands(
@@ -12,7 +12,7 @@ export function useBrands(
   return useQuery({
     queryKey: ['brands', params],
     queryFn: async () => {
-      const response = await api.brands.getAll(params);
+      const response = (await api.brands.getAll(params)) as unknown as ApiResponse<Brand[]>;
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
@@ -24,7 +24,7 @@ export function useBrand(id: string, options?: { all_langs?: boolean }) {
     queryKey: ['brands', id, options?.all_langs],
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
-      const response = await api.brands.getOne(id, params);
+      const response = (await api.brands.getOne(id, params)) as unknown as ApiResponse<Brand>;
       return response.data;
     },
     enabled: !!id,

@@ -9,7 +9,7 @@ export function useCart() {
     queryKey: ['cart'],
     queryFn: async () => {
       const response = await api.cart.getCart();
-      return response.data;
+      return response.data.data;
     },
     // Don't refetch too aggressively
     staleTime: 1000 * 60 * 5, 

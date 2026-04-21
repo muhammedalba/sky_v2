@@ -8,9 +8,7 @@ export function useProductStats(params?: { startDate?: string; endDate?: string 
     queryKey: ['products', 'statistics', params],
     queryFn: async () => {
       const response = await productsApi.getStats(params);
-      // Cast the response to ApiResponse to correctly extract the data payload
-      const apiResponse = response as unknown as ApiResponse<ProductStatisticsData>;
-      return apiResponse.data;
+      return response.data.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

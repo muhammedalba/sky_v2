@@ -10,7 +10,7 @@ export function useCarousel(params?: { page?: number; limit?: number, keywords?:
     queryKey: ['carousel', params],
     queryFn: async () => {
       const response = await api.carousel.getAll(params);
-      return response;
+      return response.data;
     },
   });
 }
@@ -21,7 +21,7 @@ export function useCarouselItem(id: string, options?: { all_langs?: boolean }) {
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
       const response = await api.carousel.getOne(id, params);
-      return response.data;
+      return response.data.data;
     },
     enabled: !!id,
   });

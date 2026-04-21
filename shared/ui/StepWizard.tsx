@@ -41,7 +41,7 @@ const StepWizard = ({ currentStep, totalSteps, className }: StepWizardProps) => 
   // Get icon for each step
   const getStepIcon = (stepNumber: number, isCompleted: boolean) => {
     if (isCompleted) {
-      return <Icons.CheckCircle className="w-5 h-5 animate-in zoom-in-50 duration-300" />;
+      return <Icons.Check className="w-5 h-5 animate-in zoom-in-50 duration-300" />;
     }
 
     const iconClass = "w-5 h-5 sm:w-7 sm:h-7";

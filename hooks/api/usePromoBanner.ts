@@ -2,14 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { PromoBanner } from '@/types';
+import { PromoBanner, ApiResponse } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 export function usePromoBanners(params?: { all_langs?: boolean }) {
   return useQuery({
     queryKey: ['promoBanners', params],
     queryFn: async () => {
-      const response = await api.promoBanner.getBanners(params);
+      const response = (await api.promoBanner.getBanners(params)) as unknown as ApiResponse<PromoBanner[]>;
       return response;
     },
   });
@@ -19,7 +19,7 @@ export function useActivePromoBanner() {
   return useQuery({
     queryKey: ['promoBanners', 'active'],
     queryFn: async () => {
-      const response = await api.promoBanner.getActive();
+      const response = (await api.promoBanner.getActive()) as unknown as ApiResponse<PromoBanner | null>;
       return response.data;
     },
   });
@@ -30,7 +30,7 @@ export function usePromoBanner(id: string, options?: { all_langs?: boolean }) {
     queryKey: ['promoBanners', id, options?.all_langs],
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
-      const response = await api.promoBanner.getOne(id, params);
+      const response = (await api.promoBanner.getOne(id, params)) as unknown as ApiResponse<PromoBanner>;
       return response.data;
     },
     enabled: !!id,

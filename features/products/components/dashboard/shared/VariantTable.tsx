@@ -129,7 +129,7 @@ export default function VariantTable({
                   <td className="px-4 py-3">
                     <Input
                       type="number"
-                      value={variant.price}
+                      value={variant.price?.toString() || '0'}
                       onChange={(e) => updateVariant(idx, 'price', parseFloat(e.target.value) || 0)}
                       className="h-9 rounded-lg text-xs w-24"
                       min={0}
@@ -141,7 +141,7 @@ export default function VariantTable({
                   <td className="px-4 py-3">
                     <Input
                       type="number"
-                      value={variant.priceAfterDiscount || ''}
+                      value={variant.priceAfterDiscount?.toString() || ''}
                       onChange={(e) => updateVariant(idx, 'priceAfterDiscount', parseFloat(e.target.value) || undefined)}
                       className="h-9 rounded-lg text-xs w-24"
                       min={0}

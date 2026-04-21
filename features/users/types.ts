@@ -7,5 +7,6 @@ export interface User {
   avatar?: string;
   phone?: string;
   active?: boolean;
+  createdAt?: string;
   updatedAt?: string;
 }

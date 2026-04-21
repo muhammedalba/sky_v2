@@ -2,12 +2,13 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { ApiResponse, User } from '@/types';
 
 export function useUsers(params?: { page?: number; limit?: number; role?: string, keywords?: string }) {
   return useQuery({
     queryKey: ['users', params],
     queryFn: async () => {
-      const response = await api.users.getAll(params);
+      const response = (await api.users.getAll(params)) as unknown as ApiResponse<User[]>;
       return response;
     },
   });
@@ -17,7 +18,7 @@ export function useUser(id: string) {
   return useQuery({
     queryKey: ['users', id],
     queryFn: async () => {
-      const response = await api.users.getOne(id);
+      const response = (await api.users.getOne(id)) as unknown as ApiResponse<User>;
       return response.data;
     },
     enabled: !!id,

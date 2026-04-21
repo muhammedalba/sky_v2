@@ -8,9 +8,8 @@ export function useProducts(params?: { page?: number; limit?: number; keywords?:
   return useQuery({
     queryKey: ['products', params],
     queryFn: async () => {
-      const response = await api.products.getAll(params);
-      // The API returns { data: [...] } inside the axios data object
-      return response as unknown as ApiResponse<Product[]>;
+      const response = (await api.products.getAll(params)) as unknown as ApiResponse<Product[]>;
+      return response;
     },
   });
 }
@@ -21,8 +20,8 @@ export function useProduct(id: string, options?: { all_langs?: boolean }) {
     queryKey: ['products', id, { all_langs }],
     queryFn: async () => {
       const params = all_langs ? { all_langs: 'true' } : undefined;
-      const response = await api.products.getOne(id, params);
-      return response ;
+      const response = (await api.products.getOne(id, params)) as unknown as ApiResponse<Product>;
+      return response.data;
     },
     enabled: !!id,
   });

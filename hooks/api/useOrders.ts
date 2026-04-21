@@ -2,13 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { ApiResponse, Order } from '@/types';
 
 export function useOrders(params?: { page?: number; limit?: number; status?: string, keywords?: string }) {
   return useQuery({
     queryKey: ['orders', params],
     queryFn: async () => {
-      const response = await api.orders.getAll(params);
-      return response.data;
+      const response = (await api.orders.getAll(params)) as unknown as ApiResponse<Order[]>;
+      return response;
     },
   });
 }
@@ -17,7 +18,7 @@ export function useOrder(id: string) {
   return useQuery({
     queryKey: ['orders', id],
     queryFn: async () => {
-      const response = await api.orders.getOne(id);
+      const response = (await api.orders.getOne(id)) as unknown as ApiResponse<Order>;
       return response.data;
     },
     enabled: !!id,

@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
+import { Supplier, ApiResponse } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 export function useSuppliers(
@@ -12,7 +13,7 @@ export function useSuppliers(
   return useQuery({
     queryKey: ['suppliers', params],
     queryFn: async () => {
-      const response = await api.suppliers.getAll(params);
+      const response = (await api.suppliers.getAll(params)) as unknown as ApiResponse<Supplier[]>;
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
@@ -24,7 +25,7 @@ export function useSupplier(id: string, options?: { allLangs?: boolean }) {
     queryKey: ['suppliers', id, options?.allLangs],
     queryFn: async () => {
       const params = options?.allLangs ? { all_langs: true } : {};
-      const response = await api.suppliers.getOne(id, params);
+      const response = (await api.suppliers.getOne(id, params)) as unknown as ApiResponse<Supplier>;
       return response.data;
     },
     enabled: !!id,

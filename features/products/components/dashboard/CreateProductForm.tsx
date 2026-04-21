@@ -361,7 +361,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
                   <Input
                     type="number"
                     placeholder="القيمة (مثال: 20)"
-                    value={comp.value || ''}
+                    value={comp.value?.toString() || ''}
                     onChange={(e) => {
                       const newComps = [...globalComponents];
                       newComps[idx].value = Number(e.target.value);

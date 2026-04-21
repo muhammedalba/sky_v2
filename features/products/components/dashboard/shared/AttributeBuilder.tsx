@@ -10,6 +10,7 @@ export type AttributeType = 'string' | 'number';
 export interface AttributeDefinition {
   name: string;
   type: AttributeType;
+  required: boolean;
   allowedValues?: string[]; // للقيم والألوان
   allowedUnits?: string[];  // للوحدات
 }
@@ -155,7 +156,7 @@ function AttributeRow({
 
 export default function AttributeBuilder({ attributes, onChange }: AttributeBuilderProps) {
   const addAttribute = () => {
-    onChange([...attributes, { name: '', type: 'string', allowedValues: [], allowedUnits: [] }]);
+    onChange([...attributes, { name: '', type: 'string', required: true, allowedValues: [], allowedUnits: [] }]);
   };
 
   const updateAttribute = (index: number, key: keyof AttributeDefinition, val: any) => {

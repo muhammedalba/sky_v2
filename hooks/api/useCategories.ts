@@ -13,7 +13,7 @@ export function useCategories(
   return useQuery({
     queryKey: ['categories', params],
     queryFn: async () => {
-      const response = await api.categories.getAll(params);
+      const response = (await api.categories.getAll(params)) as unknown as ApiResponse<Category[]>;
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
@@ -25,7 +25,7 @@ export function useCategory(id: string, options?: { all_langs?: boolean }) {
     queryKey: ['categories', id, options?.all_langs],
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
-      const response = await api.categories.getOne(id, params);
+      const response = (await api.categories.getOne(id, params)) as unknown as ApiResponse<Category>;
       return response.data;
     },
     enabled: !!id,

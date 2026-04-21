@@ -12,7 +12,7 @@ export function useSubCategories(
     queryKey: ['subCategories', params],
     queryFn: async () => {
       const response = await api.supCategories.getAll(params);
-      return response;
+      return response.data;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
   });
@@ -24,7 +24,7 @@ export function useSubCategory(id: string, options?: { all_langs?: boolean }) {
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
       const response = await api.supCategories.getOne(id, params);
-      return response.data;
+      return response.data.data;
     },
     enabled: !!id,
   });
