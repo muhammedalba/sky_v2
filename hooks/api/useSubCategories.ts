@@ -12,7 +12,7 @@ export function useSubCategories(
     queryKey: ['subCategories', params],
     queryFn: async () => {
       const response = await api.supCategories.getAll(params);
-      return response.data;
+      return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
   });
