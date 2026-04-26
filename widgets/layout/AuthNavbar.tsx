@@ -73,10 +73,10 @@ export default function AuthNavbar() {
         <>
             <nav
                 className={cn(
-                    'fixed top-0 w-full z-1000 transition-all duration-500 ease-in-out',
+                    'fixed top-0 w-full z-1000 transition-all duration-500 ease-in-out py-2',
                     scrolled
-                        ? 'py-5 bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
-                        : 'py-5 bg-transparent'
+                        ? ' bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
+                        : ' bg-transparent'
                 )}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -91,12 +91,12 @@ export default function AuthNavbar() {
                                 className="object-contain m-auto"
                                 priority
                             />
-                            <div className="flex flex-col text-left rtl:text-right">
-                                <span className="text-xl font-black tracking-tight bg-linear-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+                            {/* <div className="flex flex-col text-left rtl:text-right">
+                                <span className="text-md font-black tracking-tight bg-linear-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
                                   {appName}
                                 </span>
                                 <span className="text-[10px] font-bold text-primary/80 uppercase tracking-widest -mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Premium Tech</span>
-                            </div>
+                            </div> */}
                         </Link>
 
                         {/* Desktop Navigation */}
@@ -135,7 +135,7 @@ export default function AuthNavbar() {
                             </div>
 
                             {/* Shopping Cart */}
-                            <Link
+                            {/* <Link
                                 href="/cart"
                                 className="relative w-11 h-11 rounded-full flex items-center justify-center bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-110 transition-all duration-300 group"
                             >
@@ -143,11 +143,11 @@ export default function AuthNavbar() {
                                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-primary text-[10px] font-black rounded-full flex items-center justify-center shadow-md animate-bounce-subtle">
                                     0
                                 </span>
-                            </Link>
+                            </Link> */}
 
                             {/* User Menu */}
                           
-                                <div className="relative">
+                                {/* <div className="relative">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -166,10 +166,10 @@ export default function AuthNavbar() {
                                         ) : (
                                             <Icons.Users className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                                         )}
-                                    </button>
+                                    </button>*/}
 
                                     {/* Unified Dropdown Menu */}
-                                    {userMenuOpen && (
+                                    {/* {userMenuOpen && (
                                         <div
                                             className={cn(
                                                 "absolute top-full mt-3 w-64 bg-background border border-border/50 rounded-3xl shadow-2xl p-2 z-[120] animate-in fade-in zoom-in-95 duration-200",
@@ -220,7 +220,7 @@ export default function AuthNavbar() {
                                             )}
                                         </div>
                                     )}
-                                </div>
+                                </div> */}
                            
 
                             {/* Mobile Menu Toggle */}
