@@ -38,7 +38,7 @@ export default async function AuthPageLayout({
         {/* Background Decorations */}
         <AuthBackgroundDecorations colors={bgColors} />
 
-        <div className={`w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 relative z-10 ${isRTL ? 'rtl' : 'ltr'}`}>
+        <div className={`w-full pt-28 lg:pt-2 max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 relative z-10 ${isRTL ? 'rtl' : 'ltr'}`}>
 
           {/* Main Form/Flow Component */}
           <AuthFormContainer shadowColor={shadowColor}>

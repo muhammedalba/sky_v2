@@ -21,8 +21,8 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
       type="login"
       locale={locale}
       bgColors={{
-        top: 'bg-gradient-to-br from-blue-500/10 to-indigo-500/5',
-        bottom: 'bg-gradient-to-tl from-primary-500/10 to-purple-500/5'
+        top: 'bg-gradient-to-br from-primary/30 to-secondary/20',
+        bottom: 'bg-gradient-to-tl from-secondary/30 to-primary/20'
       }}
     >
       <LoginForm locale={locale} />

@@ -14,8 +14,8 @@ export function AuthMobileLogo({ subtitle, className = "" }: { subtitle: string,
           alt={`${appName} Logo`}
           width={200}
           height={150}
-          className="object-contain m-auto"
-          priority
+          className="object-contain m-auto h-32 w-32 md:h-40 md:w-40 lg:h-56 lg:w-56"
+          priority  
         />
         <span className="text-foreground/70 font-black tracking-wider text-lg block mt-2">
           {appName}
