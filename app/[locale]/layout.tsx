@@ -32,33 +32,11 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} dir={direction} className={isDark ? 'dark' : ''} suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem('theme');
-                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className="antialiased">
-        <LocaleProvider locale={locale} messages={messages}>
-          <ThemeProvider>
-            <ToastProvider />
-            {children}
-          </ThemeProvider>
-        </LocaleProvider>
-      </body>
-    </html>
+    <LocaleProvider locale={locale} messages={messages}>
+      <ThemeProvider>
+        <ToastProvider />
+        {children}
+      </ThemeProvider>
+    </LocaleProvider>
   );
 }

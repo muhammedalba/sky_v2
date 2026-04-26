@@ -7,13 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { editProductSchema, EditProductInput } from '@/lib/validations/schemas';
-import { useUpdateProduct } from '@/hooks/api/useProducts';
-import { useCategories } from '@/hooks/api/useCategories';
-import { useSubCategories } from '@/hooks/api/useSubCategories';
-import { useBrands } from '@/hooks/api/useBrands';
-import { useSuppliers } from '@/hooks/api/useSuppliers';
-import { useTrans } from '@/hooks/useTrans';
+import { editProductSchema, EditProductInput } from '@/features/products/product.schema';
+import { useUpdateProduct } from '@/features/products/hooks/useProducts';
+import { useCategories } from '@/features/categories/hooks/useCategories';
+import { useSubCategories } from '@/features/categories/hooks/useSubCategories';
+import { useBrands } from '@/features/brands/hooks/useBrands';
+import { useSuppliers } from '@/features/suppliers/hooks/useSuppliers';
+import { useTrans } from '@/shared/hooks/useTrans';
 import { LocalizedString, Product, ProductVariant, Category } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
@@ -524,7 +524,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
           {/* New Variants */}
           {newVariants.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-xs font-bold text-green-600 uppercase tracking-wider px-1">
+              <h3 className="text-xs font-bold text-success uppercase tracking-wider px-1">
                 {t('newVariants')} ({newVariants.length})
               </h3>
               <VariantTable

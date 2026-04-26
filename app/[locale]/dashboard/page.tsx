@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import DashboardContent from '@/shared/ui/dashboard/DashboardContent';
 
@@ -8,5 +7,8 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardPage() {
-  return <DashboardContent />;
+  return (
+    <DashboardContent />
+  );
 }
+

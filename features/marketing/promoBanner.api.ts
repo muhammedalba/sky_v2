@@ -1,14 +1,15 @@
-import { apiClient } from '@/lib/api';
 import { env } from '@/lib/env';
-import { ApiResponse, PromoBanner } from '@/types';
+import { PromoBanner } from '@/types';
+import { createCrudApi } from '@/shared/api/factory';
+import { apiClient } from '@/lib/api/client';
 
 const ENDPOINTS = env.ENDPOINTS.PROMO_BANNER;
 
+const baseApi = createCrudApi<PromoBanner>(ENDPOINTS.BASE, false);
+
 export const promoBannerApi = {
-  getBanners: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<PromoBanner[]>>(ENDPOINTS.BASE, { params }),
+  ...baseApi,
+  getBanners: baseApi.getAll, // Alias for backward compatibility
   getActive: () => apiClient.get(ENDPOINTS.ACTIVE),
-  getOne: (id: string, params?: Record<string, unknown>) => apiClient.get(`${ENDPOINTS.BASE}/${id}`, { params }),
-  create: (data: Record<string, unknown>) => apiClient.post(ENDPOINTS.BASE, data),
-  update: (id: string, data: Record<string, unknown>) => apiClient.patch(`${ENDPOINTS.BASE}/${id}`, data),
-  delete: (id: string) => apiClient.delete(`${ENDPOINTS.BASE}/${id}`),
 };
+

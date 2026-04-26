@@ -8,6 +8,7 @@ import ErrorMessage from '@/shared/ui/ErrorMessage';
 import StepWizard from '@/shared/ui/StepWizard';
 import { LogInIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
+import { AuthMobileLogo } from './AuthSharedComponents';
 
 // Dynamic imports for better performance and smaller initial bundle
 const RequestStep = dynamic(() => import('./forgot-password/RequestStep'), {
@@ -24,7 +25,12 @@ type Step = 'REQUEST' | 'VERIFY' | 'RESET';
 
 const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
   const [step, setStep] = useState<Step>('REQUEST');
-  const [submittedEmail, setSubmittedEmail] = useState('');
+  const [submittedEmail, setSubmittedEmail] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('reset-email') || '';
+    }
+    return '';
+  });
   const [serverError, setServerError] = useState<string | null>(null);
 
   const t = useTranslations('auth');
@@ -41,6 +47,9 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
   const handleRequestSuccess = (email: string) => {
     setServerError(null);
     setSubmittedEmail(email);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('reset-email', email);
+    }
     setStep('VERIFY');
   };
 
@@ -51,14 +60,19 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
 
   const handleChangeEmail = () => {
     setServerError(null);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('reset-email');
+    }
     setStep('REQUEST');
   };
 
   const stepNumber = step === 'REQUEST' ? 1 : step === 'VERIFY' ? 2 : 3;
 
   return (
-    <div className="w-full">
-      <header className="mb-8">
+    <div className="w-full pt-8">
+
+      <AuthMobileLogo subtitle={t('forgotPasswordTitle')} className="lg:hidden" />
+      <header className="mb-4">
         <h1 className="text-2xl text-center md:text-3xl font-black tracking-tight text-foreground">{t('forgotPasswordTitle')}</h1>
         <p className="text-muted-foreground text-center mt-2 font-medium">
           {step === 'REQUEST' && t('requestDescription')}
@@ -71,36 +85,36 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
 
       {serverError && <ErrorMessage showIcon={true} message={serverError} className="mb-6 animate-in slide-in-from-top-1 px-4 py-3 rounded-2xl" />}
 
-      <div className="space-y-8 min-h-[300px]">
+      <div className=" ">
         {step === 'REQUEST' && (
-          <RequestStep 
-            onSuccess={handleRequestSuccess} 
-            onError={handleError} 
+          <RequestStep
+            onSuccess={handleRequestSuccess}
+            onError={handleError}
           />
         )}
 
         {step === 'VERIFY' && (
-          <VerifyStep 
-            onSuccess={handleVerifySuccess} 
+          <VerifyStep
+            onSuccess={handleVerifySuccess}
             onError={handleError}
             onChangeEmail={handleChangeEmail}
           />
         )}
 
         {step === 'RESET' && (
-          <ResetStep 
+          <ResetStep
             email={submittedEmail}
-            onError={handleError} 
+            onError={handleError}
           />
         )}
       </div>
 
-      <footer className="text-center pt-3 border-t border-border/50 mt-10">
-        <Button variant="outline" size="sm" 
+      <footer className="text-center mt-5 pt-3 border-t border-border/50">
+        <Button variant="outline" size="sm"
           onClick={() => router.push(`/${locale}/login`)}
           className="group inline-flex items-center gap-2 text-muted-foreground hover:text-primary font-black uppercase tracking-widest text-xs transition-all p-2 rounded-lg hover:bg-secondary/50 hover:border-primary cursor-pointer"
         >
-          <LogInIcon className="w-4 h-4 rotate-180 transition-transform group-hover:-translate-x-1" />
+          <LogInIcon className="w-4 text-destructive h-4 rotate-180 transition-transform group-hover:-translate-x-1" />
           {t('backToLogin')}
         </Button>
       </footer>

@@ -17,7 +17,7 @@ export function CategoryChart({ data }: CategoryChartProps) {
   const t = useTranslations('products.statistics.charts');
 
   return (
-    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-slate-900/50 shadow-xl">
+    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-secondary/50 shadow-xl">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">{t('categories')}</CardTitle>
       </CardHeader>

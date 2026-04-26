@@ -29,21 +29,27 @@ export default function SidebarNav({ navigation, onNavigate }: SidebarNavProps) 
         const isDashboardRoot = item.href.endsWith('/dashboard');
         const active = isDashboardRoot ? pathname === item.href : pathname.startsWith(item.href);
 
-        // Color mapping
+        // Color mapping to semantic tokens
         const colorMap: Record<string, string> = {
-          blue: 'text-blue-500',
-          emerald: 'text-emerald-500',
-          orange: 'text-orange-500',
-          amber: 'text-amber-500',
-          purple: 'text-purple-500',
-          cyan: 'text-cyan-500',
-          rose: 'text-rose-500',
-          sky: 'text-sky-500',
-          pink: 'text-pink-500',
-          violet: 'text-violet-500',
-          indigo: 'text-indigo-500',
-          teal: 'text-teal-500',
-          slate: 'text-slate-500',
+          info: 'text-info',
+          success: 'text-success',
+          warning: 'text-warning',
+          primary: 'text-primary',
+          destructive: 'text-destructive',
+          // Fallbacks for legacy colors
+          blue: 'text-info',
+          emerald: 'text-success',
+          orange: 'text-warning',
+          amber: 'text-warning',
+          purple: 'text-primary',
+          cyan: 'text-info',
+          rose: 'text-destructive',
+          sky: 'text-info',
+          pink: 'text-primary',
+          violet: 'text-primary',
+          indigo: 'text-primary',
+          teal: 'text-info',
+          slate: 'text-muted-foreground',
         };
         const itemColorClass = colorMap[item.color || 'slate'];
 
@@ -75,7 +81,7 @@ export default function SidebarNav({ navigation, onNavigate }: SidebarNavProps) 
             )}
 
             {active && !isCollapsed && (
-              <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
             )}
             
             {!active && !isCollapsed && (

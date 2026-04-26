@@ -2,14 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRegister } from '@/hooks/api/useAuth';
-import { registerSchema, type RegisterInput } from '@/lib/validations/schemas';
+import { useRegister } from '@/features/auth/hooks/useAuth';
+import { registerSchema, type RegisterInput } from '@/features/auth/auth.schema';
 import { Button } from '@/shared/ui/Button';
-import { Icons } from '@/shared/ui/Icons';
-import { authApi } from '@/lib/api/auth';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/shared/hooks/useToast';
 import { User, Mail, Lock } from 'lucide-react';
-import { AuthHeader, AuthFooter } from './AuthSharedComponents';
+import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
+import { SocialLoginSection, PasswordStrength } from './AuthClientComponents';
 import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
@@ -35,6 +34,8 @@ export default function SignUpForm({ locale }: { locale: string }) {
 
   return (
     <div className="w-full space-y-6">
+      <AuthMobileLogo subtitle={t('constructionPortal')} className="lg:hidden" />
+
       <AuthHeader title={t('createAccount')} description={t('signupDescription')} />
 
       <SmartForm
@@ -48,14 +49,18 @@ export default function SignUpForm({ locale }: { locale: string }) {
           <SmartInput name="email" label={t('email')} icon={Mail} type="email" disabled={registerMutation.isPending} className="h-12" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
+            <div className="space-y-2">
+              <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
+              {/* Password Strength Indicator */}
+              <PasswordStrength name="password" />
+            </div>
             <SmartPasswordInput name="confirmPassword" label={t('confirmPassword')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
           </div>
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]" 
+        <Button
+          type="submit"
+          className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
           size="lg"
           isLoading={registerMutation.isPending}
         >
@@ -63,38 +68,9 @@ export default function SignUpForm({ locale }: { locale: string }) {
         </Button>
       </SmartForm>
 
-      {/* Divider */}
-      <div className="relative py-4">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border/50" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-4 text-muted-foreground font-bold tracking-widest">{t('orContinueWith')}</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Button
-          variant="outline"
-          className="h-12 rounded-xl border-border/50 bg-background hover:bg-secondary/50 transition-all font-bold text-foreground/80 hover:text-foreground hover:border-border"
-          onClick={() => window.location.href = authApi.getGoogleAuthUrl()}
-        >
-          <Icons.Google className="w-5 h-5 mr-2" />
-          Google
-        </Button>
-        <Button
-          variant="outline"
-          className="h-12 rounded-xl border-border/50 bg-background hover:bg-secondary/50 transition-all font-bold text-foreground/80 hover:text-foreground hover:border-border"
-          onClick={() => window.location.href = authApi.getFacebookAuthUrl()}
-        >
-          <Icons.Facebook className="w-5 h-5 mr-2" />
-          Facebook
-        </Button>
-      </div>
+      <SocialLoginSection dividerText={t('orContinueWith')} />
 
       <AuthFooter text={t('alreadyHaveAccount')} linkText={t('loginLink')} linkHref={`/${locale}/login`} />
     </div>
   );
 }
-
-

@@ -1,15 +1,15 @@
 import { apiClient } from '@/lib/api/client';
 import { env } from '@/lib/env';
 import { ApiResponse, Order } from '@/types';
+import { createCrudApi } from '@/shared/api/factory';
 
 const ENDPOINTS = env.ENDPOINTS.ORDERS;
+const baseCrud = createCrudApi<Order>(ENDPOINTS.BASE);
 
 export const ordersApi = {
-  getAll: (params?: Record<string, unknown>) => apiClient.get<ApiResponse<Order[]>>(ENDPOINTS.BASE, { params }),
-  getOne: (id: string) => apiClient.get<ApiResponse<Order>>(ENDPOINTS.BASE + '/' + id),
+  ...baseCrud,
   updateStatus: (id: string, data: Record<string, unknown>) =>
-    apiClient.patch<ApiResponse<Order>>(ENDPOINTS.BASE + '/' + id, data),
-  delete: (id: string) => apiClient.delete(ENDPOINTS.BASE + '/' + id),
+    apiClient.patch<ApiResponse<Order>>(`${ENDPOINTS.BASE}/${id}`, data),
   getStats: () => apiClient.get(ENDPOINTS.STATS),
   applyCoupon: (data: { items: Record<string, unknown>[]; couponCode: string }) =>
     apiClient.post(ENDPOINTS.COUPON, data),

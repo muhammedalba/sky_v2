@@ -8,7 +8,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/types';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
-import { useTrans } from '@/hooks/useTrans';
+import { useTrans } from '@/shared/hooks/useTrans';
 
 interface ProductCardProps {
   product: Product;
@@ -46,7 +46,7 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
            
            {/* Quick Add Overlay (Desktop) */}
            <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hidden md:block bg-gradient-to-t from-black/60 to-transparent">
-              <Button size="sm" className="w-full rounded-full font-semibold bg-white text-black hover:bg-white/90">
+              <Button size="sm" className="w-full rounded-full font-semibold">
                  View Details
               </Button>
            </div>

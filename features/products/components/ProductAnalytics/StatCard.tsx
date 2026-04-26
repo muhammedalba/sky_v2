@@ -18,14 +18,14 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, description, trend, className }: StatCardProps) {
   return (
-    <Card className={cn("overflow-hidden border-none bg-white/50 backdrop-blur-md dark:bg-slate-900/50 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1", className)}>
+    <Card className={cn("overflow-hidden border-none bg-white/50 backdrop-blur-md dark:bg-secondary/50 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1", className)}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            <p className="text-sm font-medium text-muted-foreground">
               {title}
             </p>
-            <h3 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h3 className="text-2xl font-bold tracking-tight text-foreground">
               {value}
             </h3>
           </div>
@@ -39,13 +39,13 @@ export function StatCard({ title, value, icon, description, trend, className }: 
             {trend && (
               <span className={cn(
                 "flex items-center text-xs font-medium px-2 py-1 rounded-full",
-                trend.isUp ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
+                trend.isUp ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
               )}>
                 {trend.isUp ? '↑' : '↓'} {Math.abs(trend.value)}%
               </span>
             )}
             {description && (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 {description}
               </p>
             )}

@@ -1,21 +1,21 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { useSubCategories, useDeleteSubCategory } from '@/hooks/api/useSubCategories';
+import { useSubCategories, useDeleteSubCategory } from '@/features/categories/hooks/useSubCategories';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
-import { useTrans } from '@/hooks/useTrans';
-import { SubCategory } from '@/types';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useToast } from '@/shared/hooks/useToast';
+import { useTrans } from '@/shared/hooks/useTrans';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { useTranslations } from 'next-intl';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import Modal from '@/shared/ui/Modal';
 import SubCategoryForm from '@/features/categories/components/dashboard/SubCategoryForm';
-import { useToast } from '@/hooks/useToast';
+import { SubCategory } from '@/types';
 
 export default function SubCategoriesPage() {
   const [page, setPage] = useState(1);

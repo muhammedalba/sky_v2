@@ -27,7 +27,7 @@ export function TopProductsTable({ products }: TopProductsTableProps) {
   const maxSold = products.length > 0 ? Math.max(...products.map(p => p.totalSold)) : 0;
 
   return (
-    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-slate-900/50 shadow-xl lg:col-span-3">
+    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-secondary/50 shadow-xl lg:col-span-3">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">{t('topSelling')}</CardTitle>
       </CardHeader>
@@ -48,9 +48,9 @@ export function TopProductsTable({ products }: TopProductsTableProps) {
                   <div>
                     {product.productName}
                     <div className="mt-1 flex items-center gap-2">
-                       <div className="h-1.5 w-full max-w-[100px] rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                       <div className="h-1.5 w-full max-w-[100px] rounded-full bg-secondary dark:bg-secondary/80 overflow-hidden">
                           <div 
-                            className="h-full bg-indigo-500 rounded-full" 
+                            className="h-full bg-primary rounded-full" 
                             style={{ width: `${(product.totalSold / maxSold) * 100}%` }}
                           />
                        </div>
@@ -68,7 +68,7 @@ export function TopProductsTable({ products }: TopProductsTableProps) {
                     : `${product.minPrice} - ${product.maxPrice}`}
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className={product.totalStock < 10 ? "text-rose-500 font-bold" : "text-emerald-500"}>
+                  <span className={product.totalStock < 10 ? "text-destructive font-bold" : "text-success"}>
                     {product.totalStock}
                   </span>
                 </TableCell>

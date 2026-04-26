@@ -5,12 +5,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Category } from '@/types';
-import { categorySchema, type CategoryInput } from '@/lib/validations/schemas';
+import { categorySchema, type CategoryInput } from '@/features/categories/category.schema';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Icons } from '@/shared/ui/Icons';
-import { useCreateCategory, useUpdateCategory } from '@/hooks/api/useCategories';
-import { useToast } from '@/hooks/useToast';
+import { useCreateCategory, useUpdateCategory } from '@/features/categories/hooks/useCategories';
+import { useToast } from '@/shared/hooks/useToast';
 import Image from 'next/image';
 
 interface CategoryFormProps {
@@ -80,7 +80,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.en ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
           {...register('name.en')}
         />
-        {errors.name?.en && <div className="text-red-500 text-xs mt-1">{tErrors('required')}</div>}
+        {errors.name?.en && <div className="text-destructive text-xs mt-1">{tErrors('required')}</div>}
       </div>
 
       <div className="space-y-2">
@@ -92,7 +92,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.ar ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
           {...register('name.ar')}
         />
-        {errors.name?.ar && <div className="text-red-500 text-xs mt-1">{tErrors('required')}</div>}
+        {errors.name?.ar && <div className="text-destructive text-xs mt-1">{tErrors('required')}</div>}
       </div>
 
       <div className="space-y-2">

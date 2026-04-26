@@ -76,7 +76,7 @@ export default function ConfirmDialog({
             <div
               className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
                 isDangerous
-                  ? 'bg-red-500/10 text-red-500'
+                  ? 'bg-destructive/10 text-destructive'
                   : 'bg-primary/10 text-primary'
               }`}
             >

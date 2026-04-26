@@ -3,13 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useCreateBrand, useUpdateBrand } from '@/hooks/api/useBrands';
+import { useCreateBrand, useUpdateBrand } from '@/features/brands/hooks/useBrands';
 import { useState } from 'react';
 import { Brand } from '@/types';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Icons } from '@/shared/ui/Icons';
-import { BrandFormValues, brandSchema } from '@/lib/validations/schemas';
+import { BrandFormValues, brandSchema } from '@/features/brands/brand.schema';
 
 
 interface BrandFormProps {
@@ -76,7 +76,7 @@ console.log(editingBrand);
             className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.en ? 'ring-2 ring-red-500' : ''}`}
           />
           {errors.name?.en && (
-            <p className="text-red-500 text-xs mt-1">{errors.name?.en.message}</p>
+            <p className="text-destructive text-xs mt-1">{errors.name?.en.message}</p>
           )}
         </div>
 
@@ -91,7 +91,7 @@ console.log(editingBrand);
             className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.ar ? 'ring-2 ring-red-500' : ''}`}
           />
           {errors.name?.ar && (
-            <p className="text-red-500 text-xs mt-1">{errors.name?.ar.message}</p>
+            <p className="text-destructive text-xs mt-1">{errors.name?.ar.message}</p>
           )}
         </div>
       </div>

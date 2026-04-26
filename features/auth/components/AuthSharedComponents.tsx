@@ -1,41 +1,41 @@
 import { getTranslations } from 'next-intl/server';
-import { Shield, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import Link from 'next/link';
+import { FeaturePill } from './BrandingComponents';
+import Image from 'next/image';
 
-interface AuthLayoutProps {
-  locale: string;
-  isRTL: boolean;
-  children: React.ReactNode;
-}
-
-export async function AuthMobileLogo({ 
-  locale, 
-  gradient 
-}: { 
-  locale: string; 
-  gradient: string;
-}) {
-  const t = await getTranslations({ locale, namespace: 'auth' });
-  const subtitle = gradient.includes('emerald') ? t('joinToday') : t('dashboardPortal');
-
+export function AuthMobileLogo({ subtitle, className = "" }: { subtitle: string, className?: string }) {
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
   return (
-    <div className="lg:hidden text-center mb-8 flex flex-col items-center animate-in zoom-in-50 duration-500">
-      <div className={`w-20 h-20 ${gradient} rounded-[2rem] flex items-center justify-center shadow-2xl mb-4 hover:scale-105 transition-transform`}>
-        <span className="text-white font-black text-3xl">S</span>
+    <div className={` text-center mb-1 flex flex-col items-center py-4 ${className}`}>
+      <div className="rounded-2xl">
+        <Image
+          src="/images/auth-logo.png"
+          alt={`${appName} Logo`}
+          width={200}
+          height={150}
+          className="object-contain m-auto"
+          priority
+        />
+        <span className="text-foreground/70 font-black tracking-wider text-lg block mt-2">
+          {appName}
+        </span>
+        <FeaturePill
+          label={subtitle}
+          className="justify-center p-1 px-2 my-2 bg-success/10"
+        />
       </div>
-      <h1 className="text-xl font-black text-foreground tracking-tight">Sky Galaxy</h1>
-      <p className="text-sm text-muted-foreground font-medium">{subtitle}</p>
     </div>
   );
 }
 
 export async function AuthTrustIndicators({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'auth' });
-  
+
   return (
     <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground pt-4">
       <div className="flex items-center gap-2">
-        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+        <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
         <span className="font-medium">{t('secureConnection')}</span>
       </div>
       <div className="w-px h-4 bg-border" />
@@ -47,10 +47,10 @@ export async function AuthTrustIndicators({ locale }: { locale: string }) {
   );
 }
 
-export function AuthFormContainer({ 
+export function AuthFormContainer({
   children,
   shadowColor = 'shadow-primary/5'
-}: { 
+}: {
   children: React.ReactNode;
   shadowColor?: string;
 }) {
@@ -70,12 +70,12 @@ export function AuthBackgroundDecorations({ colors }: { colors: { top: string; b
   );
 }
 
-export function AuthHeader({ 
-  title, 
+export function AuthHeader({
+  title,
   description,
-  className = "" 
-}: { 
-  title: string; 
+  className = ""
+}: {
+  title: string;
   description: string;
   className?: string;
 }) {
@@ -87,14 +87,14 @@ export function AuthHeader({
   );
 }
 
-export function AuthFooter({ 
-  text, 
-  linkText, 
+export function AuthFooter({
+  text,
+  linkText,
   linkHref,
-  className = "" 
-}: { 
-  text: string; 
-  linkText: string; 
+  className = ""
+}: {
+  text: string;
+  linkText: string;
   linkHref: string;
   className?: string;
 }) {

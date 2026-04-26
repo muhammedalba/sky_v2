@@ -5,12 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Card } from '@/shared/ui/Card';
-import { useCreateSupplier, useUpdateSupplier } from '@/hooks/api/useSuppliers';
+import { useCreateSupplier, useUpdateSupplier } from '@/features/suppliers/hooks/useSuppliers';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { Supplier } from '@/types';
-import { SupplierFormValues, supplierSchema } from '@/lib/validations/schemas';
+import { SupplierFormValues, supplierSchema } from '@/features/suppliers/supplier.schema';
 import { Switch } from '@/shared/ui/Switch';
 
 
@@ -79,33 +79,33 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
           <div className="space-y-2">
             <label className="text-sm font-medium">Supplier Name</label>
             <Input {...form.register('name')} placeholder="Supplier Name" />
-            {form.formState.errors?.name && <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>}
+            {form.formState.errors?.name && <p className="text-destructive text-sm">{form.formState.errors.name.message}</p>}
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Email</label>
             <Input {...form.register('email')} placeholder="Email Address" type="email" />
-            {form.formState.errors?.email && <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>}
+            {form.formState.errors?.email && <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>}
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Phone</label>
             <Input {...form.register('phone')} placeholder="Phone Number" />
-            {form.formState.errors?.phone && <p className="text-red-500 text-sm">{form.formState.errors.phone.message}</p>}
+            {form.formState.errors?.phone && <p className="text-destructive text-sm">{form.formState.errors.phone.message}</p>}
           </div>
           <div className="space-y-2 md:col-span-2">
             <label className="text-sm font-medium">Address</label>
             <Input {...form.register('address')} placeholder="Full Address" />
-            {form.formState.errors?.address && <p className="text-red-500 text-sm">{form.formState.errors.address.message}</p>}
+            {form.formState.errors?.address && <p className="text-destructive text-sm">{form.formState.errors.address.message}</p>}
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Contact Name</label>
             <Input {...form.register('contactName')} placeholder="Contact Name" />
-            {form.formState.errors?.contactName && <p className="text-red-500 text-sm">{form.formState.errors.contactName.message}</p>}
+            {form.formState.errors?.contactName && <p className="text-destructive text-sm">{form.formState.errors.contactName.message}</p>}
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Website</label>
             <Input {...form.register('website')} placeholder="https://example.com" />
-            {form.formState.errors?.website && <p className="text-red-500 text-sm">{form.formState.errors.website.message}</p>}
+            {form.formState.errors?.website && <p className="text-destructive text-sm">{form.formState.errors.website.message}</p>}
             
           </div>
           <div className="space-y-2">
@@ -124,7 +124,7 @@ export default function SupplierForm({ initialData, locale }: SupplierFormProps)
               form.setValue('avatar', null);
             }}
           />
-          {form.formState.errors?.avatar && <p className="text-red-500 text-sm">{form.formState.errors.avatar.message}</p>}
+          {form.formState.errors?.avatar && <p className="text-destructive text-sm">{form.formState.errors.avatar.message}</p>}
         </div>
 
         <div className="flex justify-end gap-4 pt-4">

@@ -16,7 +16,7 @@ export default function HomeClient() {
         {/* Background Gradients */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
            <div className="absolute top-20 left-10 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
-           <div className="absolute top-40 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px]" />
+           <div className="absolute top-40 right-10 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -27,7 +27,7 @@ export default function HomeClient() {
             
             <h1 className="text-5xl md:text-7xl font-black text-foreground mb-6 leading-[1.1] tracking-tight animate-in slide-in-from-bottom-6 fade-in duration-700 delay-100">
                {t('hero.title').split(' ').map((word, i) => (
-                  <span key={i} className={i > 3 ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600" : ""}> {word}</span>
+                  <span key={i} className={i > 3 ? "text-transparent bg-clip-text bg-linear-to-r from-primary to-primary/70" : ""}> {word}</span>
                ))}
             </h1>
             
@@ -51,12 +51,12 @@ export default function HomeClient() {
         {/* Dashboard Preview */}
         <div className="mt-20 px-4 relative max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
             <div className="rounded-xl border border-border/50 bg-secondary/20 p-2 backdrop-blur-sm shadow-2xl">
-               <div className="rounded-lg bg-background border border-border/50 overflow-hidden aspect-[16/9] relative">
+               <div className="rounded-lg bg-background border border-border/50 overflow-hidden aspect-video relative">
                   {/* Mock UI Elements */}
                   <div className="absolute inset-x-0 top-0 h-10 border-b border-border/50 bg-muted/20 flex items-center px-4 gap-2">
-                     <div className="w-3 h-3 rounded-full bg-red-400/80" />
-                     <div className="w-3 h-3 rounded-full bg-amber-400/80" />
-                     <div className="w-3 h-3 rounded-full bg-green-400/80" />
+                     <div className="w-3 h-3 rounded-full bg-destructive/80" />
+                     <div className="w-3 h-3 rounded-full bg-warning/80" />
+                     <div className="w-3 h-3 rounded-full bg-success/80" />
                   </div>
                   <div className="mt-10 p-8 grid grid-cols-4 gap-6">
                      <div className="col-span-1 space-y-4">
@@ -85,17 +85,17 @@ export default function HomeClient() {
                  { 
                    key: 'secure', 
                    icon: Icons.Users, 
-                   class: "text-blue-600 bg-blue-50 dark:bg-blue-900/20" 
+                   class: "text-info bg-info/10" 
                  },
                  { 
                    key: 'stats', 
                    icon: Icons.Dashboard, 
-                   class: "text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20" 
+                   class: "text-primary bg-primary/10" 
                  },
                  { 
                    key: 'global', 
                    icon: Icons.Menu, 
-                   class: "text-pink-600 bg-pink-50 dark:bg-pink-900/20" 
+                   class: "text-destructive bg-destructive/10" 
                  }
                ].map((feature) => (
                   <Card key={feature.key} className="p-8 border-border/50 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 bg-background">

@@ -93,11 +93,11 @@ export const env = {
     },
     PRODUCTS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS || '/products',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS_STATS || '/products/ProductsStatistics',
+      STATS: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS_STATS || '/products/statistics',
     },
     CATEGORIES: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES || '/categories',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES_STATS || '/categories/Statistics',
+      STATS: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES_STATS || '/categories/statistics',
     },
     ORDERS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS || '/order',
@@ -125,8 +125,8 @@ export const env = {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_CAROUSEL || '/carousel',
     },
     SUP_CATEGORIES: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES || '/sup-category',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES_STATS || '/sup-category/Statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES || '/sub-category',
+      STATS: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES_STATS || '/sub-category/statistics',
     },
     PROMO_BANNER: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER || '/promo-banner',

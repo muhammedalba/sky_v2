@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { env } from "@/lib/env";
+import Script from 'next/script';
+import { getFontVariables } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   title: env.APP_NAME,
@@ -11,5 +13,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          id="theme-initializer"
+          src="/theme-init.js"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <body className={`${getFontVariables()} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
 }

@@ -67,26 +67,32 @@ export default function StoreNavbar() {
         { name: t('products'), href: '/products', active: segment === 'products', icon: Icons.Products },
         { name: t('contact'), href: '/contact', active: segment === 'contact', icon: Icons.Users },
     ];
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
 
     return (
         <>
             <nav
                 className={cn(
-                    'fixed top-0 w-full z-[1000] transition-all duration-500 ease-in-out',
+                    'fixed top-0 w-full z-1000 transition-all duration-500 ease-in-out',
                     scrolled
-                        ? 'py-3 bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
-                        : 'py-5 bg-transparent'
+                        ? 'py-5 bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
+                        : 'py-5 bg-transparent py-4'
                 )}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-12">
                         {/* Logo */}
-                        <Link href="/home" className="flex items-center gap-3 group relative z-[110]">
-                            <div className="w-10 h-10 bg-gradient-to-tr from-primary via-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:shadow-primary/50 group-hover:scale-110 transition-all duration-500 rotate-3 group-hover:rotate-12">
-                                <div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white bg-white/20 animate-spin-slow" />
-                            </div>
+                        <Link href="/home" className="flex items-center gap-3 group relative z-110">
+                            <Image
+                                src="/images/auth-logo.png"
+                                alt={`${appName} Logo`}
+                                width={50}
+                                height={50}
+                                className="object-contain m-auto"
+                                priority
+                            />
                             <div className="flex flex-col text-left rtl:text-right">
-                                <span className="text-xl font-black tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+                                <span className="text-xl font-black tracking-tight bg-linear-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
                                     Sky Galaxy
                                 </span>
                                 <span className="text-[10px] font-bold text-primary/80 uppercase tracking-widest -mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Premium Tech</span>
@@ -147,13 +153,13 @@ export default function StoreNavbar() {
                                             e.stopPropagation();
                                             setUserMenuOpen(!userMenuOpen);
                                         }}
-                                        className="w-11 h-11 rounded-full overflow-hidden border-2 border-white/20 hover:border-primary transition-all duration-300 shadow-lg active:scale-95 group flex items-center justify-center bg-muted/40"
+                                        className="relative  w-11 h-11 rounded-full overflow-hidden border-2 border-white/20 hover:border-primary transition-all duration-300 shadow-lg active:scale-95 group flex items-center justify-center bg-muted/40"
                                     >
                                         {isLoggedIn ? (
                                             user?.avatar ? (
                                                 <Image src={user.avatar} alt={user.name} fill className="object-cover" />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center text-white font-black">
+                                                <div className="w-full h-full bg-linear-to-br from-primary to-info flex items-center justify-center text-white font-black">
                                                     {user?.name?.charAt(0).toUpperCase()}
                                                 </div>
                                             )
@@ -193,7 +199,7 @@ export default function StoreNavbar() {
                                                         </Link>
                                                         <button
                                                             onClick={() => { logout(); setUserMenuOpen(false); }}
-                                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-colors group"
+                                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-destructive/10 text-destructive transition-colors group"
                                                         >
                                                             <Icons.X className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                                             <span className="text-sm font-bold text-left rtl:text-right">{t('logout')}</span>
@@ -324,12 +330,12 @@ export default function StoreNavbar() {
                     <div className="p-6 border-t border-border/50 bg-accent/10">
                         {isLoggedIn ? (
                             <div className="flex items-center gap-4 p-3 rounded-2xl bg-background border border-border/50 shadow-sm">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-black shadow-md">
+                                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-info flex items-center justify-center text-white font-black shadow-md">
                                     {user?.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0 text-left rtl:text-right">
                                     <p className="text-sm font-black truncate">{user?.name}</p>
-                                    <button onClick={() => logout()} className="text-[10px] font-bold text-red-500 uppercase tracking-wider hover:opacity-80 transition-opacity">{t('logout')}</button>
+                                    <button onClick={() => logout()} className="text-[10px] font-bold text-destructive uppercase tracking-wider hover:opacity-80 transition-opacity">{t('logout')}</button>
                                 </div>
                             </div>
                         ) : (

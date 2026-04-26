@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, use } from 'react';
-import { useProduct } from '@/hooks/api/useProducts';
+import { useProduct } from '@/features/products/hooks/useProducts';
 import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
 import { Skeleton } from '@/shared/ui/Skeleton';
@@ -10,8 +10,8 @@ import { formatCurrency } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { Product } from '@/types';
 
-import { useTrans } from '@/hooks/useTrans';
-import { useToast } from '@/hooks/useToast';
+import { useTrans } from '@/shared/hooks/useTrans';
+import { useToast } from '@/shared/hooks/useToast';
 
 export default function ProductDetailsPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = use(params);
@@ -189,8 +189,8 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ local
                   </Button>
                </div>
                
-               <div className={`flex items-center gap-3 text-sm font-bold w-fit px-4 py-2.5 rounded-2xl border transition-all ${stock > 0 ? 'bg-green-50 border-green-100 text-green-700 dark:bg-green-500/10 dark:border-green-500/20 dark:text-green-400' : 'bg-red-50 border-red-100 text-red-700 dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-400'}`}>
-                  <div className={`w-2.5 h-2.5 rounded-full ${stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+               <div className={`flex items-center gap-3 text-sm font-bold w-fit px-4 py-2.5 rounded-2xl border transition-all ${stock > 0 ? 'bg-success/10 border-success/20 text-success' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
+                  <div className={`w-2.5 h-2.5 rounded-full ${stock > 0 ? 'bg-success animate-pulse' : 'bg-destructive'}`} />
                   {stock > 0 ? `${stock} Pieces available in stock` : 'Currently Unavailable'}
                </div>
            </div>

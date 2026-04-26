@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import CouponForm from '@/features/marketing/components/dashboard/CouponForm';
-import { useCoupon } from '@/hooks/api/useCoupons';
+import { useCoupon } from '@/features/marketing/hooks/useCoupons';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useRouter } from 'next/navigation';
 

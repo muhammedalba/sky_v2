@@ -2,20 +2,19 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { usePromoBanners, useDeletePromoBanner } from '@/hooks/api/usePromoBanner';
+import { usePromoBanners, useDeletePromoBanner } from '@/features/marketing/hooks/usePromoBanner';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
 import { PromoBanner } from '@/types';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
-import { useTrans } from '@/hooks/useTrans';
+import { useTrans } from '@/shared/hooks/useTrans';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import Modal from '@/shared/ui/Modal';
-
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/shared/hooks/useToast';
 import PromoBannerForm from '@/features/marketing/components/dashboard/PromoBannerForm';
 
 export default function PromoBannersPage() {

@@ -1,7 +1,39 @@
 import { getTranslations } from 'next-intl/server';
-import { Zap, ShieldCheck, Lock, UserPlus, Sparkles, Mail } from 'lucide-react';
+import { Truck, Construction, ShieldCheck, Star, Package, Lock, Mail, Droplets, LucideIcon } from 'lucide-react';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import { 
+  BenefitItem, 
+  FeaturePill, 
+  PreviewStatCard 
+} from './BrandingComponents';
+import { AuthMobileLogo } from './AuthSharedComponents';
 
 type AuthType = 'login' | 'signup' | 'forgot-password';
+
+interface OrbConfig {
+  className: string;
+  duration: string;
+  delay: string;
+}
+
+interface FeatureConfig {
+  icon: LucideIcon;
+  iconColor: string;
+  label: string;
+}
+
+interface AuthBrandingConfig {
+  bgGradient: string;
+  orbs: OrbConfig[];
+  badgeShadow: string;
+  badgeSubtitle: string;
+  heading: string;
+  headingGradientText: string;
+  headingGradient: string;
+  description: string;
+  features: FeatureConfig[];
+}
 
 interface AuthBrandingSectionProps {
   locale: string;
@@ -9,69 +41,70 @@ interface AuthBrandingSectionProps {
   type: AuthType;
 }
 
+/**
+ * AuthBrandingSection - A server-side component that renders the branding sidebar for authentication pages.
+ * Improved for maintainability, type safety, and code clarity.
+ */
 export default async function AuthBrandingSection({ locale, isRTL, type }: AuthBrandingSectionProps) {
   const t = await getTranslations({ locale, namespace: 'auth' });
 
   // Configuration for different auth types
-  const configs = {
+  const configs: Record<AuthType, AuthBrandingConfig> = {
     login: {
-      bgGradient: "from-primary-950 via-primary-900 to-secondary-950",
+      bgGradient: "from-primary/10 to-secondary/10",
       orbs: [
-        { className: "top-[-20%] left-[-10%] bg-gradient-to-br from-blue-500/30 to-indigo-600/20", duration: "8s", delay: "0s" },
-        { className: "bottom-[-20%] right-[-10%] bg-gradient-to-tl from-primary-500/30 to-purple-600/20", duration: "10s", delay: "2s" },
-        { className: "top-1/2 left-1/2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20", duration: "12s", delay: "4s" }
+        { className: "top-[-20%] left-[-10%] bg-gradient-to-br from-info/20 to-primary/40", duration: "8s", delay: "0s" },
+        { className: "bottom-[-20%] right-[-10%] bg-gradient-to-tl from-secondary/20 to-info/20", duration: "10s", delay: "2s" },
+        { className: "top-1/2 left-1/2 bg-gradient-to-r from-info/10 to-secondary/20", duration: "12s", delay: "4s" }
       ],
-      badgeGradient: "from-blue-400 to-primary-500",
       badgeShadow: "shadow-primary/20",
-      badgeSubtitle: t('dashboardPortal'),
-      heading: t('unlockYourPotential'),
-      headingGradientText: t('startManaging'),
-      headingGradient: "from-blue-300 via-indigo-300 to-primary-300",
-      description: t('platformDescription'),
+      badgeSubtitle: t('constructionPortal') || "رواد حلول الإنشاء والعزل",
+      heading: t('protectionThatLasts') || "حماية تدوم.",
+      headingGradientText: t('confidenceInEveryLayer') || "ثقة في كل طبقة.",
+      headingGradient: "from-info via-success/30 to-primary",
+      description: t('constructionDescription') || "وجهتكم المتخصصة لأحدث حلول العوازل المائية، مواد الجدران، ومستلزمات الإنشاءات بأعلى معايير الجودة العالمية.",
       features: [
-        { icon: Zap, iconColor: "text-yellow-400", label: t('instantAccess') },
-        { icon: ShieldCheck, iconColor: "text-green-400", label: t('secureLogin') },
-        { icon: Lock, iconColor: "text-blue-400", label: t('dataProtected') }
+        { icon: Droplets, iconColor: "text-warning", label: t('waterproofing') || "عزل مائي متطور" },
+        { icon: ShieldCheck, iconColor: "text-success", label: t('materialWarranty') || "ضمان المواد" },
+        { icon: Truck, iconColor: "text-info", label: t('siteDelivery') || "توصيل للمواقع" }
       ]
     },
     signup: {
-      bgGradient: "from-emerald-950 via-green-900 to-secondary-950",
+      bgGradient: "from-info/10 to-info/10",
       orbs: [
-        { className: "top-[-20%] left-[-10%] bg-gradient-to-br from-emerald-500/30 to-green-600/20", duration: "8s", delay: "0s" },
-        { className: "bottom-[-20%] right-[-10%] bg-gradient-to-tl from-teal-500/30 to-cyan-600/20", duration: "10s", delay: "2s" },
-        { className: "top-1/2 left-1/2 bg-gradient-to-r from-lime-500/20 to-green-500/20", duration: "12s", delay: "4s" }
+        { className: "top-[-20%] left-[-10%] bg-gradient-to-br from-success/10 to-info/10", duration: "8s", delay: "0s" },
+        { className: "bottom-[-20%] right-[-10%] bg-gradient-to-tl from-success/10 to-secondary/20", duration: "10s", delay: "2s" },
+        { className: "top-1/2 left-1/2 bg-gradient-to-r from-success/10 to-secondary/20", duration: "12s", delay: "4s" }
       ],
-      badgeGradient: "from-emerald-400 to-green-500",
-      badgeShadow: "shadow-emerald-500/20",
-      badgeSubtitle: t('joinToday'),
-      heading: t('joinOurCommunity'),
-      headingGradientText: t('growYourBusiness'),
-      headingGradient: "from-emerald-300 via-green-300 to-teal-300",
-      description: t('signupPlatformDescription'),
+      badgeShadow: "shadow-success/20",
+      badgeSubtitle: t('proNetwork') || "شبكة المحترفين",
+      heading: t('projectPricing') || "أسعار خاصة.",
+      headingGradientText: t('forContractors') || "للمقاولين والملاك.",
+      headingGradient: "from-success/80 via-success to-info",
+      description: t('signupConstructionDescription') || "انضم إلينا للحصول على عروض حصرية للمشاريع، استشارات فنية متخصصة، وتوريد مباشر لمواد الإنشاء.",
       features: [
-        { icon: UserPlus, iconColor: "text-emerald-400", label: t('freeToStart') },
-        { icon: ShieldCheck, iconColor: "text-green-400", label: t('secureSetup') },
-        { icon: Sparkles, iconColor: "text-teal-400", label: t('noCredit') }
+        { icon: Construction, iconColor: "text-info", label: t('technicalSupport') || "دعم فني هندسي" },
+        { icon: Package, iconColor: "text-success", label: t('bulkOrders') || "طلبيات الجملة" },
+        { icon: Star, iconColor: "text-warning", label: t('premiumQuality') || "جودة معتمدة" }
       ]
     },
     'forgot-password': {
-      bgGradient: "from-primary-950 via-primary-900 to-secondary-950",
+      bgGradient: "from-primary/10 to-secondary/10",
       orbs: [
-        { className: "top-[-20%] left-[-10%] bg-gradient-to-br from-amber-500/30 to-orange-600/20", duration: "8s", delay: "0s" },
-        { className: "bottom-[-20%] right-[-10%] bg-gradient-to-tl from-orange-500/30 to-red-600/20", duration: "10s", delay: "2s" },
-        { className: "top-1/2 left-1/2 bg-gradient-to-r from-yellow-500/20 to-amber-500/20", duration: "12s", delay: "4s" }
+        { className: "top-[-20%] left-[-10%] bg-gradient-to-br from-primary/30 to-primary/20", duration: "8s", delay: "0s" },
+        { className: "bottom-[-20%] right-[-10%] bg-gradient-to-tl from-primary/30 to-primary/20", duration: "10s", delay: "2s" },
+        { className: "top-1/2 left-1/2 bg-gradient-to-r from-primary/20 to-primary/20", duration: "12s", delay: "4s" }
       ],
-      badgeGradient: "from-amber-400 to-orange-500",
-      badgeShadow: "shadow-amber-500/20",
+      badgeShadow: "shadow-warning/20",
       badgeSubtitle: t('accountRecovery'),
       heading: t('secureYourAccount'),
       headingGradientText: t('restoringAccess'),
-      headingGradient: "from-amber-300 via-orange-300 to-yellow-300",
+      headingGradient: "from-warning via-warning/80 to-warning/60",
       description: t('secureRecoveryDescription'),
       features: [
-        { icon: ShieldCheck, iconColor: "text-amber-400", label: t('secureVerification') },
-        { icon: Mail, iconColor: "text-orange-400", label: t('emailProtected') },
-        { icon: Lock, iconColor: "text-yellow-400", label: t('encryptedData') }
+        { icon: ShieldCheck, iconColor: "text-warning", label: t('secureVerification') },
+        { icon: Mail, iconColor: "text-info", label: t('emailProtected') },
+        { icon: Lock, iconColor: "text-success", label: t('encryptedData') }
       ]
     }
   };
@@ -79,38 +112,49 @@ export default async function AuthBrandingSection({ locale, isRTL, type }: AuthB
   const config = configs[type];
 
   return (
-    <section className={` hidden lg:flex relative bg-gradient-to-br ${config.bgGradient} items-center justify-center overflow-hidden`}>
+    <section className={cn(
+      "hidden lg:flex relative items-center justify-center overflow-hidden bg-linear-to-br pb-5",
+      config.bgGradient
+    )}>
       {/* Animated Background Orbs */}
       <div className="absolute inset-0 overflow-hidden">
         {config.orbs.map((orb, idx) => (
-          <div 
+          <div
             key={idx}
-            className={`absolute w-[70%] h-[70%] rounded-full blur-[140px] animate-pulse ${orb.className}`} 
-            style={{ animationDuration: orb.duration, animationDelay: orb.delay }} 
+            className={cn(
+              "absolute w-[70%] h-[70%] rounded-full blur-[140px] animate-pulse",
+              orb.className
+            )}
+            style={{ animationDuration: orb.duration, animationDelay: orb.delay }}
           />
         ))}
       </div>
 
       {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]" />
-      
-      <div className={`relative z-10 px-12 mt-16 text-center max-w-2xl ${isRTL ? 'rtl' : 'ltr'}`}>
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[50px_50px] mask-[radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]" />
+
+      <div className={cn(
+        "relative z-10 px-12 mt-16 text-center max-w-2xl",
+        isRTL ? "rtl" : "ltr"
+      )}>
         {/* Logo Badge */}
-        <div className={`inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl px-8 py-4 rounded-3xl border border-white/20 mb-12 shadow-2xl ${config.badgeShadow} animate-in slide-in-from-top-4 duration-700 hover:scale-105 transition-transform`}>
-          <div className={`w-12 h-12 bg-gradient-to-br ${config.badgeGradient} rounded-2xl flex items-center justify-center font-black text-white shadow-lg shadow-white/20 text-xl`}>
-            S
-          </div>
-          <div className="text-left">
-            <span className="text-white font-black tracking-wider text-lg block">Sky Galaxy</span>
-            <span className="text-white/70 text-xs font-medium">{config.badgeSubtitle}</span>
-          </div>
+        <div className={cn(
+          "inline-flex flex-col items-center px-8 py-4 mb-5   transition-transform",
+          config.badgeShadow
+        )}>
+          {/* auth logo image */}
+          <AuthMobileLogo subtitle={config.badgeSubtitle} />
+
         </div>
 
         {/* Main Heading */}
-        <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight tracking-tight animate-in slide-in-from-bottom-6 duration-700 delay-100">
+        <h2 className="text-5xl lg:text-5xl font-black text-foreground/70 mb-8 leading-tight tracking-tight animate-in slide-in-from-bottom-6 duration-700 delay-100">
           {config.heading}
           <br />
-          <span className={`text-transparent bg-clip-text bg-gradient-to-r ${config.headingGradient} animate-gradient`}>
+          <span className={cn(
+            "text-transparent bg-clip-text bg-linear-to-r animate-gradient py-4",
+            config.headingGradient
+          )}>
             {config.headingGradientText}
           </span>
         </h2>
@@ -123,10 +167,13 @@ export default async function AuthBrandingSection({ locale, isRTL, type }: AuthB
         {/* Feature Pills */}
         <div className="flex flex-wrap gap-4 justify-center animate-in slide-in-from-bottom-10 duration-700 delay-300">
           {config.features.map((feature, idx) => (
-            <div key={idx} className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-5 py-3 rounded-full border border-white/10 hover:bg-white/10 transition-all group">
-              <feature.icon className={`w-5 h-5 ${feature.iconColor} group-hover:scale-110 transition-transform`} />
-              <span className="text-white/90 text-sm font-semibold">{feature.label}</span>
-            </div>
+            <FeaturePill 
+              key={idx}
+              icon={feature.icon}
+              label={feature.label}
+              iconColor={feature.iconColor}
+              className="px-5 py-3 bg-foreground/5"
+            />
           ))}
         </div>
 
@@ -135,63 +182,41 @@ export default async function AuthBrandingSection({ locale, isRTL, type }: AuthB
         {type === 'signup' && <SignupBenefits t={t} />}
 
         {/* Decorative Elements */}
-        <div className="absolute bottom-10 left-10 w-20 h-20 border-2 border-white/10 rounded-full animate-ping" style={{ animationDuration: '3s' }} />
-        <div className="absolute top-20 right-20 w-16 h-16 border-2 border-white/10 rounded-full animate-ping" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+        <div className="absolute bottom-10 left-10 w-20 h-20 border border-foreground/10 rounded-full animate-ping" style={{ animationDuration: '3s' }} />
+        <div className="absolute top-20 right-20 w-16 h-16 border border-foreground/10 rounded-full animate-ping" style={{ animationDuration: '4s', animationDelay: '1s' }} />
       </div>
     </section>
   );
 }
 
 // Sub-components for specific page elements
-function DashboardPreviewCards({ t }: { t: any }) {
+function DashboardPreviewCards({ t }: { t: (key: string) => string }) {
   return (
     <div className="grid grid-cols-2 gap-4 mt-12 animate-in slide-in-from-bottom-12 duration-700 delay-400">
-      <div className="p-5 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all group">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/20 group-hover:scale-110 transition-transform">
-            <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          </div>
-          <span className="text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-0.5 rounded-lg">+24.5%</span>
-        </div>
-        <p className="text-2xl font-black text-white tracking-tight">$12,450</p>
-        <p className="text-slate-400 text-xs font-medium mt-1">{t('branding.totalRevenue')}</p>
-      </div>
-
-      <div className="p-5 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all group">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform">
-            <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-          <span className="text-blue-400 text-xs font-bold bg-blue-500/10 px-2 py-0.5 rounded-lg">New</span>
-        </div>
-        <p className="text-2xl font-black text-white tracking-tight">1,204</p>
-        <p className="text-slate-400 text-xs font-medium mt-1">{t('branding.activeOrders')}</p>
-      </div>
+      <PreviewStatCard 
+        icon={Truck}
+        badgeText={t('express') || "سريع"}
+        value="24h"
+        label={t('averageDelivery') || "متوسط التوصيل"}
+        color="success"
+      />
+      <PreviewStatCard 
+        icon={Star}
+        badgeText="4.9/5"
+        value="+50k"
+        label={t('happyCustomers') || "عميل سعيد"}
+        color="info"
+      />
     </div>
   );
 }
 
-function SignupBenefits({ t }: { t: any }) {
+function SignupBenefits({ t }: { t: (key: string) => string }) {
   return (
     <div className="mt-12 space-y-4 text-left max-w-md mx-auto animate-in slide-in-from-bottom-12 duration-700 delay-400">
       <BenefitItem text={t('benefit1')} />
       <BenefitItem text={t('benefit2')} />
       <BenefitItem text={t('benefit3')} />
-    </div>
-  );
-}
-
-function BenefitItem({ text }: { text: string }) {
-  return (
-    <div className="flex items-start gap-3 text-white/90">
-      <span className="flex-shrink-0 w-6 h-6 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 font-bold text-sm">
-        ✓
-      </span>
-      <span className="text-sm font-medium leading-relaxed">{text}</span>
     </div>
   );
 }

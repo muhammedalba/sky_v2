@@ -5,12 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useCreateCarousel, useUpdateCarousel } from '@/hooks/api/useCarousel';
+import { useCreateCarousel, useUpdateCarousel } from '@/features/marketing/hooks/useCarousel';
 import { useState } from 'react';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { Carousel } from '@/types';
 import { useTranslations } from 'next-intl';
-import { CarouselFormValues, carouselSchema } from '@/lib/validations/schemas';
+import { CarouselFormValues, carouselSchema } from '@/features/marketing/marketing.schema';
 
 
 

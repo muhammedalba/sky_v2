@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { getServerUser, getAuthToken } from '@/lib/auth';
 import DashboardLayout from '@/widgets/layout/DashboardLayout';
 
+import { AsyncBoundary } from '@/shared/ui/boundaries/AsyncBoundary';
+
 export default async function DashboardLayoutWrapper({
   children,
   params,
@@ -28,7 +30,9 @@ export default async function DashboardLayoutWrapper({
 
   return (
     <DashboardLayout locale={locale}>
-      {children}
+      <AsyncBoundary>
+        {children}
+      </AsyncBoundary>
     </DashboardLayout>
   );
 }

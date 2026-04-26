@@ -12,28 +12,28 @@ interface StepWizardProps {
 // Step color configurations with gradients
 const stepColors = [
   {
-    // Step 1 - Blue gradient
-    active: 'bg-gradient-to-br from-blue-500 to-blue-600 ' ,
-    inactive: 'bg-secondary-200 dark:bg-secondary-700 ',
-    ring: 'ring-blue-100 dark:ring-blue-900/30 ',
-    glow: 'shadow-lg shadow-blue-500/50 dark:shadow-blue-500/30 ',
-    connector: 'bg-gradient-to-r from-blue-500 to-blue-600',
+    // Step 1 - Info
+    active: 'bg-info',
+    inactive: 'bg-secondary/20',
+    ring: 'ring-info/20',
+    glow: 'shadow-lg shadow-info/30',
+    connector: 'bg-info',
   },
   {
-    // Step 2 - Purple gradient
-    active: 'bg-gradient-to-br from-purple-500 to-purple-600',
-    inactive: 'bg-secondary-200 dark:bg-secondary-700',
-    ring: 'ring-purple-100 dark:ring-purple-900/30',
-    glow: 'shadow-lg shadow-purple-500/50 dark:shadow-purple-500/30',
-    connector: 'bg-gradient-to-r from-purple-500 to-purple-600',
+    // Step 2 - Primary
+    active: 'bg-primary',
+    inactive: 'bg-secondary/20',
+    ring: 'ring-primary/20',
+    glow: 'shadow-lg shadow-primary/30',
+    connector: 'bg-primary',
   },
   {
-    // Step 3 - Green gradient
-    active: 'bg-gradient-to-br from-green-500 to-green-600',
-    inactive: 'bg-secondary-200 dark:bg-secondary-700',
-    ring: 'ring-green-100 dark:ring-green-900/30',
-    glow: 'shadow-lg shadow-green-500/50 dark:shadow-green-500/30',
-    connector: 'bg-gradient-to-r from-green-500 to-green-600',
+    // Step 3 - Success
+    active: 'bg-success',
+    inactive: 'bg-secondary/20',
+    ring: 'ring-success/20',
+    glow: 'shadow-lg shadow-success/30',
+    connector: 'bg-success',
   },
 ];
 

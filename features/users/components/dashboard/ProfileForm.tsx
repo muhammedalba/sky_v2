@@ -6,8 +6,8 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { profileSchema, changePasswordSchema, type ProfileInput, type ChangePasswordInput } from '@/lib/validations/schemas';
+import { authApi } from '@/features/auth/api';
+import { profileSchema, changePasswordSchema, type ProfileInput, type ChangePasswordInput } from '@/features/users/user.schema';
 import { useTranslations } from 'next-intl';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { useState } from 'react';
@@ -42,7 +42,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       if (avatarFile) {
         formData.append('avatar', avatarFile);
       }
-      return api.auth.updateMe(formData);
+      return authApi.updateMe(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
@@ -66,7 +66,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: ChangePasswordInput) => {
-      return api.auth.changePassword({
+      return authApi.changePassword({
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
@@ -97,14 +97,14 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     <label className="text-sm font-medium">{t('fields.name')}</label>
                     <Input {...profileForm.register('name')} placeholder="John Doe" />
                     {profileForm.formState.errors.name && (
-                      <p className="text-red-500 text-xs">{profileForm.formState.errors.name.message}</p>
+                      <p className="text-destructive text-xs">{profileForm.formState.errors.name.message}</p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">{t('fields.email')}</label>
                     <Input {...profileForm.register('email')} type="email" placeholder="john@example.com" />
                     {profileForm.formState.errors.email && (
-                      <p className="text-red-500 text-xs">{profileForm.formState.errors.email.message}</p>
+                      <p className="text-destructive text-xs">{profileForm.formState.errors.email.message}</p>
                     )}
                   </div>
                 </div>
@@ -129,7 +129,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     <label className="text-sm font-medium">{t('fields.currentPassword')}</label>
                     <Input {...passwordForm.register('currentPassword')} type="password" />
                     {passwordForm.formState.errors.currentPassword && (
-                      <p className="text-red-500 text-xs">{passwordForm.formState.errors.currentPassword.message}</p>
+                      <p className="text-destructive text-xs">{passwordForm.formState.errors.currentPassword.message}</p>
                     )}
                   </div>
                   <div className="hidden md:block"></div>
@@ -137,14 +137,14 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     <label className="text-sm font-medium">{t('fields.newPassword')}</label>
                     <Input {...passwordForm.register('password')} type="password" />
                     {passwordForm.formState.errors.password && (
-                      <p className="text-red-500 text-xs">{passwordForm.formState.errors.password.message}</p>
+                      <p className="text-destructive text-xs">{passwordForm.formState.errors.password.message}</p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">{t('fields.confirmPassword')}</label>
                     <Input {...passwordForm.register('confirmPassword')} type="password" />
                     {passwordForm.formState.errors.confirmPassword && (
-                      <p className="text-red-500 text-xs">{passwordForm.formState.errors.confirmPassword.message}</p>
+                      <p className="text-destructive text-xs">{passwordForm.formState.errors.confirmPassword.message}</p>
                     )}
                   </div>
                 </div>

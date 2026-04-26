@@ -1,6 +1,6 @@
 'use client';
 
-import { useMe } from '@/hooks/api/useAuth';
+import { useMe } from '@/features/auth/hooks/useAuth';
 import ProfileForm from '@/features/users/components/dashboard/ProfileForm';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import ErrorMessage from '@/shared/ui/ErrorMessage';

@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import SupplierForm from '@/features/suppliers/components/dashboard/SupplierForm';
-import { useSupplier } from '@/hooks/api/useSuppliers';
+import { useSupplier } from '@/features/suppliers/hooks/useSuppliers';
 import { Skeleton } from '@/shared/ui/Skeleton';
 
 export default function EditSupplierPage({ params }: { params: Promise<{ locale: string; id: string }> }) {

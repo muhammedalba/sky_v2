@@ -4,7 +4,7 @@ import { use, useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSuppliers, useDeleteSupplier } from '@/hooks/api/useSuppliers';
+import { useSuppliers, useDeleteSupplier } from '@/features/suppliers/hooks/useSuppliers';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
@@ -13,7 +13,7 @@ import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
 import { debounce } from '@/lib/utils';
 import { Supplier } from '@/types';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 
 export default function SuppliersPage({ params }: { params: Promise<{ locale: string }> }) {

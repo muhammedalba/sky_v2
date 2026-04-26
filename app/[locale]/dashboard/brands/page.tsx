@@ -1,18 +1,18 @@
 'use client';
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { useBrands, useDeleteBrand } from '@/hooks/api/useBrands';
+import { useBrands, useDeleteBrand } from '@/features/brands/hooks/useBrands';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Icons } from '@/shared/ui/Icons';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import Modal from '@/shared/ui/Modal';
 import BrandForm from '@/features/brands/components/dashboard/BrandForm';
-import { useTrans } from '@/hooks/useTrans';
+import { useTrans } from '@/shared/hooks/useTrans';
 import { Brand } from '@/types';
 
 export default function BrandsPage() {

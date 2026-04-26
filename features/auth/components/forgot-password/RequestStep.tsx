@@ -1,28 +1,28 @@
 'use client';
 
-import { useForgotPassword } from '@/hooks/api/useAuth';
-import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/schemas';
+import { useForgotPassword } from '@/features/auth/hooks/useAuth';
+import { forgotPasswordSchema, type ForgotPasswordInput } from '@/features/auth/auth.schema';
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/shared/hooks/useToast';
 import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
 import { SmartInput } from '@/shared/ui/form/SmartFields';
 
 interface RequestStepProps {
   onSuccess: (email: string) => void;
-  onError: (error: any) => void;
+  onError: (error: unknown) => void;
 }
 
 const RequestStep = ({ onSuccess, onError }: RequestStepProps) => {
   const t = useTranslations('auth');
   const toast = useToast();
 
-  const forgotMutation = useSmartMutation<any, any, string>(useForgotPassword(), {
-    onSuccess: (_data: any, email: string) => {
+  const forgotMutation = useSmartMutation<void, unknown, string>(useForgotPassword(), {
+    onSuccess: (_data, email) => {
       onSuccess(email);
       toast.success(t('codeSentSuccessfully'));
     },
-    onError: (error: any) => {
+    onError: (error) => {
       onError(error);
     },
   });

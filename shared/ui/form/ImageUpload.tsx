@@ -49,7 +49,7 @@ export default function ImageUpload({ value, onChange, onRemove, className }: Im
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 transition-colors"
             >
               <Icons.Menu className="w-4 h-4 rotate-45" /> {/* Use generic X or trash */}
             </button>

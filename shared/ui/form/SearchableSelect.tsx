@@ -75,7 +75,7 @@ export function SearchableSelect({
           setIsOpen(true);
           if (onOpen) onOpen();
         }}
-        className={`w-full h-10 rounded-xl bg-secondary/10 border-none font-semibold ${error ? 'ring-2 ring-red-500' : ''}`}
+        className={`w-full h-10 rounded-xl bg-secondary/10 border-none font-semibold ${error ? 'ring-2 ring-destructive' : ''}`}
       />
 
       {isOpen && (
@@ -108,7 +108,7 @@ export function SearchableSelect({
           )}
         </div>
       )}
-      {error && <p className="text-red-500 text-xs mt-1 font-semibold">{error}</p>}
+      {error && <p className="text-destructive text-xs mt-1 font-semibold">{error}</p>}
     </div>
   );
 }

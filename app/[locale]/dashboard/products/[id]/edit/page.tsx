@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import EditProductForm from '@/features/products/components/dashboard/EditProductForm';
-import { useProduct } from '@/hooks/api/useProducts';
+import { useProduct } from '@/features/products/hooks/useProducts';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { Product, ProductVariant } from '@/types';
 

@@ -1,18 +1,18 @@
 'use client';
 
-import { useResetPassword } from '@/hooks/api/useAuth';
-import { resetPasswordSchema, type ResetPasswordInput } from '@/lib/validations/schemas';
+import { useResetPassword } from '@/features/auth/hooks/useAuth';
+import { resetPasswordSchema, type ResetPasswordInput } from '@/features/auth/auth.schema';
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
 import { Lock } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/shared/hooks/useToast';
 import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
 import { SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
 interface ResetStepProps {
   email: string;
-  onError: (error: any) => void;
+  onError: (error: unknown) => void;
 }
 
 const ResetStep = ({ email, onError }: ResetStepProps) => {
@@ -26,7 +26,7 @@ const ResetStep = ({ email, onError }: ResetStepProps) => {
       toast.success(t('successReset'));
       router.push(`/${locale}/login?reset=success`);
     },
-    onError: (error: any) => {
+    onError: (error) => {
       onError(error);
     },
   });

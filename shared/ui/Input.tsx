@@ -24,7 +24,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       // Determine if label should float
       const shouldFloat = isFocused || (value && value.length > 0);
       
-    return (<div className="w-full space-y-2">  
+    return (<div className="w-full ">  
       <div className=" relative">
         {label && (
           <label 
@@ -33,14 +33,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               `pointer-events-none absolute start-1 flex items-center gap-x-1 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500 ` ,
               shouldFloat 
                 ? '-top-4 text-xs text-foreground/80  w-fit' 
-                : 'top-1/2 -translate-y-1/2 text-sm text-gray-400 w-1/2 bg-transparent',
+                : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground w-fit bg-transparent',
                 
               labelClassName
             )}
           >
          
              {IconComponent && (
-                    <IconComponent className={` ${shouldFloat ? 'text-blue-700' : 'text-gray-400'} inline h-4 text-blue-500`} />
+                    <IconComponent className={` ${shouldFloat ? 'text-primary' : 'text-muted-foreground'} inline h-4 text-primary`} />
                 )}   {label}
           </label>
         )}
@@ -59,14 +59,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             props.onBlur?.(e);
           }}
           className={cn(
-            `w-full rounded-lg border px-4 py-3 text-lg leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
+            `w-full border  py-3 text-lg leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
             className
           )}
           ref={ref}
           {...props}
         />
       </div>
-     {error && <ErrorMessage message={error} />}
+     {error && <ErrorMessage  message={error} />}
       </div>
     )
   }

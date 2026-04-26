@@ -5,10 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useCreatePromoBanner, useUpdatePromoBanner } from '@/hooks/api/usePromoBanner';
+import { useCreatePromoBanner, useUpdatePromoBanner } from '@/features/marketing/hooks/usePromoBanner';
 import { PromoBanner } from '@/types';
 import { useTranslations } from 'next-intl';
-import { PromoBannerFormValues, promoBannerSchema } from '@/lib/validations/schemas';
+import { PromoBannerFormValues, promoBannerSchema } from '@/features/marketing/marketing.schema';
 
 
 interface PromoBannerFormProps {
@@ -71,7 +71,7 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
             placeholder="🎉 Free Shipping on orders over $50!" 
             className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.textEn ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.textEn && <p className="text-red-500 text-xs mt-1">{errors.textEn.message}</p>}
+          {errors.textEn && <p className="text-destructive text-xs mt-1">{errors.textEn.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -84,7 +84,7 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
             dir="rtl"
             className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.textAr ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.textAr && <p className="text-red-500 text-xs mt-1">{errors.textAr.message}</p>}
+          {errors.textAr && <p className="text-destructive text-xs mt-1">{errors.textAr.message}</p>}
         </div>
       </div>
 
@@ -98,7 +98,7 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
           type="url"
           className="h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold"
         />
-        {errors.link && <p className="text-red-500 text-xs mt-1">{errors.link.message}</p>}
+        {errors.link && <p className="text-destructive text-xs mt-1">{errors.link.message}</p>}
       </div>
 
       <div className="flex items-center gap-3 bg-secondary/10 p-4 rounded-xl border-none">

@@ -18,7 +18,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 const IconComponent = icon;
 const [isFocused, setIsFocused] = React.useState(false);
 const shouldFloat = isFocused || (props.value && props.value.length > 0);
-    return (<div  className="w-full space-y-2 mt-5">
+    return (<div  className="w-full  mt-5">
       <div className="relative ">
         {label && (
                   <label 
@@ -26,15 +26,15 @@ const shouldFloat = isFocused || (props.value && props.value.length > 0);
                     className={cn(
                       ` pointer-events-none absolute start-1 flex items-center gap-x-1 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500  ` ,
                       shouldFloat
-                        ? '-top-4 text-xs text-foreground/80 w-fit  ' 
-                        : 'top-1/2 -translate-y-1/2 text-sm text-gray-400  bg-transparent w-auto',
+                        ? '-top-4 text-xs text-foreground/80 w-fit ' 
+                        : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground  bg-transparent w-auto',
                         
                       props.labelClassName
                     )}
                   >
                  
                      {IconComponent && (
-                    <IconComponent className={` ${props.value && props.value.length > 0 ? 'text-blue-700' : 'text-gray-400'} inline h-4 text-blue-500`} />
+                    <IconComponent className={` ${props.value && props.value.length > 0 ? 'text-primary' : 'text-muted-foreground'} inline h-4 text-primary`} />
                 )}  {label}
                   </label>
                 )}
@@ -51,7 +51,7 @@ const shouldFloat = isFocused || (props.value && props.value.length > 0);
             props.onBlur?.(e);
           }}
           className={cn(
-                      `w-full rounded-lg border px-4 py-3 text-lg leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
+                      `w-full border py-3 text-lg leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
                       className
                     )}
         />

@@ -20,7 +20,7 @@ export function CompositionChart({ data }: CompositionChartProps) {
   ];
 
   return (
-    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-slate-900/50 shadow-xl">
+    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-secondary/50 shadow-xl">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">{t('composition')}</CardTitle>
       </CardHeader>

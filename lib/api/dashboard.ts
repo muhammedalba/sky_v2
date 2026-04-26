@@ -6,8 +6,8 @@ const ENDPOINTS = {
   CATEGORY_STATS: env.ENDPOINTS.CATEGORIES.STATS,
   USER_STATS: env.ENDPOINTS.USERS.STATS,
   ORDER_STATS: env.ENDPOINTS.ORDERS.STATS,
-  RECENT_ORDERS: '/order/allOrders?limit=5',
-  TOP_PRODUCTS: '/products/allProducts?limit=5&sort=-sold',
+  RECENT_ORDERS: '/order?limit=5',
+  TOP_PRODUCTS: '/products?limit=5',
 };
 
 export const dashboardApi = {
@@ -25,8 +25,8 @@ export const dashboardApi = {
       categories: categories.data.data || categories.data,
       users: users.data.data || users.data,
       orders: orders.data.data || orders.data,
-      recentOrders: recentOrders.data.data,
-      topProducts: topProducts.data.data,
+      recentOrders: recentOrders.data.data || recentOrders.data,
+      topProducts: topProducts.data.data || topProducts.data,
     };
   },
 };

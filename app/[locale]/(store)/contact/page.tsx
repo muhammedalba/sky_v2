@@ -60,9 +60,9 @@ export default function ContactPage() {
             {/* Info Cards */}
             <div className="lg:col-span-1 space-y-6">
                 {[
-                    { icon: Icons.Users, title: t('info.email'), value: "hello@skygalaxy.com", color: "bg-blue-50 text-blue-600" },
-                    { icon: Icons.Menu, title: t('info.phone'), value: "+1 (555) 000-0000", color: "bg-purple-50 text-purple-600" }, // Using Menu as Phone placeholder
-                    { icon: Icons.Dashboard, title: t('info.office'), value: "123 Tech Blvd, San Francisco, CA", color: "bg-pink-50 text-pink-600" } // Dashboard as Location placeholder
+                    { icon: Icons.Users, title: t('info.email'), value: "hello@skygalaxy.com", color: "bg-info/10 text-info" },
+                    { icon: Icons.Menu, title: t('info.phone'), value: "+1 (555) 000-0000", color: "bg-primary/10 text-primary" }, // Using Menu as Phone placeholder
+                    { icon: Icons.Dashboard, title: t('info.office'), value: "123 Tech Blvd, San Francisco, CA", color: "bg-destructive/10 text-destructive" } // Dashboard as Location placeholder
                 ].map((item, i) => (
                     <Card key={i} className="p-6 border-border/50 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
                         <div className={`p-3 rounded-xl ${item.color}`}>
@@ -80,10 +80,10 @@ export default function ContactPage() {
             <Card className="lg:col-span-2 p-8 lg:p-12 shadow-xl border-border/50">
                {success ? (
                    <div className="h-full flex flex-col items-center justify-center text-center py-12 animate-in fade-in">
-                        <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
+                        <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-6">
                             <Icons.Menu className="w-8 h-8" />
                         </div>
-                        <h3 className="text-2xl font-bold text-green-700 mb-2">{t('form.success')}</h3>
+                        <h3 className="text-2xl font-bold text-success mb-2">{t('form.success')}</h3>
                         <p className="text-muted-foreground">We&apos;ll get back to you shortly.</p>
                         <Button variant="outline" className="mt-8" onClick={() => setSuccess(false)}>Send another message</Button>
                    </div>
@@ -93,31 +93,31 @@ export default function ContactPage() {
                             <div className="space-y-2">
                                 <label className="text-sm font-bold ml-1">{t('form.name')}</label>
                                 <Input 
-                                    className={`h-12 bg-secondary/20 border-transparent focus:bg-background transition-colors ${errors.name ? 'ring-1 ring-red-500' : ''}`}
+                                    className={`h-12 bg-secondary/20 border-transparent focus:bg-background transition-colors ${errors.name ? 'ring-1 ring-destructive' : ''}`}
                                     placeholder="John Doe" 
                                     {...register('name')}
                                 />
-                                {errors.name && <p className="text-xs text-red-500 font-bold ml-1">{errors.name.message}</p>}
+                                {errors.name && <p className="text-xs text-destructive font-bold ml-1">{errors.name.message}</p>}
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-bold ml-1">{t('form.email')}</label>
                                 <Input 
-                                    className={`h-12 bg-secondary/20 border-transparent focus:bg-background transition-colors ${errors.email ? 'ring-1 ring-red-500' : ''}`}
+                                    className={`h-12 bg-secondary/20 border-transparent focus:bg-background transition-colors ${errors.email ? 'ring-1 ring-destructive' : ''}`}
                                     placeholder="john@example.com" 
                                     {...register('email')}
                                 />
-                                {errors.email && <p className="text-xs text-red-500 font-bold ml-1">{errors.email.message}</p>}
+                                {errors.email && <p className="text-xs text-destructive font-bold ml-1">{errors.email.message}</p>}
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <label className="text-sm font-bold ml-1">{t('form.message')}</label>
                             <Textarea 
-                                className={`min-h-[150px] bg-secondary/20 border-transparent focus:bg-background transition-colors resize-none p-4 ${errors.message ? 'ring-1 ring-red-500' : ''}`}
+                                className={`min-h-[150px] bg-secondary/20 border-transparent focus:bg-background transition-colors resize-none p-4 ${errors.message ? 'ring-1 ring-destructive' : ''}`}
                                 placeholder="How can we help you?" 
                                 {...register('message')}
                             />
-                            {errors.message && <p className="text-xs text-red-500 font-bold ml-1">{errors.message.message}</p>}
+                            {errors.message && <p className="text-xs text-destructive font-bold ml-1">{errors.message.message}</p>}
                         </div>
 
                         <Button 

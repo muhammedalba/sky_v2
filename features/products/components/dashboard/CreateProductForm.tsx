@@ -6,13 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { createProductSchema, CreateProductInput } from '@/lib/validations/schemas';
-import { useCreateProduct } from '@/hooks/api/useProducts';
-import { useCategories } from '@/hooks/api/useCategories';
-import { useSubCategories } from '@/hooks/api/useSubCategories';
-import { useBrands } from '@/hooks/api/useBrands';
-import { useSuppliers } from '@/hooks/api/useSuppliers';
-import { useTrans } from '@/hooks/useTrans';
+import { createProductSchema, CreateProductInput } from '@/features/products/product.schema';
+import { useCreateProduct } from '@/features/products/hooks/useProducts';
+import { useCategories } from '@/features/categories/hooks/useCategories';
+import { useSubCategories } from '@/features/categories/hooks/useSubCategories';
+import { useBrands } from '@/features/brands/hooks/useBrands';
+import { useSuppliers } from '@/features/suppliers/hooks/useSuppliers';
+import { useTrans } from '@/shared/hooks/useTrans';
 import { LocalizedString } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 

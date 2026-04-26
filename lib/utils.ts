@@ -32,7 +32,7 @@ export function formatDateTime(date: string | Date, locale: string = 'en-US'): s
   if (!date) return '-';
   const d = new Date(date);
   if (isNaN(d.getTime())) return '-';
-  
+
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'short',
@@ -44,13 +44,13 @@ export function formatDateTime(date: string | Date, locale: string = 'en-US'): s
 
 export function getStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-    processing: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    shipped: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-    delivered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+    pending: 'bg-warning/10 text-warning',
+    processing: 'bg-info/10 text-info',
+    shipped: 'bg-primary/10 text-primary',
+    delivered: 'bg-success/10 text-success',
+    cancelled: 'bg-destructive/10 text-destructive',
   };
-  return statusColors[status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+  return statusColors[status] || 'bg-muted text-muted-foreground';
 }
 
 export function truncate(str: string, length: number): string {

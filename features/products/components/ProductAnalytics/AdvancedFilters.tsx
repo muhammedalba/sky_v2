@@ -31,11 +31,11 @@ export function AdvancedFilters({ onApply, onReset, isLoading }: AdvancedFilters
   };
 
   return (
-    <Card className="border-none bg-white/40 backdrop-blur-md dark:bg-slate-900/40 shadow-lg mb-8">
+    <Card className="border-none bg-white/40 backdrop-blur-md dark:bg-secondary/40 shadow-lg mb-8">
       <CardContent className="p-4">
         <div className="flex flex-wrap items-end gap-4">
           <div className="space-y-1.5 flex-1 min-w-[200px]">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Calendar className="w-3 h-3" />
               {t('startDate')}
             </label>
@@ -48,7 +48,7 @@ export function AdvancedFilters({ onApply, onReset, isLoading }: AdvancedFilters
           </div>
 
           <div className="space-y-1.5 flex-1 min-w-[200px]">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Calendar className="w-3 h-3" />
               {t('endDate')}
             </label>

@@ -7,7 +7,7 @@ import { Input } from '@/shared/ui/Input';
 import { Icons } from '@/shared/ui/Icons';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import Pagination from '@/shared/ui/Pagination';
-import { useProducts } from '@/hooks/api/useProducts';
+import { useProducts } from '@/features/products/hooks/useProducts';
 import { debounce } from '@/lib/utils';
 import { Product } from '@/types';
 // Accordion import removed

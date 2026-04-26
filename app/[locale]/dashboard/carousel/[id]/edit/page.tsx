@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import CarouselForm from '@/features/marketing/components/dashboard/CarouselForm';
-import { useCarouselItem } from '@/hooks/api/useCarousel';
+import { useCarouselItem } from '@/features/marketing/hooks/useCarousel';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useRouter } from 'next/navigation';
 

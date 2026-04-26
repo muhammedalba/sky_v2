@@ -1,16 +1,16 @@
 'use client';
 
-import { useVerifyResetCode } from '@/hooks/api/useAuth';
-import { verifyResetCodeSchema, type VerifyResetCodeInput } from '@/lib/validations/schemas';
+import { useVerifyResetCode } from '@/features/auth/hooks/useAuth';
+import { verifyResetCodeSchema, type VerifyResetCodeInput } from '@/features/auth/auth.schema';
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/shared/hooks/useToast';
 import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
 import { SmartInput } from '@/shared/ui/form/SmartFields';
 
 interface VerifyStepProps {
   onSuccess: () => void;
-  onError: (error: any) => void;
+  onError: (error: unknown) => void;
   onChangeEmail: () => void;
 }
  
@@ -23,7 +23,7 @@ const VerifyStep = ({ onSuccess, onError, onChangeEmail }: VerifyStepProps) => {
       onSuccess();
       toast.success(t('resetSuccess'));
     },
-    onError: (error: any) => {
+    onError: (error) => {
       onError(error);
     },
   });

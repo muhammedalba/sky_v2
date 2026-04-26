@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import PromoBannerForm from '@/features/marketing/components/dashboard/PromoBannerForm';
-import { usePromoBanner } from '@/hooks/api/usePromoBanner';
+import { usePromoBanner } from '@/features/marketing/hooks/usePromoBanner';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useRouter } from 'next/navigation';
 

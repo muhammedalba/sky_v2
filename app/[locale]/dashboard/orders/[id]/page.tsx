@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useOrder, useUpdateOrderStatus } from '@/hooks/api/useOrders';
-import { orderStatusSchema, type OrderStatusInput } from '@/lib/validations/schemas';
+import { useOrder, useUpdateOrderStatus } from '@/features/orders/hooks/useOrders';
+import { orderStatusSchema, type OrderStatusInput } from '@/features/orders/order.schema';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Select } from '@/shared/ui/Select';
 import { Button } from '@/shared/ui/Button';
@@ -17,7 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { formatCurrency, formatDateTime, getStatusColor, cn } from '@/lib/utils';
 import { Product } from '@/types';
-import { useTrans } from '@/hooks/useTrans';
+import { useTrans } from '@/shared/hooks/useTrans';
 
 export default function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -179,7 +179,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                  </div>
                  <div className="flex justify-between w-64 text-sm font-medium text-muted-foreground">
                     <span>Shipping Fee</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-2">Free</Badge>
+                    <Badge variant="secondary" className="bg-success/10 text-success hover:bg-success/20 border-none px-2">Free</Badge>
                  </div>
                  <div className="w-64 h-px bg-border my-2" />
                  <div className="flex justify-between w-64 text-xl font-black">
@@ -239,14 +239,14 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                  <CardTitle className="text-lg font-bold">Payment Status</CardTitle>
               </CardHeader>
               <CardContent>
-                 <div className="flex items-center justify-between p-4 rounded-2xl bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/50">
+                 <div className="flex items-center justify-between p-4 rounded-2xl bg-success/10 dark:bg-success/5 border border-success/20 dark:border-success/10">
                     <div className="flex items-center gap-3">
-                       <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center">
+                       <div className="w-8 h-8 rounded-full bg-success text-white flex items-center justify-center">
                           <Icons.Menu className="w-4 h-4" />{/* Checkmark replacement */}
                        </div>
-                       <span className="text-green-700 dark:text-green-400 font-black text-sm uppercase tracking-wider">{order.paymentMethodType || 'CARD'}</span>
+                       <span className="text-success font-black text-sm uppercase tracking-wider">{order.paymentMethodType || 'CARD'}</span>
                     </div>
-                    <Badge variant="outline" className="bg-white dark:bg-background border-green-200 text-green-600 font-bold uppercase text-[10px]">
+                    <Badge variant="outline" className="bg-white dark:bg-background border-success/30 text-success font-bold uppercase text-[10px]">
                        {order.isPaid ? 'Success' : 'Pending'}
                     </Badge>
                  </div>
@@ -271,7 +271,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                          />
                       )}
                    />
-                   {errors.status && <div className="text-red-500 text-xs mt-1">{tErrors('required')}</div>}
+                   {errors.status && <div className="text-destructive text-xs mt-1">{tErrors('required')}</div>}
                    <Button
                       type="submit"
                       className="w-full h-12 rounded-xl font-black shadow-lg shadow-primary/10 mt-4"

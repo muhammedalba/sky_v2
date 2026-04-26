@@ -2,21 +2,21 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { useCarousel, useDeleteCarousel } from '@/hooks/api/useCarousel';
+import { useCarousel, useDeleteCarousel } from '@/features/marketing/hooks/useCarousel';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { Carousel as CarouselType } from '@/types';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
+import { useTrans } from '@/shared/hooks/useTrans';
+import { useToast } from '@/shared/hooks/useToast';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
-import { useTrans } from '@/hooks/useTrans';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import Modal from '@/shared/ui/Modal';
 import CarouselForm from '@/features/marketing/components/dashboard/CarouselForm';
-import { useToast } from '@/hooks/useToast';
 
 export default function CarouselPage() {
   const confirmDialog = useConfirmDialog();

@@ -3,7 +3,7 @@
 import { use, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCoupons, useDeleteCoupon } from '@/hooks/api/useCoupons';
+import { useCoupons, useDeleteCoupon } from '@/features/marketing/hooks/useCoupons';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
@@ -11,7 +11,7 @@ import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
 import { formatDate, debounce } from '@/lib/utils';
 import { Coupon } from '@/types';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 
 export default function CouponsPage({ params }: { params: Promise<{ locale: string }> }) {

@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Card } from '@/shared/ui/Card';
-import { useCreateCoupon, useUpdateCoupon } from '@/hooks/api/useCoupons';
+import { useCreateCoupon, useUpdateCoupon } from '@/features/marketing/hooks/useCoupons';
 import { Coupon } from '@/types';
-import { CouponFormValues, couponSchema } from '@/lib/validations/schemas';
+import { CouponFormValues, couponSchema } from '@/features/marketing/marketing.schema';
 
 
 interface CouponFormProps {
@@ -51,7 +51,7 @@ export default function CouponForm({ initialData, onSuccess, onCancel }: CouponF
           <div className="space-y-2">
             <label className="text-sm font-medium">Coupon Code</label>
             <Input {...form.register('name')} placeholder="SUMMER2024" className="uppercase" />
-            {form.formState.errors.name && <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>}
+            {form.formState.errors.name && <p className="text-destructive text-sm">{form.formState.errors.name.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -61,7 +61,7 @@ export default function CouponForm({ initialData, onSuccess, onCancel }: CouponF
               type="number" 
               placeholder="10" 
             />
-            {form.formState.errors.discount && <p className="text-red-500 text-sm">{form.formState.errors.discount.message}</p>}
+            {form.formState.errors.discount && <p className="text-destructive text-sm">{form.formState.errors.discount.message}</p>}
           </div>
 
           <div className="space-y-2">

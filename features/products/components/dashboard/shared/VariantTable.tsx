@@ -165,7 +165,7 @@ export default function VariantTable({
                       <button
                         type="button"
                         onClick={() => variant._id && onUnmarkDelete?.(variant._id)}
-                        className="p-1.5 rounded-lg hover:bg-green-500/10 text-green-600 transition-colors"
+                        className="p-1.5 rounded-lg hover:bg-success/10 text-success transition-colors"
                         title="Undo delete"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

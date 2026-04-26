@@ -1,26 +1,34 @@
 'use client';
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { useCategories, useDeleteCategory } from '@/hooks/api/useCategories';
+import { useCategories, useDeleteCategory } from '@/features/categories/hooks/useCategories';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Button } from '@/shared/ui/Button';
 import Modal from '@/shared/ui/Modal';
 import { Icons } from '@/shared/ui/Icons';
 import { Badge } from '@/shared/ui/Badge';
 import { Category } from '@/types';
-import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
+import { useTrans } from '@/shared/hooks/useTrans';
+import { useToast } from '@/shared/hooks/useToast';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
-import { useTrans } from '@/hooks/useTrans';
-import { useToast } from '@/hooks/useToast';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import CategoryForm from '@/features/categories/components/dashboard/CategoryForm';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 
+
+import { useQueryState } from '@/shared/hooks/useQueryState';
+
+
 export default function CategoriesPage() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
+
+  const page = Number(getQueryParam('page', '1'));
+  const search = getQueryParam('search', '');
   const { data, isLoading, refetch } = useCategories({ page, limit: 10, keywords: search, all_langs: true });
+
+  const setPage = (val: number) => setQueryParam('page', val);
   const getTrans = useTrans();
   const t = useTranslations('categories');
   const tMessages = useTranslations('messages');
@@ -127,70 +135,70 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
-      <EntityPageHeader
-        title={t('title')}
-        subtitle={t('subtitle')}
-        action={{
-          label: t('createCategory'),
-          icon: <Icons.Plus className="w-5 h-5" />,
-          onClick: () => handleOpenModal()
-        }}
-      />
-
-      {/* Search */}
-      <EntitySearchBar
-        placeholder={t('searchPlaceholder') || 'Search categories...'}
-        onSearch={(value) => {
-          setSearch(value);
-          setPage(1);
-        }}
-      />
-
-      {/* Table start */}
-      <EntityDataTable<Category>
-        data={data?.data}
-        isLoading={isLoading}
-        pagination={data?.meta?.pagination}
-        onPageChange={setPage}
-        columns={columns}
-        emptyState={{
-          title: t('emptyState.title'),
-          description: t('emptyState.description'),
-          icon: <Icons.Menu className="h-10 w-10 text-muted-foreground/40" />,
-        }}
-      />
-      {/* Table end */}
-
-      {/* Modal start */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={editingCategory ? t('editCategory') : t('createCategory')}
-        description="Organize your store by creating meaningful categories."
-      >
-        <CategoryForm
-          editingCategory={editingCategory}
-          onSuccess={() => {
-            refetch();
-            handleCloseModal();
+        {/* Header */}
+        <EntityPageHeader
+          title={t('title')}
+          subtitle={t('subtitle')}
+          action={{
+            label: t('createCategory'),
+            icon: <Icons.Plus className="w-5 h-5" />,
+            onClick: () => handleOpenModal()
           }}
-          onCancel={handleCloseModal}
         />
-      </Modal>
-      {/* Confirm Dialog start */}
-      <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        onClose={confirmDialog.closeDialog}
-        onConfirm={confirmDialog.handleConfirm}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
-        confirmText="Delete"
-        cancelText="Cancel"
-        isDangerous={true}
-        isLoading={confirmDialog.isLoading}
-      />
-      {/* Confirm Dialog end */}
-    </div>
+
+        {/* Search */}
+        <EntitySearchBar
+          placeholder={t('searchPlaceholder') || 'Search categories...'}
+          defaultValue={search}
+          onSearch={(value) => {
+            setQueryParams({ search: value, page: 1 });
+          }}
+        />
+
+        {/* Table start */}
+        <EntityDataTable<Category>
+          data={data?.data}
+          isLoading={isLoading}
+          pagination={data?.meta?.pagination}
+          onPageChange={setPage}
+          columns={columns}
+          emptyState={{
+            title: t('emptyState.title'),
+            description: t('emptyState.description'),
+            icon: <Icons.Menu className="h-10 w-10 text-muted-foreground/40" />,
+          }}
+        />
+        {/* Table end */}
+
+        {/* Modal start */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          title={editingCategory ? t('editCategory') : t('createCategory')}
+          description="Organize your store by creating meaningful categories."
+        >
+          <CategoryForm
+            editingCategory={editingCategory}
+            onSuccess={() => {
+              refetch();
+              handleCloseModal();
+            }}
+            onCancel={handleCloseModal}
+          />
+        </Modal>
+        {/* Confirm Dialog start */}
+        <ConfirmDialog
+          isOpen={confirmDialog.isOpen}
+          onClose={confirmDialog.closeDialog}
+          onConfirm={confirmDialog.handleConfirm}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          confirmText="Delete"
+          cancelText="Cancel"
+          isDangerous={true}
+          isLoading={confirmDialog.isLoading}
+        />
+        {/* Confirm Dialog end */}
+      </div>
   );
 }

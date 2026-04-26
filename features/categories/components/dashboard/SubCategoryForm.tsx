@@ -4,14 +4,14 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useCategories } from '@/hooks/api/useCategories';
-import { useCreateSubCategory, useUpdateSubCategory } from '@/hooks/api/useSubCategories';
+import { useCategories } from '@/features/categories/hooks/useCategories';
+import { useCreateSubCategory, useUpdateSubCategory } from '@/features/categories/hooks/useSubCategories';
 import { Category, SubCategory } from '@/types';
 import { useTranslations } from 'next-intl';
-import { useTrans } from '@/hooks/useTrans';
+import { useTrans } from '@/shared/hooks/useTrans';
 import { useState } from 'react';
 import Spinner from '@/shared/ui/Spinner';
-import { SubCategoryFormValues, subCategorySchema } from '@/lib/validations/schemas';
+import { SubCategoryFormValues, subCategorySchema } from '@/features/categories/category.schema';
 
 
 interface SubCategoryFormProps {
@@ -91,7 +91,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
             placeholder="e.g. Smartphones"
             className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.en ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.name?.en && <p className="text-red-500 text-xs mt-1">{errors.name.en.message}</p>}
+          {errors.name?.en && <p className="text-destructive text-xs mt-1">{errors.name.en.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -104,7 +104,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
             dir="rtl"
             className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.ar ? 'ring-2 ring-red-500' : ''}`}
           />
-          {errors.name?.ar && <p className="text-red-500 text-xs mt-1">{errors.name.ar.message}</p>}
+          {errors.name?.ar && <p className="text-destructive text-xs mt-1">{errors.name.ar.message}</p>}
         </div>
       </div>
 
@@ -160,7 +160,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
             )}
           </div>
         )}
-        {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
+        {errors.category && <p className="text-destructive text-xs mt-1">{errors.category.message}</p>}
       </div>
 
       <div className="flex gap-3 pt-4">
