@@ -35,7 +35,7 @@ export default function LanguageSwitcher({ variant = 'ghost', className }: Langu
       className={cn("gap-2 min-w-[40px] px-3 font-semibold transition-all duration-300", className)}
       aria-label={locale === 'en' ? 'Switch to Arabic' : 'Switch to English'}
     >
-      <Icons.Languages className="w-4 h-4" />
+      {/* <Icons.Languages className="w-4 h-4" /> */}
       <span className="uppercase">{locale}</span>
     </Button>
   );

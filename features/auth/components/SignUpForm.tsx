@@ -48,8 +48,8 @@ export default function SignUpForm({ locale }: { locale: string }) {
           <SmartInput name="name" label={t('name')} icon={User} disabled={registerMutation.isPending} className="h-12" />
           <SmartInput name="email" label={t('email')} icon={Mail} type="email" disabled={registerMutation.isPending} className="h-12" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-4">
+            <div className="">
               <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
               {/* Password Strength Indicator */}
               <PasswordStrength name="password" />

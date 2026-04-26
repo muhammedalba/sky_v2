@@ -13,7 +13,11 @@
             "theme": "Theme",
             "language": "Language",
             "menu": "Menu",
-            "login_to_account": "Login To Account"
+            "login_to_account": "Login To Account",
+            "cart": "Cart",
+            "account": "Account",
+            "search": "Search products...",
+            "all_categories": "All Categories"
       },
       "footer": {
             "rights": "All rights reserved."

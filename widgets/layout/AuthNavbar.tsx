@@ -12,7 +12,7 @@ import LanguageSwitcher from '@/widgets/layout/LanguageSwitcher';
 import { getUser, isAuthenticated, logout } from '@/lib/auth';
 import Image from 'next/image';
 
-export default function StoreNavbar() {
+export default function AuthNavbar() {
     const t = useTranslations('store.nav');
     const segment = useSelectedLayoutSegment();
     const locale = useLocale();
@@ -24,7 +24,7 @@ export default function StoreNavbar() {
     const [user, setUser] = useState<any>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [mounted, setMounted] = useState(false);
-
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
     useEffect(() => {
         setMounted(true);
         const userData = isAuthenticated() ? getUser() : null;
@@ -67,7 +67,7 @@ export default function StoreNavbar() {
         { name: t('products'), href: '/products', active: segment === 'products', icon: Icons.Products },
         { name: t('contact'), href: '/contact', active: segment === 'contact', icon: Icons.Users },
     ];
-    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
+
 
     return (
         <>
@@ -76,7 +76,7 @@ export default function StoreNavbar() {
                     'fixed top-0 w-full z-1000 transition-all duration-500 ease-in-out',
                     scrolled
                         ? 'py-5 bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
-                        : 'py-5 bg-transparent py-4'
+                        : 'py-5 bg-transparent'
                 )}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -93,7 +93,7 @@ export default function StoreNavbar() {
                             />
                             <div className="flex flex-col text-left rtl:text-right">
                                 <span className="text-xl font-black tracking-tight bg-linear-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
-                                    Sky Galaxy
+                                  {appName}
                                 </span>
                                 <span className="text-[10px] font-bold text-primary/80 uppercase tracking-widest -mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Premium Tech</span>
                             </div>
@@ -118,7 +118,7 @@ export default function StoreNavbar() {
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-2 relative z-[110]">
+                        <div className="flex items-center gap-2 relative z-110">
                             <div className="hidden sm:flex items-center gap-1.5 p-1 bg-muted/40 backdrop-blur-md border border-white/5 rounded-full shadow-inner">
                                 <LanguageSwitcher />
                                 <button
@@ -146,7 +146,7 @@ export default function StoreNavbar() {
                             </Link>
 
                             {/* User Menu */}
-                            {mounted && (
+                          
                                 <div className="relative">
                                     <button
                                         onClick={(e) => {
@@ -221,7 +221,7 @@ export default function StoreNavbar() {
                                         </div>
                                     )}
                                 </div>
-                            )}
+                           
 
                             {/* Mobile Menu Toggle */}
                             <button
@@ -241,7 +241,7 @@ export default function StoreNavbar() {
             {/* Mobile Sidebar (Drawer) */}
             <div
                 className={cn(
-                    "fixed inset-0 z-[9999] lg:hidden transition-all duration-500",
+                    "fixed inset-0 z-9999 lg:hidden transition-all duration-500",
                     mobileMenuOpen ? "visible" : "invisible pointer-events-none"
                 )}
             >

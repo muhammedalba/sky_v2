@@ -237,3 +237,36 @@
   background-size: 200% 200%;
   animation: gradient 5s ease infinite;
 }
+
+/* ─── Mobile Bottom Nav ────────────────────────────────────────────── */
+
+@keyframes badge-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-badge-pop {
+  animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Haptic-like press feedback for nav items */
+.mobile-bottom-nav a:active {
+  transform: scale(0.96);
+  transition: transform 0.08s ease-out;
+}
+
+/* Hide bottom nav when virtual keyboard is open (viewport shrinks) */
+@media (max-height: 450px) and (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: none;
+  }
+}

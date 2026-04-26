@@ -160,7 +160,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
         <div className="space-y-8">
           <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
-            <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5"></div>
+            <div className="h-24 bg-linear-to-r from-primary/20 to-primary/5"></div>
             <CardContent className="relative pt-0 flex flex-col items-center -mt-12">
               <div className="relative group">
                 <ImageUpload

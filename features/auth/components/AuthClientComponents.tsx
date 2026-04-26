@@ -10,7 +10,7 @@ import { authApi } from '../api';
  * SocialLoginSection — Shared social login buttons + divider.
  * Needs to be a Client Component because of onClick handlers.
  */
-export function SocialLoginSection({ dividerText }: { dividerText?: string }) {
+export function SocialLoginSection({ dividerText, disabled = false }: { dividerText?: string, disabled?: boolean }) {
   const label = dividerText || 'أو المتابعة عبر';
 
   return (
@@ -29,6 +29,7 @@ export function SocialLoginSection({ dividerText }: { dividerText?: string }) {
         <Button
           variant="outline"
           type="button"
+          disabled={disabled}
           className="h-12 rounded-xl border-border/50 bg-background hover:bg-secondary/50 transition-all font-bold text-foreground/80 hover:text-foreground hover:border-border"
           onClick={() => window.location.href = authApi.getGoogleAuthUrl()}
         >
@@ -38,6 +39,7 @@ export function SocialLoginSection({ dividerText }: { dividerText?: string }) {
         <Button
           variant="outline"
           type="button"
+          disabled={disabled}
           className="h-12 rounded-xl border-border/50 bg-background hover:bg-secondary/50 transition-all font-bold text-foreground/80 hover:text-foreground hover:border-border"
           onClick={() => window.location.href = authApi.getFacebookAuthUrl()}
         >
@@ -56,7 +58,7 @@ export function SocialLoginSection({ dividerText }: { dividerText?: string }) {
 export function PasswordStrength({ name }: { name: string }) {
   const { control } = useFormContext();
   const password = useWatch({ control, name });
-  
+
   if (!password) return null;
 
   const getStrength = (val: string) => {
@@ -71,23 +73,23 @@ export function PasswordStrength({ name }: { name: string }) {
 
   const score = getStrength(password);
   const colors = [
-    'bg-muted', 
-    'bg-destructive', 
-    'bg-orange-500', 
-    'bg-yellow-500', 
-    'bg-blue-500', 
+    'bg-muted',
+    'bg-destructive',
+    'bg-orange-500',
+    'bg-yellow-500',
+    'bg-blue-500',
     'bg-emerald-500'
   ];
 
   return (
     <div className="flex gap-1 h-1 mt-1 px-1">
       {[1, 2, 3, 4, 5].map((s) => (
-        <div 
-          key={s} 
+        <div
+          key={s}
           className={cn(
             "flex-1 rounded-full transition-all duration-500",
             s <= score ? colors[score] : "bg-muted"
-          )} 
+          )}
         />
       ))}
     </div>

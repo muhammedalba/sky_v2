@@ -13,7 +13,11 @@
             "theme": "المظهر",
             "language": "اللغة",
             "menu": "القائمة",
-            "login_to_account": "تسجيل الدخول للحساب"
+            "login_to_account": "تسجيل الدخول للحساب",
+            "cart": "السلة",
+            "account": "حسابي",
+            "search": "ابحث عن منتجات...",
+            "all_categories": "جميع الأقسام"
       },
       "footer": {
             "rights": "جميع الحقوق محفوظة."

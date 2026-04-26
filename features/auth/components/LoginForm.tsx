@@ -73,7 +73,7 @@ export default function LoginForm({ locale }: { locale: string }) {
         </Button>
       </SmartForm>
 
-      <SocialLoginSection />
+      <SocialLoginSection disabled={loginMutation.isPending} />
 
       <AuthFooter text={t('noAccount')} linkText={t('signupLink')} linkHref={`/${locale}/signup`} />
     </div>

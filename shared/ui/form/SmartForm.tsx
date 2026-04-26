@@ -3,16 +3,16 @@
 import React, { useState } from 'react';
 import { useForm, FormProvider, FieldValues, DefaultValues, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ZodSchema } from 'zod';
+import { ZodType } from 'zod';
 import { useTranslations } from 'next-intl';
 import { AxiosError } from 'axios';
 import ErrorMessage from '@/shared/ui/ErrorMessage';
 import SuccessMessage from '@/shared/ui/SuccessMessage';
 
 interface SmartFormProps<T extends FieldValues> {
-  schema: ZodSchema<T>;
+  schema: ZodType<T>;
   defaultValues: DefaultValues<T>;
-  onSubmit: (data: T) => void;
+  onSubmit: (data: T) => void; 
   isLoading?: boolean;
   serverError?: string | null;
   successMessage?: string | null;

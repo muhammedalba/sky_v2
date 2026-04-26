@@ -26,12 +26,14 @@ export function SmartInput({
   const error = errors[name]?.message as string | undefined;
 
   return (
+    <div className="my-7">
     <Input
       {...register(name)}
       {...props}
       value={value}
       error={error ? tErrors(error as any) : undefined}
     />
+    </div>
   );
 }
 
