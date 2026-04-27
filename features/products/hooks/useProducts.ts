@@ -3,11 +3,31 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Product, ApiResponse } from '@/types';
 
-export function useProducts(params?: { page?: number; limit?: number; keywords?: string; category?: string; all_langs?: boolean }) {
+export interface UseProductsParams {
+  page?: number;
+  limit?: number;
+  keywords?: string; // mapping to search in old code
+  skuSearch?: string;
+  category?: string;
+  all_langs?: boolean | string;
+  color?: string;
+  weight_min?: string | number;
+  weight_max?: string | number;
+  weight_unit?: string;
+  volume_min?: string | number;
+  volume_max?: string | number;
+  volume_unit?: string;
+  sold_min?: string | number;
+  sold_max?: string | number;
+  isDeleted?: string | boolean;
+  [key: string]: any;
+}
+
+export function useProducts(params?: UseProductsParams) {
   return useQuery({
     queryKey: ['products', params],
     queryFn: async () => {
-      const response = (await productsApi.getAll(params));
+      const response = await productsApi.getAll(params);
       return response;
     },
     throwOnError: true,
@@ -20,7 +40,7 @@ export function useProduct(id: string, options?: { all_langs?: boolean }) {
     queryKey: ['products', id, { all_langs }],
     queryFn: async () => {
       const params = all_langs ? { all_langs: 'true' } : undefined;
-      const response = (await productsApi.getOne(id, params)) as unknown as ApiResponse<Product>;
+      const response = await productsApi.getOne(id, params);
       return response.data;
     },
     enabled: !!id,
@@ -71,7 +91,6 @@ export function useUpdateProduct() {
     }
   });
 }
-
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   const toast = useToast();

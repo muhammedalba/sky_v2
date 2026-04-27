@@ -9,7 +9,7 @@ import { Product, ProductVariant } from '@/types';
 export default function EditProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = use(params);
   const { data: productRes, isLoading } = useProduct(id, { all_langs: true });
-
+  console.log("ffffffffffffffff", productRes);
   if (isLoading) {
     return (
       <div className="space-y-8 animate-pulse">
@@ -30,14 +30,11 @@ export default function EditProductPage({ params }: { params: Promise<{ locale: 
     );
   }
 
-  const product = productRes as Product;
-  const variants = product.variants || [];
-
   return (
     <EditProductForm
       locale={locale}
-      initialData={product}
-      initialVariants={variants}
+      initialData={productRes.product || []}
+      initialVariants={productRes.variants || []}
     />
   );
 }

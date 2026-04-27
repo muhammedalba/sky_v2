@@ -2801,21 +2801,21 @@
                   "type": "text"
                 },
                 {
-                  "key": "supCategories",
+                  "key": "subCategories",
                   "value": "685bea629631c19e73d6855d",
                   "type": "text",
                   "uuid": "ff6bbf5b-5aaa-42bf-9ceb-98e2c8028901",
                   "disabled": true
                 },
                 {
-                  "key": "supCategories",
+                  "key": "subCategories",
                   "value": "685bea629631c19e73d6855d",
                   "type": "text",
                   "uuid": "98c7135f-1f74-474c-bb1a-2ef9aa210058",
                   "disabled": true
                 },
                 {
-                  "key": "supCategories",
+                  "key": "subCategories",
                   "value": "685bea5c9631c19e73d68557",
                   "type": "text",
                   "uuid": "3823ba03-782d-4d41-94d8-26a4176fc443",

@@ -101,7 +101,7 @@ export default function CategoriesPage() {
       header: t('fields.subCategoriesCount'),
       render: (category: Category) => (
         <Badge variant="secondary" className="rounded-xl font-bold px-3 py-1 bg-muted/40 border-none group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-          {category.supCategories?.length || category.subCategoriesCount || 0} Sub Categories
+          {category.subCategories?.length || category.subCategoriesCount || 0} Sub Categories
         </Badge>
       )
     },
@@ -135,70 +135,70 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        {/* Header */}
-        <EntityPageHeader
-          title={t('title')}
-          subtitle={t('subtitle')}
-          action={{
-            label: t('createCategory'),
-            icon: <Icons.Plus className="w-5 h-5" />,
-            onClick: () => handleOpenModal()
-          }}
-        />
+      {/* Header */}
+      <EntityPageHeader
+        title={t('title')}
+        subtitle={t('subtitle')}
+        action={{
+          label: t('createCategory'),
+          icon: <Icons.Plus className="w-5 h-5" />,
+          onClick: () => handleOpenModal()
+        }}
+      />
 
-        {/* Search */}
-        <EntitySearchBar
-          placeholder={t('searchPlaceholder') || 'Search categories...'}
-          defaultValue={search}
-          onSearch={(value) => {
-            setQueryParams({ search: value, page: 1 });
-          }}
-        />
+      {/* Search */}
+      <EntitySearchBar
+        placeholder={t('searchPlaceholder') || 'Search categories...'}
+        defaultValue={search}
+        onSearch={(value) => {
+          setQueryParams({ search: value, page: 1 });
+        }}
+      />
 
-        {/* Table start */}
-        <EntityDataTable<Category>
-          data={data?.data}
-          isLoading={isLoading}
-          pagination={data?.meta?.pagination}
-          onPageChange={setPage}
-          columns={columns}
-          emptyState={{
-            title: t('emptyState.title'),
-            description: t('emptyState.description'),
-            icon: <Icons.Menu className="h-10 w-10 text-muted-foreground/40" />,
-          }}
-        />
-        {/* Table end */}
+      {/* Table start */}
+      <EntityDataTable<Category>
+        data={data?.data}
+        isLoading={isLoading}
+        pagination={data?.meta?.pagination}
+        onPageChange={setPage}
+        columns={columns}
+        emptyState={{
+          title: t('emptyState.title'),
+          description: t('emptyState.description'),
+          icon: <Icons.Menu className="h-10 w-10 text-muted-foreground/40" />,
+        }}
+      />
+      {/* Table end */}
 
-        {/* Modal start */}
-        <Modal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          title={editingCategory ? t('editCategory') : t('createCategory')}
-          description="Organize your store by creating meaningful categories."
-        >
-          <CategoryForm
-            editingCategory={editingCategory}
-            onSuccess={() => {
-              refetch();
-              handleCloseModal();
-            }}
-            onCancel={handleCloseModal}
-          />
-        </Modal>
-        {/* Confirm Dialog start */}
-        <ConfirmDialog
-          isOpen={confirmDialog.isOpen}
-          onClose={confirmDialog.closeDialog}
-          onConfirm={confirmDialog.handleConfirm}
-          title={confirmDialog.title}
-          message={confirmDialog.message}
-          confirmText="Delete"
-          cancelText="Cancel"
-          isDangerous={true}
-          isLoading={confirmDialog.isLoading}
+      {/* Modal start */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={editingCategory ? t('editCategory') : t('createCategory')}
+        description="Organize your store by creating meaningful categories."
+      >
+        <CategoryForm
+          editingCategory={editingCategory}
+          onSuccess={() => {
+            refetch();
+            handleCloseModal();
+          }}
+          onCancel={handleCloseModal}
         />
-        {/* Confirm Dialog end */}
-      </div>
+      </Modal>
+      {/* Confirm Dialog start */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={confirmDialog.closeDialog}
+        onConfirm={confirmDialog.handleConfirm}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+        isLoading={confirmDialog.isLoading}
+      />
+      {/* Confirm Dialog end */}
+    </div>
   );
 }

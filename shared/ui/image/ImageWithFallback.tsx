@@ -9,14 +9,15 @@ interface ImageWithFallbackProps extends ImageProps {
   fallback?: React.ReactNode;
 }
 
-export default function ImageWithFallback({ 
-  src, 
-  alt, 
-  fallback, 
-  className, 
-  ...props 
+export default function ImageWithFallback({
+  src,
+  alt,
+  fallback,
+  className,
+  ...props
 }: ImageWithFallbackProps) {
   const [error, setError] = useState(false);
+
   if (error || !src) {
     return (
       <div className={cn("flex items-center justify-center bg-secondary/50", className)}>

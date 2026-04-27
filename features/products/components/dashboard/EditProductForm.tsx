@@ -14,7 +14,7 @@ import { useSubCategories } from '@/features/categories/hooks/useSubCategories';
 import { useBrands } from '@/features/brands/hooks/useBrands';
 import { useSuppliers } from '@/features/suppliers/hooks/useSuppliers';
 import { useTrans } from '@/shared/hooks/useTrans';
-import { LocalizedString, Product, ProductVariant, Category } from '@/types';
+import { LocalizedString, Product, ProductVariant, Category, SubCategory } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
 import { Input } from '@/shared/ui/Input';
@@ -105,8 +105,8 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   }, [initialData.category]);
 
   const initialSupCatIds = useMemo(() => {
-    return (initialData.supCategories || []).map(sc => typeof sc === 'string' ? sc : sc._id);
-  }, [initialData.supCategories]);
+    return (initialData.SubCategories || []).map(sc => typeof sc === 'string' ? sc : sc._id);
+  }, [initialData.SubCategories]);
 
   const initialBrandId = useMemo(() => {
     if (!initialData.brand) return '';
@@ -166,7 +166,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       disabled: initialData.disabled ?? false,
       isFeatured: initialData.isFeatured ?? false,
       category: initialCategoryId,
-      supCategories: initialSupCatIds,
+      SubCategories: initialSupCatIds,
       brand: initialBrandId,
       supplier: initialSupplierId,
       allowedAttributes: initialAttributes,
@@ -199,7 +199,8 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   const [isSubCategoryOpen, setIsSubCategoryOpen] = useState(false);
   const [existingImages, setExistingImages] = useState<string[]>(initialData.images || []);
   const [selectedSubCategories, setSelectedSubCategories] = useState<SearchOption[]>(
-    ((initialData?.supCategories as unknown as (Category | string)[]) || []).map((sc) => ({
+
+    ((initialData?.SubCategories as unknown as SubCategory[]) || []).map((sc) => ({
       _id: typeof sc === 'object' ? sc._id : String(sc),
       name: typeof sc === 'object' ? sc.name : { en: 'Selected', ar: 'تم التحديد' }
     })) as SearchOption[]
@@ -252,7 +253,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     { keywords: supplierSearch },
     { enabled: isSupplierOpen }
   );
-  const { data: subCategoriesData, isFetching: isSubCategoriesFetching } = useSubCategories(
+  const { data: SubCategoriesData, isFetching: isSubCategoriesFetching } = useSubCategories(
     { keywords: subCategorySearch },
     { enabled: isSubCategoryOpen }
   );
@@ -378,7 +379,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     formData.append('title', JSON.stringify(data.title));
     formData.append('description', JSON.stringify(data.description));
     formData.append('category', data.category);
-    data.supCategories?.forEach((id) => formData.append('supCategories', id));
+    data.SubCategories?.forEach((id) => formData.append('SubCategories', id));
     formData.append('isUnlimitedStock', String(data.isUnlimitedStock));
     formData.append('disabled', String(data.disabled));
     formData.append('isFeatured', String(data.isFeatured));
@@ -630,7 +631,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
                 onOpen={() => setIsCategoryOpen(true)}
                 onSelect={(id: string) => {
                   setValue('category', id, { shouldValidate: true });
-                  setValue('supCategories', []);
+                  setValue('SubCategories', []);
                   setSelectedSubCategories([]);
                 }}
                 error={errors.category?.message as string}
@@ -638,11 +639,11 @@ export default function EditProductForm({ locale, initialData, initialVariants =
               />
 
               <SearchableMultiSelect
-                label={t('subCategories')}
+                label={t('SubCategories')}
                 placeholder={t('searchSubCategory')}
-                error={errors.supCategories?.message as string}
+                error={errors.SubCategories?.message as string}
                 isLoading={isSubCategoriesFetching}
-                options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
+                options={(SubCategoriesData?.data as unknown as SearchOption[]) || []}
                 selectedOptions={selectedSubCategories}
                 getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
                 onSearch={(term: string) => setSubCategorySearch(term)}
@@ -650,12 +651,12 @@ export default function EditProductForm({ locale, initialData, initialVariants =
                 onSelect={(opt: SearchOption) => {
                   const newSelected = [...selectedSubCategories, opt];
                   setSelectedSubCategories(newSelected);
-                  setValue('supCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
+                  setValue('SubCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
                 }}
                 onRemove={(id: string) => {
                   const newSelected = selectedSubCategories.filter(sc => sc._id !== id);
                   setSelectedSubCategories(newSelected);
-                  setValue('supCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
+                  setValue('SubCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
                 }}
               />
 

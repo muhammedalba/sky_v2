@@ -4,5 +4,5 @@ import { createCrudApi } from '@/shared/api/factory';
 
 const ENDPOINTS = env.ENDPOINTS.SUP_CATEGORIES;
 
-export const supCategoriesApi = createCrudApi<SubCategory>(ENDPOINTS.BASE, true);
+export const subCategoriesApi = createCrudApi<SubCategory>(ENDPOINTS.BASE, true);
 

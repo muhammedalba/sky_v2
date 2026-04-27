@@ -22,17 +22,20 @@ export function useQueryState() {
   const setQueryParam = useCallback(
     (key: string, value: string | number | null) => {
       const params = new URLSearchParams(searchParams.toString());
+      const oldValue = params.get(key);
+      const newValue = value !== null ? String(value) : null;
+
+      if (newValue === oldValue || (newValue === null && oldValue === null)) return;
       
-      if (value === null || value === '') {
+      if (newValue === null || newValue === '') {
         params.delete(key);
       } else {
-        params.set(key, String(value));
+        params.set(key, newValue);
       }
 
       const query = params.toString();
       const url = `${pathname}${query ? `?${query}` : ''}`;
       
-      // We use scroll: false to prevent the page from jumping to top
       router.push(url, { scroll: false });
     },
     [pathname, router, searchParams]
@@ -41,14 +44,23 @@ export function useQueryState() {
   const setQueryParams = useCallback(
     (newParams: Record<string, string | number | null>) => {
       const params = new URLSearchParams(searchParams.toString());
-      
+      let hasChanged = false;
+
       Object.entries(newParams).forEach(([key, value]) => {
-        if (value === null || value === '') {
+        const oldValue = params.get(key);
+        const newValue = value !== null ? String(value) : null;
+
+        if (newValue === oldValue) return;
+        
+        hasChanged = true;
+        if (newValue === null || newValue === '') {
           params.delete(key);
         } else {
-          params.set(key, String(value));
+          params.set(key, newValue);
         }
       });
+
+      if (!hasChanged) return;
 
       const query = params.toString();
       const url = `${pathname}${query ? `?${query}` : ''}`;

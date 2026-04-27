@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode, useState, Fragment } from 'react';
 import {
   Table,
   TableBody,
@@ -19,11 +19,11 @@ import { useTranslations } from 'next-intl';
 export interface Column<T> {
   header: string;
   className?: string;
-  render?: (item: T) => ReactNode;
+  render?: (item: T, index: number) => ReactNode;
   accessor?: keyof T;
 }
 
-interface EntityDataTableProps<T> {
+export interface EntityDataTableProps<T> {
   data?: T[];
   isLoading: boolean;
   columns: Column<T>[];
@@ -36,6 +36,7 @@ interface EntityDataTableProps<T> {
     createLink?: string;
     createLabel?: string;
   };
+  expandableContent?: (item: T) => ReactNode;
 }
 
 export default function EntityDataTable<T extends { _id: string }>({
@@ -45,8 +46,15 @@ export default function EntityDataTable<T extends { _id: string }>({
   pagination,
   onPageChange,
   emptyState,
+  expandableContent,
 }: EntityDataTableProps<T>) {
+  console.log("Check Expandable:", !!expandableContent);
   const tCommon = useTranslations('common');
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+  const toggleRow = (id: string) => {
+    setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   return (
     <Card className="border-none shadow-xl shadow-foreground/5 bg-background/50 backdrop-blur-md ring-1 ring-border/40 overflow-hidden rounded-3xl">
@@ -60,13 +68,14 @@ export default function EntityDataTable<T extends { _id: string }>({
                   className={cn(
                     'h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground/80',
                     idx === 0 && 'pl-6',
-                    idx === columns.length - 1 && 'pr-6 text-right',
+                    idx === columns.length - 1 && !expandableContent && 'pr-6 text-right',
                     col.className,
                   )}
                 >
                   {col.header}
                 </TableHead>
               ))}
+              {expandableContent && <TableHead className="w-10 pr-6 text-right"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -96,35 +105,62 @@ export default function EntityDataTable<T extends { _id: string }>({
                         />
                       </TableCell>
                     ))}
+                    {expandableContent && <TableCell></TableCell>}
                   </TableRow>
                 ))
             ) : data?.length ? (
-              data.map((item) => (
-                <TableRow
-                  key={item._id}
-                  className="group hover:bg-muted/40 transition-all duration-300 border-b border-border/20 last:border-0 h-20 relative overflow-hidden"
-                >
-                  {columns.map((col, idx) => (
+              data.map((item, rowIdx) => (
+                <Fragment key={item._id}>
+                  <TableRow
+                    className="group hover:bg-muted/40 transition-all duration-300 border-b border-border/20 last:border-0 h-20 relative overflow-hidden"
+                  >
+                    {columns.map((col, idx) => (
                     <TableCell
                       key={idx}
                       className={cn(
                         idx === 0 && 'pl-6',
-                        idx === columns.length - 1 && 'pr-6 text-right',
+                        idx === columns.length - 1 && !expandableContent && 'pr-6 text-right',
                         col.className,
                       )}
                     >
-                      {col.render
-                        ? col.render(item)
-                        : col.accessor
-                          ? String(item[col.accessor])
-                          : null}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                        {col.render
+                          ? col.render(item, rowIdx)
+                          : col.accessor
+                            ? String(item[col.accessor])
+                            : null}
+                      </TableCell>
+                    ))}
+                    {expandableContent && (
+                      <TableCell className="pr-6 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-full hover:bg-muted/50"
+                          onClick={() => toggleRow(item._id)}
+                        >
+                          {expandedRows[item._id] ? (
+                            <Icons.ChevronLeft className="h-4 w-4 -rotate-90 transition-transform" />
+                          ) : (
+                            <Icons.ChevronRight className="h-4 w-4 rotate-90 rtl:-rotate-90 transition-transform" />
+                          )}
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                  {expandableContent && expandedRows[item._id] && (
+                    <TableRow className="bg-muted/10 hover:bg-muted/10 border-b border-border/20">
+                      <TableCell colSpan={columns.length + 1} className="p-0">
+                        <div className="p-4 px-6 animate-in slide-in-from-top-2 fade-in duration-200">
+                          {expandableContent(item)}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-64 text-center">
+                <TableCell colSpan={columns.length + (expandableContent ? 1 : 0)} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95 duration-500">
                     <div className="p-4 rounded-3xl bg-muted/30 ring-1 ring-border/20">
                       {emptyState?.icon || (

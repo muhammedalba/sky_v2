@@ -86,10 +86,10 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       disabled: false,
       isFeatured: false,
       category: '',
-      supCategories: [],
+      SubCategories: [],
       brand: '',
       supplier: '',
-      
+
       allowedAttributes: [],
       variants: [{ sku: '', price: 0, stock: 0, attributes: {}, isActive: true }],
     },
@@ -245,7 +245,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     formData.append('title', JSON.stringify(data.title));
     formData.append('description', JSON.stringify(data.description));
     formData.append('category', data.category);
-    data.supCategories?.forEach((id) => formData.append('supCategories', id));
+    data.SubCategories?.forEach((id) => formData.append('SubCategories', id));
     formData.append('isUnlimitedStock', String(data.isUnlimitedStock));
     formData.append('disabled', String(data.disabled));
     formData.append('isFeatured', String(data.isFeatured));
@@ -493,16 +493,16 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
                 onOpen={() => setIsCategoryOpen(true)}
                 onSelect={(id: string) => {
                   setValue('category', id, { shouldValidate: true });
-                  setValue('supCategories', []);
+                  setValue('SubCategories', []);
                   setSelectedSubCategories([]);
                 }}
                 error={errors.category?.message as string}
               />
 
               <SearchableMultiSelect
-                label={t('subCategories')}
+                label={t('SubCategories')}
                 placeholder={t('searchSubCategory')}
-                error={errors.supCategories?.message as string}
+                error={errors.SubCategories?.message as string}
                 isLoading={isSubCategoriesFetching}
                 options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
                 selectedOptions={selectedSubCategories}
@@ -512,12 +512,12 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
                 onSelect={(opt: SearchOption) => {
                   const newSelected = [...selectedSubCategories, opt];
                   setSelectedSubCategories(newSelected);
-                  setValue('supCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
+                  setValue('SubCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
                 }}
                 onRemove={(id: string) => {
                   const newSelected = selectedSubCategories.filter(sc => sc._id !== id);
                   setSelectedSubCategories(newSelected);
-                  setValue('supCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
+                  setValue('SubCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
                 }}
               />
 

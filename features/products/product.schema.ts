@@ -10,7 +10,7 @@ export const attributeDefinitionSchema = z.object({
 
 // ─── Component DTO (A+B compound products) ─────────────
 export const componentSchema = z.object({
-  name: z.string().min(1, 'required'), 
+  name: z.string().min(1, 'required'),
   value: z.coerce.number().positive('required'),
   unit: z.string().min(1, 'required'),
 });
@@ -56,7 +56,7 @@ const productBaseSchema = z.object({
   disabled: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   category: z.string(),
-  supCategories: z.array(z.string()).min(1, 'required'),
+  SubCategories: z.array(z.string()).min(1, 'required'),
   brand: z.string().optional(),
   supplier: z.string().optional(),
   allowedAttributes: z.array(attributeDefinitionSchema).optional(),

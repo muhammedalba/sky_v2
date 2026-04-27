@@ -13,6 +13,9 @@
             "sku": "رمز المنتج",
             "images": "الصور",
             "image": "الصورة",
+            "product": "المنتج",
+            "status": "الحالة",
+            "inventory": "المخزون",
             "actions": "الإجراءات"
       },
       "placeholders": {
@@ -36,7 +39,13 @@
             "outOfStock": "غير متوفر",
             "lowStock": "مخزون منخفض",
             "active": "نشط",
-            "deleted": "محذوف"
+            "featured": "مميز",
+            "unlimitedStock": "مخزون غير محدود",
+            "disabled": "معطّل",
+            "deleted": "محذوف",
+            "noFeatured": "لا توجد منتجات مميزة",
+            "noUnlimitedStock": "لا توجد منتجات بمخزون غير محدود",
+            "noDisabled": "لا توجد منتجات معطّلة"
       },
       "form": {
             "titleCreate": "إنشاء منتج",
@@ -64,7 +73,7 @@
             "taxonomy": "التصنيف",
             "taxonomyDesc": "ربط المنتج بالأقسام الداخلية",
             "mainCategory": "القسم الرئيسي",
-            "subCategories": "الأقسام الفرعية *",
+            "SubCategories": "الأقسام الفرعية *",
             "brand": "الماركة التجارية",
             "supplier": "المورد",
             "searchCategory": "ابحث عن قسم...",

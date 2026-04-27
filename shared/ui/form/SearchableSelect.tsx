@@ -9,7 +9,7 @@ export interface SearchOption {
 }
 
 interface SearchableSelectProps {
-  label: string;
+  label?: string;
   placeholder?: string;
   value: string; // The selected ID
   onSelect: (id: string, optionTitle: string) => void;
@@ -21,6 +21,8 @@ interface SearchableSelectProps {
   onOpen?: () => void;
   /** Pre-fill the text input with the saved label when in edit mode */
   initialDisplayValue?: string;
+  className?: string;
+  disabled?: boolean;
 }
 
 export function SearchableSelect({
@@ -35,6 +37,8 @@ export function SearchableSelect({
   getDisplayValue,
   onOpen,
   initialDisplayValue = '',
+  className,
+  disabled = false,
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState(initialDisplayValue);
@@ -60,12 +64,13 @@ export function SearchableSelect({
   }, []);
 
   return (
-    <div className="relative space-y-2" ref={wrapperRef}>
-      <label className="text-sm font-bold ml-1">{label}</label>
+    <div className={`relative space-y-2 ${className}`} ref={wrapperRef}>
+      {label && <label className="text-sm font-bold ml-1">{label}</label>}
       <Input
         placeholder={placeholder}
         value={search}
         autoComplete="off"
+        disabled={disabled}
         onChange={(e) => {
           setSearch(e.target.value);
           setIsOpen(true);

@@ -1,5 +1,5 @@
 import { LocalizedString } from '@/types';
-import { Category } from '@/features/categories/types';
+import { Category, SubCategory } from '@/features/categories/types';
 import { Brand } from '@/features/brands/types';
 import { Supplier } from '@/features/suppliers/types';
 
@@ -43,7 +43,7 @@ export interface Product {
   imageCover?: string;
   images?: string[];
   category: Category | string;
-  supCategories?: Category[]; 
+  SubCategories?: SubCategory[];
   brand?: Brand | string;
   supplier?: Supplier | string;
   isUnlimitedStock?: boolean;
