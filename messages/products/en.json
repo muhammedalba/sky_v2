@@ -45,7 +45,15 @@
             "deleted": "Deleted",
             "noFeatured": "No featured products",
             "noUnlimitedStock": "No unlimited stock products",
-            "noDisabled": "No disabled products"
+            "noDisabled": "No disabled products",
+            "advancedFilters": "Advanced Filters",
+            "noActiveFilters": "No active filters",
+            "general": "General",
+            "classification": "Classification",
+            "priceRange": "Price Range",
+            "weight": "Weight",
+            "volume": "Volume",
+            "unitsSold": "Units Sold"
       },
       "form": {
             "titleCreate": "Create Product",

@@ -15,7 +15,9 @@
             "previous": "Previous",
             "close": "Close",
             "confirm": "Confirm",
-            "retry": "Try Again"
+            "retry": "Try Again",
+            "clearAll": "Clear All",
+            "applyFilters": "Apply Filters"
       },
       "errors": {
             "required": "This field is required",

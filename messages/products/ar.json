@@ -45,7 +45,15 @@
             "deleted": "محذوف",
             "noFeatured": "لا توجد منتجات مميزة",
             "noUnlimitedStock": "لا توجد منتجات بمخزون غير محدود",
-            "noDisabled": "لا توجد منتجات معطّلة"
+            "noDisabled": "لا توجد منتجات معطّلة",
+            "advancedFilters": "فلاتر متقدمة",
+            "noActiveFilters": "لا توجد فلاتر نشطة",
+            "general": "عام",
+            "classification": "التصنيف",
+            "priceRange": "نطاق السعر",
+            "weight": "الوزن",
+            "volume": "الحجم",
+            "unitsSold": "الوحدات المباعة"
       },
       "form": {
             "titleCreate": "إنشاء منتج",

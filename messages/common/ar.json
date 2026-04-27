@@ -15,7 +15,9 @@
             "previous": "السابق",
             "close": "إغلاق",
             "confirm": "تأكيد",
-            "retry": "المحاولة مرة أخرى"
+            "retry": "المحاولة مرة أخرى",
+            "clearAll": "مسح الكل",
+            "applyFilters": "تطبيق الفلاتر"
       },
       "errors": {
             "required": "هذا الحقل مطلوب",

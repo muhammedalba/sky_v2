@@ -63,6 +63,13 @@ export function SearchableSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Clear search text if value is cleared externally
+  useEffect(() => {
+    if (!value) {
+      setSearch('');
+    }
+  }, [value]);
+
   return (
     <div className={`relative space-y-2 ${className}`} ref={wrapperRef}>
       {label && <label className="text-sm font-bold ml-1">{label}</label>}
