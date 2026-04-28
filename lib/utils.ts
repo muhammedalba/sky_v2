@@ -6,16 +6,33 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(
-  amount: number,
-  currency: string = env.DEFAULT_CURRENCY
-): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-  }).format(amount);
-}
+// يمكنك مستقبلاً استبدال هذا الثابت بالقيمة القادمة من الـ API أو الـ State
+const FALLBACK_EXCHANGE_RATE = 3.75; 
 
+export function formatCurrency(
+  amountInUSD: number, 
+  locale: string = env.DEFAULT_LOCALE ?? 'ar' ,
+  currentExchangeRate: number = FALLBACK_EXCHANGE_RATE
+): string {
+  // 1. تحديد ما إذا كانت اللغة عربية
+  const isArabic = locale.startsWith('ar');
+  
+  // 2. حساب المبلغ: إذا عربي نضرب في سعر الصرف، وإذا إنجليزي يبقى بالدولار
+  const finalAmount = isArabic ? (amountInUSD * currentExchangeRate) : amountInUSD;
+  
+  // 3. تحديد كود العملة والتنسيق المحلي
+  const currencyCode = isArabic ? 'SAR' : 'USD';
+  const formatLocale = isArabic ? 'ar-SA' : 'en-US';
+
+  // 4. إرجاع المبلغ المنسق
+  return new Intl.NumberFormat(formatLocale, {
+    style: 'currency',
+    currency: currencyCode,
+    currencyDisplay: 'symbol',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2, // لضمان عدم ظهور أكثر من رقمين عشريين
+  }).format(finalAmount);
+}
 export function formatDate(date: string | Date, locale: string = 'en-US'): string {
   if (!date) return '-';
   const d = new Date(date);

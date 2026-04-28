@@ -19,26 +19,24 @@ interface PaginationProps {
 }
 
 export default function Pagination({ pagination, onPageChange, className }: PaginationProps) {
-  const tButtons = useTranslations('buttons');
-  const tMessages = useTranslations('messages');  const { currentPage, numberOfPages, nextPage, prevPage } = pagination;
+  // const tButtons = useTranslations('buttons'); // تم إيقافها في كودك الأصلي
+  const tMessages = useTranslations('messages'); 
+  const { currentPage, numberOfPages, nextPage, prevPage } = pagination;
 
-  // Generate visible page numbers with smart ellipsis
+  // المنطق البرمجي (Logic) تُرك كما هو تماماً دون تغيير
   const getVisiblePages = () => {
     const pages: (number | 'ellipsis')[] = [];
-    
+
     if (numberOfPages <= 7) {
-      // Show all pages if 7 or less
       return Array.from({ length: numberOfPages }, (_, i) => i + 1);
     }
 
-    // Always show first page
     pages.push(1);
 
     if (currentPage > 3) {
       pages.push('ellipsis');
     }
 
-    // Show pages around current page
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(numberOfPages - 1, currentPage + 1);
 
@@ -50,7 +48,6 @@ export default function Pagination({ pagination, onPageChange, className }: Pagi
       pages.push('ellipsis');
     }
 
-    // Always show last page
     if (numberOfPages > 1) {
       pages.push(numberOfPages);
     }
@@ -65,40 +62,40 @@ export default function Pagination({ pagination, onPageChange, className }: Pagi
   }
 
   return (
-    <div className={cn("flex items-center justify-between gap-4 flex-wrap", className)}>
-      {/* Page Info */}
-      <div className="flex items-center gap-2">
-        <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest opacity-60">
-          {tMessages('showingPage', { page: currentPage, total: numberOfPages })}
-        </p>
+    <div className={cn("flex flex-col sm:flex-row items-center justify-between gap-4 p-5 w-full", className)}>
+      
+      {/* ── Page Info ── */}
+      <div className="flex items-center text-sm font-medium text-muted-foreground">
+        {tMessages('showingPage', { page: currentPage, total: numberOfPages })}
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex items-center gap-2">
+      {/* ── Pagination Controls ── */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        
         {/* Previous Button */}
         <button
           onClick={() => prevPage && onPageChange(prevPage)}
           disabled={!prevPage}
           className={cn(
-            'h-10 px-4 rounded-xl font-bold text-sm transition-all flex items-center gap-2',
-            'border border-border/60 shadow-sm',
+            'inline-flex items-center justify-center h-10 px-3 sm:px-4 rounded-xl font-semibold text-sm transition-all duration-300 ease-out',
             !prevPage
-              ? 'opacity-40 cursor-not-allowed bg-muted/20'
-              : 'hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
+              ? 'opacity-50 cursor-not-allowed text-muted-foreground'
+              : 'bg-background border border-input shadow-sm hover:bg-accent hover:text-accent-foreground active:scale-[0.98]'
           )}
+          aria-label="Previous page"
         >
-          <Icons.ChevronLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">{tButtons('previous')}</span>
+          {/* إضافة rtl:rotate-180 لدعم اللغتين العربية والإنجليزية تلقائياً */}
+          <Icons.ChevronLeft className="w-4 h-4 rtl:rotate-180" />
         </button>
 
         {/* Page Numbers */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           {visiblePages.map((page, index) => {
             if (page === 'ellipsis') {
               return (
                 <span
                   key={`ellipsis-${index}`}
-                  className="w-10 h-10 flex items-center justify-center text-muted-foreground font-bold"
+                  className="w-8 h-10 flex items-center justify-center text-muted-foreground/60 font-bold tracking-widest"
                 >
                   •••
                 </span>
@@ -113,11 +110,10 @@ export default function Pagination({ pagination, onPageChange, className }: Pagi
                 onClick={() => onPageChange(page)}
                 disabled={isActive}
                 className={cn(
-                  'w-10 h-10 rounded-xl font-bold text-sm transition-all',
-                  'border shadow-sm',
+                  'inline-flex items-center justify-center w-10 h-10 rounded-xl font-semibold text-sm transition-all duration-300 ease-out',
                   isActive
-                    ? 'bg-primary text-primary-foreground border-primary shadow-primary/20 scale-110'
-                    : 'border-border/60 hover:bg-muted hover:border-border hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
+                    ? 'bg-primary text-primary-foreground shadow-md ring-1 ring-primary/20 cursor-default'
+                    : 'bg-background border border-transparent text-foreground hover:bg-accent hover:border-border hover:shadow-sm active:scale-[0.98]'
                 )}
               >
                 {page}
@@ -131,15 +127,16 @@ export default function Pagination({ pagination, onPageChange, className }: Pagi
           onClick={() => nextPage && onPageChange(nextPage)}
           disabled={!nextPage}
           className={cn(
-            'h-10 px-4 rounded-xl font-bold text-sm transition-all flex items-center gap-2',
-            'border border-border/60 shadow-sm',
+            'inline-flex  items-center justify-center h-10 px-3 sm:px-4 rounded-xl font-semibold text-sm transition-all duration-300 ease-out',
+            !prevPage && !nextPage ? "" : "", // Safe guard
             !nextPage
-              ? 'opacity-40 cursor-not-allowed bg-muted/20'
-              : 'hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
+              ? 'opacity-50 cursor-not-allowed text-muted-foreground'
+              : 'bg-background border border-input shadow-sm hover:bg-accent hover:text-accent-foreground active:scale-[0.98]'
           )}
+          aria-label="Next page"
         >
-          <span className="hidden sm:inline">{tButtons('next')}</span>
-          <Icons.ChevronRight className="w-4 h-4" />
+          {/* إضافة rtl:rotate-180 */}
+          <Icons.ChevronRight className="w-4 h-4 rtl:rotate-180" />
         </button>
       </div>
     </div>

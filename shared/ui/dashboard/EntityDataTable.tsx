@@ -48,7 +48,7 @@ export default function EntityDataTable<T extends { _id: string }>({
   emptyState,
   expandableContent,
 }: EntityDataTableProps<T>) {
-  console.log("Check Expandable:", !!expandableContent);
+  console.log("Check Expandable:", expandableContent);
   const tCommon = useTranslations('common');
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
@@ -80,7 +80,7 @@ export default function EntityDataTable<T extends { _id: string }>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array(6)
+              Array(columns.length)
                 .fill(0)
                 .map((_, i) => (
                   <TableRow
@@ -115,14 +115,14 @@ export default function EntityDataTable<T extends { _id: string }>({
                     className="group hover:bg-muted/40 transition-all duration-300 border-b border-border/20 last:border-0 h-20 relative overflow-hidden"
                   >
                     {columns.map((col, idx) => (
-                    <TableCell
-                      key={idx}
-                      className={cn(
-                        idx === 0 && 'pl-6',
-                        idx === columns.length - 1 && !expandableContent && 'pr-6 text-right',
-                        col.className,
-                      )}
-                    >
+                      <TableCell
+                        key={idx}
+                        className={cn(
+                          idx === 0 && 'pl-6',
+                          idx === columns.length - 1 && !expandableContent && 'pr-6 text-right',
+                          col.className,
+                        )}
+                      >
                         {col.render
                           ? col.render(item, rowIdx)
                           : col.accessor
@@ -168,7 +168,7 @@ export default function EntityDataTable<T extends { _id: string }>({
                       )}
                     </div>
                     <div className="space-y-1">
-                      <p className="text-lg font-bold text-foreground">
+                      <p className="text-lg font-bold text-primary">
                         {emptyState?.title || tCommon('messages.noData')}
                       </p>
                       {emptyState?.description && (
@@ -197,15 +197,7 @@ export default function EntityDataTable<T extends { _id: string }>({
       </div>
 
       {pagination && pagination.numberOfPages > 1 && onPageChange && (
-        <div className="p-5 border-t border-border/20 bg-muted/20 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest opacity-60">
-            {tCommon('messages.showingPage', {
-              page: pagination.currentPage,
-              total: pagination.numberOfPages,
-            })}
-          </p>
           <Pagination pagination={pagination} onPageChange={onPageChange} />
-        </div>
       )}
     </Card>
   );

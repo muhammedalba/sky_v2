@@ -3,15 +3,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/api/query-keys';
 import { setUser, removeAuthToken, setTokens, getRefreshToken } from '@/lib/auth';
-import { User, ApiResponse } from '@/types';
+import { User, ApiResponse, ApiError } from '@/types';
 import { LoginResponseData } from '@/features/auth/types';
 import { authApi } from '@/features/auth/api';
+import { useToast } from '@/shared/hooks/useToast';
 
 /**
  * Processes a successful auth response (login or register).
  * Extracts and stores the access token and user data.
  */
 function handleAuthSuccess(response: ApiResponse<LoginResponseData>, queryClient: ReturnType<typeof useQueryClient>) {
+
+
   const accessToken = response.data?.access_token;
   if (accessToken) {
     setTokens(accessToken, getRefreshToken() || '');
@@ -27,16 +30,18 @@ function handleAuthSuccess(response: ApiResponse<LoginResponseData>, queryClient
 
 export function useLogin() {
   const queryClient = useQueryClient();
-
+  const toast = useToast();
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       return authApi.login(credentials);
     },
     onSuccess: (response: ApiResponse<LoginResponseData>) => {
       handleAuthSuccess(response, queryClient);
+      toast.success(response?.message || "تم تسجيل الدخول بنجاح");
     },
-    onError: (error) => {
-      console.error(error);
+    onError: (error: ApiError) => {
+      toast.error(error?.message || "حدث خطأ");
+
     }
   });
 }
@@ -54,6 +59,7 @@ export function useMe() {
 
 export function useRegister() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: async (data: FormData) => {
@@ -61,7 +67,12 @@ export function useRegister() {
     },
     onSuccess: (response: ApiResponse<LoginResponseData>) => {
       handleAuthSuccess(response, queryClient);
+      toast.success(response?.message || "تم تسجيل الدخول بنجاح");
     },
+    onError: (error: ApiError) => {
+      toast.error(error?.message || "حدث خطأ");
+
+    }
   });
 }
 
@@ -71,6 +82,7 @@ export function useForgotPassword() {
       const response = await authApi.forgotPassword(email);
       return response.data;
     },
+    
   });
 }
 
@@ -105,7 +117,7 @@ function getCurrentLocale(): string {
 
 export function useLogout() {
   const queryClient = useQueryClient();
-
+  const toast = useToast();
   return useMutation({
     mutationFn: async () => {
       await authApi.logout();
@@ -115,6 +127,7 @@ export function useLogout() {
       queryClient.clear();
       const locale = getCurrentLocale();
       window.location.href = `/${locale}/login`;
+      toast.success("تم تسجيل الخروج بنجاح");
     },
   });
 }
