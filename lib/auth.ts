@@ -94,7 +94,7 @@ export const isAdmin = (): boolean => {
 export const logout = (): void => {
   if (isServer) return;
   clearTokens();
-  const defaultLocale = env.DEFAULT_LOCALE;
+  const defaultLocale = env.DEFAULT_LOCALE ?? "ar";
   window.location.href = `/${defaultLocale}/login`;
 };
 

@@ -48,7 +48,7 @@ export const env = {
   APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION || '',
 
   // Internationalization
-  DEFAULT_LOCALE: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'en',
+  DEFAULT_LOCALE: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'ar',
 
   // Authentication (NextAuth) - Secret is only available on server
   NEXTAUTH_URL: process.env.NEXTAUTH_URL || APP_URL,

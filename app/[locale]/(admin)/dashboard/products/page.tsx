@@ -112,6 +112,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => router.push(`/${locale}/dashboard/products/create`)
         }}
+        totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
       />
 
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -125,12 +126,6 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
               {tab.label}
             </button>
           ))}
-        </div>
-        <div className="text-sm font-medium text-muted-foreground">
-          <Badge variant="success" className="rounded-full  p-1.5 font-bold text-xs border-indigo-500/20  gap-1.5 flex items-center w-fit group/badge transition-all duration-300">
-            {t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
-            <Icons.Products className="w-4 h-4 group-hover/badge:rotate-12 transition-transform duration-500" />
-          </Badge>
         </div>
       </div>
 

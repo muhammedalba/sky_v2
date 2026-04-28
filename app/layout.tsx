@@ -8,13 +8,22 @@ export const metadata: Metadata = {
   description: env.APP_DESCRIPTION,
 };
 
-export default function RootLayout({
+
+
+import { getLocale } from 'next-intl/server';
+
+export default async function RootLayout({
   children,
+  
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const locale = await getLocale();
+  const dir = locale === 'ar' ? 'rtl' : 'ltr';
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
         <Script
           id="theme-initializer"

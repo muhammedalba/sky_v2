@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 
 interface LocaleProviderProps {
   children: ReactNode;
@@ -11,6 +11,11 @@ interface LocaleProviderProps {
 }
 
 export default function LocaleProvider({ children, locale, messages }: LocaleProviderProps) {
+  useEffect(() => {
+    document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -24,7 +29,7 @@ export default function LocaleProvider({ children, locale, messages }: LocalePro
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider  client={queryClient}>
       <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">
         {children}
       </NextIntlClientProvider>
