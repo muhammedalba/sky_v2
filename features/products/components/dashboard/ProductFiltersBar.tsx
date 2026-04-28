@@ -15,6 +15,23 @@ import { useSubCategories } from '@/features/categories/hooks/useSubCategories';
 import { useTrans } from '@/shared/hooks/useTrans';
 import { LocalizedString } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
+import { useDebounce } from '@/shared/hooks/use-debounce';
+import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
+import {
+  Hash,
+  Palette,
+  Tag,
+  Briefcase,
+  Layers,
+  DollarSign,
+  Scale,
+  Box,
+  TrendingUp
+} from 'lucide-react';
+import { WEIGHT_UNITS, VOLUME_UNITS } from '@/shared/constants/product-constants';
+
+
+
 
 export function ProductFiltersBar() {
   const t = useTranslations('products');
@@ -22,10 +39,9 @@ export function ProductFiltersBar() {
   const { filters, setFilter, setFilters, resetFilters } = useProductFilters();
   const getTrans = useTrans();
 
-  // ── Drawer open/close ────────────────────────────────
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // ── Local state for debounced inputs ─────────────────
+  // ── Local states ──
   const [query, setQuery] = useState(filters.keywords || '');
   const [sku, setSku] = useState(filters.skuSearch || '');
   const [color, setColor] = useState(filters.color || '');
@@ -51,57 +67,52 @@ export function ProductFiltersBar() {
     { enabled: isDrawerOpen },
   );
 
-  // ── Debounced setters ────────────────────────────────
-  useEffect(() => {
-    if (query === (filters.keywords || '')) return;
-    const handler = setTimeout(() => setFilter('keywords', query), 500);
-    return () => clearTimeout(handler);
-  }, [query, setFilter, filters.keywords]);
+  // ── Debounced values ────────────────────────────────
+  const debouncedQuery = useDebounce(query, 500);
+  const debouncedSku = useDebounce(sku, 500);
+  const debouncedColor = useDebounce(color, 500);
+  const debouncedMinPrice = useDebounce(minPrice, 500);
+  const debouncedMaxPrice = useDebounce(maxPrice, 500);
 
+  // ── Sync debounced values to filters ─────────────────
   useEffect(() => {
-    if (sku === (filters.skuSearch || '')) return;
-    const handler = setTimeout(() => setFilter('skuSearch', sku), 500);
-    return () => clearTimeout(handler);
-  }, [sku, setFilter, filters.skuSearch]);
+    const updates: Record<string, any> = {};
 
+    if (debouncedQuery !== (filters.keywords || '')) updates.keywords = debouncedQuery;
+    if (debouncedSku !== (filters.skuSearch || '')) updates.skuSearch = debouncedSku;
+    if (debouncedColor !== (filters.color || '')) updates.color = debouncedColor;
+    if (debouncedMinPrice !== (filters['pricerange[min]'] || '')) updates['pricerange[min]'] = debouncedMinPrice;
+    if (debouncedMaxPrice !== (filters['pricerange[max]'] || '')) updates['pricerange[max]'] = debouncedMaxPrice;
+
+    if (Object.keys(updates).length > 0) {
+      setFilters(updates); // تحديث الكل دفعة واحدة
+    }
+  }, [debouncedQuery, debouncedSku, debouncedColor, debouncedMinPrice, debouncedMaxPrice, setFilters]);
+
+  // 2. مزامنة الحالة المحلية عند تغير الـ URL (تأثير واحد شامل)  ── Sync back if URL changes externally ──────────────
   useEffect(() => {
-    if (color === (filters.color || '')) return;
-    const handler = setTimeout(() => setFilter('color', color), 500);
-    return () => clearTimeout(handler);
-  }, [color, setFilter, filters.color]);
+    setQuery(filters.keywords || '');
+    setSku(filters.skuSearch || '');
+    setColor(filters.color || '');
+    setMinPrice(filters['pricerange[min]'] || '');
+    setMaxPrice(filters['pricerange[max]'] || '');
+  }, [filters.keywords, filters.skuSearch, filters.color, filters['pricerange[min]'], filters['pricerange[max]']]);
 
-  useEffect(() => {
-    if (minPrice === (filters['pricerange[min]'] || '')) return;
-    const handler = setTimeout(() => setFilter('pricerange[min]', minPrice), 500);
-    return () => clearTimeout(handler);
-  }, [minPrice, setFilter, filters['pricerange[min]']]);
 
-  useEffect(() => {
-    if (maxPrice === (filters['pricerange[max]'] || '')) return;
-    const handler = setTimeout(() => setFilter('pricerange[max]', maxPrice), 500);
-    return () => clearTimeout(handler);
-  }, [maxPrice, setFilter, filters['pricerange[max]']]);
 
-  // ── Sync back if URL changes externally ──────────────
-  useEffect(() => { setQuery(filters.keywords || ''); }, [filters.keywords]);
-  useEffect(() => { setSku(filters.skuSearch || ''); }, [filters.skuSearch]);
-  useEffect(() => { setColor(filters.color || ''); }, [filters.color]);
-  useEffect(() => { setMinPrice(filters['pricerange[min]'] || ''); }, [filters['pricerange[min]']]);
-  useEffect(() => { setMaxPrice(filters['pricerange[max]'] || ''); }, [filters['pricerange[max]']]);
 
   // ── Count active advanced filters (excluding keywords) ─
+  // 3. تحسين حساب الفلاتر النشطة
   const activeFilterCount = useMemo(() => {
-    const advancedKeys: (keyof typeof filters)[] = [
+    const keys = [
       'skuSearch', 'color', 'category', 'brand', 'SubCategories',
-      'pricerange[min]', 'pricerange[max]',
-      'weight_min', 'weight_max', 'weight_unit',
-      'volume_min', 'volume_max', 'volume_unit',
-      'sold_min', 'sold_max', 'all_langs',
+      'pricerange[min]', 'pricerange[max]', 'weight_min', 'weight_max',
+      'weight_unit', 'volume_min', 'volume_max', 'volume_unit', 'sold_min', 'sold_max'
     ];
-    return advancedKeys.filter((k) => filters[k] && filters[k] !== '').length;
+    return keys.filter(k => filters[k as keyof typeof filters]).length;
   }, [filters]);
 
-  // ── Clear all & close ────────────────────────────────
+  // ── Handlers ──
   const handleClearAll = () => {
     resetFilters();
     setCategorySearch('');
@@ -112,6 +123,7 @@ export function ProductFiltersBar() {
     setColor('');
     setMinPrice('');
     setMaxPrice('');
+
   };
 
   // ─────────────────────────────────────────────────────
@@ -120,23 +132,19 @@ export function ProductFiltersBar() {
   return (
     <div className="space-y-4 w-full">
       {/* ── Primary Search Row + Drawer Toggle ────────── */}
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className="flex flex-col md:flex-row gap-3 items-center">
         {/* Search input */}
-        <div className="relative flex-1 group">
-          <Icons.Search className="absolute left-4 rtl:left-auto rtl:right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <Input
-            placeholder={tCommon('search') || 'Search products...'}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="pl-11 rtl:pl-4 rtl:pr-11 h-12 w-full bg-background/50 border-border/40 focus-visible:ring-primary shadow-sm"
-          />
-        </div>
+        <EntitySearchBar
+          placeholder={tCommon('search') || 'Search products...'}
+          onSearch={(val) => setQuery(val)}
+          defaultValue={query}
+        />
 
         {/* Advanced Filters toggle button */}
         <Button
           variant="outline"
           onClick={() => setIsDrawerOpen(true)}
-          className="h-12 px-5 gap-2.5 bg-background/50 border-border/40 font-bold relative"
+          className="h-12 px-5 gap-2.5 bg-background/50 border-border/40 font-bold relative h-stretch"
           id="advanced-filters-toggle"
         >
           <Icons.Settings className="w-4 h-4" />
@@ -154,6 +162,7 @@ export function ProductFiltersBar() {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         title={t('filters.advancedFilters', { defaultValue: 'Advanced Filters' })}
+        activeCount={activeFilterCount}
         subtitle={
           activeFilterCount > 0
             ? `${activeFilterCount} ${t('filters.active', { defaultValue: 'active' })}`
@@ -180,202 +189,198 @@ export function ProductFiltersBar() {
         <div className="space-y-6">
           {/* ═══ Section: General ═══════════════════════ */}
           <FilterSection title={t('filters.general', { defaultValue: 'General' })}>
-            <FilterField label="SKU Search">
-              <Input
-                placeholder="Search by SKU..."
-                value={sku}
-                onChange={(e) => setSku(e.target.value)}
-                className="h-10"
-              />
-            </FilterField>
+            <Input
+              label="Search by SKU..."
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              icon={Hash}
+              className="h-10"
+            />
 
-            <FilterField label="Color">
-              <Input
-                placeholder="e.g. red, blue"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                className="h-10"
-              />
-            </FilterField>
 
-            <FilterField label="All Languages">
-              <Select
-                value={filters.all_langs || ''}
-                onChange={(e) => setFilter('all_langs', e.target.value)}
-                options={[
-                  { value: '', label: 'Default' },
-                  { value: 'true', label: 'Yes' },
-                  { value: 'false', label: 'No' },
-                ]}
-                className="h-10"
-              />
-            </FilterField>
+
+            <Input
+              label="e.g. red, blue"
+              inputWrapperClass="mt-5"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              icon={Palette}
+              className="h-10"
+            />
+
+
+
           </FilterSection>
 
           {/* ═══ Section: Classification ════════════════ */}
           <FilterSection title={t('filters.classification', { defaultValue: 'Classification' })}>
-            <FilterField label="Category">
-              <SearchableSelect
-                placeholder="All Categories"
-                value={filters.category || ''}
-                isLoading={isCategoriesFetching}
-                options={(categoriesData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
-                onSearch={(term) => setCategorySearch(term)}
-                onSelect={(id) => {
-                  setFilters({ category: id, SubCategories: '' });
-                }}
-                className="h-10"
-              />
-            </FilterField>
+            <SearchableSelect
+              label="Search Categories"
+              icon={Tag}
+              value={filters.category || ''}
 
-            <FilterField label="Brand">
-              <SearchableSelect
-                placeholder="All Brands"
-                value={filters.brand || ''}
-                isLoading={isBrandsFetching}
-                options={(brandsData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
-                onSearch={(term) => setBrandSearch(term)}
-                onSelect={(id) => setFilter('brand', id)}
-                className="h-10"
-              />
-            </FilterField>
+              isLoading={isCategoriesFetching}
+              options={(categoriesData?.data as unknown as SearchOption[]) || []}
+              getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+              onSearch={(term) => setCategorySearch(term)}
+              onSelect={(id) => {
+                setFilters({ category: id, SubCategories: '' });
+              }}
+              className="h-10"
+            />
 
-            <FilterField label="Sub Category">
-              <SearchableSelect
-                placeholder="All Sub Categories"
-                value={filters.SubCategories || ''}
-                isLoading={isSubCategoriesFetching}
-                options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
-                onSearch={(term) => setSubCategorySearch(term)}
-                onSelect={(id) => setFilter('SubCategories', id)}
-                className="h-10"
-              />
-            </FilterField>
+            <SearchableSelect
+              label="Search Brands"
+              icon={Briefcase}
+              value={filters.brand || ''}
+
+              isLoading={isBrandsFetching}
+              options={(brandsData?.data as unknown as SearchOption[]) || []}
+              getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+              onSearch={(term) => setBrandSearch(term)}
+              onSelect={(id) => setFilter('brand', id)}
+              className="h-10 my-5"
+            />
+
+
+            <SearchableSelect
+              icon={Layers}
+              label="Search Sub Categories"
+
+              value={filters.SubCategories || ''}
+              isLoading={isSubCategoriesFetching}
+              options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
+              getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+              onSearch={(term) => setSubCategorySearch(term)}
+              onSelect={(id) => setFilter('SubCategories', id)}
+              className="h-10"
+            />
+
           </FilterSection>
 
           {/* ═══ Section: Price ═════════════════════════ */}
           <FilterSection title={t('filters.priceRange', { defaultValue: 'Price Range' })}>
             <div className="grid grid-cols-2 gap-3">
-              <FilterField label="Min">
-                <Input
-                  type="number"
-                  placeholder="0"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
-              <FilterField label="Max">
-                <Input
-                  type="number"
-                  placeholder="999"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
+
+              <Input
+                label="Min Price"
+                icon={DollarSign}
+                type="number"
+                value={minPrice}
+
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="h-10"
+              />
+
+
+              <Input
+                type="number"
+                icon={DollarSign}
+                label='Max price'
+                value={maxPrice}
+
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="h-10"
+              />
             </div>
           </FilterSection>
 
           {/* ═══ Section: Weight ════════════════════════ */}
           <FilterSection title={t('filters.weight', { defaultValue: 'Weight' })}>
             <div className="grid grid-cols-2 gap-3">
-              <FilterField label="Min">
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.weight_min || ''}
-                  onChange={(e) => setFilter('weight_min', e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
-              <FilterField label="Max">
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.weight_max || ''}
-                  onChange={(e) => setFilter('weight_max', e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
-            </div>
-            <FilterField label="Unit">
-              <Select
-                value={filters.weight_unit || ''}
-                onChange={(e) => setFilter('weight_unit', e.target.value)}
-                options={[
-                  { value: '', label: 'Any' },
-                  { value: 'kg', label: 'kg' },
-                  { value: 'g', label: 'g' },
-                  { value: 'lb', label: 'lb' },
-                  { value: 'oz', label: 'oz' },
-                ]}
+
+              <Input
+                type="number"
+                icon={Scale}
+                label="Min"
+                value={filters.weight_min || ''}
+
+                onChange={(e) => setFilter('weight_min', e.target.value)}
                 className="h-10"
               />
-            </FilterField>
+              <Input
+                type="number"
+                icon={Scale}
+                label="Max"
+                value={filters.weight_max || ''}
+
+                onChange={(e) => setFilter('weight_max', e.target.value)}
+                className="h-10"
+              />
+            </div>
+
+            <Select
+              label="weight Unit"
+              value={filters.weight_unit || ''}
+              onChange={(e) => setFilter('weight_unit', e.target.value)}
+              options={[...WEIGHT_UNITS]}
+              className="h-10"
+            />
+
+
           </FilterSection>
 
           {/* ═══ Section: Volume ════════════════════════ */}
           <FilterSection title={t('filters.volume', { defaultValue: 'Volume' })}>
             <div className="grid grid-cols-2 gap-3">
-              <FilterField label="Min">
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.volume_min || ''}
-                  onChange={(e) => setFilter('volume_min', e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
-              <FilterField label="Max">
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.volume_max || ''}
-                  onChange={(e) => setFilter('volume_max', e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
-            </div>
-            <FilterField label="Unit">
-              <Select
-                value={filters.volume_unit || ''}
-                onChange={(e) => setFilter('volume_unit', e.target.value)}
-                options={[
-                  { value: '', label: 'Any' },
-                  { value: 'l', label: 'L' },
-                  { value: 'ml', label: 'ml' },
-                  { value: 'gal', label: 'gal' },
-                ]}
+
+              <Input
+                type="number"
+                label="Min"
+                value={filters.volume_min || ''}
+                onChange={(e) => setFilter('volume_min', e.target.value)}
                 className="h-10"
+                icon={Box}
               />
-            </FilterField>
+
+
+
+              <Input
+                type="number"
+                label="Max"
+                value={filters.volume_max || ''}
+                onChange={(e) => setFilter('volume_max', e.target.value)}
+                className="h-10"
+                icon={Box}
+              />
+
+
+            </div>
+
+            <Select
+              label="volume Unit"
+              value={filters.volume_unit || ''}
+              onChange={(e) => setFilter('volume_unit', e.target.value)}
+              options={[...VOLUME_UNITS]}
+              className="h-10"
+            />
+
+
           </FilterSection>
 
           {/* ═══ Section: Sales ═════════════════════════ */}
           <FilterSection title={t('filters.unitsSold', { defaultValue: 'Units Sold' })}>
             <div className="grid grid-cols-2 gap-3">
-              <FilterField label="Min">
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.sold_min || ''}
-                  onChange={(e) => setFilter('sold_min', e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
-              <FilterField label="Max">
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.sold_max || ''}
-                  onChange={(e) => setFilter('sold_max', e.target.value)}
-                  className="h-10"
-                />
-              </FilterField>
+
+              <Input
+                type="number"
+                label="Min"
+                value={filters.sold_min || ''}
+                onChange={(e) => setFilter('sold_min', e.target.value)}
+                icon={TrendingUp}
+                className="h-10"
+              />
+
+
+              <Input
+                type="number"
+                label="Max"
+                value={filters.sold_max || ''}
+                onChange={(e) => setFilter('sold_max', e.target.value)}
+                icon={TrendingUp}
+                className="h-10"
+              />
+
             </div>
           </FilterSection>
         </div>
@@ -390,8 +395,8 @@ export function ProductFiltersBar() {
 
 function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-3">
-      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+    <div className="space-y-5">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
         {title}
       </h3>
       <div className="space-y-3 pl-0.5 rtl:pr-0.5 rtl:pl-0">

@@ -1,6 +1,8 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
+import { useDebounce } from '@/shared/hooks/use-debounce';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCoupons, useDeleteCoupon } from '@/features/marketing/hooks/useCoupons';
@@ -9,7 +11,8 @@ import { Input } from '@/shared/ui/Input';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
-import { formatDate, debounce } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
+
 import { Coupon } from '@/types';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
@@ -18,16 +21,20 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
   const { locale } = use(params);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [localSearch, setLocalSearch] = useState('');
+  const debouncedSearch = useDebounce(localSearch, 500);
+
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
 
   const { data, isLoading, refetch } = useCoupons({ page, limit: 10, keywords: search });
   const deleteMutation = useDeleteCoupon();
 
-  const handleSearch = debounce((value: string) => {
-    setSearch(value);
+  useEffect(() => {
+    setSearch(debouncedSearch);
     setPage(1);
-  }, 500);
+  }, [debouncedSearch]);
+
 
   const handleDelete = async (id: string, name: string) => {
     confirmDialog.openDialog({
@@ -65,8 +72,10 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
            <Input
              placeholder="Search coupons..."
              className="pl-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
-             onChange={(e) => handleSearch(e.target.value)}
+             value={localSearch}
+             onChange={(e) => setLocalSearch(e.target.value)}
            />
+
         </div>
       </div>
 

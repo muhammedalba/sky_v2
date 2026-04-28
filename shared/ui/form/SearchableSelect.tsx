@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '../Input';
 import Spinner from '../Spinner';
+import { LucideIcon } from 'lucide-react';
 
 export interface SearchOption {
   _id: string;
@@ -23,11 +24,12 @@ interface SearchableSelectProps {
   initialDisplayValue?: string;
   className?: string;
   disabled?: boolean;
+  icon?: LucideIcon
 }
 
 export function SearchableSelect({
   label,
-  placeholder = 'Search...',
+  placeholder,
   value,
   onSelect,
   options = [],
@@ -38,6 +40,7 @@ export function SearchableSelect({
   onOpen,
   initialDisplayValue = '',
   className,
+   icon,
   disabled = false,
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,9 +75,11 @@ export function SearchableSelect({
 
   return (
     <div className={`relative space-y-2 ${className}`} ref={wrapperRef}>
-      {label && <label className="text-sm font-bold ml-1">{label}</label>}
+
       <Input
+        icon={icon}
         placeholder={placeholder}
+        label={label}
         value={search}
         autoComplete="off"
         disabled={disabled}
@@ -87,11 +92,11 @@ export function SearchableSelect({
           setIsOpen(true);
           if (onOpen) onOpen();
         }}
-        className={`w-full h-10 rounded-xl bg-secondary/10 border-none font-semibold ${error ? 'ring-2 ring-destructive' : ''}`}
+        className={`w-full h-10 rounded-xl bg-secondary/10 border font-semibold ${error ? 'ring-2 ring-destructive' : ''}`}
       />
 
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 flex justify-center items-center gap-2 text-sm text-muted-foreground">
               <Spinner className="w-4 h-4" /> Loading...
@@ -107,9 +112,8 @@ export function SearchableSelect({
                     setSearch(displayVal);
                     setIsOpen(false);
                   }}
-                  className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors ${
-                    value === opt._id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/20 text-foreground'
-                  }`}
+                  className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors ${value === opt._id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/20 text-foreground'
+                    }`}
                 >
                   {getDisplayValue(opt)}
                 </li>

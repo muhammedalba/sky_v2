@@ -3,8 +3,9 @@
 import { Icons } from '@/shared/ui/Icons';
 import { Input } from '@/shared/ui/Input';
 import { cn } from '@/lib/utils';
-import { debounce } from '@/lib/utils';
-import { useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useDebounce } from '@/shared/hooks/use-debounce';
+
 
 interface EntitySearchBarProps {
   placeholder?: string;
@@ -21,12 +22,13 @@ export default function EntitySearchBar({
   debounceMs = 500,
   className,
 }: EntitySearchBarProps) {
-  const handleSearch = useCallback(
-    debounce((value: string) => {
-      onSearch(value);
-    }, debounceMs),
-    [onSearch, debounceMs]
-  );
+  const [searchTerm, setSearchTerm] = useState(defaultValue || '');
+  const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
+
+  useEffect(() => {
+    onSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm, onSearch]);
+
 
   return (
     <div
@@ -39,10 +41,11 @@ export default function EntitySearchBar({
         <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
         <Input
           placeholder={placeholder}
-          defaultValue={defaultValue}
+          value={searchTerm}
           className="pl-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
+
       </div>
     </div>
   );

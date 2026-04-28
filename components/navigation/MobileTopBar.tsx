@@ -9,6 +9,8 @@ import { useUIStore } from '@/store/ui-store';
 import LanguageSwitcher from '@/widgets/layout/LanguageSwitcher';
 import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
 import SideDrawer from './SideDrawer';
+import { useDebounce } from '@/shared/hooks/use-debounce';
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,39 +24,33 @@ function MobileSearchInput() {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const t = useTranslations('store.nav');
+  const debouncedQuery = useDebounce(query, 400);
 
-  const handleSearch = useCallback(
-    (value: string) => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
-        if (value.trim()) {
-          router.push(`/products?search=${encodeURIComponent(value.trim())}`);
-        }
-      }, 400);
-    },
-    [router]
-  );
+
+  useEffect(() => {
+    if (debouncedQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(debouncedQuery.trim())}`);
+    }
+  }, [debouncedQuery, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value);
-    handleSearch(value);
+    setQuery(e.target.value);
   };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (debounceRef.current) clearTimeout(debounceRef.current);
     if (query.trim()) {
       router.push(`/products?search=${encodeURIComponent(query.trim())}`);
     }
   };
 
+
   const clearSearch = () => {
     setQuery('');
-    if (debounceRef.current) clearTimeout(debounceRef.current);
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="flex-1 relative">

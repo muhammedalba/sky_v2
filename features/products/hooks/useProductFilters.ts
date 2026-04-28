@@ -6,7 +6,6 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 export interface ProductFilters {
   keywords: string;
   skuSearch: string;
-  all_langs: string;
   color: string;
   'pricerange[min]': string;
   'pricerange[max]': string;
@@ -29,7 +28,6 @@ export function useProductFilters() {
   const filters = useMemo<ProductFilters>(() => ({
     keywords: getQueryParam('keywords', ''),
     skuSearch: getQueryParam('skuSearch', ''),
-    all_langs: getQueryParam('all_langs', ''),
     color: getQueryParam('color', ''),
     'pricerange[min]': getQueryParam('pricerange[min]', ''),
     'pricerange[max]': getQueryParam('pricerange[max]', ''),
@@ -59,7 +57,6 @@ export function useProductFilters() {
     const defaultFilters: Record<keyof ProductFilters, null> = {
       keywords: null,
       skuSearch: null,
-      all_langs: null,
       color: null,
       'pricerange[min]': null,
       'pricerange[max]': null,

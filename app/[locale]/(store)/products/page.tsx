@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDebounce } from '@/shared/hooks/use-debounce';
+
 import { useLocale } from 'next-intl';
 import ProductCard from '@/features/products/components/storefront/ProductCard';
 import { Input } from '@/shared/ui/Input';
@@ -8,8 +10,8 @@ import { Icons } from '@/shared/ui/Icons';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import Pagination from '@/shared/ui/Pagination';
 import { useProducts } from '@/features/products/hooks/useProducts';
-import { debounce } from '@/lib/utils';
 import { Product } from '@/types';
+
 // Accordion import removed
 
 export default function ProductsPage() {
@@ -17,14 +19,18 @@ export default function ProductsPage() {
   
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [localSearch, setLocalSearch] = useState('');
+  const debouncedSearch = useDebounce(localSearch, 500);
+
   // const [sort, setSort] = useState('newest');
 
   const { data, isLoading } = useProducts({ page, limit: 12, keywords: search });
   
-  const handleSearch = debounce((value: string) => {
-    setSearch(value);
+  useEffect(() => {
+    setSearch(debouncedSearch);
     setPage(1);
-  }, 500);
+  }, [debouncedSearch]);
+
 
   return (
     <>
@@ -42,11 +48,12 @@ export default function ProductsPage() {
          <div className="flex flex-col md:flex-row gap-6 mb-8 items-center justify-between">
             <div className="relative w-full md:w-96">
                <Icons.Menu className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-               <Input 
-                 placeholder="Search products..." 
-                 className="pl-10 h-12 rounded-full bg-background border-border/60 focus-visible:ring-primary/20"
-                 onChange={(e) => handleSearch(e.target.value)}
-               />
+                <Input 
+                  placeholder="Search products..." 
+                  className="pl-10 h-12 rounded-full bg-background border-border/60 focus-visible:ring-primary/20"
+                  value={localSearch}
+                  onChange={(e) => setLocalSearch(e.target.value)}
+                />
             </div>
              <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-muted-foreground">

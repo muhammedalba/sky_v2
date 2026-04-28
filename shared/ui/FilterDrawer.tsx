@@ -22,6 +22,7 @@ export function FilterDrawer({
   title,
   subtitle,
   children,
+  activeCount=0,
   footer,
 }: FilterDrawerProps) {
   const locale = useLocale();
@@ -60,7 +61,7 @@ export function FilterDrawer({
       {/* ── Overlay ────────────────────────────────────── */}
       <div
         className={cn(
-          'fixed inset-0 z-90 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300',
+          'fixed inset-0 m-0 z-90 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300',
           isOpen
             ? 'opacity-100 pointer-events-auto'
             : 'opacity-0 pointer-events-none',
@@ -106,7 +107,7 @@ export function FilterDrawer({
                 {title}
               </h2>
               {subtitle && (
-                <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate">
+                <p className={cn("text-xs  font-medium mt-0.5 truncate",activeCount > 0 ?"text-success":"text-muted-foreground")}>
                   {subtitle}
                 </p>
               )}

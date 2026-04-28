@@ -11,7 +11,7 @@ import { Switch } from '@/shared/ui/Switch';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
-import { formatCurrency, debounce } from '@/lib/utils';
+import { formatCurrency, truncate } from '@/lib/utils';
 import { Product } from '@/types';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
@@ -21,6 +21,7 @@ import { useTrans } from '@/shared/hooks/useTrans';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useProductFilters } from '@/features/products/hooks/useProductFilters';
 import { ProductFiltersBar } from '@/features/products/components/dashboard/ProductFiltersBar';
+import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 
 type ViewTab = 'all' | 'deleted' | 'featured' | 'unlimited_stock' | 'disabled';
 
@@ -89,23 +90,16 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            {t('title')}
-          </h1>
-          <p className="text-muted-foreground text-sm font-medium">
-            {t('productList')}
-          </p>
-        </div>
-        <Link href={`/${locale}/dashboard/products/create`}>
-          <Button className="h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95">
-            <Icons.Plus className="w-5 h-5" />
-            {t('createProduct')}
-          </Button>
-        </Link>
-      </div>
-
+      <EntityPageHeader
+        title={t('title')}
+        subtitle={t('productList')}
+        action={{
+          label: t('createProduct'),
+          icon: <Icons.Plus className="w-5 h-5" />,
+          onClick: () => router.push(`/${locale}/dashboard/products/create`)
+        }}
+      />
+      <div className="">total products: {data?.meta?.pagination?.totalResults}</div>
       {/* Tabs: Active / Featured / Unlimited Stock / Disabled / Deleted */}
       <div className="flex items-center gap-2 flex-wrap">
         {([
@@ -152,8 +146,8 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                   />
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
-                  <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors truncate">
-                    {getTrans(product.title).slice(0, 20)} {getTrans(product.title).length > 20 ? '...' : ''}
+                  <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                    {truncate(getTrans(product.title), 20)}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
@@ -203,7 +197,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                   ? getTrans(product.brand.name)
                   : typeof product.brand === 'string' ? product.brand : '-'}
               </Badge>
-              </>
+            </>
             )
           },
           {

@@ -10,6 +10,7 @@ export interface InputProps
     disabled?: boolean;
     placeholder?: string;
     labelClassName?: string;
+    inputWrapperClass?: string;
     name?: string;
     type?: string;  
     value?: string;
@@ -17,14 +18,14 @@ export interface InputProps
   }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, name, placeholder, labelClassName, disabled=false, value, icon, ...props }, ref) => {
+  ({ className, type, label, error, name, placeholder, labelClassName, disabled=false, value, icon,inputWrapperClass, ...props }, ref) => {
       const IconComponent = icon;
       const [isFocused, setIsFocused] = React.useState(false);
       
       // Determine if label should float
       const shouldFloat = isFocused || (value && value.length > 0);
       
-    return (<div className="w-full ">  
+    return (<div className={cn("w-full  ", inputWrapperClass)}>  
       <div className=" relative">
         {label && (
           <label 
@@ -55,6 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             props.onFocus?.(e);
           }}
           onBlur={(e) => {
+            
             setIsFocused(false);
             props.onBlur?.(e);
           }}
