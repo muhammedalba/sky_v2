@@ -35,6 +35,9 @@ export function useLogin() {
     onSuccess: (response: ApiResponse<LoginResponseData>) => {
       handleAuthSuccess(response, queryClient);
     },
+    onError: (error) => {
+      console.error(error);
+    }
   });
 }
 

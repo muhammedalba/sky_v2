@@ -1,6 +1,8 @@
 {
       "title": "المنتجات",
+      "totalResults": "تم العثور على {count} منتج",
       "createProduct": "إنشاء منتج",
+
       "editProduct": "تعديل المنتج",
       "productList": "قائمة المنتجات",
       "productDetails": "تفاصيل المنتج",

@@ -1,6 +1,8 @@
 {
       "title": "Products",
+      "totalResults": "{count} products found",
       "createProduct": "Create Product",
+
       "editProduct": "Edit Product",
       "productList": "Product List",
       "productDetails": "Product Details",

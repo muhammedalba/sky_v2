@@ -18,6 +18,9 @@ export default function LoginForm({ locale }: { locale: string }) {
 
   const loginMutation = useSmartMutation(useLogin(), {
     onSuccess: () => router.push(`/${locale}/dashboard`),
+    onError: (error) => {
+      console.error(error);
+    }
   });
 
   const successMessage =
