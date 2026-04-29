@@ -176,7 +176,7 @@ export default function AuthNavbar() {
                     onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
                 >
                     <div className="p-6 border-b border-border/50 flex items-center justify-between bg-accent/20">
-                        <SidebarHeader Collapsed={true} locale={locale} />
+                        <SidebarHeader locale={locale} />
                         <button  
                             onClick={() => setMobileMenuOpen(false)}
                             className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"

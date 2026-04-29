@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import type { CategoryItem } from './CategoriesScroller';
 import Image from 'next/image';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
+import SidebarHeader from '@/widgets/layout/sidebar/SidebarHeader';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -173,7 +174,7 @@ export default function SideDrawer({
       >
         {/* Header */}
         <div className="p-5 border-b border-border/50 flex items-center justify-between bg-accent/10">
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <Image
               src="/images/auth-logo.png"
               alt={`${appName} Logo`}
@@ -182,7 +183,8 @@ export default function SideDrawer({
               className="object-contain"
             />
             <span className="font-black tracking-tight text-lg">{appName}</span>
-          </div>
+          </div> */}
+          <SidebarHeader locale={locale} />
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"

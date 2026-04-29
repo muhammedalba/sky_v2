@@ -41,7 +41,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
 
   return (
     <SidebarClientWrapper mode={mode} className={className}>
-      <SidebarHeader locale={l} onNavigate={onNavigate} />
+      <SidebarHeader locale={l} onNavigate={onNavigate} Collapsed={true} />
       <SidebarNav navigation={navigation} onNavigate={onNavigate} /> 
       <SidebarFooter/>
     </SidebarClientWrapper>

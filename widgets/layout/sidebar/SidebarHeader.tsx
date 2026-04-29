@@ -6,10 +6,10 @@ import { cn } from '@/lib/utils';
 import { env } from '@/lib/env';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
-export default function SidebarHeader({ locale, Collapsed, onNavigate, }: { locale: string; Collapsed: boolean; onNavigate?: () => void }) {
+export default function SidebarHeader({ locale, Collapsed = false, onNavigate, }: { locale: string; Collapsed?: boolean; onNavigate?: () => void }) {
   const { sidebarCollapsed } = useUIStore();
   const appName = env.APP_NAME;
-  const isCollapsed = Collapsed ? !Collapsed : sidebarCollapsed;
+  const isCollapsed = sidebarCollapsed && Collapsed;
 
   return (
     <div className={cn("h-20 flex items-center transition-all duration-300", isCollapsed ? "justify-center px-0" : "px-8")}>
@@ -34,7 +34,7 @@ export default function SidebarHeader({ locale, Collapsed, onNavigate, }: { loca
               {appName}
             </span>
             <span className="text-[10px] font-bold text-info uppercase tracking-[0.2em] leading-none mt-1 relative">
-              E-commerce 
+              E-commerce
               <div className="absolute -inset-e-2  top-1/4 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
             </span>
           </div>
