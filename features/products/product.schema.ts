@@ -53,7 +53,7 @@ const productBaseSchema = z.object({
     ar: z.string().min(15, 'required').max(1000, 'required'),
   }),
   isUnlimitedStock: z.boolean().default(true),
-  disabled: z.boolean().default(false),
+  isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
   category: z.string(),
   SubCategories: z.array(z.string()).min(1, 'required'),

@@ -47,7 +47,7 @@
             "lowStock": "Low Stock",
             "active": "Active",
             "featured": "Featured",
-            "unlimitedStock": "Unlimited Stock",
+            "unlimitedStock": "Unlimited",
             "disabled": "Disabled",
             "deleted": "Deleted",
             "noFeatured": "No featured products",
@@ -60,7 +60,12 @@
             "priceRange": "Price Range",
             "weight": "Weight",
             "volume": "Volume",
-            "unitsSold": "Units Sold"
+            "unitsSold": "Units Sold",
+            "weightUnit": "Weight Unit",
+            "weightUnitRequired": "Weight unit is required when filtering by weight",
+            "volumeUnit": "Volume Unit",
+            "volumeUnitRequired": "Volume unit is required when filtering by volume",
+            "minExceedsMax": "Min value cannot be greater than max"
       },
       "form": {
             "titleCreate": "Create Product",

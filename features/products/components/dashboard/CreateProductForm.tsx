@@ -83,7 +83,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       title: { en: '', ar: '' },
       description: { en: '', ar: '' },
       isUnlimitedStock: true,
-      disabled: false,
+      isActive: true,
       isFeatured: false,
       category: '',
       SubCategories: [],
@@ -247,7 +247,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     formData.append('category', data.category);
     data.SubCategories?.forEach((id) => formData.append('SubCategories', id));
     formData.append('isUnlimitedStock', String(data.isUnlimitedStock));
-    formData.append('disabled', String(data.disabled));
+    formData.append('isActive', String(data.isActive));
     formData.append('isFeatured', String(data.isFeatured));
 
     if (data.brand) formData.append('brand', data.brand);
@@ -557,7 +557,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
               <div className="h-px bg-border/50 w-full" />
               <Switch {...register('isFeatured')} label={t('featured')} description={t('featuredDesc')} />
               <div className="h-px bg-border/50 w-full" />
-              <Switch {...register('disabled')} label={t('disabled')} description={t('disabledDesc')} />
+              <Switch {...register('isActive')} label={t('disabled')} description={t('disabledDesc')} />
             </div>
           </div>
         </div>

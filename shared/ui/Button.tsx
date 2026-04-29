@@ -10,17 +10,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5",
+          "bg-primary cursor-pointer text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-md hover:-translate-y-0.5",
+          "bg-destructive cursor-pointer text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-md hover:-translate-y-0.5",
         outline:
-          "border border-input/80 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/30",
+          "border cursor-pointer border-input/80 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/30 hover:-translate-y-0.5",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 hover:shadow",
+          "bg-secondary cursor-pointer text-secondary-foreground shadow-sm hover:bg-secondary/80 hover:shadow hover:-translate-y-0.5",
         ghost:
-          "hover:bg-accent/80 hover:text-accent-foreground",
+          "hover:bg-accent/80 cursor-pointer hover:text-accent-foreground hover:-translate-y-0.5",
         link:
-          "text-primary underline-offset-4 hover:underline hover:opacity-80",
+          "text-primary cursor-pointer underline-offset-4 hover:underline hover:opacity-80 hover:-translate-y-0.5",
       },
       size: {
         default: "h-10 px-5 py-2",

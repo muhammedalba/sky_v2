@@ -38,11 +38,11 @@ export default function EntityPageHeader({
           </p>
         )}
         <div className="text-sm font-medium text-muted-foreground">
-          {totalResults && <Badge variant="success" className="rounded-full bg-success/80 hover:bg-success/90  p-1.5 font-bold text-xs gap-1.5 flex items-center w-fit group/badge transition-all duration-300">
+          {totalResults && <Badge variant="success" className="rounded-full text-green-700 bg-green-100 hover:bg-green-300 font-bold text-xs gap-1.5 flex items-center w-fit group/badge transition-all duration-300">
             <Icons.Products className="w-4 h-4 group-hover/badge:rotate-12 transition-transform duration-500" />
             {totalResults}
           </Badge>}  
-        </div>
+        </div> 
       </div>
       {action && (
         <Button

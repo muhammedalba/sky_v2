@@ -48,9 +48,9 @@ export default function DashboardClientLayout({
           )}
         >
           {/* Topbar Wrapper with Mobile Trigger */}
-          <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border pl-4 md:pl-0">
+          <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border ps-4 md:ps-0">
             <div className="flex items-center">
-              <SheetTrigger className="md:hidden p-2 mr-2 text-muted-foreground hover:bg-secondary rounded-lg">
+              <SheetTrigger className="md:hidden p-2 me-2 text-muted-foreground hover:bg-secondary rounded-lg">
                 <Icons.Menu className="w-6 h-6" />
               </SheetTrigger>
               <div className="flex-1">

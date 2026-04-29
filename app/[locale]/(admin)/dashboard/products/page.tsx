@@ -1,9 +1,9 @@
 'use client';
 
-import { use, useState, useMemo, useCallback } from 'react';
+import { use, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+
 import { useProducts, useDeleteProduct, useRestoreProduct, useHardDeleteProduct, useUpdateProduct } from '@/features/products/hooks/useProducts';
 import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
@@ -21,17 +21,17 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useProductFilters } from '@/features/products/hooks/useProductFilters';
 import { ProductFiltersBar } from '@/features/products/components/dashboard/ProductFiltersBar';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
+import Link from 'next/link';
 
-type ViewTab = 'all' | 'deleted' | 'featured' | 'unlimited_stock' | 'disabled' | 'active';
+type ViewTab = 'isActive' | 'deleted' | 'featured' | 'unlimited_stock' | 'notActive';
 
 // نقل الثوابت خارج المكون لمنع إعادة تخصيص الذاكرة
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
-  all: {},
+  isActive: {},
   deleted: { isDeleted: 'true' },
   featured: { isFeatured: 'true' },
   unlimited_stock: { isUnlimitedStock: 'true' },
-  disabled: { disabled: 'true' },
-  active: { disabled: 'false' },
+  notActive: { isActive: 'false' },
 };
 
 export default function ProductsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -39,11 +39,10 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
 
   const page = Number(getQueryParam('page', '1'));
-  const viewTab = (getQueryParam('tab', 'all') as ViewTab);
+  const viewTab = (getQueryParam('tab', 'isActive') as ViewTab);
   const { apiParams } = useProductFilters();
 
   const t = useTranslations('products');
-  const tCommon = useTranslations('buttons');
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
   const getTrans = useTrans();
@@ -66,9 +65,8 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
 
   const tabs = useMemo(() => [
-    { key: 'all' as ViewTab, label: t('filters.all'), activeClass: 'bg-primary text-primary-foreground shadow-md shadow-primary/20' },
-    { key: 'active' as ViewTab, label: t('filters.active'), activeClass: 'bg-green-500 text-white shadow-md shadow-green-500/20' },
-    { key: 'disabled' as ViewTab, label: t('filters.disabled'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
+    { key: 'isActive' as ViewTab, label: t('filters.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
+    { key: 'notActive' as ViewTab, label: t('filters.disabled'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
     { key: 'featured' as ViewTab, label: t('filters.featured'), activeClass: 'bg-amber-500 text-white shadow-md shadow-amber-500/20' },
     { key: 'unlimited_stock' as ViewTab, label: t('filters.unlimitedStock'), activeClass: 'bg-sky-500 text-white shadow-md shadow-sky-500/20' },
     { key: 'deleted' as ViewTab, label: t('filters.deleted'), activeClass: 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20' },
@@ -139,9 +137,9 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         columns={[
           {
             header: t('fields.product', { defaultValue: 'Product' }),
-            className: "w-[300px] pl-6",
+            className: "w-[300px] ps-6",
             render: (product: Product, index: number) => (
-              <div className="flex items-center gap-4">
+              <Link href={`/${locale}/dashboard/products/${product.slug}/edit`} className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
                   <ImageWithFallback
                     src={product.imageCover || ''}
@@ -165,7 +163,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             )
           },
           {
@@ -181,8 +179,8 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                   className="scale-75 origin-left rtl:origin-right"
                 />
                 <Switch
-                  checked={!product.disabled}
-                  onChange={(e) => updateMutation.mutate({ id: product._id, data: { disabled: !e.target.checked } })}
+                  checked={product.isActive}
+                  onChange={(e) => updateMutation.mutate({ id: product._id, data: { isActive: !e.target.checked } })}
                   disabled={updateMutation.isPending}
                   label={getTrans({ ar: "نشط", en: "Active" })}
                   className="scale-75 origin-left rtl:origin-right"
@@ -191,7 +189,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
             )
           },
           {
-            header: t('fields.category', { defaultValue: 'Category' }),
+            header: `${t('fields.category', { defaultValue: 'Category' })} & ${t('form.brand', { defaultValue: 'brand' })}`,
             render: (product: Product) => (<>
               <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                 {product.category && typeof product.category === 'object' && 'name' in product.category
@@ -251,9 +249,9 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           },
           {
             header: t('fields.actions') || 'Actions',
-            className: "pr-6 text-right w-[120px]",
+            className: "pe-6 text-end w-[120px]",
             render: (product: Product) => (
-              <div className="flex justify-end gap-1 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+              <div className="flex justify-end gap-1 translate-x-4 rtl:-translate-x-4 group-hover:translate-x-0 rtl:group-hover:translate-x-0 group-hover:scale-105 transition-all duration-300">
                 {viewTab === 'deleted' ? (
                   <>
                     <Button
@@ -280,7 +278,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-12 w-12 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
+                      className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
                       onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
                     >
                       <Icons.Edit className="w-4 h-4" />
@@ -288,7 +286,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-12 w-12 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground"
+                      className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
                       onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
                       isLoading={deleteMutation.isPending}
                     >
@@ -346,13 +344,13 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           title: viewTab === 'deleted' ? t('form.noDeletedProducts')
             : viewTab === 'featured' ? t('filters.noFeatured')
               : viewTab === 'unlimited_stock' ? t('filters.noUnlimitedStock')
-                : viewTab === 'disabled' ? t('filters.noDisabled')
+                : viewTab === 'notActive' ? t('filters.noDisabled')
                   : t('emptyState.noProducts'),
           description: viewTab === 'deleted'
             ? t('emptyState.deletedDesc')
             : t('emptyState.activeDesc'),
-          createLink: viewTab === 'all' ? `/${locale}/dashboard/products/create` : undefined,
-          createLabel: viewTab === 'all' ? t('createProduct') : undefined
+          createLink: viewTab === 'isActive' ? `/${locale}/dashboard/products/create` : undefined,
+          createLabel: viewTab === 'isActive' ? t('createProduct') : undefined
         }}
       />
 

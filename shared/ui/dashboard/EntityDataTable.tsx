@@ -48,7 +48,7 @@ export default function EntityDataTable<T extends { _id: string }>({
   emptyState,
   expandableContent,
 }: EntityDataTableProps<T>) {
-  console.log("Check Expandable:", expandableContent);
+
   const tCommon = useTranslations('common');
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
@@ -67,15 +67,15 @@ export default function EntityDataTable<T extends { _id: string }>({
                   key={idx}
                   className={cn(
                     'h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground/80',
-                    idx === 0 && 'pl-6',
-                    idx === columns.length - 1 && !expandableContent && 'pr-6 text-right',
+                    idx === 0 && 'ps-6',
+                    idx === columns.length - 1 && !expandableContent && 'pe-6 text-end',
                     col.className,
                   )}
                 >
                   {col.header}
                 </TableHead>
               ))}
-              {expandableContent && <TableHead className="w-10 pr-6 text-right"></TableHead>}
+              {expandableContent && <TableHead className="w-10 pe-6 text-end"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -91,8 +91,8 @@ export default function EntityDataTable<T extends { _id: string }>({
                       <TableCell
                         key={idx}
                         className={cn(
-                          idx === 0 && 'pl-6',
-                          idx === columns.length - 1 && 'pr-6',
+                          idx === 0 && 'ps-6',
+                          idx === columns.length - 1 && 'pe-6',
                         )}
                       >
                         <Skeleton
@@ -118,8 +118,8 @@ export default function EntityDataTable<T extends { _id: string }>({
                       <TableCell
                         key={idx}
                         className={cn(
-                          idx === 0 && 'pl-6',
-                          idx === columns.length - 1 && !expandableContent && 'pr-6 text-right',
+                          idx === 0 && 'ps-6',
+                          idx === columns.length - 1 && !expandableContent && 'pe-6 text-end',
                           col.className,
                         )}
                       >
@@ -131,7 +131,7 @@ export default function EntityDataTable<T extends { _id: string }>({
                       </TableCell>
                     ))}
                     {expandableContent && (
-                      <TableCell className="pr-6 text-right">
+                      <TableCell className="pe-6 text-end">
                         <Button
                           variant="ghost"
                           size="sm"

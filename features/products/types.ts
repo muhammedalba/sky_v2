@@ -47,10 +47,10 @@ export interface Product {
   brand?: Brand | string;
   supplier?: Supplier | string;
   isUnlimitedStock?: boolean;
-  disabled?: boolean;
+  isActive?: boolean;
   isFeatured?: boolean;
   comparePrice?: number;
-  manual?: string;
+  // manual?: string;
   infoProductPdf?: string;
   ratingsAverage?: number;
   ratingsQuantity?: number;

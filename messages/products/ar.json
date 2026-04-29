@@ -47,7 +47,7 @@
             "lowStock": "مخزون منخفض",
             "active": "نشط",
             "featured": "مميز",
-            "unlimitedStock": "مخزون غير محدود",
+            "unlimitedStock": "غير محدود",
             "disabled": "معطّل",
             "deleted": "محذوف",
             "noFeatured": "لا توجد منتجات مميزة",
@@ -60,7 +60,12 @@
             "priceRange": "نطاق السعر",
             "weight": "الوزن",
             "volume": "الحجم",
-            "unitsSold": "الوحدات المباعة"
+            "unitsSold": "الوحدات المباعة",
+            "weightUnit": "وحدة الوزن",
+            "weightUnitRequired": "وحدة الوزن مطلوبة عند التصفية حسب الوزن",
+            "volumeUnit": "وحدة الحجم",
+            "volumeUnitRequired": "وحدة الحجم مطلوبة عند التصفية حسب الحجم",
+            "minExceedsMax": "القيمة الأدنى لا يمكن أن تكون أكبر من القيمة الأقصى"
       },
       "form": {
             "titleCreate": "إنشاء منتج",
