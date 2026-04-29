@@ -24,10 +24,10 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <label
             htmlFor={props.name}
             className={cn(
-              ` pointer-events-none absolute inset-s-1flex items-center gap-x-1 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500  `,
+              ` pointer-events-none absolute inset-s-1 flex items-center gap-x-1 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500  `,
               shouldFloat
                 ? '-top-4 text-xs text-foreground/80 w-fit '
-                : 'top-1/2 -translate-y-1/2 text-sm text-muted-foreground  bg-transparent w-auto',
+                : 'top-1/2 -translate-y-1/2  text-muted-foreground  bg-transparent w-auto',
 
               props.labelClassName
             )}
@@ -51,14 +51,17 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             props.onBlur?.(e);
           }}
           className={cn(
-            `w-full border py-3 text-sm md:text-base leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
+            `w-full border py-3 text-sm leading-relaxed focus:outline-none ps-4 pe-10 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive' : ''}`,
             className
           )}
         />
-        {shouldFloat && <button
+        <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-e-3 top-1/2 -translate-y-1/2 focus:outline-none text-muted-foreground hover:text-primary transition-colors"
+          className={cn(
+            "absolute inset-e-3 top-1/2 -translate-y-1/2 focus:outline-none transition-all duration-200",
+            shouldFloat ? "opacity-100 text-muted-foreground hover:text-primary" : "opacity-0 pointer-events-none"
+          )}
           tabIndex={-1}
         >
           {showPassword ? (
@@ -66,7 +69,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           ) : (
             <Icons.Eye className="w-5 h-5" />
           )}
-        </button>}
+        </button>
       </div>
       {error && <ErrorMessage message={error} />}
     </div>);

@@ -8,7 +8,7 @@ import ErrorMessage from '@/shared/ui/ErrorMessage';
 import StepWizard from '@/shared/ui/StepWizard';
 import { LogInIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
-import { AuthMobileLogo } from './AuthSharedComponents';
+import { AuthHeader, AuthMobileLogo } from './AuthSharedComponents';
 
 // Dynamic imports for better performance and smaller initial bundle
 const RequestStep = dynamic(() => import('./forgot-password/RequestStep'), {
@@ -67,19 +67,17 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
   };
 
   const stepNumber = step === 'REQUEST' ? 1 : step === 'VERIFY' ? 2 : 3;
+  const headerText = {
+    REQUEST: t('requestDescription'),
+    VERIFY: t('verifyDescription'),
+    RESET: t('resetDescription'),
+  };
 
   return (
     <div className="w-full pt-8">
 
       <AuthMobileLogo subtitle={t('forgotPasswordTitle')} className="lg:hidden" />
-      <header className="mb-4">
-        <h1 className="text-2xl text-center md:text-3xl font-black tracking-tight text-foreground">{t('forgotPasswordTitle')}</h1>
-        <p className="text-muted-foreground text-center mt-2 font-medium">
-          {step === 'REQUEST' && t('requestDescription')}
-          {step === 'VERIFY' && t('verifyDescription')}
-          {step === 'RESET' && t('resetDescription')}
-        </p>
-      </header>
+      <AuthHeader description={headerText[step] } title={t('forgotPasswordTitle')} />
 
       <StepWizard currentStep={stepNumber} totalSteps={3} className="mb-10" />
 

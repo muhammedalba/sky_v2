@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { CategoryItem } from './CategoriesScroller';
 import Image from 'next/image';
+import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -237,16 +238,7 @@ export default function SideDrawer({
         </div>
 
         {/* Footer */}
-        <div
-          className="p-4 border-t border-border/50 bg-accent/10"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
-        >
-          <Link href="/login" onClick={onClose}>
-            <button className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98]">
-              {t('login_to_account')}
-            </button>
-          </Link>
-        </div>
+         <UserAccountMenu />
       </div>
     </div>
   );

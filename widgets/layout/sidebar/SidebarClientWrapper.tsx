@@ -22,13 +22,13 @@ export default function SidebarClientWrapper({
   return (
     <aside
       className={cn(
-        'flex flex-col h-full bg-background transition-all duration-300 ease-in-out overflow-hidden',
-        !isMobile && 'border-e border-border/60 fixed top-0 start-0 z-40 h-screen',
+        'flex flex-col h-full bg-background transition-all duration-300 ease-in-out  ',
+        !isMobile && 'border-e border-border/60 fixed top-0 inset-s-0 z-40 h-screen',
         !isMobile && (isCollapsed ? 'w-20' : 'w-64'),
         isMobile && 'w-full',
         className
       )}
-    >
+    > 
       {children}
     </aside>
   );

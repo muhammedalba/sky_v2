@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { loginSchema } from '@/features/auth/auth.schema';
@@ -13,7 +13,7 @@ import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
 export default function LoginForm({ locale }: { locale: string }) {
   const router = useRouter();
-  const searchParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
+  const searchParams = useSearchParams();
   const t = useTranslations('auth');
 
   const loginMutation = useSmartMutation(useLogin(), {

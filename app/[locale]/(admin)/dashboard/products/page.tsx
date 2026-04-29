@@ -251,7 +251,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
             header: t('fields.actions') || 'Actions',
             className: "pe-6 text-end w-[120px]",
             render: (product: Product) => (
-              <div className="flex justify-end gap-1 translate-x-4 rtl:-translate-x-4 group-hover:translate-x-0 rtl:group-hover:translate-x-0 group-hover:scale-105 transition-all duration-300">
+              <div className="flex justify-end gap-1 group-hover:scale-105 transition-all duration-300">
                 {viewTab === 'deleted' ? (
                   <>
                     <Button

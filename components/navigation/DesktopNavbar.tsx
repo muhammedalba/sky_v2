@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, ShoppingCart, User, Package, X, ChevronRight } from 'lucide-react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useState, useEffect } from 'react';
+import { Search, ShoppingCart, Package, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/navigation';
 import { useCartStore } from '@/store/cart-store';
 import { cn } from '@/lib/utils';
-import { isAuthenticated, getUser, logout } from '@/lib/auth';
 import { useUIStore } from '@/store/ui-store';
 import LanguageSwitcher from '@/widgets/layout/LanguageSwitcher';
 import { Icons } from '@/shared/ui/Icons';
 import Image from 'next/image';
 import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
+import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ function DesktopSearchBar() {
             onClick={() => setQuery('')}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            <X size={14} />
+            <X  size={14} />
           </button>
         )}
       </div>
@@ -106,141 +106,6 @@ function CartButton() {
   );
 }
 
-// ─── User Menu Dropdown ───────────────────────────────────────────────────────
-
-function UserMenu() {
-  const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const t = useTranslations('store.nav');
-  const locale = useLocale();
-
-  useEffect(() => {
-    setMounted(true);
-    const userData = isAuthenticated() ? getUser() : null;
-    setUser(userData);
-    setLoggedIn(!!userData);
-  }, []);
-
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent && e.key === 'Escape') setOpen(false);
-      if (e instanceof MouseEvent) setOpen(false);
-    };
-    document.addEventListener('click', handler as any);
-    document.addEventListener('keydown', handler as any);
-    return () => {
-      document.removeEventListener('click', handler as any);
-      document.removeEventListener('keydown', handler as any);
-    };
-  }, [open]);
-
-  if (!mounted) {
-    return (
-      <div className="w-10 h-10 rounded-xl bg-muted/40 animate-pulse" />
-    );
-  }
-
-  return (
-    <div className="relative">
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen(!open);
-        }}
-        className={cn(
-          'flex items-center gap-2 px-3 py-2 rounded-xl',
-          'hover:bg-accent/50 transition-all duration-200',
-          'group',
-          open && 'bg-accent/50'
-        )}
-      >
-        <div className="w-8 h-8 rounded-lg overflow-hidden border border-border/40 flex items-center justify-center bg-muted/40">
-          {loggedIn && user?.avatar ? (
-            <Image src={user.avatar} alt="" fill className="object-cover" />
-          ) : loggedIn && user?.name ? (
-            <span className="text-xs font-black text-primary">
-              {user.name.charAt(0).toUpperCase()}
-            </span>
-          ) : (
-            <User size={16} className="text-muted-foreground" />
-          )}
-        </div>
-        <span className="text-sm font-semibold text-foreground/70 group-hover:text-foreground hidden xl:inline">
-          {loggedIn ? (user?.name?.split(' ')[0] || t('profile')) : t('login')}
-        </span>
-      </button>
-
-      {/* Dropdown */}
-      {open && (
-        <div
-          className={cn(
-            'absolute top-full mt-2 w-56 bg-background border border-border/50 rounded-2xl shadow-2xl p-1.5 z-120 animate-in fade-in zoom-in-95 duration-200',
-            locale === 'ar' ? 'left-0' : 'right-0'
-          )}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {loggedIn ? (
-            <>
-              <div className="p-3 border-b border-border/30 mb-1">
-                <p className="text-sm font-bold truncate">{user?.name}</p>
-                <p className="text-[11px] text-muted-foreground truncate">
-                  {user?.email}
-                </p>
-              </div>
-              <Link
-                href="/profile"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
-              >
-                <User size={16} className="text-muted-foreground" />
-                {t('profile')}
-              </Link>
-              <Link
-                href="/orders"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
-              >
-                <Package size={16} className="text-muted-foreground" />
-                {t('orders')}
-              </Link>
-              <button
-                onClick={() => {
-                  logout();
-                  setOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-destructive/10 text-sm font-medium text-destructive transition-colors"
-              >
-                <X size={16} />
-                {t('logout')}
-              </button>
-            </>
-          ) : (
-            <div className="space-y-1">
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-lg shadow-primary/20"
-              >
-                {t('login')}
-              </Link>
-              <Link
-                href="/signup"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
-              >
-                {t('signup')}
-              </Link>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -281,17 +146,17 @@ export default function DesktopNavbar({ categories }: DesktopNavbarProps) {
           {/* Logo */}
           <Link
             href="/home"
-            className="flex items-center gap-2.5 shrink-0 group"
+            className="flex items-center  shrink-0 group"
           >
             <Image
               src="/images/auth-logo.png"
               alt={`${appName} Logo`}
               width={40}
               height={40}
-              className="object-contain"
+              className="object-contain mb-3"
               priority
             />
-            <span className="text-lg font-black tracking-tight text-foreground">
+            <span className="text-md font-extrabold tracking-tight bg-clip-text text-transparent animate-gradient bg-linear-to-br from-info via-foreground/30 to-primary">
               {appName}
             </span>
           </Link>
@@ -336,7 +201,7 @@ export default function DesktopNavbar({ categories }: DesktopNavbarProps) {
             <CartButton />
 
             {/* User */}
-            <UserMenu />
+            <UserAccountMenu iconOnly={true} dir="top" />
           </div>
         </div>
       </div>

@@ -8,18 +8,26 @@ export const metadata: Metadata = {
   description: env.APP_DESCRIPTION,
 };
 
+import type { Viewport } from 'next';
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 
 
 import { getLocale } from 'next-intl/server';
 
 export default async function RootLayout({
   children,
-  
+
 }: Readonly<{
   children: React.ReactNode;
 }>) {
 
-  const locale = await getLocale();
+  const locale = await getLocale() ?? 'ar';
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (

@@ -1,8 +1,6 @@
 import SidebarToggle from './topbar/SidebarToggle';
 import Breadcrumbs from './topbar/Breadcrumbs';
 import TopbarActions from './topbar/TopbarActions';
-import UserMenu from './topbar/UserMenu';
-// import SearchBar from './topbar/SearchBar';
 
 export default function Topbar({ locale }: { locale: string }) {
   return (
@@ -15,13 +13,9 @@ export default function Topbar({ locale }: { locale: string }) {
           <Breadcrumbs />
         </div>
 
-        {/* Center Search - Mobile Hidden */}
-        {/* <SearchBar /> */}
-
         {/* Actions & User */}
         <div className="flex items-center gap-3">
           <TopbarActions />
-          <UserMenu locale={locale} />
         </div>
       </div>
     </header>

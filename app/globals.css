@@ -184,6 +184,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-inter), var(--font-arabic), system-ui, sans-serif;
+    /* overflow-x: hidden !important; */
   }
 
   /* Arabic-first font stack when in RTL mode */
