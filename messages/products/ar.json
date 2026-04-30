@@ -65,7 +65,8 @@
             "weightUnitRequired": "وحدة الوزن مطلوبة عند التصفية حسب الوزن",
             "volumeUnit": "وحدة الحجم",
             "volumeUnitRequired": "وحدة الحجم مطلوبة عند التصفية حسب الحجم",
-            "minExceedsMax": "القيمة الأدنى لا يمكن أن تكون أكبر من القيمة الأقصى"
+            "minExceedsMax": "القيمة الأدنى لا يمكن أن تكون أكبر من القيمة الأقصى",
+            "sold": "الأكثر مبيعاً"
       },
       "form": {
             "titleCreate": "إنشاء منتج",
@@ -115,6 +116,8 @@
             "productPdf": "ملف الـ PDF",
             "pdfDesc": "دليل المستخدم أو المواصفات",
             "attachPdf": "إرفاق ملف PDF",
+            "addGalleryImages": "إضافة صور للمعرض",
+            "manageGallery": "إدارة المعرض",
             "coverImageRequired": "صورة الغلاف مطلوبة.",
             "colors": "الألوان",
             "colorsDesc": "ألوان المنتج المتاحة",
@@ -133,6 +136,11 @@
             "componentValue": "القيمة",
             "componentUnit": "الوحدة",
             "addComponent": "إضافة مكون",
+            "variantComponents": "مكونات خاصة بهذا المتغير",
+            "noCustomComponents": "لا توجد مكونات مخصصة",
+            "noCustomComponentsDesc": "يتم استخدام المكونات العامة الافتراضية.",
+            "addFirstComponent": "أضف أول مكون مخصص",
+            "inheritedDefaults": "موروثة من الإعدادات العامة",
             "addVariant": "إضافة متغير",
             "deleteVariant": "حذف المتغير",
             "restoreProduct": "استعادة المنتج",

@@ -13,6 +13,7 @@ import { useSubCategories } from '@/features/categories/hooks/useSubCategories';
 import { useBrands } from '@/features/brands/hooks/useBrands';
 import { useSuppliers } from '@/features/suppliers/hooks/useSuppliers';
 import { useTrans } from '@/shared/hooks/useTrans';
+import { useToast } from '@/shared/hooks/useToast';
 import { LocalizedString } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
@@ -51,10 +52,11 @@ function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
         // للألوان والنصوص: نأخذ القيم المسموحة كما هي
         options = attr.allowedValues || [];
       } else if (attr.type === 'number') {
-        // للأحجام: نضرب القيم في الوحدات لتكوين الكائن المطلوب للباك إند
+        // للأوزان والأحجام: كل قيمة مرتبطة بالوحدة الموجودة في نفس الموقع (zip)
+        // مثال: values=[50, 40], units=[kg, kg] => [{value:50,unit:'kg'}, {value:40,unit:'kg'}]
         const values = attr.allowedValues || [];
         const units = attr.allowedUnits || [];
-        options = values.flatMap(v => units.map(u => ({ value: Number(v), unit: u })));
+        options = values.map((v, i) => ({ value: Number(v), unit: units[i] ?? units[0] }));
       }
 
       if (acc.length === 0) {
@@ -70,6 +72,7 @@ function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
 
 export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const t = useTranslations('products.form');
+  const toast = useToast();
   const router = useRouter();
   const getTrans = useTrans();
   const createMutation = useCreateProduct();
@@ -103,7 +106,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [coverError, setCoverError] = useState<string | null>(null);
-
+  const [isGalleryExpanded, setIsGalleryExpanded] = useState(false);
   // ─── Search States for Selects ───────────────────────
   const [categorySearch, setCategorySearch] = useState('');
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -151,12 +154,11 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const regenerateVariants = useCallback((attrs: AttributeDefinition[]) => {
     const combos = cartesian(attrs);
     if (combos.length === 0) {
-      setVariants([{ sku: '', price: 0, stock: 0, attributes: {}, isActive: true }]);
+      setVariants([{ sku: '', price: 0, stock: 0, attributes: {}, isActive: true, components: globalComponents }]);
       return;
     }
     setVariants(
       combos.map(combo => {
-        // Build SKU correctly depending on whether it's a string or {value, unit} object
         const skuParts = Object.values(combo).map(v => {
           if (typeof v === 'object' && v !== null && 'value' in v && 'unit' in v) {
             return `${v.value}-${v.unit}`.toUpperCase();
@@ -164,7 +166,6 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           return String(v).toUpperCase().replace(/\s+/g, '-');
         });
 
-        // Add current date to make it unique (YYYYMMDD)
         const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
         skuParts.push(dateStr);
 
@@ -174,13 +175,13 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           stock: 0,
           attributes: combo,
           isActive: true,
+          components: globalComponents, // البداية تكون من المكونات العالمية
         };
       })
     );
-  }, []);
+  }, [globalComponents]);
 
   const handleAttributesChange = useCallback((newAttrs: AttributeDefinition[]) => {
-    console.log('newAttrs', newAttrs);
     setAttributes(newAttrs);
     regenerateVariants(newAttrs);
   }, [regenerateVariants]);
@@ -193,17 +194,21 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       priceAfterDiscount: v.priceAfterDiscount,
       stock: v.stock,
       attributes: v.attributes,
-      components: globalComponents.length > 0 ? globalComponents : v.components,
+      components: v.components, // نستخدم مكونات كل متغير كما هي
       label: v.label,
       isActive: v.isActive,
     })));
-  }, [variants, globalComponents, setValue]);
+  }, [variants, setValue]);
 
   useEffect(() => {
     setValue('allowedAttributes', attributes);
   }, [attributes, setValue]);
 
   const handleGalleryAdd = (file: File) => {
+    if (galleryFiles.length >= 3) {
+      toast.error(t('maxGalleryImagesReached', { defaultValue: 'You can only upload up to 3 images' }));
+      return;
+    }
     setGalleryFiles(prev => [...prev, file]);
     const reader = new FileReader();
     reader.onload = (e) => setGalleryPreviews(prev => [...prev, e.target?.result as string]);
@@ -341,10 +346,15 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
 
           {/* Components Section */}
-          <ComponentBuilder components={globalComponents} onChange={setGlobalComponents} />
+          {/* <ComponentBuilder components={globalComponents} onChange={setGlobalComponents} /> */}
 
           {/* Variant Table */}
-          <VariantTable variants={variants} onChange={setVariants} mode="create" />
+          <VariantTable 
+            variants={variants} 
+            onChange={setVariants} 
+            mode="create" 
+            globalComponents={globalComponents}
+          />
 
         </div>
 
@@ -376,35 +386,86 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
 
             {/* Gallery */}
             <div className="space-y-3 pt-4 border-t border-border/40">
-              <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('galleryImages')}</h4>
-              <p className="text-xs text-muted-foreground">{t('galleryDesc')}</p>
-              <div className="flex flex-wrap gap-3">
-                {galleryPreviews.map((src, idx) => (
-                  <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border border-border/40 group">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={src} alt="" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleGalleryRemove(idx)}
-                      className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+              <div 
+                className="flex items-center justify-between cursor-pointer group"
+                onClick={() => setIsGalleryExpanded(!isGalleryExpanded)}
+              >
+                <div className="flex items-center gap-2">
+                  <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('galleryImages')}</h4>
+                  {galleryPreviews.length > 0 && (
+                    <span className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                      {galleryPreviews.length}
+                    </span>
+                  )}
+                </div>
+                <Icons.ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isGalleryExpanded ? 'rotate-180' : ''}`} />
+              </div>
+              
+              {isGalleryExpanded ? (
+                <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-xs text-muted-foreground">{t('galleryDesc')}</p>
+                  <div className="flex flex-wrap gap-3">
+                    {galleryPreviews.map((src, idx) => (
+                      <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border border-border/40 group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={src} alt="" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => handleGalleryRemove(idx)}
+                          className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        >
+                          <Icons.X className="w-5 h-5 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                    {galleryPreviews.length < 3 && (
+                      <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border/60 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
+                        <Icons.Plus className="w-5 h-5 text-muted-foreground" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) handleGalleryAdd(e.target.files[0]);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                galleryPreviews.length > 0 ? (
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="flex -space-x-3 overflow-hidden">
+                      {galleryPreviews.slice(0, 4).map((src, i) => (
+                        <img key={i} src={src} alt="" className="inline-block h-10 w-10 rounded-lg ring-2 ring-card object-cover" />
+                      ))}
+                      {galleryPreviews.length > 4 && (
+                        <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-[10px] font-bold ring-2 ring-card">
+                          +{galleryPreviews.length - 4}
+                        </div>
+                      )}
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={(e) => { e.stopPropagation(); setIsGalleryExpanded(true); }}
+                      className="text-[10px] font-bold text-primary hover:underline ml-2"
                     >
-                      <Icons.X className="w-5 h-5 text-white" />
+                      {t('manageGallery') || 'Manage Gallery'}
                     </button>
                   </div>
-                ))}
-                <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border/60 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                  <Icons.Plus className="w-5 h-5 text-muted-foreground" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) handleGalleryAdd(e.target.files[0]);
-                      e.target.value = '';
-                    }}
-                  />
-                </label>
-              </div>
+                ) : (
+                  <button 
+                    type="button" 
+                    onClick={() => setIsGalleryExpanded(true)}
+                    className="w-full py-4 border border-dashed border-border/40 rounded-xl flex flex-col items-center gap-2 text-muted-foreground hover:bg-muted/30 transition-all"
+                  >
+                    <Icons.Plus className="w-5 h-5" />
+                    <span className="text-xs font-bold">{t('addGalleryImages') || 'Add Gallery Images'}</span>
+                  </button>
+                )
+              )}
             </div>
 
             {/* PDF */}

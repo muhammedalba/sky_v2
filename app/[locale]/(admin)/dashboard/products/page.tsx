@@ -23,7 +23,7 @@ import { ProductFiltersBar } from '@/features/products/components/dashboard/Prod
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import Link from 'next/link';
 
-type ViewTab = 'isActive' | 'deleted' | 'featured' | 'unlimited_stock' | 'notActive';
+type ViewTab = 'isActive' | 'deleted' | 'featured' | 'unlimited_stock' | 'notActive' | 'sort';
 
 // نقل الثوابت خارج المكون لمنع إعادة تخصيص الذاكرة
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
@@ -32,6 +32,7 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
   featured: { isFeatured: 'true' },
   unlimited_stock: { isUnlimitedStock: 'true' },
   notActive: { isActive: 'false' },
+  sort: { sort: '-totalSold' },
 };
 
 export default function ProductsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -54,7 +55,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
     ...apiParams,
     ...TAB_FILTER_PARAMS[viewTab],
   } as Record<string, unknown>);
-
+  console.log(" Products data", data?.data)
   const deleteMutation = useDeleteProduct();
   const restoreMutation = useRestoreProduct();
   const hardDeleteMutation = useHardDeleteProduct();
@@ -67,6 +68,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   const tabs = useMemo(() => [
     { key: 'isActive' as ViewTab, label: t('filters.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
     { key: 'notActive' as ViewTab, label: t('filters.disabled'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
+    { key: 'sort' as ViewTab, label: t('filters.sold'), activeClass: 'bg-amber-400 text-white shadow-md shadow-amber-500/20' },
     { key: 'featured' as ViewTab, label: t('filters.featured'), activeClass: 'bg-amber-500 text-white shadow-md shadow-amber-500/20' },
     { key: 'unlimited_stock' as ViewTab, label: t('filters.unlimitedStock'), activeClass: 'bg-sky-500 text-white shadow-md shadow-sky-500/20' },
     { key: 'deleted' as ViewTab, label: t('filters.deleted'), activeClass: 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20' },
@@ -139,31 +141,46 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
             header: t('fields.product', { defaultValue: 'Product' }),
             className: "w-[300px] ps-6",
             render: (product: Product, index: number) => (
-              <Link href={`/${locale}/dashboard/products/${product.slug}/edit`} className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
-                  <ImageWithFallback
-                    src={product.imageCover || ''}
-                    alt={getTrans(product.title)}
-                    fill
-                    sizes="48px"
-                    loading={index < 5 ? "eager" : "lazy"}
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="flex flex-col gap-1 overflow-hidden">
-                  <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                    {truncate(getTrans(product.title), 30)}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
-                      {product.variantCount ? `${product.variantCount} Variants` : 'Standard'}
-                    </span>
-                    {product.infoProductPdf && (
-                      <Badge variant="success" className="text-[9px] px-1.5 py-0 rounded-sm">PDF</Badge>
-                    )}
+              <>
+                <Link href={`/${locale}/dashboard/products/${product.slug}/edit`} className="flex items-center gap-3">
+
+                  <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
+                    <ImageWithFallback
+                      src={product.imageCover || ''}
+                      alt={getTrans(product.title)}
+                      fill
+                      sizes="48px"
+                      loading={index < 5 ? "eager" : "lazy"}
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
+
+                  <div className="flex flex-col gap-1 overflow-hidden">
+                    <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                      {truncate(getTrans(product.title), 30)}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
+                        {product.variantCount ? `${product.variantCount} Variants` : 'Standard'}
+                      </span>
+                      {product.infoProductPdf && (
+                        <Badge variant="success" className="text-[9px] px-1.5 py-0 rounded-sm">PDF</Badge>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+                <div className="flex items-center gap-0.5 mt-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Icons.Star
+                      key={i}
+                      className={`w-3 h-3 ${i < Math.round(product.ratingsAverage || 0) ? 'text-amber-400' : 'text-zinc-200'}`}
+                    />
+                  ))}
+                  <span className="text-[10px] text-muted-foreground ml-1 font-medium">({product.ratingsAverage || 0})</span>
                 </div>
-              </Link>
+
+              </>
             )
           },
           {
@@ -180,7 +197,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                 />
                 <Switch
                   checked={product.isActive}
-                  onChange={(e) => updateMutation.mutate({ id: product._id, data: { isActive: !e.target.checked } })}
+                  onChange={(e) => updateMutation.mutate({ id: product._id, data: { isActive: e.target.checked } })}
                   disabled={updateMutation.isPending}
                   label={getTrans({ ar: "نشط", en: "Active" })}
                   className="scale-75 origin-left rtl:origin-right"

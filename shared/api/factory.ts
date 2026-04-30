@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import { ApiResponse } from '@/types';
 
-export interface CrudApi<T> {
+export interface CrudApi<T> { 
   getAll: (params?: Record<string, unknown>) => Promise<any>;
   getOne: (id: string, params?: Record<string, unknown>) => Promise<any>;
   create: (data: FormData | Record<string, unknown>) => Promise<any>;

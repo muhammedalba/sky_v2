@@ -14,6 +14,7 @@ import { useSubCategories } from '@/features/categories/hooks/useSubCategories';
 import { useBrands } from '@/features/brands/hooks/useBrands';
 import { useSuppliers } from '@/features/suppliers/hooks/useSuppliers';
 import { useTrans } from '@/shared/hooks/useTrans';
+import { useToast } from '@/shared/hooks/useToast';
 import { LocalizedString, Product, ProductVariant, Category, SubCategory } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
@@ -22,10 +23,12 @@ import { Textarea } from '@/shared/ui/Textarea';
 import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
 import { Icons } from '@/shared/ui/Icons';
+import { Tooltip } from '@/shared/ui/Tooltip';
 import { SearchableSelect } from '@/shared/ui/form/SearchableSelect';
 import { SearchableMultiSelect } from '@/shared/ui/form/SearchableMultiSelect';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import AttributeBuilder, { AttributeDefinition } from './shared/AttributeBuilder';
+import ComponentBuilder from './shared/ComponentBuilder';
 import VariantTable, { VariantRow } from './shared/VariantTable';
 
 interface EditProductFormProps {
@@ -52,9 +55,11 @@ function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
       if (attr.type === 'string') {
         options = attr.allowedValues || [];
       } else if (attr.type === 'number') {
+        // للأوزان والأحجام: كل قيمة مرتبطة بالوحدة الموجودة في نفس الموقع (zip)
+        // مثال: values=[50, 40], units=[kg, kg] => [{value:50,unit:'kg'}, {value:40,unit:'kg'}]
         const values = attr.allowedValues || [];
         const units = attr.allowedUnits || [];
-        options = values.flatMap(v => units.map(u => ({ value: Number(v), unit: u })));
+        options = values.map((v, i) => ({ value: Number(v), unit: units[i] ?? units[0] }));
       }
 
       if (acc.length === 0) {
@@ -83,6 +88,7 @@ const getVariantKey = (attrs: Record<string, any> = {}) => {
 
 export default function EditProductForm({ locale, initialData, initialVariants = [] }: EditProductFormProps) {
   const t = useTranslations('products.form');
+  const toast = useToast();
   const router = useRouter();
   const getTrans = useTrans();
   const updateMutation = useUpdateProduct();
@@ -190,6 +196,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   const [coverError, setCoverError] = useState<string | null>(null);
   // ─── Search States for Selects ───────────────────────
   const [categorySearch, setCategorySearch] = useState('');
+  const [isGalleryExpanded, setIsGalleryExpanded] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [brandSearch, setBrandSearch] = useState('');
   const [isBrandOpen, setIsBrandOpen] = useState(false);
@@ -205,6 +212,9 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       name: typeof sc === 'object' ? sc.name : { en: 'Selected', ar: 'تم التحديد' }
     })) as SearchOption[]
   );
+
+  // ─── Global Components State (A+B) ───────────────────
+  const [globalComponents, setGlobalComponents] = useState<{ name: string; value: number; unit: string }[]>([]);
 
   // ─── Attribute & Variant State ───────────────────────
   const [attributes, setAttributes] = useState<AttributeDefinition[]>(initialAttributes);
@@ -240,6 +250,11 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     }))
   );
 
+  // Watched values
+  const watchedCategory = watch('category');
+  const watchedBrand = watch('brand');
+  const watchedSupplier = watch('supplier');
+
   // ─── Data fetching ───────────────────────────────────
   const { data: categoriesData, isFetching: isCategoriesFetching } = useCategories(
     { keywords: categorySearch },
@@ -253,9 +268,9 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     { keywords: supplierSearch },
     { enabled: isSupplierOpen }
   );
-  const { data: SubCategoriesData, isFetching: isSubCategoriesFetching } = useSubCategories(
-    { keywords: subCategorySearch },
-    { enabled: isSubCategoryOpen }
+  const { data: subCategoriesData, isFetching: isSubCategoriesFetching } = useSubCategories(
+    { keywords: subCategorySearch, category: watchedCategory },
+    { enabled: isSubCategoryOpen && !!watchedCategory }
   );
 
   // ─── Regenerate new combos ────────────────────────────
@@ -285,9 +300,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
         stock: 0,
         attributes: combo,
         isActive: true,
+        components: globalComponents, // نستخدم المكونات العالمية كبداية
       };
     }));
-  }, [existingVariants]);
+  }, [existingVariants, globalComponents]);
 
   const addNewVariant = () => {
     setNewVariants(prev => [...prev, { sku: '', price: 0, stock: 0, attributes: {}, isActive: true }]);
@@ -304,8 +320,12 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       if (!v._id) return false;
       const orig = originalVariants.find(o => o._id === v._id);
       if (!orig) return false;
+
+      const componentsChanged = JSON.stringify(v.components) !== JSON.stringify(orig.components);
+
       return v.sku !== orig.sku || v.price !== orig.price || v.stock !== orig.stock ||
-        v.priceAfterDiscount !== orig.priceAfterDiscount || v.isActive !== orig.isActive;
+        v.priceAfterDiscount !== orig.priceAfterDiscount || v.isActive !== orig.isActive ||
+        componentsChanged;
     });
 
     setValue('variantsToUpdate', changed.map(v => ({
@@ -315,6 +335,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       priceAfterDiscount: v.priceAfterDiscount,
       stock: v.stock,
       isActive: v.isActive,
+      components: v.components,
     })));
 
     setValue('variantsToCreate', newVariants.map(v => ({
@@ -344,6 +365,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   };
 
   const handleGalleryAdd = (file: File) => {
+    if (galleryPreviews.length >= 3) {
+      toast.error(t('maxGalleryImagesReached', { defaultValue: 'You can only upload up to 3 images' }));
+      return;
+    }
     setGalleryFiles(prev => [...prev, file]);
     const reader = new FileReader();
     reader.onload = (e) => setGalleryPreviews(prev => [...prev, e.target?.result as string]);
@@ -430,18 +455,15 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     // router.push(`/${locale}/dashboard/products`);
   };
 
-  // Watched values
-  const watchedCategory = watch('category');
-  const watchedBrand = watch('brand');
-  const watchedSupplier = watch('supplier');
+  // Watched values - moved up
 
   // ─────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-md pb-4 pt-6 border-b border-border/40 flex items-center justify-between">
         <div className="space-y-1">
           <h1 className="text-3xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('titleEdit')}
@@ -473,37 +495,35 @@ export default function EditProductForm({ locale, initialData, initialVariants =
         <div className="lg:col-span-2 space-y-6">
 
           {/* Basic Information */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('basicInformation')}</h3>
-              <p className="text-xs text-muted-foreground">{t('basicDesc')}</p>
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Edit className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('basicInformation')}</h3>
+                <p className="text-xs text-muted-foreground">{t('basicDesc')}</p>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('titleEn')}</label>
-                <Input {...register('title.en')} placeholder={t('placeholderTitleEn')} className="h-11 rounded-xl" />
-                {errors.title?.en && <p className="text-xs text-destructive font-medium">{errors.title.en.message}</p>}
+                <Input icon={Icons.Edit} iconColor="text-blue-500" error={errors.title?.en?.message} {...register('title.en')} label={t('titleEn')} className="h-11 rounded-xl" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('titleAr')}</label>
-                <Input {...register('title.ar')} placeholder={t('placeholderTitleAr')} dir="rtl" className="h-11 rounded-xl" />
-                {errors.title?.ar && <p className="text-xs text-destructive font-medium">{errors.title.ar.message}</p>}
+                <Input icon={Icons.Edit} iconColor="text-blue-500" error={errors.title?.ar?.message} {...register('title.ar')} label={t('titleAr')} dir="rtl" className="h-11 rounded-xl" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('descEn')}</label>
-                <Textarea {...register('description.en')} placeholder={t('placeholderDescEn')} className="rounded-xl min-h-[100px]" />
-                {errors.description?.en && <p className="text-xs text-destructive font-medium">{errors.description.en.message}</p>}
+              <div className="space-y-2 lg:col-span-2">
+                <Textarea icon={Icons.Edit} iconColor="text-indigo-500" {...register('description.en')} error={errors.description?.en?.message} label={t('descEn')} className="rounded-xl min-h-[100px]" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('descAr')}</label>
-                <Textarea {...register('description.ar')} placeholder={t('placeholderDescAr')} dir="rtl" className="rounded-xl min-h-[100px]" />
-                {errors.description?.ar && <p className="text-xs text-destructive font-medium">{errors.description.ar.message}</p>}
+              <div className="space-y-2 lg:col-span-2">
+                <Textarea icon={Icons.Edit} iconColor="text-indigo-500" {...register('description.ar')} error={errors.description?.ar?.message} label={t('descAr')} dir="rtl" className="rounded-xl min-h-[100px]" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
             </div>
           </div>
 
           {/* Attributes Builder */}
           <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
+
+          {/* Components Section */}
+          <ComponentBuilder components={globalComponents} onChange={setGlobalComponents} />
 
           {/* Existing Variants */}
           {existingVariants.length > 0 && (
@@ -518,6 +538,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
                 deletedIds={deletedVariantIds}
                 onMarkForDelete={markForDelete}
                 onUnmarkDelete={unmarkDelete}
+                globalComponents={globalComponents}
               />
             </div>
           )}
@@ -532,6 +553,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
                 variants={newVariants}
                 onChange={setNewVariants}
                 mode="create"
+                globalComponents={globalComponents}
               />
             </div>
           )}
@@ -546,11 +568,18 @@ export default function EditProductForm({ locale, initialData, initialVariants =
             <Icons.Plus className="w-4 h-4" />
             {t('addVariant')}
           </Button>
+        </div>
+
+        {/* ═══ RIGHT COLUMN ═══ */}
+        <div className="space-y-6">
 
           {/* Media */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('coverImage')}</h3>
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Eye className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('coverImage')}</h3>
+              </div>
             </div>
             <div className="space-y-4">
               <ImageUpload
@@ -565,40 +594,91 @@ export default function EditProductForm({ locale, initialData, initialVariants =
             </div>
 
             {/* Gallery */}
-            <div className="space-y-3">
-              <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('galleryImages')}</h4>
-              <p className="text-xs text-muted-foreground">{t('galleryDesc')}</p>
-              <div className="flex flex-wrap gap-3">
-                {galleryPreviews.map((src, idx) => (
-                  <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border border-border/40 group">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={src} alt="" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleGalleryRemove(idx)}
-                      className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+            <div className="space-y-3 pt-4 border-t border-border/40">
+              <div 
+                className="flex items-center justify-between cursor-pointer group"
+                onClick={() => setIsGalleryExpanded(!isGalleryExpanded)}
+              >
+                <div className="flex items-center gap-2">
+                  <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('galleryImages')}</h4>
+                  {galleryPreviews.length > 0 && (
+                    <span className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                      {galleryPreviews.length}
+                    </span>
+                  )}
+                </div>
+                <Icons.ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isGalleryExpanded ? 'rotate-180' : ''}`} />
+              </div>
+              
+              {isGalleryExpanded ? (
+                <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-xs text-muted-foreground">{t('galleryDesc')}</p>
+                  <div className="flex flex-wrap gap-3">
+                    {galleryPreviews.map((src, idx) => (
+                      <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border border-border/40 group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={src} alt="" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => handleGalleryRemove(idx)}
+                          className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        >
+                          <Icons.X className="w-5 h-5 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                    {galleryPreviews.length < 3 && (
+                      <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border/60 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
+                        <Icons.Plus className="w-5 h-5 text-muted-foreground" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) handleGalleryAdd(e.target.files[0]);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                galleryPreviews.length > 0 ? (
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="flex -space-x-3 overflow-hidden">
+                      {galleryPreviews.slice(0, 4).map((src, i) => (
+                        <img key={i} src={src} alt="" className="inline-block h-10 w-10 rounded-lg ring-2 ring-card object-cover" />
+                      ))}
+                      {galleryPreviews.length > 4 && (
+                        <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-[10px] font-bold ring-2 ring-card">
+                          +{galleryPreviews.length - 4}
+                        </div>
+                      )}
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={(e) => { e.stopPropagation(); setIsGalleryExpanded(true); }}
+                      className="text-[10px] font-bold text-primary hover:underline ml-2"
                     >
-                      <Icons.X className="w-5 h-5 text-white" />
+                      {t('manageGallery') || 'Manage Gallery'}
                     </button>
                   </div>
-                ))}
-                <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border/60 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                  <Icons.Plus className="w-5 h-5 text-muted-foreground" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) handleGalleryAdd(e.target.files[0]);
-                      e.target.value = '';
-                    }}
-                  />
-                </label>
-              </div>
+                ) : (
+                  <button 
+                    type="button" 
+                    onClick={() => setIsGalleryExpanded(true)}
+                    className="w-full py-4 border border-dashed border-border/40 rounded-xl flex flex-col items-center gap-2 text-muted-foreground hover:bg-muted/30 transition-all"
+                  >
+                    <Icons.Plus className="w-5 h-5" />
+                    <span className="text-xs font-bold">{t('addGalleryImages') || 'Add Gallery Images'}</span>
+                  </button>
+                )
+              )}
             </div>
 
             {/* PDF */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-4 border-t border-border/40">
               <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('productPdf')}</h4>
               <p className="text-xs text-muted-foreground">{t('pdfDesc')}</p>
               <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors text-sm font-medium">
@@ -607,22 +687,70 @@ export default function EditProductForm({ locale, initialData, initialVariants =
               </label>
             </div>
           </div>
-        </div>
 
-        {/* ═══ RIGHT COLUMN ═══ */}
-        <div className="space-y-6">
+          {/* Status */}
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Settings className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('statusSettings')}</h3>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <Switch {...register('isUnlimitedStock')} label={t('unlimitedStock')} defaultChecked={initialData.isUnlimitedStock} />
+              <div className="h-px bg-border/50 w-full" />
+              <Switch {...register('isFeatured')} label={t('featured')} description={t('featuredDesc')} defaultChecked={initialData.isFeatured} />
+              <div className="h-px bg-border/50 w-full" />
+              <Switch {...register('isActive')} label={t('disabled')} description={t('disabledDesc')} defaultChecked={initialData.isActive} />
+            </div>
+          </div>
 
           {/* Taxonomy */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('taxonomy')}</h3>
-              <p className="text-xs text-muted-foreground">{t('taxonomyDesc')}</p>
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Categories className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('taxonomy')}</h3>
+                <p className="text-xs text-muted-foreground">{t('taxonomyDesc')}</p>
+              </div>
             </div>
 
             <div className="space-y-4">
               <SearchableSelect
+                icon={Icons.Brands}
+                iconColor="text-rose-500"
+                label={t('brand')}
+                // placeholder={t('searchBrand')}
+                value={watchedBrand || ''}
+                isLoading={isBrandsFetching}
+                options={(brandsData?.data as unknown as SearchOption[]) || []}
+                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+                onSearch={(term: string) => setBrandSearch(term)}
+                onOpen={() => setIsBrandOpen(true)}
+                onSelect={(id: string) => setValue('brand', id)}
+                initialDisplayValue={getLabel(initialData?.brand)}
+              />
+
+              <SearchableSelect
+                icon={Icons.Users}
+                iconColor="text-teal-500"
+                label={t('supplier')}
+                // placeholder={t('searchSupplier')}
+                value={watchedSupplier || ''}
+                isLoading={isSuppliersFetching}
+                options={(suppliersData?.data as unknown as SearchOption[]) || []}
+                getDisplayValue={(opt: SearchOption) => String(opt.name)}
+                onSearch={(term: string) => setSupplierSearch(term)}
+                onOpen={() => setIsSupplierOpen(true)}
+                onSelect={(id: string) => setValue('supplier', id)}
+                initialDisplayValue={getLabel(initialData?.supplier)}
+              />
+
+              <SearchableSelect
+                icon={Icons.Categories}
+                iconColor="text-amber-500"
                 label={t('mainCategory')}
-                placeholder={t('searchCategory')}
+                // placeholder={t('searchCategory')}
                 value={watchedCategory || ''}
                 isLoading={isCategoriesFetching}
                 options={(categoriesData?.data as unknown as SearchOption[]) || []}
@@ -639,11 +767,13 @@ export default function EditProductForm({ locale, initialData, initialVariants =
               />
 
               <SearchableMultiSelect
-                label={t('SubCategories')}
-                placeholder={t('searchSubCategory')}
+                icon={Icons.SubCategories}
+                iconColor="text-orange-500"
+                label={watchedCategory ? t('searchSubCategory') : t('selectCategoryFirst')}
+                disabled={!watchedCategory}
                 error={errors.SubCategories?.message as string}
                 isLoading={isSubCategoriesFetching}
-                options={(SubCategoriesData?.data as unknown as SearchOption[]) || []}
+                options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
                 selectedOptions={selectedSubCategories}
                 getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
                 onSearch={(term: string) => setSubCategorySearch(term)}
@@ -659,46 +789,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
                   setValue('SubCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
                 }}
               />
-
-              <SearchableSelect
-                label={t('brand')}
-                placeholder={t('searchBrand')}
-                value={watchedBrand || ''}
-                isLoading={isBrandsFetching}
-                options={(brandsData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
-                onSearch={(term: string) => setBrandSearch(term)}
-                onOpen={() => setIsBrandOpen(true)}
-                onSelect={(id: string) => setValue('brand', id)}
-                initialDisplayValue={getLabel(initialData?.brand)}
-              />
-
-              <SearchableSelect
-                label={t('supplier')}
-                placeholder={t('searchSupplier')}
-                value={watchedSupplier || ''}
-                isLoading={isSuppliersFetching}
-                options={(suppliersData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => String(opt.name)}
-                onSearch={(term: string) => setSupplierSearch(term)}
-                onOpen={() => setIsSupplierOpen(true)}
-                onSelect={(id: string) => setValue('supplier', id)}
-                initialDisplayValue={getLabel(initialData?.supplier)}
-              />
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('statusSettings')}</h3>
-            </div>
-            <div className="space-y-4">
-              <Switch {...register('isUnlimitedStock')} label={t('unlimitedStock')} defaultChecked={initialData.isUnlimitedStock} />
-              <div className="h-px bg-border/50 w-full" />
-              <Switch {...register('isFeatured')} label={t('featured')} description={t('featuredDesc')} defaultChecked={initialData.isFeatured} />
-              <div className="h-px bg-border/50 w-full" />
-              <Switch {...register('isActive')} label={t('disabled')} description={t('disabledDesc')} defaultChecked={initialData.isActive} />
             </div>
           </div>
         </div>

@@ -65,7 +65,8 @@
             "weightUnitRequired": "Weight unit is required when filtering by weight",
             "volumeUnit": "Volume Unit",
             "volumeUnitRequired": "Volume unit is required when filtering by volume",
-            "minExceedsMax": "Min value cannot be greater than max"
+            "minExceedsMax": "Min value cannot be greater than max",
+            "sold": "Most Sold"
       },
       "form": {
             "titleCreate": "Create Product",
@@ -115,6 +116,8 @@
             "productPdf": "Product Info PDF",
             "pdfDesc": "User manual or specs sheet",
             "attachPdf": "Attach PDF",
+            "addGalleryImages": "Add Gallery Images",
+            "manageGallery": "Manage Gallery",
             "coverImageRequired": "Cover image required.",
             "colors": "Colors",
             "colorsDesc": "Available product colors",
@@ -133,6 +136,11 @@
             "componentValue": "Value",
             "componentUnit": "Unit",
             "addComponent": "Add Component",
+            "variantComponents": "Variant-Specific Components",
+            "noCustomComponents": "No custom components",
+            "noCustomComponentsDesc": "Using global defaults if set.",
+            "addFirstComponent": "Add your first custom component",
+            "inheritedDefaults": "inherited from defaults",
             "addVariant": "Add Variant",
             "deleteVariant": "Delete Variant",
             "restoreProduct": "Restore Product",

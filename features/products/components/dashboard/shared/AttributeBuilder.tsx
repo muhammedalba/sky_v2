@@ -78,7 +78,7 @@ function AttributeRow({
             <option value="string">{t('typeString')}</option>
             <option value="number">{t('typeNumber')}</option>
           </select>
-          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-muted-foreground">
+          <div className="absolute inset-y-0 end-3 flex items-center pointer-events-none text-muted-foreground">
             <Icons.ChevronDown className="w-4 h-4" />
           </div>
         </div>
