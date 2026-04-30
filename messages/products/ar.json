@@ -141,7 +141,23 @@
             "noDeletedProducts": "لا توجد منتجات محذوفة",
             "existingVariants": "المتغيرات الحالية",
             "newVariants": "متغيرات جديدة",
-            "markedForDeletion": "مُعلَّم للحذف"
+            "markedForDeletion": "مُعلَّم للحذف",
+            "optional": "اختياري",
+            "attributeBuilder": {
+                  "title": "خصائص المتغيرات (Attributes)",
+                  "attributeNamePlaceholder": "اسم الخاصية (مثال: color أو weight)",
+                  "typeString": "اللون / نصوص",
+                  "typeNumber": "الأحجام / أرقام",
+                  "valuePlaceholder": "القيمة (مثال: red, black)",
+                  "addValue": "إضافة قيمة",
+                  "numberPlaceholder": "الأرقام (مثال: 1, 5)",
+                  "addNumber": "إضافة رقم",
+                  "unitPlaceholder": "الوحدات (مثال: kg, ltr)",
+                  "addUnit": "إضافة وحدة",
+                  "valuesLabel": "القيم:",
+                  "unitsLabel": "الوحدات:",
+                  "addNewAttribute": "إضافة خاصية جديدة"
+            }
       },
       "statistics": {
         "title": "تحليلات المنتجات",

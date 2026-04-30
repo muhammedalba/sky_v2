@@ -92,7 +92,8 @@ export function SearchableSelect({
           setIsOpen(true);
           if (onOpen) onOpen();
         }}
-        className={`w-full h-10 rounded-xl bg-secondary/10 border font-semibold ${error ? 'ring-2 ring-destructive' : ''}`}
+        error={error}
+
       />
 
       {isOpen && (
@@ -124,7 +125,6 @@ export function SearchableSelect({
           )}
         </div>
       )}
-      {error && <p className="text-destructive text-xs mt-1 font-semibold">{error}</p>}
     </div>
   );
 }

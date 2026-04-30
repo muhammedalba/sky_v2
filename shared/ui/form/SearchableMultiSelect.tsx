@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import  { useState, useRef, useEffect } from 'react';
 import { Input } from '../Input';
 import Spinner from '../Spinner';
 import { SearchOption } from './SearchableSelect';
 import { Icons } from '../Icons';
-import { Badge } from '../Badge'; // Ensure Badge component exists or use simple div
 
 interface SearchableMultiSelectProps {
   label: string;
@@ -21,7 +20,7 @@ interface SearchableMultiSelectProps {
 
 export function SearchableMultiSelect({
   label,
-  placeholder = 'Search...',
+  placeholder,
   selectedOptions = [],
   onSelect,
   onRemove,
@@ -50,8 +49,6 @@ export function SearchableMultiSelect({
 
   return (
     <div className="relative space-y-2" ref={wrapperRef}>
-      <label className="text-sm font-bold ml-1">{label}</label>
-
       {/* Selected Badges */}
       {selectedOptions.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
@@ -77,6 +74,8 @@ export function SearchableMultiSelect({
       <Input
         placeholder={placeholder}
         value={search}
+        error={error}
+        label={label}
         autoComplete="off"
         onChange={(e) => {
           setSearch(e.target.value);
@@ -87,11 +86,10 @@ export function SearchableMultiSelect({
           setIsOpen(true);
           if (onOpen) onOpen();
         }}
-        className={`w-full h-10 rounded-xl bg-secondary/10 border-none font-semibold ${error ? 'ring-2 ring-destructive' : ''}`}
       />
 
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-background  border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 flex justify-center items-center gap-2 text-sm text-muted-foreground">
               <Spinner className="w-4 h-4" /> Loading...
@@ -128,7 +126,6 @@ export function SearchableMultiSelect({
           )}
         </div>
       )}
-      {error && <p className="text-destructive text-xs mt-1 font-semibold">{error}</p>}
     </div>
   );
 }

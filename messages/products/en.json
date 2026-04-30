@@ -141,7 +141,23 @@
             "noDeletedProducts": "No deleted products found",
             "existingVariants": "Existing Variants",
             "newVariants": "New Variants",
-            "markedForDeletion": "Marked for Deletion"
+            "markedForDeletion": "Marked for Deletion",
+            "optional": "Optional",
+            "attributeBuilder": {
+                  "title": "Variant Attributes (Attributes)",
+                  "attributeNamePlaceholder": "Attribute name (e.g. color or weight)",
+                  "typeString": "Color / Text",
+                  "typeNumber": "Sizes / Numbers",
+                  "valuePlaceholder": "Value (e.g. red, black)",
+                  "addValue": "Add Value",
+                  "numberPlaceholder": "Numbers (e.g. 1, 5)",
+                  "addNumber": "Add Number",
+                  "unitPlaceholder": "Units (e.g. kg, ltr)",
+                  "addUnit": "Add Unit",
+                  "valuesLabel": "Values:",
+                  "unitsLabel": "Units:",
+                  "addNewAttribute": "Add New Attribute"
+            }
       },
       "statistics": {
         "title": "Product Analytics",

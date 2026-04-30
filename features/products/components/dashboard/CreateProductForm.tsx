@@ -25,13 +25,12 @@ import { SearchableSelect } from '@/shared/ui/form/SearchableSelect';
 import { SearchableMultiSelect } from '@/shared/ui/form/SearchableMultiSelect';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import AttributeBuilder, { AttributeDefinition } from './shared/AttributeBuilder';
+import ComponentBuilder from './shared/ComponentBuilder';
 import VariantTable, { VariantRow } from './shared/VariantTable';
 
 interface CreateProductFormProps {
   locale: string;
 }
-
-// ─── Cartesian product generator ───────────────────────
 // ─── Cartesian product generator ───────────────────────
 function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
   // نتأكد أن الخاصية صالحة ولديها بيانات
@@ -159,6 +158,10 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           }
           return String(v).toUpperCase().replace(/\s+/g, '-');
         });
+
+        // Add current date to make it unique (YYYYMMDD)
+        const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+        skuParts.push(dateStr);
 
         return {
           sku: skuParts.join('-'),
@@ -315,24 +318,16 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('titleEn')}</label>
-                <Input {...register('title.en')} placeholder={t('placeholderTitleEn')} className="h-11 rounded-xl" />
-                {errors.title?.en && <p className="text-xs text-destructive font-medium">{errors.title.en.message}</p>}
+                <Input error={errors.title?.en?.message} {...register('title.en')} label={t('titleEn')} className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('titleAr')}</label>
-                <Input {...register('title.ar')} placeholder={t('placeholderTitleAr')} dir="rtl" className="h-11 rounded-xl" />
-                {errors.title?.ar && <p className="text-xs text-destructive font-medium">{errors.title.ar.message}</p>}
+                <Input error={errors.title?.ar?.message} {...register('title.ar')} label={t('titleAr')} dir="rtl" className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('descEn')}</label>
-                <Textarea {...register('description.en')} placeholder={t('placeholderDescEn')} className="rounded-xl min-h-[100px]" />
-                {errors.description?.en && <p className="text-xs text-destructive font-medium">{errors.description.en.message}</p>}
+                <Textarea {...register('description.en')} error={errors.description?.en?.message} label={t('descEn')} className="rounded-xl min-h-[100px]" />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('descAr')}</label>
-                <Textarea {...register('description.ar')} placeholder={t('placeholderDescAr')} dir="rtl" className="rounded-xl min-h-[100px]" />
-                {errors.description?.ar && <p className="text-xs text-destructive font-medium">{errors.description.ar.message}</p>}
+                <Textarea {...register('description.ar')} error={errors.description?.ar?.message} label={t('descAr')}  dir="rtl" className="rounded-xl min-h-[100px]" />
               </div>
             </div>
           </div>
@@ -341,67 +336,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
 
           {/* Components Section */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">مكونات المنتج المتعددة (Components) - <span className="text-muted-foreground">اختياري</span></h3>
-              <p className="text-xs text-muted-foreground">أضف المكونات إذا كان المنتج يتكون من عبوات منفصلة (مثل: مادة A ومادة B). سيتم إضافتها تلقائياً لكل المتغيرات.</p>
-            </div>
-            <div className="space-y-3">
-              {globalComponents.map((comp, idx) => (
-                <div key={idx} className="flex gap-2 items-center">
-                  <Input
-                    placeholder="الاسم (مثل: A)"
-                    value={comp.name}
-                    onChange={(e) => {
-                      const newComps = [...globalComponents];
-                      newComps[idx].name = e.target.value;
-                      setGlobalComponents(newComps);
-                    }}
-                    className="w-1/3 rounded-xl h-11"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="القيمة (مثال: 20)"
-                    value={comp.value?.toString() || ''}
-                    onChange={(e) => {
-                      const newComps = [...globalComponents];
-                      newComps[idx].value = Number(e.target.value);
-                      setGlobalComponents(newComps);
-                    }}
-                    className="w-1/3 rounded-xl h-11"
-                  />
-                  <Input
-                    placeholder="الوحدة (kg, ltr...)"
-                    value={comp.unit}
-                    onChange={(e) => {
-                      const newComps = [...globalComponents];
-                      newComps[idx].unit = e.target.value;
-                      setGlobalComponents(newComps);
-                    }}
-                    className="w-1/3 rounded-xl h-11"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    className="shrink-0 h-11 w-11 rounded-xl"
-                    onClick={() => setGlobalComponents(globalComponents.filter((_, i) => i !== idx))}
-                  >
-                    <Icons.X className="w-5 h-5" />
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                className="rounded-xl border-dashed w-full"
-                onClick={() => setGlobalComponents([...globalComponents, { name: '', value: 0, unit: 'kg' }])}
-              >
-                <Icons.Plus className="w-4 h-4 mr-2" />
-                إضافة مكون جديد
-              </Button>
-            </div>
-          </div>
+          <ComponentBuilder components={globalComponents} onChange={setGlobalComponents} />
 
           {/* Variant Table */}
           <VariantTable variants={variants} onChange={setVariants} mode="create" />
@@ -484,7 +419,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             <div className="space-y-4">
               <SearchableSelect
                 label={t('mainCategory')}
-                placeholder={t('searchCategory')}
+                // placeholder={t('searchCategory')}
                 value={watchedCategory || ''}
                 isLoading={isCategoriesFetching}
                 options={(categoriesData?.data as unknown as SearchOption[]) || []}
@@ -501,7 +436,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
 
               <SearchableMultiSelect
                 label={t('SubCategories')}
-                placeholder={t('searchSubCategory')}
+                // placeholder={t('searchSubCategory')}
                 error={errors.SubCategories?.message as string}
                 isLoading={isSubCategoriesFetching}
                 options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
@@ -523,7 +458,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
 
               <SearchableSelect
                 label={t('brand')}
-                placeholder={t('searchBrand')}
+                // placeholder={t('searchBrand')}
                 value={watchedBrand || ''}
                 isLoading={isBrandsFetching}
                 options={(brandsData?.data as unknown as SearchOption[]) || []}
@@ -535,7 +470,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
 
               <SearchableSelect
                 label={t('supplier')}
-                placeholder={t('searchSupplier')}
+                // placeholder={t('searchSupplier')}
                 value={watchedSupplier || ''}
                 isLoading={isSuppliersFetching}
                 options={(suppliersData?.data as unknown as SearchOption[]) || []}
