@@ -24,7 +24,8 @@ interface SearchableSelectProps {
   initialDisplayValue?: string;
   className?: string;
   disabled?: boolean;
-  icon?: LucideIcon
+  icon?: any;
+  iconColor?: string;
 }
 
 export function SearchableSelect({
@@ -40,7 +41,8 @@ export function SearchableSelect({
   onOpen,
   initialDisplayValue = '',
   className,
-   icon,
+  icon,
+  iconColor,
   disabled = false,
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,10 +76,11 @@ export function SearchableSelect({
   }, [value]);
 
   return (
-    <div className={`relative space-y-2 ${className}`} ref={wrapperRef}>
+    <div className={`relative space-y-2 mt-7 ${className}`} ref={wrapperRef}>
 
       <Input
         icon={icon}
+        iconColor={iconColor}
         placeholder={placeholder}
         label={label}
         value={search}

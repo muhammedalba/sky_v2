@@ -69,11 +69,14 @@ export default function VariantTable({
   }
 
   return (
-    <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="font-bold text-sm">{t('variantsConfig')}</h3>
-          <p className="text-xs text-muted-foreground">{t('variantsDesc')}</p>
+    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-4">
+      <div className="flex items-center justify-between border-b border-border/40 pb-4">
+        <div className="flex items-center gap-2">
+          <Icons.Check className="w-5 h-5 text-muted-foreground" />
+          <div>
+            <h3 className="font-bold text-sm">{t('variantsConfig')}</h3>
+            <p className="text-xs text-muted-foreground">{t('variantsDesc')}</p>
+          </div>
         </div>
         <span className="text-xs font-bold text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
           {variants.length} variants
@@ -120,6 +123,8 @@ export default function VariantTable({
                   </td>
                   <td className="px-4 py-3">
                     <Input
+                      icon={Icons.Tag}
+                      iconColor="text-blue-400"
                       value={variant.sku}
                       onChange={(e) => updateVariant(idx, 'sku', e.target.value)}
                       className="h-9 rounded-lg text-xs w-32"
@@ -128,6 +133,8 @@ export default function VariantTable({
                   </td>
                   <td className="px-4 py-3">
                     <Input
+                      icon={Icons.Tag}
+                      iconColor="text-emerald-500"
                       type="number"
                       value={variant.price?.toString() || '0'}
                       onChange={(e) => updateVariant(idx, 'price', parseFloat(e.target.value) || 0)}
@@ -140,6 +147,8 @@ export default function VariantTable({
                   </td>
                   <td className="px-4 py-3">
                     <Input
+                      icon={Icons.Tag}
+                      iconColor="text-rose-400"
                       type="number"
                       value={variant.priceAfterDiscount?.toString() || ''}
                       onChange={(e) => updateVariant(idx, 'priceAfterDiscount', parseFloat(e.target.value) || undefined)}
@@ -152,10 +161,12 @@ export default function VariantTable({
                   </td>
                   <td className="px-4 py-3">
                     <Input
+                      icon={Icons.Box}
+                      iconColor="text-orange-500"
                       type="number"
-                      value={variant.stock.toString()}
+                      value={variant.stock?.toString() || '0'}
                       onChange={(e) => updateVariant(idx, 'stock', parseInt(e.target.value) || 0)}
-                      className="h-9 rounded-lg text-xs w-20"
+                      className="h-9 rounded-lg text-xs w-24"
                       min={0}
                       disabled={isDeleted}
                     />

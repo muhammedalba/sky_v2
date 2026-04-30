@@ -62,6 +62,8 @@ function AttributeRow({
       {/* ─── Header ─── */}
       <div className="flex gap-3 items-center">
         <Input
+          icon={Icons.Edit}
+          iconColor="text-cyan-500"
           label={t('attributeNamePlaceholder')}
           value={attr.name}
           onChange={(e) => updateAttribute(index, 'name', e.target.value)}
@@ -94,6 +96,8 @@ function AttributeRow({
         {attr.type === 'string' ? (
           <div className="flex gap-2 items-end">
             <Input
+              icon={Icons.Plus}
+              iconColor="text-green-500"
               label={t('valuePlaceholder')}
               value={strValue}
               onChange={(e) => setStrValue(e.target.value)}
@@ -197,8 +201,13 @@ export default function AttributeBuilder({ attributes, onChange }: AttributeBuil
   };
 
   return (
-    <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-      <div><h3 className="font-bold text-sm">{t('title')}</h3></div>
+    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+        <Icons.Check className="w-5 h-5 text-muted-foreground" />
+        <div>
+          <h3 className="font-bold text-sm">{t('title')}</h3>
+        </div>
+      </div>
       <div className="space-y-6">
         {attributes.map((attr, index) => (
           <AttributeRow key={index} attr={attr} index={index} updateAttribute={updateAttribute} removeAttribute={removeAttribute} addValue={addValue} removeValue={removeValue} />

@@ -124,6 +124,11 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   // ─── Global Components State (A+B) ───────────────────
   const [globalComponents, setGlobalComponents] = useState<{ name: string; value: number; unit: string }[]>([]);
 
+  // Watched values
+  const watchedCategory = watch('category');
+  const watchedBrand = watch('brand');
+  const watchedSupplier = watch('supplier');
+
   // ─── Data fetching ───────────────────────────────────
   const { data: categoriesData, isFetching: isCategoriesFetching } = useCategories(
     { keywords: categorySearch },
@@ -138,8 +143,8 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     { enabled: isSupplierOpen }
   );
   const { data: subCategoriesData, isFetching: isSubCategoriesFetching } = useSubCategories(
-    { keywords: subCategorySearch },
-    { enabled: isSubCategoryOpen }
+    { keywords: subCategorySearch, category: watchedCategory },
+    { enabled: isSubCategoryOpen && !!watchedCategory }
   );
 
   // ─── Variant generation from attributes ──────────────
@@ -268,18 +273,14 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     // router.push(`/${locale}/dashboard/products`);
   };
 
-  // Watched values
-  const watchedCategory = watch('category');
-  const watchedBrand = watch('brand');
-  const watchedSupplier = watch('supplier');
 
   // ─────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-md pb-4 pt-6 border-b border-border/40 flex items-center justify-between">
         <div className="space-y-1">
           <h1 className="text-3xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('titleCreate')}
@@ -311,26 +312,30 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Basic Information */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('basicInformation')}</h3>
-              <p className="text-xs text-muted-foreground">{t('basicDesc')}</p>
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Edit className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('basicInformation')}</h3>
+                <p className="text-xs text-muted-foreground">{t('basicDesc')}</p>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Input error={errors.title?.en?.message} {...register('title.en')} label={t('titleEn')} className="h-11 rounded-xl" />
+                <Input icon={Icons.Edit} iconColor="text-blue-500" error={errors.title?.en?.message} {...register('title.en')} label={t('titleEn')} className="h-11 rounded-xl" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
               <div className="space-y-2">
-                <Input error={errors.title?.ar?.message} {...register('title.ar')} label={t('titleAr')} dir="rtl" className="h-11 rounded-xl" />
+                <Input icon={Icons.Edit} iconColor="text-blue-500" error={errors.title?.ar?.message} {...register('title.ar')} label={t('titleAr')} dir="rtl" className="h-11 rounded-xl" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
-              <div className="space-y-2">
-                <Textarea {...register('description.en')} error={errors.description?.en?.message} label={t('descEn')} className="rounded-xl min-h-[100px]" />
+              <div className="space-y-2 lg:col-span-2">
+                <Textarea icon={Icons.Edit} iconColor="text-indigo-500" {...register('description.en')} error={errors.description?.en?.message} label={t('descEn')} className="rounded-xl min-h-[100px]" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
-              <div className="space-y-2">
-                <Textarea {...register('description.ar')} error={errors.description?.ar?.message} label={t('descAr')}  dir="rtl" className="rounded-xl min-h-[100px]" />
+              <div className="space-y-2 lg:col-span-2">
+                <Textarea icon={Icons.Edit} iconColor="text-indigo-500" {...register('description.ar')} error={errors.description?.ar?.message} label={t('descAr')} dir="rtl" className="rounded-xl min-h-[100px]" showAiAction aiActionTooltip={t('aiTranslateImprove')} />
               </div>
             </div>
           </div>
+
 
           {/* Attributes Builder */}
           <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
@@ -341,10 +346,18 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           {/* Variant Table */}
           <VariantTable variants={variants} onChange={setVariants} mode="create" />
 
+        </div>
+
+        {/* ═══ RIGHT COLUMN ═══ */}
+        <div className="space-y-6">
+
           {/* Media */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('coverImage')}</h3>
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Eye className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('coverImage')}</h3>
+              </div>
             </div>
             <div className="space-y-4">
               <ImageUpload
@@ -362,7 +375,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             </div>
 
             {/* Gallery */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-4 border-t border-border/40">
               <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('galleryImages')}</h4>
               <p className="text-xs text-muted-foreground">{t('galleryDesc')}</p>
               <div className="flex flex-wrap gap-3">
@@ -395,7 +408,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             </div>
 
             {/* PDF */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-4 border-t border-border/40">
               <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('productPdf')}</h4>
               <p className="text-xs text-muted-foreground">{t('pdfDesc')}</p>
               <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors text-sm font-medium">
@@ -404,20 +417,65 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
               </label>
             </div>
           </div>
-        </div>
 
-        {/* ═══ RIGHT COLUMN ═══ */}
-        <div className="space-y-6">
+          {/* Status */}
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Settings className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('statusSettings')}</h3>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <Switch {...register('isUnlimitedStock')} label={t('unlimitedStock')} />
+              <div className="h-px bg-border/50 w-full" />
+              <Switch {...register('isFeatured')} label={t('featured')} description={t('featuredDesc')} />
+              <div className="h-px bg-border/50 w-full" />
+              <Switch {...register('isActive')} label={t('disabled')} description={t('disabledDesc')} />
+            </div>
+          </div>
 
           {/* Taxonomy */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('taxonomy')}</h3>
-              <p className="text-xs text-muted-foreground">{t('taxonomyDesc')}</p>
+          <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+              <Icons.Categories className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-bold text-sm">{t('taxonomy')}</h3>
+                <p className="text-xs text-muted-foreground">{t('taxonomyDesc')}</p>
+              </div>
             </div>
 
             <div className="space-y-4">
               <SearchableSelect
+                icon={Icons.Brands}
+                iconColor="text-rose-500"
+                label={t('brand')}
+                // placeholder={t('searchBrand')}
+                value={watchedBrand || ''}
+                isLoading={isBrandsFetching}
+                options={(brandsData?.data as unknown as SearchOption[]) || []}
+                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+                onSearch={(term: string) => setBrandSearch(term)}
+                onOpen={() => setIsBrandOpen(true)}
+                onSelect={(id: string) => setValue('brand', id)}
+              />
+
+              <SearchableSelect
+                icon={Icons.Users}
+                iconColor="text-teal-500"
+                label={t('supplier')}
+                // placeholder={t('searchSupplier')}
+                value={watchedSupplier || ''}
+                isLoading={isSuppliersFetching}
+                options={(suppliersData?.data as unknown as SearchOption[]) || []}
+                getDisplayValue={(opt: SearchOption) => String(opt.name)}
+                onSearch={(term: string) => setSupplierSearch(term)}
+                onOpen={() => setIsSupplierOpen(true)}
+                onSelect={(id: string) => setValue('supplier', id)}
+              />
+              <SearchableSelect
+                icon={Icons.Categories}
+                iconColor="text-amber-500"
                 label={t('mainCategory')}
                 // placeholder={t('searchCategory')}
                 value={watchedCategory || ''}
@@ -433,10 +491,12 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
                 }}
                 error={errors.category?.message as string}
               />
-
               <SearchableMultiSelect
-                label={t('SubCategories')}
-                // placeholder={t('searchSubCategory')}
+                icon={Icons.SubCategories}
+                iconColor="text-orange-500"
+                // label={t('SubCategories')}
+                label={watchedCategory ? t('searchSubCategory') : t('selectCategoryFirst')}
+                disabled={!watchedCategory}
                 error={errors.SubCategories?.message as string}
                 isLoading={isSubCategoriesFetching}
                 options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
@@ -455,46 +515,9 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
                   setValue('SubCategories', newSelected.map(sc => sc._id), { shouldValidate: true });
                 }}
               />
-
-              <SearchableSelect
-                label={t('brand')}
-                // placeholder={t('searchBrand')}
-                value={watchedBrand || ''}
-                isLoading={isBrandsFetching}
-                options={(brandsData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
-                onSearch={(term: string) => setBrandSearch(term)}
-                onOpen={() => setIsBrandOpen(true)}
-                onSelect={(id: string) => setValue('brand', id)}
-              />
-
-              <SearchableSelect
-                label={t('supplier')}
-                // placeholder={t('searchSupplier')}
-                value={watchedSupplier || ''}
-                isLoading={isSuppliersFetching}
-                options={(suppliersData?.data as unknown as SearchOption[]) || []}
-                getDisplayValue={(opt: SearchOption) => String(opt.name)}
-                onSearch={(term: string) => setSupplierSearch(term)}
-                onOpen={() => setIsSupplierOpen(true)}
-                onSelect={(id: string) => setValue('supplier', id)}
-              />
             </div>
           </div>
 
-          {/* Status */}
-          <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-            <div>
-              <h3 className="font-bold text-sm">{t('statusSettings')}</h3>
-            </div>
-            <div className="space-y-4">
-              <Switch {...register('isUnlimitedStock')} label={t('unlimitedStock')} />
-              <div className="h-px bg-border/50 w-full" />
-              <Switch {...register('isFeatured')} label={t('featured')} description={t('featuredDesc')} />
-              <div className="h-px bg-border/50 w-full" />
-              <Switch {...register('isActive')} label={t('disabled')} description={t('disabledDesc')} />
-            </div>
-          </div>
         </div>
       </form>
     </div>

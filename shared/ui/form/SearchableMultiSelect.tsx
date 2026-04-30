@@ -16,6 +16,9 @@ interface SearchableMultiSelectProps {
   error?: string;
   getDisplayValue: (opt: SearchOption) => string;
   onOpen?: () => void;
+  icon?: any;
+  iconColor?: string;
+  disabled?: boolean;
 }
 
 export function SearchableMultiSelect({
@@ -30,6 +33,9 @@ export function SearchableMultiSelect({
   error,
   getDisplayValue,
   onOpen,
+  icon,
+  iconColor,
+  disabled,
 }: SearchableMultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -49,7 +55,28 @@ export function SearchableMultiSelect({
 
   return (
     <div className="relative space-y-2" ref={wrapperRef}>
-      {/* Selected Badges */}
+     
+
+      <Input
+        icon={icon}
+        iconColor={iconColor}
+        placeholder={placeholder}
+        value={search}
+        error={error}
+        label={label}
+        autoComplete="off"
+        disabled={disabled}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setIsOpen(true);
+          onSearch(e.target.value);
+        }}
+        onFocus={() => {
+          setIsOpen(true);
+          if (onOpen) onOpen();
+        }}
+      />
+ {/* Selected Badges */}
       {selectedOptions.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
           {selectedOptions.map((opt) => (
@@ -70,24 +97,6 @@ export function SearchableMultiSelect({
           ))}
         </div>
       )}
-
-      <Input
-        placeholder={placeholder}
-        value={search}
-        error={error}
-        label={label}
-        autoComplete="off"
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setIsOpen(true);
-          onSearch(e.target.value);
-        }}
-        onFocus={() => {
-          setIsOpen(true);
-          if (onOpen) onOpen();
-        }}
-      />
-
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-background  border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {isLoading ? (

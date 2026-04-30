@@ -35,23 +35,30 @@ export default function ComponentBuilder({ components, onChange }: ComponentBuil
   };
 
   return (
-    <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-5">
-      <div>
-        <h3 className="font-bold text-sm">
-          {t('components')} - <span className="text-muted-foreground">{t('optional')}</span>
-        </h3>
-        <p className="text-xs text-muted-foreground">{t('componentsDesc')}</p>
+    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
+      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+        <Icons.Check className="w-5 h-5 text-muted-foreground" />
+        <div>
+          <h3 className="font-bold text-sm">
+            {t('components')} - <span className="text-muted-foreground font-normal">{t('optional')}</span>
+          </h3>
+          <p className="text-xs text-muted-foreground">{t('componentsDesc')}</p>
+        </div>
       </div>
       <div className="space-y-3">
         {components.map((comp, idx) => (
           <div key={idx} className="flex gap-2 items-center mt-5">
             <Input
+              icon={Icons.Edit}
+              iconColor="text-violet-500"
               label={t('componentName')}
               value={comp.name}
               onChange={(e) => updateComponent(idx, 'name', e.target.value)}
               className="rounded-xl h-11"
             />
             <Input
+              icon={Icons.Plus}
+              iconColor="text-emerald-500"
               type="number"
               label={t('componentValue')}
               value={comp.value?.toString() || ''}
@@ -59,6 +66,8 @@ export default function ComponentBuilder({ components, onChange }: ComponentBuil
               className="rounded-xl h-11"
             />
             <Input
+              icon={Icons.Check}
+              iconColor="text-sky-500"
               label={t('componentUnit')}
               value={comp.unit}
               onChange={(e) => updateComponent(idx, 'unit', e.target.value)}

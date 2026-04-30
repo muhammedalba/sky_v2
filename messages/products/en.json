@@ -102,6 +102,7 @@
             "searchSubCategory": "Search sub-categories...",
             "searchBrand": "Search a brand...",
             "searchSupplier": "Search a supplier...",
+            "selectCategoryFirst": "Please select a main category first...",
             "statusSettings": "Status Settings",
             "featured": "Promoted (Featured)",
             "featuredDesc": "Display product in featured sections",
@@ -143,6 +144,7 @@
             "newVariants": "New Variants",
             "markedForDeletion": "Marked for Deletion",
             "optional": "Optional",
+            "aiTranslateImprove": "AI Translation & Improvement",
             "attributeBuilder": {
                   "title": "Variant Attributes (Attributes)",
                   "attributeNamePlaceholder": "Attribute name (e.g. color or weight)",
