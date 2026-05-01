@@ -265,6 +265,12 @@
   transition: transform 0.08s ease-out;
 }
 
+/* Hide native password reveal and clear buttons (mostly Edge/IE) to avoid overlap with custom icons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
 /* Hide bottom nav when virtual keyboard is open (viewport shrinks) */
 @media (max-height: 450px) and (max-width: 768px) {
   .mobile-bottom-nav {

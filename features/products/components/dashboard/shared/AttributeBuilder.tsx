@@ -5,12 +5,15 @@ import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { Icons } from '@/shared/ui/Icons';
+import { AllowedAttributeName, ATTRIBUTE_CONFIG, ATTRIBUTE_NAME_OPTIONS } from '@/shared/constants/product-constants';
+import { Select } from '@/shared/ui/Select';
+
 
 // --- Types & Constants ---
 export type AttributeType = 'string' | 'number';
 
 export interface AttributeDefinition {
-  id: string; // إضافة ID فريد للأداء
+  id: string;
   name: string;
   type: AttributeType;
   required: boolean;
@@ -18,15 +21,9 @@ export interface AttributeDefinition {
   allowedUnits?: string[];
 }
 
-const ATTRIBUTE_NAME_OPTIONS = ['color', 'size', 'material', 'weight', 'volume'] as const;
 
-const ATTRIBUTE_TYPE_MAP: Record<string, AttributeType> = {
-  color: 'string',
-  size: 'string',
-  material: 'string',
-  weight: 'number',
-  volume: 'number',
-};
+
+
 
 // --- Sub-Component: AttributeRow ---
 // تغليف المكون بـ React.memo لمنع الرندر غير الضروري
@@ -41,37 +38,40 @@ const AttributeRow = React.memo(({
   onRemoveValue: (attrIndex: number, valIndex: number, target: 'allowedValues' | 'allowedUnits') => void;
 }) => {
   const t = useTranslations('products.form.attributeBuilder');
-  const [inputs, setInputs] = useState({ str: '', num: '', unit: '' });
 
-  const handleAction = (type: keyof typeof inputs, target: 'allowedValues' | 'allowedUnits') => {
-    const value = inputs[type].trim();
-    if (value) {
-      onAddValue(index, type === 'unit' ? value.toLowerCase() : value, target);
-      setInputs(prev => ({ ...prev, [type]: '' }));
-    }
-  };
+  const [inputs, setInputs] = useState({ str: '', num: '', unit: '' });
+  // جلب الوحدات المتاحة بناءً على اسم الخاصية المختارة
+  const availableUnits = attr.name && ATTRIBUTE_CONFIG[attr.name as AllowedAttributeName]
+    ? ATTRIBUTE_CONFIG[attr.name as AllowedAttributeName].units
+    : []; const handleAction = (type: keyof typeof inputs, target: 'allowedValues' | 'allowedUnits') => {
+      const value = inputs[type].trim();
+      if (value) {
+        // منع إضافة نفس الوحدة أو القيمة مرتين
+        const currentList = attr[target] || [];
+        const formattedValue = type === 'unit' ? value.toUpperCase() : value; // توحيد حالة الأحرف للوحدات
+
+        if (!currentList.includes(formattedValue)) {
+          onAddValue(index, formattedValue, target);
+        }
+        setInputs(prev => ({ ...prev, [type]: '' }));
+      }
+    };
 
   return (
     <div className="p-4 border border-border/50 rounded-xl space-y-4 bg-background/50">
-      <div className="flex gap-3 items-center">
-        <div className="relative flex-1">
-          <select
-            value={attr.name}
-            onChange={(e) => onUpdate(index, 'name', e.target.value)}
-            className="w-full h-11 px-10 rounded-xl border border-input bg-secondary/30 text-sm appearance-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all"
-          >
-            <option value="" disabled>{t('attributeNamePlaceholder')}</option>
-            {ATTRIBUTE_NAME_OPTIONS.map((key) => (
-              <option key={key} value={key}>{t(`names.${key}`)}</option>
-            ))}
-          </select>
-          <Icons.Edit className="absolute inset-y-0 inset-s-3 my-auto w-4 h-4 text-cyan-500 pointer-events-none" />
-          <Icons.ChevronDown className="absolute inset-y-0 inset-e-3 my-auto w-4 h-4 text-muted-foreground pointer-events-none" />
-        </div>
+      <div className="relative flex gap-3 items-center">
+        <Select
+          label={t('attributeNamePlaceholder', { defaultValue: 'Attribute Name' })}
+          value={attr.name}
+          onChange={(e) => onUpdate(index, 'name', e.target.value)}
+          options={ATTRIBUTE_NAME_OPTIONS.map((key) => ({ value: key, label: t(`names.${key}`) }))}
+          className="h-10 mt-3"
+
+        />
 
         <Button
           type="button" variant="destructive" size="icon"
-          className="h-11 w-11 rounded-xl"
+          className="absolute -top-8 -inset-e-7 z-10 h-8 w-8 rounded-full "
           onClick={() => onRemove(index)}
         >
           <Icons.X className="w-4 h-4" />
@@ -80,12 +80,12 @@ const AttributeRow = React.memo(({
 
       <div className="flex flex-col gap-3">
         {attr.type === 'string' ? (
-          <div className="flex gap-2 items-end">
+          <div className="flex gap-2 items-end flex-wrap">
             <Input
               icon={Icons.Plus}
               label={t('valuePlaceholder')}
               value={inputs.str}
-              onChange={(e) => setInputs(prev => ({ ...prev, str: e.target.value }))}
+              onChange={(e) => setInputs(prev => ({ ...prev, str: e.target.value.trim().toLowerCase() }))}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('str', 'allowedValues'))}
               className="rounded-xl h-11 flex-1"
             />
@@ -93,7 +93,8 @@ const AttributeRow = React.memo(({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-s-2 border-primary/20 ps-4 py-1">
-            <div className="flex gap-2 items-end">
+            {/* جزء إضافة الأرقام */}
+            <div className="flex gap-2 items-end ">
               <Input
                 type="number"
                 label={t('numberPlaceholder')}
@@ -101,18 +102,33 @@ const AttributeRow = React.memo(({
                 onChange={(e) => setInputs(prev => ({ ...prev, num: e.target.value }))}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('num', 'allowedValues'))}
                 className="rounded-xl h-11 flex-1"
+                icon={Icons.Check}
               />
               <Button type="button" onClick={() => handleAction('num', 'allowedValues')} variant="secondary" className="rounded-xl h-11">{t('addNumber')}</Button>
             </div>
-            <div className="flex gap-2 items-end">
-              <Input
-                label={t('unitPlaceholder')}
-                value={inputs.unit}
-                onChange={(e) => setInputs(prev => ({ ...prev, unit: e.target.value }))}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('unit', 'allowedUnits'))}
-                className="rounded-xl h-11 flex-1"
-              />
-              <Button type="button" onClick={() => handleAction('unit', 'allowedUnits')} variant="secondary" className="rounded-xl h-11">{t('addUnit')}</Button>
+
+            {/* جزء إضافة الوحدات (تم التحديث ليصبح Select) */}
+            <div className="flex gap-2  items-end ">
+              <div className="relative flex-1">
+                <Select
+                  label={t('unitPlaceholder', { defaultValue: 'Unit' })}
+                  value={inputs.unit}
+                  onChange={(e) => setInputs(prev => ({ ...prev, unit: e.target.value.toLowerCase() }))}
+                  options={availableUnits.map((key) => ({ value: key.value, label: key.label }))}
+
+                  disabled={availableUnits.length === 0}
+
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={() => handleAction('unit', 'allowedUnits')}
+                variant="secondary"
+                className="rounded-xl h-11 mb-px" // mb-[1px] لضبط المحاذاة مع الـ Select بعد إضافة الـ Label
+                disabled={!inputs.unit} // تعطيل الزر إذا لم يتم اختيار وحدة
+              >
+                {t('addUnit')}
+              </Button>
             </div>
           </div>
         )}
@@ -185,7 +201,10 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
     const target = { ...newAttrs[index] };
 
     if (key === 'name') {
-      const newType = ATTRIBUTE_TYPE_MAP[val as string] || 'string';
+      // قراءة النوع من الـ Config الجديد
+      const attrConfig = ATTRIBUTE_CONFIG[val as AllowedAttributeName];
+      const newType = attrConfig ? attrConfig.type : 'string';
+
       if (target.type !== newType) {
         target.allowedValues = [];
         target.allowedUnits = [];

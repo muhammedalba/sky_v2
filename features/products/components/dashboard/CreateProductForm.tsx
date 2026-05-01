@@ -345,7 +345,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
 
           {/* Components Section */}
-          {/* <ComponentBuilder components={globalComponents} onChange={setGlobalComponents} /> */}
+          <ComponentBuilder components={globalComponents} onChange={setGlobalComponents} />
 
           {/* Variant Table */}
           <VariantTable 

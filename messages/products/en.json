@@ -167,12 +167,17 @@
                   "valuesLabel": "Values:",
                   "unitsLabel": "Units:",
                   "addNewAttribute": "Add New Attribute",
+                  "selectUnit": "Select Unit",
+                  "noUnitsAvailable": "No units available",
                   "names": {
                         "color": "Color",
-                        "size": "Size",
-                        "material": "Material",
                         "weight": "Weight",
-                        "volume": "volume"
+                        "volume": "Volume / Capacity",
+                        "packaging_type": "Packaging Type",
+                        "thickness": "Thickness",
+                        "length": "Length",
+                        "dimensions": "Dimensions",
+                        "components_kit": "Components Kit"
                   }
             }
       },

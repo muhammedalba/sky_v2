@@ -27,14 +27,10 @@ import {
   Box,
   TrendingUp
 } from 'lucide-react';
-import { WEIGHT_UNITS, VOLUME_UNITS } from '@/shared/constants/product-constants';
+import { WEIGHT_UNITS, VOLUME_UNITS, ADVANCED_FILTER_KEYS } from '@/shared/constants/product-constants';
 
 // الثوابت خارج المكون لضمان استقرار الأداء وعدم إعادة حجز الذاكرة
-const ADVANCED_FILTER_KEYS = [
-  'skuSearch', 'color', 'category', 'brand', 'SubCategories',
-  'pricerange[min]', 'pricerange[max]', 'weight_min', 'weight_max',
-  'weight_unit', 'volume_min', 'volume_max', 'volume_unit', 'sold_min', 'sold_max'
-];
+
 
 export function ProductFiltersBar() {
   const t = useTranslations('products');
@@ -124,7 +120,7 @@ export function ProductFiltersBar() {
 
   // 3. حساب عدد الفلاتر النشطة بكفاءة
   const activeFilterCount = useMemo(() => {
-    return ADVANCED_FILTER_KEYS.reduce((count, key) => {
+    return ADVANCED_FILTER_KEYS?.reduce((count, key) => {
       const val = filters[key as keyof typeof filters];
       return val && val !== '' ? count + 1 : count;
     }, 0);
@@ -354,7 +350,6 @@ export function ProductFiltersBar() {
               value={filters.volume_unit || ''}
               onChange={(e) => setFilter('volume_unit', e.target.value)}
               options={[...VOLUME_UNITS]}
-              className="h-10 mt-3"
               error={filterErrors.volume_unit ? t('filters.volumeUnitRequired', { defaultValue: 'Volume unit is required when filtering by volume' }) : undefined}
             />
           </FilterSection>

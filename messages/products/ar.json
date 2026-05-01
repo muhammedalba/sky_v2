@@ -2,7 +2,6 @@
       "title": "المنتجات",
       "totalResults": "تم العثور على {count} منتج",
       "createProduct": "إنشاء منتج",
-
       "editProduct": "تعديل المنتج",
       "productList": "قائمة المنتجات",
       "productDetails": "تفاصيل المنتج",
@@ -20,7 +19,6 @@
             "inventory": "المخزون",
             "attributes": "المواصفات",
             "actions": "الإجراءات"
-
       },
       "placeholders": {
             "name": "أدخل اسم المنتج",
@@ -37,7 +35,6 @@
             "softDeleteTitle": "حذف المنتج",
             "softDeleteConfirm": "هل أنت متأكد أنك تريد حذف \"{title}\"؟ يمكن استعادته لاحقاً.",
             "restoreSuccess": "تم استعادة المنتج بنجاح",
-
             "hardDeleteConfirm": "هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات والملفات نهائياً."
       },
       "filters": {
@@ -75,7 +72,6 @@
             "cancel": "إلغاء",
             "confirm": "تأكيد",
             "save": "حفظ التغييرات",
-
             "publish": "نشر المنتج",
             "basicInformation": "المعلومات الأساسية",
             "basicDesc": "إعداد العنوان والوصف حسب اللغة",
@@ -167,54 +163,58 @@
                   "valuesLabel": "القيم:",
                   "unitsLabel": "الوحدات:",
                   "addNewAttribute": "إضافة خاصية جديدة",
+                  "selectUnit": "اختر الوحدة",
+                  "noUnitsAvailable": "لا توجد وحدات متاحة",
                   "names": {
                         "color": "اللون",
-                        "material": "الخامة",
                         "weight": "الوزن",
-                        "volume": "الحجم",
-                        "size": "المقاس"
-
+                        "volume": "الحجم / السعة",
+                        "packaging_type": "نوع التعبئة",
+                        "thickness": "السماكة",
+                        "length": "الطول",
+                        "dimensions": "الأبعاد",
+                        "components_kit": "المكونات (A+B)"
                   }
             }
       },
       "statistics": {
-        "title": "تحليلات المنتجات",
-        "subtitle": "رؤى شاملة حول قائمة منتجاتك وأداء المخزون.",
-        "filters": {
-          "startDate": "تاريخ البدء",
-          "endDate": "تاريخ الانتهاء",
-          "apply": "تطبيق الفلاتر",
-          "reset": "إعادة تعيين"
-        },
-        "overview": {
-          "totalProducts": "إجمالي المنتجات",
-          "stockValue": "قيمة المخزون",
-          "unitsSold": "إجمالي الوحدات المباعة",
-          "stockHealth": "صحة المخزون"
-        },
-        "charts": {
-          "composition": "تكوين المنتجات",
-          "categories": "توزيع الفئات",
-          "inventory": "حالة المخزون",
-          "trends": "اتجاهات النشر",
-          "simple": "منتجات بسيطة",
-          "variable": "منتجات بمتغيرات"
-        },
-        "inventory": {
-          "outOfStock": "نفد من المخزون",
-          "lowStock": "عناصر بمخزون منخفض",
-          "totalValue": "القيمة الإجمالية"
-        },
-        "performer": {
-          "topSelling": "الأكثر مبيعاً",
-          "topVariants": "أقوى المتغيرات (SKU)",
-          "soldUnits": "وحدة مباعة",
-          "stockLeft": "المتبقي"
-        }
+            "title": "تحليلات المنتجات",
+            "subtitle": "رؤى شاملة حول قائمة منتجاتك وأداء المخزون.",
+            "filters": {
+                  "startDate": "تاريخ البدء",
+                  "endDate": "تاريخ الانتهاء",
+                  "apply": "تطبيق الفلاتر",
+                  "reset": "إعادة تعيين"
+            },
+            "overview": {
+                  "totalProducts": "إجمالي المنتجات",
+                  "stockValue": "قيمة المخزون",
+                  "unitsSold": "إجمالي الوحدات المباعة",
+                  "stockHealth": "صحة المخزون"
+            },
+            "charts": {
+                  "composition": "تكوين المنتجات",
+                  "categories": "توزيع الفئات",
+                  "inventory": "حالة المخزون",
+                  "trends": "اتجاهات النشر",
+                  "simple": "منتجات بسيطة",
+                  "variable": "منتجات بمتغيرات"
+            },
+            "inventory": {
+                  "outOfStock": "نفد من المخزون",
+                  "lowStock": "عناصر بمخزون منخفض",
+                  "totalValue": "القيمة الإجمالية"
+            },
+            "performer": {
+                  "topSelling": "الأكثر مبيعاً",
+                  "topVariants": "أقوى المتغيرات (SKU)",
+                  "soldUnits": "وحدة مباعة",
+                  "stockLeft": "المتبقي"
+            }
       },
       "emptyState": {
-        "noProducts": "لم يتم العثور على منتجات",
-        "deletedDesc": "ستظهر جميع المنتجات المحذوفة هنا لإمكانية استعادتها.",
-        "activeDesc": "ابدأ بإضافة منتجك الأول إلى الكتالوج الخاص بك."
+            "noProducts": "لم يتم العثور على منتجات",
+            "deletedDesc": "ستظهر جميع المنتجات المحذوفة هنا لإمكانية استعادتها.",
+            "activeDesc": "ابدأ بإضافة منتجك الأول إلى الكتالوج الخاص بك."
       }
 }
