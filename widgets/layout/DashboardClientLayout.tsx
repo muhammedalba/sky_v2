@@ -59,11 +59,11 @@ export default function DashboardClientLayout({
             </div>
           </div>
 
-          <main className="p-4 md:p-8 max-w-[1600px] mx-auto overflow-x-hidden">
+          <main className="p-4 md:p-8 max-w-[1600px] mx-auto">
             {children}
           </main>
         </div>
       </div>
-    </Sheet>
+    </Sheet> 
   );
 }

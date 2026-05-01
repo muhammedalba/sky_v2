@@ -54,6 +54,7 @@
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-gradient: gradient 5s ease infinite;
 
   @keyframes accordion-down {
     from {
@@ -74,6 +75,17 @@
       height: 0;
     }
   }
+
+  @keyframes gradient {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
 }
 
 @layer base {
@@ -89,7 +101,7 @@
     --popover-foreground: 240 10% 3.9%;
 
     /* اللون الأساسي للمشروع (يمكن تغييره من هنا فقط) */
-     --primary: 221 83% 53%;
+    --primary: 221 83% 53%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 240 4.8% 95.9%;
@@ -139,7 +151,7 @@
     --popover-foreground: 0 0% 98%;
 
     /* اللون الأساسي في الوضع الليلي */
-     --primary: 221 83% 53%;
+    --primary: 221 83% 53%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 240 3.7% 15.9%;
@@ -221,22 +233,9 @@
   direction: ltr;
 }
 
-/* Gradient Animation */
-@keyframes gradient {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.animate-gradient {
+@utility title-gradient {
+  @apply bg-clip-text text-transparent animate-gradient bg-linear-to-br from-success via-primary to-success;
   background-size: 200% 200%;
-  animation: gradient 5s ease infinite;
 }
 
 /* ─── Mobile Bottom Nav ────────────────────────────────────────────── */
@@ -246,9 +245,11 @@
     transform: scale(0);
     opacity: 0;
   }
+
   50% {
     transform: scale(1.2);
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -270,6 +271,7 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
 
 /* Hide bottom nav when virtual keyboard is open (viewport shrinks) */
 @media (max-height: 450px) and (max-width: 768px) {

@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '../Input';
 import Spinner from '../Spinner';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, SearchX, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export interface SearchOption {
   _id: string;
@@ -26,6 +28,7 @@ interface SearchableSelectProps {
   disabled?: boolean;
   icon?: any;
   iconColor?: string;
+  createLink?: string;
 }
 
 export function SearchableSelect({
@@ -44,7 +47,9 @@ export function SearchableSelect({
   icon,
   iconColor,
   disabled = false,
+  createLink,
 }: SearchableSelectProps) {
+  const t = useTranslations('common');
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState(initialDisplayValue);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -124,7 +129,23 @@ export function SearchableSelect({
               ))}
             </ul>
           ) : (
-            <div className="p-4 text-center text-sm text-muted-foreground">No options found.</div>
+            <div className="p-6 flex flex-col items-center justify-center text-center gap-3">
+              <div className="bg-secondary/50 p-3 rounded-full">
+                <SearchX className="w-6 h-6 text-muted-foreground/50" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {t('messages.noData')}
+              </p>
+              {createLink && (
+                <Link 
+                  href={createLink} 
+                  className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl transition-colors text-sm font-bold"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t('buttons.create')}
+                </Link>
+              )}
+            </div>
           )}
         </div>
       )}

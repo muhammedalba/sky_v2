@@ -1,8 +1,11 @@
-import  { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Input } from '../Input';
 import Spinner from '../Spinner';
 import { SearchOption } from './SearchableSelect';
 import { Icons } from '../Icons';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { SearchX, Plus } from 'lucide-react';
 
 interface SearchableMultiSelectProps {
   label: string;
@@ -19,6 +22,7 @@ interface SearchableMultiSelectProps {
   icon?: any;
   iconColor?: string;
   disabled?: boolean;
+  createLink?: string;
 }
 
 export function SearchableMultiSelect({
@@ -36,7 +40,9 @@ export function SearchableMultiSelect({
   icon,
   iconColor,
   disabled,
+  createLink,
 }: SearchableMultiSelectProps) {
+  const t = useTranslations('common');
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -55,7 +61,7 @@ export function SearchableMultiSelect({
 
   return (
     <div className="relative space-y-2" ref={wrapperRef}>
-     
+
 
       <Input
         icon={icon}
@@ -76,7 +82,7 @@ export function SearchableMultiSelect({
           if (onOpen) onOpen();
         }}
       />
- {/* Selected Badges */}
+      {/* Selected Badges */}
       {selectedOptions.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
           {selectedOptions.map((opt) => (
@@ -120,9 +126,8 @@ export function SearchableMultiSelect({
                       }
                       // Keep open for multi select
                     }}
-                    className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors flex justify-between items-center ${
-                      isSelected ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/20 text-foreground'
-                    }`}
+                    className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors flex justify-between items-center ${isSelected ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/20 text-foreground'
+                      }`}
                   >
                     {getDisplayValue(opt)}
                     {isSelected && <Icons.Check className="w-4 h-4" />}
@@ -131,7 +136,23 @@ export function SearchableMultiSelect({
               })}
             </ul>
           ) : (
-            <div className="p-4 text-center text-sm text-muted-foreground">No options found.</div>
+            <div className="p-6 flex flex-col items-center justify-center text-center gap-3">
+              <div className="bg-secondary/50 p-3 rounded-full">
+                <SearchX className="w-6 h-6 text-muted-foreground/50" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {t('messages.noData')}
+              </p>
+              {createLink && (
+                <Link 
+                  href={createLink} 
+                  className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl transition-colors text-sm font-bold"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t('buttons.create')}
+                </Link>
+              )}
+            </div>
           )}
         </div>
       )}

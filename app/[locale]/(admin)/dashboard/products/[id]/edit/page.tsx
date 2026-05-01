@@ -4,12 +4,10 @@ import { use } from 'react';
 import EditProductForm from '@/features/products/components/dashboard/EditProductForm';
 import { useProduct } from '@/features/products/hooks/useProducts';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { Product, ProductVariant } from '@/types';
 
 export default function EditProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = use(params);
   const { data: productRes, isLoading } = useProduct(id, { all_langs: true });
-  console.log("ffffffffffffffff", productRes);
   if (isLoading) {
     return (
       <div className="space-y-8 animate-pulse">

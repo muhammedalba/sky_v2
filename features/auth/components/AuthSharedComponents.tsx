@@ -81,8 +81,7 @@ export function AuthHeader({
 }) {
   return (
     <div className={`text-center space-y-2 ${className}`}>
-      <h1 className="text-2xl md:text-3xl font-black bg-clip-text text-transparent animate-gradient 
-      bg-linear-to-br from-success via-primary to-success">{title}</h1>
+      <h1 className="text-2xl md:text-3xl font-black title-gradient">{title}</h1>
       <p className="text-muted-foreground text-base">{description}</p>
     </div>
   );

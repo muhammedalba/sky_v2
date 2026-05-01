@@ -33,26 +33,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (<div className={cn("w-full  ", inputWrapperClass)}>
       <div className=" relative">
-        {label && (
-          <label
-            htmlFor={name}
-            className={cn(
-              `pointer-events-none absolute inset-s-1 flex items-center gap-x-1.5 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500 `,
-              shouldFloat
-                ? '-top-4 text-xs text-foreground/80  w-fit'
-                : 'top-5 -translate-y-1/2 text-sm text-muted-foreground w-fit bg-transparent',
-
-              labelClassName
-            )}
-          >
-
-            {IconComponent && (
-              <IconComponent className={cn("inline h-4 w-4 transition-colors", iconColor ?  iconColor : " text-primary")} />
-            )}   {label}
-          </label>
-        )}
         <textarea
-          placeholder={placeholder}
+          placeholder={placeholder || " "}
           name={name}
           disabled={disabled}
           value={value}
@@ -61,18 +43,36 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             props.onFocus?.(e);
           }}
           onBlur={(e) => {
-
             setIsFocused(false);
             props.onBlur?.(e);
           }}
           className={cn(
-            `w-full border  py-3  text-sm md:text-md leading-relaxed  focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 ${error ? 'focus:border-destructive border-destructive' : ''}`,
+            `peer w-full border py-3 text-sm md:text-md leading-relaxed focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 placeholder-transparent focus:placeholder-muted-foreground ${error ? 'focus:border-destructive border-destructive' : ''}`,
             showAiAction && "pe-12",
             className
           )}
           ref={ref}
           {...props}
         />
+        {label && (
+          <label
+            htmlFor={name}
+            className={cn(
+              `pointer-events-none absolute inset-s-1 flex items-center gap-x-1.5 rounded-2xl bg-background z-10 px-2 py-1 text-sm transition-all duration-500 w-fit`,
+              // Base state (floating - when input has value)
+              '-top-4 text-xs text-foreground/80 translate-y-0',
+              // State when input is empty (placeholder is shown) AND not focused
+              'peer-placeholder-shown:top-5 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-muted-foreground peer-placeholder-shown:bg-transparent',
+              // State when focused (override placeholder-shown)
+              'peer-focus:-top-4 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-foreground/80 peer-focus:bg-background',
+              labelClassName
+            )}
+          >
+            {IconComponent && (
+              <IconComponent className={cn("inline h-4 w-4 transition-colors", iconColor ?  iconColor : " text-primary")} />
+            )}   {label}
+          </label>
+        )}
         {showAiAction && (
           <div className="absolute top-3 inset-e-3">
             <Tooltip content={aiActionTooltip || ""}>

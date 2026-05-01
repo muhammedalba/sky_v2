@@ -25,13 +25,13 @@ export function TrendChart({ data }: TrendChartProps) {
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-              <XAxis 
-                dataKey="date" 
+              <XAxis
+                dataKey="date"
                 axisLine={false}
                 tickLine={false}
                 fontSize={12}
@@ -41,27 +41,27 @@ export function TrendChart({ data }: TrendChartProps) {
                   return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
                 }}
               />
-              <YAxis 
+              <YAxis
                 axisLine={false}
                 tickLine={false}
                 fontSize={12}
                 tick={{ fill: '#64748b' }}
               />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
                   borderRadius: '12px',
                   border: 'none',
                   boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                 }}
               />
-              <Area 
-                type="monotone" 
-                dataKey="count" 
-                stroke="#6366f1" 
+              <Area
+                type="monotone"
+                dataKey="count"
+                stroke="#6366f1"
                 strokeWidth={3}
-                fillOpacity={1} 
-                fill="url(#colorCount)" 
+                fillOpacity={1}
+                fill="url(#colorCount)"
               />
             </AreaChart>
           </ResponsiveContainer>

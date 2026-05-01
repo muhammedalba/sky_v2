@@ -114,7 +114,6 @@
             "attachPdf": "إرفاق ملف PDF",
             "addGalleryImages": "إضافة صور للمعرض",
             "manageGallery": "إدارة المعرض",
-            "coverImageRequired": "صورة الغلاف مطلوبة.",
             "colors": "الألوان",
             "colorsDesc": "ألوان المنتج المتاحة",
             "addColor": "إضافة لون",
@@ -138,6 +137,19 @@
             "addFirstComponent": "أضف أول مكون مخصص",
             "inheritedDefaults": "موروثة من الإعدادات العامة",
             "addVariant": "إضافة متغير",
+            "validation": {
+                  "required": "هذا الحقل مطلوب",
+                  "titleMin": "يجب أن يكون العنوان 3 أحرف على الأقل",
+                  "descMin": "يجب أن يكون الوصف 15 حرفاً على الأقل",
+                  "priceMin": "يجب أن يكون السعر 1 على الأقل",
+                  "stockMin": "المخزون لا يمكن أن يكون أقل من 0",
+                  "variantsRequired": "يجب إضافة متغير واحد على الأقل",
+                  "subCategoriesRequired": "يجب اختيار قسم فرعي واحد على الأقل",
+                  "invalidNumber": "يجب إدخال رقم صحيح",
+                  "coverImageRequired": "صورة الغلاف مطلوبة.",
+                  "maxGalleryImagesReached": "يمكنك رفع 3 صور كحد أقصى.",
+                  "positiveNumber": "يجب أن يكون الرقم موجباً"
+            },
             "deleteVariant": "حذف المتغير",
             "restoreProduct": "استعادة المنتج",
             "hardDelete": "حذف نهائي",
@@ -148,6 +160,7 @@
             "newVariants": "متغيرات جديدة",
             "markedForDeletion": "مُعلَّم للحذف",
             "optional": "اختياري",
+            "actions": "Actions",
             "aiTranslateImprove": "الترجمة والتحسين بالذكاء الاصطناعي",
             "attributeBuilder": {
                   "title": "خصائص المتغيرات (Attributes)",
@@ -210,6 +223,10 @@
                   "topVariants": "أقوى المتغيرات (SKU)",
                   "soldUnits": "وحدة مباعة",
                   "stockLeft": "المتبقي"
+            },
+            "alerts": {
+                  "inventoryAlert": "تنبيه المخزون",
+                  "lowStockMessage": "يوجد حالياً {count} عناصر أقل من مستويات المخزون الآمن. نوصي بمراجعة العناصر الأكثر مبيعاً ذات المخزون المنخفض."
             }
       },
       "emptyState": {

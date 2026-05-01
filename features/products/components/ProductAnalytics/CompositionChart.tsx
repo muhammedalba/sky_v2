@@ -13,7 +13,7 @@ interface CompositionChartProps {
 
 export function CompositionChart({ data }: CompositionChartProps) {
   const t = useTranslations('products.statistics.charts');
-  
+
   const chartData = [
     { name: t('simple'), value: data.simple, color: '#6366f1' },
     { name: t('variable'), value: data.variable, color: '#ec4899' },
@@ -41,15 +41,15 @@ export function CompositionChart({ data }: CompositionChartProps) {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
                   borderRadius: '12px',
                   border: 'none',
                   boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                 }}
               />
-              <Legend verticalAlign="bottom" height={36}/>
+              <Legend verticalAlign="bottom" height={36} />
             </PieChart>
           </ResponsiveContainer>
         </div>

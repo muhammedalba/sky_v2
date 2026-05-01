@@ -33,7 +33,7 @@ export function StatCard({ title, value, icon, description, trend, className }: 
             {icon}
           </div>
         </div>
-        
+
         {(description || trend) && (
           <div className="mt-4 flex items-center gap-2">
             {trend && (

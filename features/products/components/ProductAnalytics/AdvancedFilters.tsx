@@ -39,9 +39,9 @@ export function AdvancedFilters({ onApply, onReset, isLoading }: AdvancedFilters
               <Calendar className="w-3 h-3" />
               {t('startDate')}
             </label>
-            <Input 
-              type="date" 
-              value={startDate} 
+            <Input
+              type="date"
+              value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className="bg-white/50 border-slate-200 focus:ring-primary/20"
             />
@@ -52,25 +52,25 @@ export function AdvancedFilters({ onApply, onReset, isLoading }: AdvancedFilters
               <Calendar className="w-3 h-3" />
               {t('endDate')}
             </label>
-            <Input 
-              type="date" 
-              value={endDate} 
+            <Input
+              type="date"
+              value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className="bg-white/50 border-slate-200 focus:ring-primary/20"
             />
           </div>
 
           <div className="flex gap-2">
-            <Button 
-              onClick={handleApply} 
+            <Button
+              onClick={handleApply}
               disabled={!startDate || !endDate || isLoading}
               className="gap-2"
             >
               <Filter className="w-4 h-4" />
               {t('apply')}
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleReset}
               className="gap-2 bg-white/50 hover:bg-white"
             >

@@ -9,12 +9,12 @@ import { CategoryChart } from './CategoryChart';
 import { TrendChart } from './TrendChart';
 import { TopProductsTable } from './TopProductsTable';
 import { AdvancedFilters } from './AdvancedFilters';
-import { 
-  Package, 
-  BarChart3, 
-  RefreshCw, 
-  TrendingUp, 
-  DollarSign, 
+import {
+  Package,
+  BarChart3,
+  RefreshCw,
+  TrendingUp,
+  DollarSign,
   Activity,
   AlertTriangle
 } from 'lucide-react';
@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 export function ProductAnalyticsContainer() {
   const t = useTranslations('products.statistics');
   const [params, setParams] = useState<{ startDate?: string; endDate?: string }>({});
-  
+
   const { data: stats, isLoading, error, refetch, isRefetching } = useProductStats(params);
 
   if (error) {
@@ -52,8 +52,8 @@ export function ProductAnalyticsContainer() {
             {t('subtitle')}
           </p>
         </div>
-        
-        <button 
+
+        <button
           onClick={() => refetch()}
           disabled={isLoading || isRefetching}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-200 text-foreground/80 hover:bg-white transition-all disabled:opacity-50"
@@ -63,8 +63,8 @@ export function ProductAnalyticsContainer() {
         </button>
       </div>
 
-      <AdvancedFilters 
-        onApply={(p) => setParams(p)} 
+      <AdvancedFilters
+        onApply={(p) => setParams(p)}
         onReset={() => setParams({})}
         isLoading={isLoading || isRefetching}
       />
@@ -77,25 +77,25 @@ export function ProductAnalyticsContainer() {
           ))
         ) : (
           <>
-            <StatCard 
+            <StatCard
               title={t('overview.totalProducts')}
               value={stats?.totalProducts || 0}
               icon={<Package className="w-6 h-6" />}
               description="Across all categories"
             />
-            <StatCard 
+            <StatCard
               title={t('overview.stockValue')}
               value={`${inventoryStats.totalValue.toLocaleString()}`}
               icon={<DollarSign className="w-6 h-6" />}
               description="Current inventory worth"
             />
-            <StatCard 
+            <StatCard
               title={t('overview.unitsSold')}
               value={inventoryStats.totalSold.toLocaleString()}
               icon={<TrendingUp className="w-6 h-6" />}
               description="Life-time performance"
             />
-            <StatCard 
+            <StatCard
               title={t('overview.stockHealth')}
               value={`${Math.round(inventoryStats.stockHealth)}%`}
               icon={<Activity className="w-6 h-6" />}
@@ -144,9 +144,9 @@ export function ProductAnalyticsContainer() {
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-lg font-bold text-warning">Inventory Alert</h4>
+            <h4 className="text-lg font-bold text-warning">{t('alerts.inventoryAlert')}</h4>
             <p className="text-warning/80">
-              There are {stats.lowStockCount} items currently below safety stock levels. We recommend reviewing your top-performing low-stock items.
+              {t('alerts.lowStockMessage', { count: stats.lowStockCount })}
             </p>
           </div>
         </div>

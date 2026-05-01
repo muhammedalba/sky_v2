@@ -48,7 +48,7 @@ const AttributeRow = React.memo(({
       if (value) {
         // منع إضافة نفس الوحدة أو القيمة مرتين
         const currentList = attr[target] || [];
-        const formattedValue = type === 'unit' ? value.toUpperCase() : value; // توحيد حالة الأحرف للوحدات
+        const formattedValue = type === 'unit' ? value.toLowerCase() : value; // توحيد حالة الأحرف للوحدات
 
         if (!currentList.includes(formattedValue)) {
           onAddValue(index, formattedValue, target);

@@ -29,7 +29,7 @@ export default function EntityPageHeader({
   return (
     <div className={cn("flex flex-col md:flex-row md:items-end justify-between gap-6", className)}>
       <div className="space-y-1">
-        <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-extrabold tracking-tight title-gradient">
           {title}
         </h1>
         {subtitle && (

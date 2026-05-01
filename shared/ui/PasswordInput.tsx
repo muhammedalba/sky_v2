@@ -14,7 +14,6 @@ interface PasswordInputProps extends React.ComponentProps<typeof Input> {
 const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ className, label, error, icon, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
-    const shouldFloat =  (props.value && props.value.length > 0);
    
     return (<div className="w-full">
       <div className="relative ">
@@ -32,10 +31,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className={cn(
-            "absolute inset-e-3 top-1/2 -translate-y-1/2 focus:outline-none transition-all duration-200",
-            shouldFloat ? "opacity-100 text-muted-foreground hover:text-primary" : "opacity-0 pointer-events-none"
-          )}
+          className="absolute inset-e-3 top-1/2 -translate-y-1/2 focus:outline-none transition-all duration-200 text-muted-foreground/50 hover:text-primary"
           tabIndex={-1}
         >
           {showPassword ? (

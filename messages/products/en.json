@@ -2,7 +2,6 @@
       "title": "Products",
       "totalResults": "{count} products found",
       "createProduct": "Create Product",
-
       "editProduct": "Edit Product",
       "productList": "Product List",
       "productDetails": "Product Details",
@@ -20,7 +19,6 @@
             "inventory": "Inventory",
             "attributes": "Attributes",
             "actions": "Actions"
-
       },
       "placeholders": {
             "name": "Enter product name",
@@ -37,7 +35,6 @@
             "softDeleteTitle": "Delete Product",
             "softDeleteConfirm": "Are you sure you want to delete \"{title}\"? It can be restored later.",
             "restoreSuccess": "Product restored successfully",
-
             "hardDeleteConfirm": "This action is IRREVERSIBLE. All data and files will be permanently lost."
       },
       "filters": {
@@ -75,7 +72,7 @@
             "cancel": "Cancel",
             "confirm": "Confirm",
             "save": "Save Changes",
-
+            "actions": "Actions",
             "publish": "Publish Product",
             "basicInformation": "Basic Information",
             "basicDesc": "Title and description formatted by localization",
@@ -118,7 +115,6 @@
             "attachPdf": "Attach PDF",
             "addGalleryImages": "Add Gallery Images",
             "manageGallery": "Manage Gallery",
-            "coverImageRequired": "Cover image required.",
             "colors": "Colors",
             "colorsDesc": "Available product colors",
             "addColor": "Add Color",
@@ -142,6 +138,19 @@
             "addFirstComponent": "Add your first custom component",
             "inheritedDefaults": "inherited from defaults",
             "addVariant": "Add Variant",
+            "validation": {
+                  "required": "This field is required",
+                  "titleMin": "Title must be at least 3 characters",
+                  "descMin": "Description must be at least 15 characters",
+                  "priceMin": "Price must be at least 1",
+                  "stockMin": "Stock cannot be negative",
+                  "variantsRequired": "At least one variant is required",
+                  "subCategoriesRequired": "Please select at least one sub-category",
+                  "invalidNumber": "Invalid number",
+                  "coverImageRequired": "Cover image required.",
+                  "maxGalleryImagesReached": "You can upload a maximum of 3 images.",
+                  "positiveNumber": "Number must be positive"
+            },
             "deleteVariant": "Delete Variant",
             "restoreProduct": "Restore Product",
             "hardDelete": "Permanently Delete",
@@ -182,43 +191,47 @@
             }
       },
       "statistics": {
-        "title": "Product Analytics",
-        "subtitle": "Comprehensive insights into your product catalog and inventory performance.",
-        "filters": {
-          "startDate": "Start Date",
-          "endDate": "End Date",
-          "apply": "Apply Filters",
-          "reset": "Reset"
-        },
-        "overview": {
-          "totalProducts": "Total Products",
-          "stockValue": "Stock Value",
-          "unitsSold": "Total Units Sold",
-          "stockHealth": "Inventory Health"
-        },
-        "charts": {
-          "composition": "Product Composition",
-          "categories": "Category Distribution",
-          "inventory": "Inventory Status",
-          "trends": "Publication Trends",
-          "simple": "Simple Products",
-          "variable": "Variable Products"
-        },
-        "inventory": {
-          "outOfStock": "Out of Stock",
-          "lowStock": "Low Stock Items",
-          "totalValue": "Total Worth"
-        },
-        "performer": {
-          "topSelling": "Top Selling Products",
-          "topVariants": "Power SKUs",
-          "soldUnits": "Units Sold",
-          "stockLeft": "Stock Left"
-        }
+            "title": "Product Analytics",
+            "subtitle": "Comprehensive insights into your product catalog and inventory performance.",
+            "filters": {
+                  "startDate": "Start Date",
+                  "endDate": "End Date",
+                  "apply": "Apply Filters",
+                  "reset": "Reset"
+            },
+            "overview": {
+                  "totalProducts": "Total Products",
+                  "stockValue": "Stock Value",
+                  "unitsSold": "Total Units Sold",
+                  "stockHealth": "Inventory Health"
+            },
+            "charts": {
+                  "composition": "Product Composition",
+                  "categories": "Category Distribution",
+                  "inventory": "Inventory Status",
+                  "trends": "Publication Trends",
+                  "simple": "Simple Products",
+                  "variable": "Variable Products"
+            },
+            "inventory": {
+                  "outOfStock": "Out of Stock",
+                  "lowStock": "Low Stock Items",
+                  "totalValue": "Total Worth"
+            },
+            "performer": {
+                  "topSelling": "Top Selling Products",
+                  "topVariants": "Power SKUs",
+                  "soldUnits": "Units Sold",
+                  "stockLeft": "Stock Left"
+            },
+            "alerts": {
+                  "inventoryAlert": "Inventory Alert",
+                  "lowStockMessage": "There are {count} items currently below safety stock levels. We recommend reviewing your top-performing low-stock items."
+            }
       },
       "emptyState": {
-        "noProducts": "No products found",
-        "deletedDesc": "All deleted products will appear here for restoration.",
-        "activeDesc": "Start by adding your first product to your catalog."
+            "noProducts": "No products found",
+            "deletedDesc": "All deleted products will appear here for restoration.",
+            "activeDesc": "Start by adding your first product to your catalog."
       }
 }

@@ -48,12 +48,12 @@ export function TopProductsTable({ products }: TopProductsTableProps) {
                   <div>
                     {product.productName}
                     <div className="mt-1 flex items-center gap-2">
-                       <div className="h-1.5 w-full max-w-[100px] rounded-full bg-secondary dark:bg-secondary/80 overflow-hidden">
-                          <div 
-                            className="h-full bg-primary rounded-full" 
-                            style={{ width: `${(product.totalSold / maxSold) * 100}%` }}
-                          />
-                       </div>
+                      <div className="h-1.5 w-full max-w-[100px] rounded-full bg-secondary dark:bg-secondary/80 overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full"
+                          style={{ width: `${(product.totalSold / maxSold) * 100}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </TableCell>
@@ -63,8 +63,8 @@ export function TopProductsTable({ products }: TopProductsTableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {product.minPrice === product.maxPrice 
-                    ? `${product.minPrice}` 
+                  {product.minPrice === product.maxPrice
+                    ? `${product.minPrice}`
                     : `${product.minPrice} - ${product.maxPrice}`}
                 </TableCell>
                 <TableCell className="text-right">

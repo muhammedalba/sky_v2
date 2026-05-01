@@ -27,19 +27,19 @@ export function CategoryChart({ data }: CategoryChartProps) {
             <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
               <XAxis type="number" hide />
-              <YAxis 
-                dataKey="name" 
-                type="category" 
-                width={100} 
+              <YAxis
+                dataKey="name"
+                type="category"
+                width={100}
                 fontSize={12}
                 tick={{ fill: '#64748b' }}
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip 
+              <Tooltip
                 cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
                   borderRadius: '12px',
                   border: 'none',
                   boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'

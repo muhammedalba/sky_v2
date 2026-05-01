@@ -4,21 +4,24 @@ import { useRef, useState } from 'react';
 
 import { Icons } from '@/shared/ui/Icons';
 import Image from 'next/image';
+import ErrorMessage from '../ErrorMessage';
+import { cn } from '@/lib/utils';
 
 interface ImageUploadProps {
   value?: string;
   onChange: (file: File) => void;
   onRemove: () => void;
   className?: string;
+  error?: string;
 }
 
-export default function ImageUpload({ value, onChange, onRemove, className }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, onRemove, className, error }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | undefined>(value);
 
   // Sync internal state if prop changes (e.g. initial value load)
   if (value !== preview && value) {
-      setPreview(value);
+    setPreview(value);
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,9 +58,9 @@ export default function ImageUpload({ value, onChange, onRemove, className }: Im
             </button>
           </div>
         ) : (
-          <div 
+          <div
             onClick={() => inputRef.current?.click()}
-            className="w-40 h-40 rounded-xl border-dashed border-2 border-muted-foreground/20 hover:border-primary/50 bg-secondary/20 flex flex-col items-center justify-center cursor-pointer transition-colors group"
+            className={cn(`w-40 h-40 rounded-xl border-dashed border-2 ${error ? "border-destructive" : "border-muted-foreground/20 "} hover:border-primary/50 bg-secondary/20 flex flex-col items-center justify-center cursor-pointer transition-colors group`)}
           >
             <Icons.Products className="w-8 h-8 text-muted-foreground group-hover:text-primary mb-2" />
             <span className="text-xs text-muted-foreground font-medium group-hover:text-primary">Upload Image</span>
@@ -71,6 +74,7 @@ export default function ImageUpload({ value, onChange, onRemove, className }: Im
         className="hidden"
         onChange={handleFileChange}
       />
+      {error && <ErrorMessage message={error} />}
     </div>
   );
 }
