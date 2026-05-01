@@ -1,222 +1,250 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { Icons } from '@/shared/ui/Icons';
 
+// --- Types & Constants ---
 export type AttributeType = 'string' | 'number';
 
 export interface AttributeDefinition {
+  id: string; // إضافة ID فريد للأداء
   name: string;
   type: AttributeType;
   required: boolean;
-  allowedValues?: string[]; // للقيم والألوان
-  allowedUnits?: string[];  // للوحدات
+  allowedValues?: string[];
+  allowedUnits?: string[];
 }
 
-interface AttributeBuilderProps {
-  attributes: AttributeDefinition[];
-  onChange: (attrs: AttributeDefinition[]) => void;
-}
+const ATTRIBUTE_NAME_OPTIONS = ['color', 'size', 'material', 'weight', 'volume'] as const;
 
-function AttributeRow({
-  attr, index, updateAttribute, removeAttribute, addValue, removeValue
+const ATTRIBUTE_TYPE_MAP: Record<string, AttributeType> = {
+  color: 'string',
+  size: 'string',
+  material: 'string',
+  weight: 'number',
+  volume: 'number',
+};
+
+// --- Sub-Component: AttributeRow ---
+// تغليف المكون بـ React.memo لمنع الرندر غير الضروري
+const AttributeRow = React.memo(({
+  attr, index, onUpdate, onRemove, onAddValue, onRemoveValue
 }: {
   attr: AttributeDefinition;
   index: number;
-  updateAttribute: (index: number, key: keyof AttributeDefinition, val: any) => void;
-  removeAttribute: (index: number) => void;
-  addValue: (index: number, val: string, targetArray: 'allowedValues' | 'allowedUnits') => void;
-  removeValue: (attrIndex: number, valIndex: number, targetArray: 'allowedValues' | 'allowedUnits') => void;
-}) {
+  onUpdate: (index: number, key: keyof AttributeDefinition, val: any) => void;
+  onRemove: (index: number) => void;
+  onAddValue: (index: number, val: string, target: 'allowedValues' | 'allowedUnits') => void;
+  onRemoveValue: (attrIndex: number, valIndex: number, target: 'allowedValues' | 'allowedUnits') => void;
+}) => {
   const t = useTranslations('products.form.attributeBuilder');
-  const [strValue, setStrValue] = useState('');
-  const [numValue, setNumValue] = useState('');
-  const [unitValue, setUnitValue] = useState('');
+  const [inputs, setInputs] = useState({ str: '', num: '', unit: '' });
 
-  const handleAddString = () => {
-    if (strValue.trim()) {
-      addValue(index, strValue.trim(), 'allowedValues');
-      setStrValue('');
-    }
-  };
-
-  const handleAddNumber = () => {
-    if (numValue.trim()) {
-      addValue(index, numValue.trim(), 'allowedValues');
-      setNumValue('');
-    }
-  };
-
-  const handleAddUnit = () => {
-    if (unitValue.trim()) {
-      addValue(index, unitValue.trim().toLowerCase(), 'allowedUnits');
-      setUnitValue('');
+  const handleAction = (type: keyof typeof inputs, target: 'allowedValues' | 'allowedUnits') => {
+    const value = inputs[type].trim();
+    if (value) {
+      onAddValue(index, type === 'unit' ? value.toLowerCase() : value, target);
+      setInputs(prev => ({ ...prev, [type]: '' }));
     }
   };
 
   return (
     <div className="p-4 border border-border/50 rounded-xl space-y-4 bg-background/50">
-      {/* ─── Header ─── */}
       <div className="flex gap-3 items-center">
-        <Input
-          icon={Icons.Edit}
-          iconColor="text-cyan-500"
-          label={t('attributeNamePlaceholder')}
-          value={attr.name}
-          onChange={(e) => updateAttribute(index, 'name', e.target.value)}
-          className="flex-1 rounded-xl h-11"
-        />
-        <div className="relative">
+        <div className="relative flex-1">
           <select
-            value={attr.type}
-            onChange={(e) => updateAttribute(index, 'type', e.target.value as AttributeType)}
-            className="h-11 px-3 rounded-xl border border-input bg-secondary/30 text-sm appearance-none min-w-[140px] focus:outline-none focus:border-primary/50"
+            value={attr.name}
+            onChange={(e) => onUpdate(index, 'name', e.target.value)}
+            className="w-full h-11 px-10 rounded-xl border border-input bg-secondary/30 text-sm appearance-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all"
           >
-            <option value="string">{t('typeString')}</option>
-            <option value="number">{t('typeNumber')}</option>
+            <option value="" disabled>{t('attributeNamePlaceholder')}</option>
+            {ATTRIBUTE_NAME_OPTIONS.map((key) => (
+              <option key={key} value={key}>{t(`names.${key}`)}</option>
+            ))}
           </select>
-          <div className="absolute inset-y-0 end-3 flex items-center pointer-events-none text-muted-foreground">
-            <Icons.ChevronDown className="w-4 h-4" />
-          </div>
+          <Icons.Edit className="absolute inset-y-0 inset-s-3 my-auto w-4 h-4 text-cyan-500 pointer-events-none" />
+          <Icons.ChevronDown className="absolute inset-y-0 inset-e-3 my-auto w-4 h-4 text-muted-foreground pointer-events-none" />
         </div>
-        <Button 
-          type="button" variant="destructive" size="icon" 
-          className="h-11 w-11 rounded-xl shrink-0" 
-          onClick={() => removeAttribute(index)}
+
+        <Button
+          type="button" variant="destructive" size="icon"
+          className="h-11 w-11 rounded-xl"
+          onClick={() => onRemove(index)}
         >
           <Icons.X className="w-4 h-4" />
         </Button>
       </div>
 
-      {/* ─── Inputs ─── */}
       <div className="flex flex-col gap-3">
         {attr.type === 'string' ? (
           <div className="flex gap-2 items-end">
             <Input
               icon={Icons.Plus}
-              iconColor="text-green-500"
               label={t('valuePlaceholder')}
-              value={strValue}
-              onChange={(e) => setStrValue(e.target.value)}
+              value={inputs.str}
+              onChange={(e) => setInputs(prev => ({ ...prev, str: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('str', 'allowedValues'))}
               className="rounded-xl h-11 flex-1"
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddString())}
             />
-            <Button type="button" onClick={handleAddString} className="rounded-xl h-11">{t('addValue')}</Button>
+            <Button type="button" onClick={() => handleAction('str', 'allowedValues')} className="rounded-xl h-11">{t('addValue')}</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-l-2 border-primary/20 pl-4 py-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-s-2 border-primary/20 ps-4 py-1">
             <div className="flex gap-2 items-end">
               <Input
                 type="number"
                 label={t('numberPlaceholder')}
-                value={numValue}
-                onChange={(e) => setNumValue(e.target.value)}
+                value={inputs.num}
+                onChange={(e) => setInputs(prev => ({ ...prev, num: e.target.value }))}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('num', 'allowedValues'))}
                 className="rounded-xl h-11 flex-1"
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddNumber())}
               />
-              <Button type="button" onClick={handleAddNumber} variant="secondary" className="rounded-xl h-11">{t('addNumber')}</Button>
+              <Button type="button" onClick={() => handleAction('num', 'allowedValues')} variant="secondary" className="rounded-xl h-11">{t('addNumber')}</Button>
             </div>
             <div className="flex gap-2 items-end">
               <Input
                 label={t('unitPlaceholder')}
-                value={unitValue}
-                onChange={(e) => setUnitValue(e.target.value)}
+                value={inputs.unit}
+                onChange={(e) => setInputs(prev => ({ ...prev, unit: e.target.value }))}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('unit', 'allowedUnits'))}
                 className="rounded-xl h-11 flex-1"
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddUnit())}
               />
-              <Button type="button" onClick={handleAddUnit} variant="secondary" className="rounded-xl h-11">{t('addUnit')}</Button>
+              <Button type="button" onClick={() => handleAction('unit', 'allowedUnits')} variant="secondary" className="rounded-xl h-11">{t('addUnit')}</Button>
             </div>
           </div>
         )}
       </div>
 
-      {/* ─── Display Tags ─── */}
+      {/* Tags Display */}
       <div className="flex flex-col gap-3 pt-2">
-        {/* القيم (تُعرض للنصوص والأرقام) */}
-        {attr.allowedValues && attr.allowedValues.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-bold text-muted-foreground w-16">{t('valuesLabel')}</span>
-            {attr.allowedValues.map((val, vIdx) => (
-              <span key={`val-${vIdx}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-sm font-medium border border-primary/20">
-                {val}
-                <button type="button" onClick={(e) => { e.preventDefault(); removeValue(index, vIdx, 'allowedValues'); }} className="hover:text-destructive"><Icons.X className="w-3.5 h-3.5" /></button>
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* الوحدات (تُعرض فقط للنوع Number) */}
-        {attr.type === 'number' && attr.allowedUnits && attr.allowedUnits.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-bold text-muted-foreground w-16">{t('unitsLabel')}</span>
-            {attr.allowedUnits.map((val, vIdx) => (
-              <span key={`unit-${vIdx}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary-foreground text-sm font-medium border border-secondary/20">
-                {val}
-                <button type="button" onClick={(e) => { e.preventDefault(); removeValue(index, vIdx, 'allowedUnits'); }} className="hover:text-destructive"><Icons.X className="w-3.5 h-3.5" /></button>
-              </span>
-            ))}
-          </div>
+        <TagGroup label={t('valuesLabel')} items={attr.allowedValues} onRemove={(vIdx) => onRemoveValue(index, vIdx, 'allowedValues')} color="primary" />
+        {attr.type === 'number' && (
+          <TagGroup label={t('unitsLabel')} items={attr.allowedUnits} onRemove={(vIdx) => onRemoveValue(index, vIdx, 'allowedUnits')} color="secondary" />
         )}
       </div>
     </div>
   );
+});
+
+// مكون صغير للـ Tags لتقليل تكرار الكود
+interface TagGroupProps {
+  label: string;
+  items?: string[];
+  onRemove: (index: number) => void;
+  color: 'primary' | 'secondary';
 }
 
-export default function AttributeBuilder({ attributes, onChange }: AttributeBuilderProps) {
+const TagGroup = ({ label, items, onRemove, color }: TagGroupProps) => {
+  if (!items?.length) return null;
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-xs font-bold text-muted-foreground w-16">{label}</span>
+      {items.map((val: string, i: number) => (
+        <span
+          key={i}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border ${color === 'primary'
+            ? 'bg-primary/10 text-primary border-primary/20'
+            : 'bg-secondary/10 text-secondary-foreground border-secondary/20'
+            }`}
+        >
+          {val}
+          <button
+            type="button"
+            onClick={() => onRemove(i)} // هنا i هو رقم (number)
+            className="hover:text-destructive transition-colors"
+          >
+            <Icons.X className="w-3.5 h-3.5" />
+          </button>
+        </span>
+      ))}
+    </div>
+  );
+};
+
+// --- Main Component ---
+export default function AttributeBuilder({ attributes, onChange }: { attributes: AttributeDefinition[], onChange: (attrs: AttributeDefinition[]) => void }) {
   const t = useTranslations('products.form.attributeBuilder');
 
-  const addAttribute = () => {
-    onChange([...attributes, { name: '', type: 'string', required: true, allowedValues: [], allowedUnits: [] }]);
-  };
+  const addAttribute = useCallback(() => {
+    onChange([...attributes, {
+      id: crypto.randomUUID(), // معرف فريد
+      name: '',
+      type: 'string',
+      required: true,
+      allowedValues: [],
+      allowedUnits: []
+    }]);
+  }, [attributes, onChange]);
 
-  const updateAttribute = (index: number, key: keyof AttributeDefinition, val: any) => {
+  const updateAttribute = useCallback((index: number, key: keyof AttributeDefinition, val: any) => {
     const newAttrs = [...attributes];
-    if (key === 'type' && newAttrs[index].type !== val) {
-      newAttrs[index].allowedValues = [];
-      newAttrs[index].allowedUnits = [];
+    const target = { ...newAttrs[index] };
+
+    if (key === 'name') {
+      const newType = ATTRIBUTE_TYPE_MAP[val as string] || 'string';
+      if (target.type !== newType) {
+        target.allowedValues = [];
+        target.allowedUnits = [];
+      }
+      target.name = val;
+      target.type = newType;
+    } else {
+      (target as any)[key] = val;
     }
-    newAttrs[index] = { ...newAttrs[index], [key]: val };
-    onChange(newAttrs);
-  };
 
-  const removeAttribute = (index: number) => {
+    newAttrs[index] = target;
+    onChange(newAttrs);
+  }, [attributes, onChange]);
+
+  const removeAttribute = useCallback((index: number) => {
     onChange(attributes.filter((_, i) => i !== index));
-  };
+  }, [attributes, onChange]);
 
-  const addValue = (index: number, val: string, targetArray: 'allowedValues' | 'allowedUnits') => {
+  const modifyList = useCallback((
+    attrIndex: number,
+    val: string | number, // قد يكون القيمة المضافة (string) أو ترتيب العنصر المراد حذفه (number)
+    action: 'add' | 'remove',
+    targetArray: 'allowedValues' | 'allowedUnits'
+  ) => {
     const newAttrs = [...attributes];
-    const list = newAttrs[index][targetArray] || [];
-    newAttrs[index] = { ...newAttrs[index], [targetArray]: [...list, val] };
-    onChange(newAttrs);
-  };
+    const list = [...(newAttrs[attrIndex][targetArray] || [])];
 
-  const removeValue = (attrIndex: number, valIndex: number, targetArray: 'allowedValues' | 'allowedUnits') => {
-    const newAttrs = [...attributes];
-    const list = newAttrs[attrIndex][targetArray] || [];
-    newAttrs[attrIndex] = { ...newAttrs[attrIndex], [targetArray]: list.filter((_, i) => i !== valIndex) };
+    if (action === 'add') {
+      list.push(val as string);
+    } else {
+      list.splice(val as number, 1);
+    }
+
+    newAttrs[attrIndex] = { ...newAttrs[attrIndex], [targetArray]: list };
     onChange(newAttrs);
-  };
+  }, [attributes, onChange]);
 
   return (
     <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
         <Icons.Check className="w-5 h-5 text-muted-foreground" />
-        <div>
-          <h3 className="font-bold text-sm">{t('title')}</h3>
-        </div>
+        <h3 className="font-bold text-sm">{t('title')}</h3>
       </div>
       <div className="space-y-6">
         {attributes.map((attr, index) => (
-          <AttributeRow key={index} attr={attr} index={index} updateAttribute={updateAttribute} removeAttribute={removeAttribute} addValue={addValue} removeValue={removeValue} />
+          <AttributeRow
+            key={attr.id || index} // استخدام ID إذا توفر
+            attr={attr}
+            index={index}
+            onUpdate={updateAttribute}
+            onRemove={removeAttribute}
+            onAddValue={(idx, val, target) => modifyList(idx, val, 'add', target)}
+            onRemoveValue={(idx, vIdx, target) => modifyList(idx, vIdx, 'remove', target)}
+          />
         ))}
-        <Button type="button" variant="outline" className="w-full rounded-xl border-dashed" onClick={addAttribute}>
-          <Icons.Plus className="w-4 h-4 mr-2" /> {t('addNewAttribute')}
+        <Button type="button" variant="outline" className="w-full rounded-xl border-dashed py-6 hover:bg-secondary/50 transition-all" onClick={addAttribute}>
+          <Icons.Plus className="w-4 h-4 me-2" /> {t('addNewAttribute')}
         </Button>
       </div>
     </div>
   );
 }
-

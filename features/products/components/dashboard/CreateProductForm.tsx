@@ -91,7 +91,6 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       SubCategories: [],
       brand: '',
       supplier: '',
-
       allowedAttributes: [],
       variants: [{ sku: '', price: 0, stock: 0, attributes: {}, isActive: true }],
     },

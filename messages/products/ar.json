@@ -166,7 +166,15 @@
                   "addUnit": "إضافة وحدة",
                   "valuesLabel": "القيم:",
                   "unitsLabel": "الوحدات:",
-                  "addNewAttribute": "إضافة خاصية جديدة"
+                  "addNewAttribute": "إضافة خاصية جديدة",
+                  "names": {
+                        "color": "اللون",
+                        "material": "الخامة",
+                        "weight": "الوزن",
+                        "volume": "الحجم",
+                        "size": "المقاس"
+
+                  }
             }
       },
       "statistics": {

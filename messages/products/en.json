@@ -166,7 +166,14 @@
                   "addUnit": "Add Unit",
                   "valuesLabel": "Values:",
                   "unitsLabel": "Units:",
-                  "addNewAttribute": "Add New Attribute"
+                  "addNewAttribute": "Add New Attribute",
+                  "names": {
+                        "color": "Color",
+                        "size": "Size",
+                        "material": "Material",
+                        "weight": "Weight",
+                        "volume": "volume"
+                  }
             }
       },
       "statistics": {
