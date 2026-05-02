@@ -40,6 +40,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     defaultValues: {
       title: { en: '', ar: '' },
       description: { en: '', ar: '' },
+      uses: { en: [], ar: [] },
       isUnlimitedStock: true,
       isActive: true,
       isFeatured: false,
@@ -91,9 +92,9 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       combos.map((combo) => {
         const skuParts = Object.values(combo).map((v) => {
           if (typeof v === 'object' && v !== null && 'value' in v && 'unit' in v) {
-            return `${v.value}-${v.unit}`.toUpperCase();
+            return `${v.value}-${v.unit}`.toUpperCase().trim();
           }
-          return String(v).toUpperCase().replace(/\s+/g, '-');
+          return String(v).toUpperCase().replace(/\s+/g, '-').trim();
         });
         const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
         skuParts.push(dateStr);
@@ -166,6 +167,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     const formData = new FormData();
     formData.append('title', JSON.stringify(data.title));
     formData.append('description', JSON.stringify(data.description));
+    if (data.uses) formData.append('uses', JSON.stringify(data.uses));
     formData.append('category', data.category);
     data.SubCategories?.forEach((id) => formData.append('SubCategories', id));
     formData.append('isUnlimitedStock', String(data.isUnlimitedStock));
@@ -205,7 +207,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
         >
           {/* ═══ LEFT COLUMN ═══ */}
           <div className="lg:col-span-2 space-y-6">
-            <ProductBasicInfo register={register} errors={errors as any} tError={tError} />
+            <ProductBasicInfo register={register} errors={errors as any} tError={tError} watch={watch} setValue={setValue} />
 
             <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
 

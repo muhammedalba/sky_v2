@@ -79,6 +79,8 @@
             "titleAr": "العنوان (عربي) *",
             "descEn": "الوصف (إنجليزي) *",
             "descAr": "الوصف (عربي) *",
+            "usesEn": "الاستخدامات (إنجليزي)",
+            "usesAr": "الاستخدامات (عربي)",
             "placeholderTitleEn": "e.g. Wireless Headphones",
             "placeholderTitleAr": "سماعات لاسلكية",
             "placeholderDescEn": "Product features and details...",
@@ -178,6 +180,7 @@
                   "addNewAttribute": "إضافة خاصية جديدة",
                   "selectUnit": "اختر الوحدة",
                   "noUnitsAvailable": "لا توجد وحدات متاحة",
+                  "duplicateAttributeError": "هذه الخاصية موجودة بالفعل، يرجى إضافة القيم الجديدة للخاصية الحالية بدلاً من إنشاء واحدة جديدة.",
                   "names": {
                         "color": "اللون",
                         "weight": "الوزن",

@@ -35,15 +35,15 @@ export function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
     return acc.flatMap((combo) => options.map((opt) => ({ ...combo, [attr.name]: opt })));
   }, []);
 }
-
+ 
 /** Generates a stable string key for a variant combo (supports object values like {value, unit}). */
 export const getVariantKey = (attrs: Record<string, any> = {}): string =>
   Object.entries(attrs || {})
     .sort()
     .map(([k, val]) => {
       if (typeof val === 'object' && val !== null && 'value' in val && 'unit' in val) {
-        return `${k}:${val.value}${val.unit}`;
+        return `${k}:${val.value}(${val.unit})`;
       }
-      return `${k}:${val}`;
+      return `${k}:${val}`; 
     })
     .join('|');

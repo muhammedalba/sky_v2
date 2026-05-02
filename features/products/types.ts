@@ -26,6 +26,10 @@ export interface Product {
   slug?: string;
   sku?: string;
   description: LocalizedString;
+  uses?: {
+    en: string[];
+    ar: string[];
+  };
   stockSummary?: number;
   variantCount?: number;
   priceRange?: {

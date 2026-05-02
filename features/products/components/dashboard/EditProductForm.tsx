@@ -30,6 +30,16 @@ interface EditProductFormProps {
   initialVariants?: ProductVariant[];
 }
 
+/**
+ * مكون `EditProductForm`
+ * 
+ * هذا المكون هو المسؤول عن واجهة "تعديل المنتج" في لوحة التحكم. يتعامل مع بيانات المنتج الأساسية، 
+ * الصور، التصنيفات، والأهم من ذلك: إدارة المتغيرات (Variants) والسمات (Attributes) المعقدة.
+ * 
+ * ملاحظات للمطورين:
+ * - لإضافة حقول جديدة، تأكد من إضافتها في `product.schema.ts`، و`defaultValues` للنموذج، ودالة `onSubmit` لربطها بـ FormData.
+ * - تعتمد حالة `variantsToUpdate` على مقارنة التغييرات مع النسخة الأصلية `originalVariants`.
+ */
 export default function EditProductForm({ locale, initialData, initialVariants = [] }: EditProductFormProps) {
   const t = useTranslations('products.form');
   const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
@@ -39,7 +49,8 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   const updateMutation = useUpdateProduct();
 
 
-  // ─── Derived initial values ──────────────────────────
+  // ─── التهيئة واستخراج البيانات الأولية (Derived Initial Values) ─────────
+  // يتم هنا التأكد من استخراج البيانات من `initialData` وتحويلها لتلائم صيغة حقول النموذج
   const defaultTitle = useMemo(() => {
     if (typeof initialData.title === 'object') return initialData.title;
     return { en: String(initialData.title || ''), ar: '' };
@@ -65,6 +76,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     return typeof initialData.supplier === 'string' ? initialData.supplier : initialData.supplier._id;
   }, [initialData.supplier]);
 
+  /**
+   * دالة مساعدة تأخذ كائناً (مثل الماركة أو التصنيف) وتستخرج منه الاسم،
+   * سواء كان سلسلة نصية بسيطة أو كائناً متعدد اللغات باستخدام الترجمة.
+   */
   const getLabel = (obj: unknown): string => {
     if (!obj || typeof obj !== 'object') return '';
     const item = obj as { name: string | { en: string; ar: string } };
@@ -73,7 +88,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     return getTrans(item.name as { en: string; ar: string });
   };
 
-  // 🌟 Restore number attribute values from existing variants for AttributeBuilder 🌟
+  // 🌟 استعادة السمات والبيانات من المتغيرات الموجودة 🌟
+  // خاصة للسمات الرقمية (Number): نستخرج جميع القيم الرقمية المستخدمة 
+  // في المتغيرات الحالية `initialVariants` ونضعها في `allowedValues` 
+  // لكي تظهر بشكل صحيح في منشئ السمات (Attribute Builder).
   const initialAttributes = useMemo(() => {
     const attrs = initialData.allowedAttributes || [];
     return attrs.map((attr) => {
@@ -98,6 +116,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     defaultValues: {
       title: defaultTitle as { en: string; ar: string },
       description: defaultDesc as { en: string; ar: string },
+      uses: (initialData.uses as { en: string[]; ar: string[] }) || { en: [], ar: [] },
       isUnlimitedStock: initialData.isUnlimitedStock ?? true,
       isActive: initialData.isActive ?? true,
       isFeatured: initialData.isFeatured ?? false,
@@ -178,7 +197,14 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   // ─── Search states + data fetching (shared hook) ─────
   const options = useProductFormOptions(watchedCategory);
 
-  // ─── Regenerate new combos when attributes change ────
+  // ─── إعادة توليد المتغيرات عند تعديل السمات (Core Variant Logic) ────
+  /**
+   * تُستدعى هذه الدالة كلما قام المستخدم بتعديل السمات (إضافة/حذف سمة، أو إضافة/حذف قيمة).
+   * 1. تحفظ السمات الجديدة وتبني خريطة بالقيم المسموحة.
+   * 2. تفحص المتغيرات الحالية: إذا كانت تعتمد على سمة أو قيمة تم حذفها، يتم نقلها للمحذوفات تلقائياً.
+   * 3. تولد احتمالات المتغيرات الجديدة `cartesian` بناءً على السمات الجديدة.
+   * 4. تستبعد الاحتمالات الموجودة مسبقاً وتضيف المتبقي كمتغيرات جديدة.
+   */
   const handleAttributesChange = useCallback(
     (newAttrs: AttributeDefinition[]) => {
       setAttributes(newAttrs);
@@ -243,6 +269,8 @@ export default function EditProductForm({ locale, initialData, initialVariants =
             }
             return String(v).toUpperCase().replace(/\s+/g, '-').trim();
           });
+          const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+          skuParts.push(dateStr);
           return { sku: skuParts.join('-'), price: 0, stock: 0, attributes: combo, isActive: true };
         }),
       );
@@ -258,6 +286,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     setValue('allowedAttributes', attributes);
   }, [attributes, setValue]);
 
+  // ─── مزامنة حالات المتغيرات مع النموذج (Form Synchronization) ────
+  // نظراً لأن المتغيرات تدار عبر `useState` منفصلة، يعمل هذا الخطاف كجسر
+  // لتحديث قيم `react-hook-form` تلقائياً وإرسالها مع النموذج.
+  // يتم التحقق من أي تعديل (في السعر أو المخزون الخ) بمقارنة `existingVariants` بـ `originalVariants`.
   useEffect(() => {
     const changed = existingVariants.filter((v) => {
       if (!v._id) return false;
@@ -303,7 +335,11 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     setValue('variantsToDelete', deletedVariantIds);
   }, [existingVariants, newVariants, deletedVariantIds, originalVariants, setValue]);
 
-  // ─── Gallery handlers ─────────────────────────────────
+  // ─── إدارة الوسائط والصور (Gallery Handlers) ───────────────────────
+  /**
+   * تضيف صورة جديدة لمعرض الصور بحد أقصى 3 صور.
+   * تقوم بتوليد رابط معاينة محلي باستخدام FileReader لعرض الصورة فوراً.
+   */
   const handleGalleryAdd = (file: File) => {
     if (galleryPreviews.length >= 3) {
       toast.error(t('validation.maxGalleryImagesReached', { defaultValue: 'You can only upload up to 3 images' }));
@@ -315,6 +351,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     reader.readAsDataURL(file);
   };
 
+  /**
+   * تحذف صورة من المعرض بناءً على الفهرس.
+   * تفرّق بين الصور الموجودة مسبقاً (روابط) والصور المرفوعة حديثاً (ملفات).
+   */
   const handleGalleryRemove = (index: number) => {
     const targetUrl = galleryPreviews[index];
     if (typeof targetUrl === 'string' && (targetUrl.startsWith('http') || targetUrl.startsWith('/'))) {
@@ -326,7 +366,13 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ─── Submit ──────────────────────────────────────────
+  // ─── الإرسال والحفظ (Submit) ─────────────────────────────────────────
+  /**
+   * دالة الإرسال الرئيسية.
+   * - تتحقق من وجود صورة غلاف.
+   * - تُجهز `FormData` لإرسال البيانات والملفات معاً.
+   * - تفصل المتغيرات في عمليات إنشاء، تحديث، وحذف.
+   */
   const onSubmit = async (data: EditProductInput) => {
     if (!coverFile && !initialData.imageCover) {
       setCoverError(t('coverImageRequired'));
@@ -336,6 +382,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     const formData = new FormData();
     formData.append('title', JSON.stringify(data.title));
     formData.append('description', JSON.stringify(data.description));
+    if (data.uses) formData.append('uses', JSON.stringify(data.uses));
     formData.append('category', data.category);
     data.SubCategories?.forEach((id) => formData.append('SubCategories', id));
     formData.append('isUnlimitedStock', String(data.isUnlimitedStock));
@@ -390,7 +437,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
         >
           {/* ═══ LEFT COLUMN ═══ */}
           <div className="lg:col-span-2 space-y-6">
-            <ProductBasicInfo register={register} errors={errors as any} tError={tError} />
+            <ProductBasicInfo register={register} errors={errors as any} tError={tError} watch={watch} setValue={setValue} />
 
             <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
 

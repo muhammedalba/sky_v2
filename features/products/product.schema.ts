@@ -52,6 +52,10 @@ const productBaseSchema = z.object({
     en: z.string().min(15, 'validation.descMin').max(1000, 'validation.required'),
     ar: z.string().min(15, 'validation.descMin').max(1000, 'validation.required'),
   }),
+  uses: z.object({
+    en: z.array(z.string()).optional().default([]),
+    ar: z.array(z.string()).optional().default([]),
+  }).optional(),
   isUnlimitedStock: z.boolean().default(true),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),

@@ -7,7 +7,7 @@ import { Button } from '@/shared/ui/Button';
 import { Icons } from '@/shared/ui/Icons';
 import { AllowedAttributeName, ATTRIBUTE_CONFIG, ATTRIBUTE_NAME_OPTIONS } from '@/shared/constants/product-constants';
 import { Select } from '@/shared/ui/Select';
-
+import { useToast } from '@/shared/hooks/useToast';
 
 // --- Types & Constants ---
 export type AttributeType = 'string' | 'number';
@@ -181,9 +181,9 @@ const TagGroup = ({ label, items, onRemove, color }: TagGroupProps) => {
   );
 };
 
-// --- Main Component ---
 export default function AttributeBuilder({ attributes, onChange }: { attributes: AttributeDefinition[], onChange: (attrs: AttributeDefinition[]) => void }) {
   const t = useTranslations('products.form.attributeBuilder');
+  const toast = useToast();
 
   const addAttribute = useCallback(() => {
     onChange([...attributes, {
@@ -197,6 +197,16 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
   }, [attributes, onChange]);
 
   const updateAttribute = useCallback((index: number, key: keyof AttributeDefinition, val: any) => {
+    if (key === 'name') {
+      const isDuplicate = attributes.some((attr, i) => i !== index && attr.name === val);
+      if (isDuplicate) {
+        toast.error(t('duplicateAttributeError', { 
+          defaultValue: 'هذه الخاصية موجودة بالفعل، يرجى إضافة القيم الجديدة للخاصية الحالية بدلاً من إنشاء واحدة جديدة.' 
+        }));
+        return;
+      }
+    }
+
     const newAttrs = [...attributes];
     const target = { ...newAttrs[index] };
 
@@ -217,7 +227,7 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
 
     newAttrs[index] = target;
     onChange(newAttrs);
-  }, [attributes, onChange]);
+  }, [attributes, onChange, toast, t]);
 
   const removeAttribute = useCallback((index: number) => {
     onChange(attributes.filter((_, i) => i !== index));

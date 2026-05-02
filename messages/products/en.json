@@ -80,6 +80,8 @@
             "titleAr": "Title (Arabic) *",
             "descEn": "Description (English) *",
             "descAr": "Description (Arabic) *",
+            "usesEn": "Uses (English)",
+            "usesAr": "Uses (Arabic)",
             "placeholderTitleEn": "e.g. Wireless Headphones",
             "placeholderTitleAr": "سماعات لاسلكية",
             "placeholderDescEn": "Product features and details...",
@@ -178,6 +180,7 @@
                   "addNewAttribute": "Add New Attribute",
                   "selectUnit": "Select Unit",
                   "noUnitsAvailable": "No units available",
+                  "duplicateAttributeError": "This attribute is already added. Please add new values to the existing one instead of creating a new one.",
                   "names": {
                         "color": "Color",
                         "weight": "Weight",
