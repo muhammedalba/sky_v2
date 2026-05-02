@@ -18,9 +18,8 @@ import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 
-export default function CategoriesPage({ params }: { params: Promise<{ locale: string }> }) {
+export default function CategoriesPage() {
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
-  const { locale } = use(params);
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
 

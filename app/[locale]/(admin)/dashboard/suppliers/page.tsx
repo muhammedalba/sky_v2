@@ -154,7 +154,7 @@ export default function SuppliersPage({ params }: { params: Promise<{ locale: st
         emptyState={{
           title: "No suppliers found",
           description: "Keep track of your vendors by adding them to your dashboard.",
-          createLink: `/${locale}/dashboard/suppliers/create`,
+          createLink: () => router.push(`/${locale}/dashboard/suppliers/create`),
           createLabel: "Add Supplier"
         }}
       />

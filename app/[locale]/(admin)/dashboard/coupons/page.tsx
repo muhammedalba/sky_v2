@@ -155,7 +155,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
         emptyState={{
           title: "No coupons found",
           description: "Start rewarding your customers by creating discount codes.",
-          createLink: `/${locale}/dashboard/coupons/create`,
+          createLink: () => router.push(`/${locale}/dashboard/coupons/create`),
           createLabel: "Create Coupon"
         }}
       />
