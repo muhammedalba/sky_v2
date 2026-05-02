@@ -12,6 +12,7 @@ interface EntitySearchBarProps {
   onSearch: (value: string) => void;
   debounceMs?: number;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function EntitySearchBar({
@@ -20,10 +21,11 @@ export default function EntitySearchBar({
   onSearch,
   debounceMs = 500,
   className,
+  disabled = false
 }: EntitySearchBarProps) {
   const [searchTerm, setSearchTerm] = useState(defaultValue || '');
   const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
-  
+
   // نستخدم Ref لمنع البحث التلقائي عند فتح الصفحة لأول مرة
   const isMounted = useRef(false);
 
@@ -53,6 +55,7 @@ export default function EntitySearchBar({
         <Input
           placeholder={placeholder}
           value={searchTerm}
+          disabled={disabled}
           className="ps-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
           onChange={(e) => setSearchTerm(e.target.value)}
         />

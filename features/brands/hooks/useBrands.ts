@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Brand, ApiResponse } from '@/types';
-import { useToast } from '@/shared/hooks/useToast';
 import { brandsApi } from '@/features/brands/api';
 
 export function useBrands(
@@ -33,7 +32,6 @@ export function useBrand(id: string, options?: { all_langs?: boolean }) {
 
 export function useCreateBrand() {
   const queryClient = useQueryClient();
-  const toast = useToast();
 
   return useMutation({
     mutationFn: async (data: FormData) => {
@@ -42,10 +40,8 @@ export function useCreateBrand() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
-      toast.success('Brand created successfully');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create brand');
       console.log(error.message);
     },
   });
@@ -53,8 +49,6 @@ export function useCreateBrand() {
 
 export function useUpdateBrand() {
   const queryClient = useQueryClient();
-  const toast = useToast();
-
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: FormData }) => {
       const response = await brandsApi.update(id, data);
@@ -63,17 +57,13 @@ export function useUpdateBrand() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
       queryClient.invalidateQueries({ queryKey: ['brands', variables.id] });
-      toast.success('Brand updated successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update brand');
     },
   });
 }
 
 export function useDeleteBrand() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -82,10 +72,6 @@ export function useDeleteBrand() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
-      toast.success('Brand deleted successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete brand');
     },
   });
 }

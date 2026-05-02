@@ -19,29 +19,31 @@ import { SubCategory } from '@/types';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 
 export default function SubCategoriesPage() {
-
-  const getTrans = useTrans();
-  const confirmDialog = useConfirmDialog();
-  const t = useTranslations('subCategories');
-  const tCommon = useTranslations('messages');
-  const tButtons = useTranslations('buttons');
-  const toast = useToast();
+  // get query params
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSubCategory, setEditingSubCategory] = useState<SubCategory | null>(null);
+  // query params
   const queryParams = useMemo(() => ({
     page, limit: 10, keywords: search, all_langs: true
   }), [page, search]);
 
   const { data, isLoading, refetch } = useSubCategories(queryParams);
-  const deleteMutation = useDeleteSubCategory();
-  console.log(data);
-  // const handleSearch = useCallback((value: string) => {
-  //   setSearch(value);
-  //   setPage(1);
-  // }, []);
+  // mutations
+  const { mutateAsync: deleteSubCategory, isPending: deleteSubCategoryPending } = useDeleteSubCategory();
+  // translations
+  const t = useTranslations('subCategories');
+  const tCommon = useTranslations('messages');
+  const tButtons = useTranslations('buttons');
+  // hooks
+  const toast = useToast();
+  const getTrans = useTrans();
+  const confirmDialog = useConfirmDialog();
+  // states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSubCategory, setEditingSubCategory] = useState<SubCategory | null>(null);
+
+
 
   const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
 
@@ -65,29 +67,34 @@ export default function SubCategoriesPage() {
 
   const handleDelete = useCallback(async (id: string, name: string) => {
     confirmDialog.openDialog({
-      title: t('messages.deleteTitle'),
-      message: t('messages.deleteConfirm', { name }),
+      title: tCommon('deleteConfirm'),
+      message: tCommon('deleteConfirmWithName', { name }),
       onConfirm: async () => {
         try {
-          await deleteMutation.mutateAsync(id);
-          toast.success(t('messages.deleteSuccess'));
+          await deleteSubCategory(id);
+          toast.success(tCommon('success'));
           refetch();
         } catch (error: any) {
           console.error('Delete operation failed:', error);
-          toast.error(error.message || 'Failed to delete the item. Please try again.');
+          toast.error(tCommon('deleteError') || "Error while deleting");
         }
       },
     });
-  }, [confirmDialog, deleteMutation, refetch, t, toast]);
+  }, [confirmDialog, deleteSubCategory, refetch, t, toast]);
 
   const columns = useMemo(() => [
     {
       header: "Name",
       className: "pl-6",
       render: (sub: SubCategory) => (
-        <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
-          {getTrans(sub.name)}
-        </span>
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+            {getTrans(sub.name)}
+          </span>
+          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
+            ID: {sub._id.substring(0, 8)}...
+          </span>
+        </div>
       )
     },
     {
@@ -100,31 +107,31 @@ export default function SubCategoriesPage() {
     },
     {
       header: "Actions",
-      className: "pr-6 text-right",
+      className: "ps-6 text-center",
       render: (sub: SubCategory) => (
-        <div className="flex justify-end gap-2.5">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
-                 onClick={() => handleOpenModal(sub)}           >
-              <Icons.Edit className="w-4 h-4" />
-              {/* {tCommon('edit')} */}
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
-              onClick={() => handleDelete(sub._id, getTrans(sub.name))}
-            isLoading={deleteMutation.isPending}
-            >
-              <Icons.Trash className="w-4 h-4" />     
-                 {/* {tCommon('delete')} */}
-            </Button>
+        <div className="flex justify-center gap-2.5">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
+            disabled={deleteSubCategoryPending || isLoading}
+            onClick={() => handleOpenModal(sub)}           >
+            <Icons.Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
+            disabled={deleteSubCategoryPending || isLoading}
+            onClick={() => handleDelete(sub._id, getTrans(sub.name))}
+            isLoading={isLoading}
+          >
+            <Icons.Trash className="w-4 h-4" />
+          </Button>
         </div>
       )
     }
-  ], [getTrans, handleDelete, handleOpenModal, tButtons, deleteMutation.isPending]);
+  ], [getTrans, handleDelete, handleOpenModal, isLoading, deleteSubCategoryPending]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -144,6 +151,8 @@ export default function SubCategoriesPage() {
         defaultValue={search}
         onSearch={handleSearch}
         debounceMs={700}
+        disabled={deleteSubCategoryPending || isLoading}
+
       />
 
       <EntityDataTable<SubCategory>
@@ -153,18 +162,18 @@ export default function SubCategoriesPage() {
         onPageChange={handlePageChange}
         columns={columns}
         emptyState={{
-          title: "No sub-categories found",
-          description: "Organize your catalog by creating sub-categories under main categories.",
-          createLink: undefined,
-          createLabel: "Create Sub Category"
+          title: t('emptyState.title'),
+          description: t('emptyState.description'),
+          createLink: () => handleOpenModal(),
+          createLabel: t('createSubCategory')
         }}
       />
 
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={editingSubCategory ? 'Edit Sub-Category' : 'Create Sub-Category'}
-        description="Establish relationships between products and categories."
+        title={editingSubCategory ? t('editSubCategory') : t('createSubCategory')}
+        description={t('modalDescription')}
       >
         <SubCategoryForm
           editingSubCategory={editingSubCategory}
@@ -182,8 +191,8 @@ export default function SubCategoriesPage() {
         onConfirm={confirmDialog.handleConfirm}
         title={confirmDialog.title}
         message={confirmDialog.message}
-        confirmText="Delete"
-        cancelText="Cancel"
+        confirmText={tButtons('confirm')}
+        cancelText={tButtons('cancel')}
         isDangerous={true}
         isLoading={confirmDialog.isLoading}
       />

@@ -187,7 +187,7 @@ export default function DashboardContent() {
                 ))
               ) : (
                 data?.topProducts?.length ? (
-                  data.topProducts.map((product: Product) => (
+                  data?.topProducts.map((product: Product) => (
                     <div key={product._id} className="flex items-center gap-4 group">
                       <div className="relative h-12 w-12 rounded-xl bg-secondary overflow-hidden shrink-0 ring-1 ring-border/50">
                         <ImageWithFallback
@@ -200,7 +200,7 @@ export default function DashboardContent() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm truncate">{typeof product.title === 'string' ? product.title : (product.title?.en || '')}</p>
-                        <p className="text-xs text-muted-foreground truncate">{typeof product.category === 'object' ? (typeof product.category.name === 'string' ? product.category.name : product.category.name?.en) : ''}</p>
+                        <p className="text-xs text-muted-foreground truncate">{typeof product.category === 'object' ? (typeof product.category?.name === 'string' ? product.category?.name : product.category?.name?.en) : ''}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-black text-sm">{formatCurrency(product.priceRange?.min || 0)}</p>

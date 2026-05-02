@@ -32,7 +32,7 @@
       "messages": {
             "success": "تمت العملية بنجاح",
             "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
-            "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+            "deleteConfirmWithName": "    لا يمكن التراجع عن حذف هذا العنصر  . \"{name}\"",
             "deleteItem": "حذف {item}",
             "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد المغادرة؟",
             "loading": "جاري التحميل...",

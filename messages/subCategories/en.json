@@ -16,5 +16,10 @@
             "deleteTitle": "Delete Sub-Category",
             "deleteConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
             "deleteSuccess": "Sub-category deleted successfully"
+      },
+      "modalDescription": "Establish relationships between products and categories.",
+      "emptyState": {
+            "title": "No sub-categories found",
+            "description": "Organize your catalog by creating sub-categories under main categories."
       }
 }

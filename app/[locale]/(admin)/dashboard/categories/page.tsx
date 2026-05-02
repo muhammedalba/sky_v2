@@ -19,35 +19,35 @@ import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 
 export default function CategoriesPage() {
+  // get page and search from query params
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
-
+  // create query params
   const queryParams = useMemo(() => ({
     page, limit: 10, keywords: search, all_langs: true
   }), [page, search]);
-
+  // get data from api
   const { data, isLoading, refetch } = useCategories(queryParams);
-  console.log(data)
+  const { mutateAsync: deleteCategoryAsync, isPending: deleteCategoryPending } = useDeleteCategory();
+  // handle page change
   const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
-
-  // ── دالة بسيطة ومستقرة لتحديث الرابط مباشرة ──
+  // handle search
   const handleSearch = useCallback((value: string) => {
     setQueryParams({ search: value, page: 1 });
   }, [setQueryParams]);
-
-  const getTrans = useTrans();
+  // translations
   const t = useTranslations('categories');
   const tMessages = useTranslations('messages');
-  const tCommon = useTranslations('buttons');
-
-  const { mutateAsync: deleteCategoryAsync } = useDeleteCategory();
+  const tButtons = useTranslations('buttons');
+  const getTrans = useTrans();
+  // hooks
   const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
   const { success: toastSuccess, error: toastError } = useToast();
-
+  // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-
+  // open modal for adding or editing
   const handleOpenModal = useCallback((category?: Category) => {
     setEditingCategory(category || null);
     setIsModalOpen(true);
@@ -60,7 +60,7 @@ export default function CategoriesPage() {
 
   const handleDelete = useCallback((id: string, name: string) => {
     openDialog({
-      title: tMessages('deleteConfirm', { item: t('entityLabel') }),
+      title: tMessages('deleteConfirm'),
       message: tMessages('deleteConfirmWithName', { name }),
       onConfirm: async () => {
         try {
@@ -72,8 +72,8 @@ export default function CategoriesPage() {
         }
       },
     });
-  }, [openDialog, deleteCategoryAsync, toastSuccess, toastError, refetch, t, tMessages]);
-
+  }, [openDialog, deleteCategoryAsync, toastSuccess, toastError, refetch]);
+  // columns configuration for data table
   const columns = useMemo(() => [
     {
       header: t('fields.image'),
@@ -92,9 +92,14 @@ export default function CategoriesPage() {
     {
       header: t('fields.name'),
       render: (category: Category) => (
-        <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
-          {getTrans(category.name)}
-        </span>
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+            {getTrans(category.name)}
+          </span>
+          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
+            ID: {category._id.substring(0, 8)}...
+          </span>
+        </div>
       )
     },
     {
@@ -110,30 +115,31 @@ export default function CategoriesPage() {
     },
     {
       header: "Actions",
-      className: "pr-6 text-right",
+      className: "pe-6 text-center",
       render: (category: Category) => (
-        <div className="flex justify-end gap-2.5">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
-              onClick={() => handleOpenModal(category)}            >
-              <Icons.Edit className="w-4 h-4" />
-              {/* {tCommon('edit')} */}
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
-              onClick={() => handleDelete(category._id, getTrans(category.name))}
-            >
-              <Icons.Trash className="w-4 h-4" />     
-                 {/* {tCommon('delete')} */}
-            </Button>
+        <div className="flex justify-center gap-2.5">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
+            onClick={() => handleOpenModal(category)}
+            disabled={deleteCategoryPending || isLoading}           >
+            <Icons.Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
+            onClick={() => handleDelete(category._id, getTrans(category.name))}
+            disabled={deleteCategoryPending || isLoading}
+            isLoading={deleteCategoryPending}
+          >
+            <Icons.Trash className="w-4 h-4" />
+          </Button>
         </div>
       )
     }
-  ], [getTrans, handleOpenModal, handleDelete, t, tCommon]);
+  ], [getTrans, handleOpenModal, handleDelete, deleteCategoryPending, isLoading]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -154,6 +160,7 @@ export default function CategoriesPage() {
         defaultValue={search}
         onSearch={handleSearch}
         debounceMs={700}
+        disabled={deleteCategoryPending || isLoading}
       />
 
       <EntityDataTable<Category>
@@ -196,8 +203,8 @@ export default function CategoriesPage() {
         onConfirm={handleConfirm}
         title={confirmTitle}
         message={confirmMessage}
-        confirmText="Delete"
-        cancelText="Cancel"
+        confirmText={tButtons('confirm')}
+        cancelText={tButtons('cancel')}
         isDangerous={true}
         isLoading={isConfirmLoading}
       />

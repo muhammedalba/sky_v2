@@ -13,5 +13,15 @@
       "buttons": {
             "edit": "Edit",
             "delete": "Delete"
+      },
+      "aiTranslateImprove": "Improve with AI",
+      "messages": {
+            "createSuccess": "Brand created successfully ",
+            "updateSuccess": "Brand updated successfully",
+            "error": "An error occurred while saving the brand"
+      },
+      "modalDescription": "Organize your store by creating meaningful product brands.",
+      "emptyState": {
+            "description": "Try adjusting your search or create a new brand to get started."
       }
 }

@@ -85,7 +85,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           icon={Icons.Edit}
           label={t('fields.name') + (' (English)')}
           {...register('name.en')}
-          error={errors.name?.en ? tErrors('required') : undefined}
+          error={errors.name?.en?.message}
           disabled={createMutation.isPending || updateMutation.isPending}
 
         />
@@ -100,7 +100,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           aiActionTooltip={t('aiTranslateImprove')}
           icon={Icons.Edit}
           {...register('name.ar')}
-          error={errors.name?.ar ? tErrors('required') : undefined}
+          error={errors.name?.ar?.message}
           disabled={createMutation.isPending || updateMutation.isPending}
         />
 

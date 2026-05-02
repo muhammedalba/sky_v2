@@ -8,11 +8,11 @@ import ErrorMessage from '../ErrorMessage';
 import { cn } from '@/lib/utils';
 
 interface ImageUploadProps {
-  value?: string;
   onChange: (file: File) => void;
   onRemove: () => void;
   className?: string;
-  error?: string;
+  value?: string;
+  error?: string | null | undefined;
 }
 
 export default function ImageUpload({ value, onChange, onRemove, className, error }: ImageUploadProps) {
@@ -42,7 +42,7 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
     <div className={`flex flex-col gap-4 ${className}`}>
       <div className="flex items-center gap-4">
         {preview ? (
-          <div className="relative w-40 h-40 rounded-xl overflow-hidden border border-border">
+          <div className="relative w-40 h-40 rounded-xl  border border-border">
             <Image
               src={preview}
               alt="Upload preview"
@@ -52,9 +52,9 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 transition-colors"
+              className="absolute -top-2 -inset-e-2.5 cursor-pointer hover:scale-110  p-1 bg-destructive/70 text-destructive-foreground rounded-full hover:bg-destructive transition-colors"
             >
-              <Icons.Menu className="w-4 h-4 rotate-45" /> {/* Use generic X or trash */}
+              <Icons.X className="w-4 h-4 " /> {/* Use generic X or trash */}
             </button>
           </div>
         ) : (

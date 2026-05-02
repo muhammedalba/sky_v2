@@ -56,7 +56,7 @@ export default function Modal({ isOpen, onClose, title, description, children, f
       >
         {/* Header */}
         <div className="px-8 pt-8 pb-4 flex items-start justify-between">
-          <div>
+          <div className='border-b pb-5'>
             {title && (
               <h3 className="text-2xl font-black tracking-tight title-gradient">
                 {title}

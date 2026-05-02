@@ -14,24 +14,43 @@ import Modal from '@/shared/ui/Modal';
 import BrandForm from '@/features/brands/components/dashboard/BrandForm';
 import { useTrans } from '@/shared/hooks/useTrans';
 import { Brand } from '@/types';
+import { useQueryState } from '@/shared/hooks/useQueryState';
+import { useToast } from '@/shared/hooks/useToast';
 
 export default function BrandsPage() {
+  // get page and search from query params
+  const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
+  const page = Number(getQueryParam('page', '1'));
+  const search = getQueryParam('search', '');
+  // create query params
+  const queryParams = useMemo(() => ({
+    page, limit: 10, keywords: search, all_langs: true
+  }), [page, search]);
+
+  // get data from api
+  const { data, isLoading, refetch } = useBrands(queryParams);
+  const { mutateAsync: deleteBrandAsync, isPending: deleteBrandPending } = useDeleteBrand();
+
+  // handle page change
+  const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
+  // translations
   const t = useTranslations('brands');
-  const tCommon = useTranslations('messages');
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const tMessages = useTranslations('messages');
+  const tButtons = useTranslations('buttons');
+
   const getTrans = useTrans();
-  const confirmDialog = useConfirmDialog();
+  // hooks
+  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
+  const { success: toastSuccess, error: toastError } = useToast();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
 
-  const { data, isLoading, refetch } = useBrands({ page, limit: 10, keywords: search,all_langs:true});
-  const deleteMutation = useDeleteBrand();
 
+  // handle search
   const handleSearch = useCallback((value: string) => {
-    setSearch(value);
-    setPage(1);
-  }, []);
+    setQueryParams({ search: value, page: 1 });
+  }, [setQueryParams]);
 
   const handleOpenModal = useCallback((brand?: Brand) => {
     if (brand) {
@@ -47,16 +66,22 @@ export default function BrandsPage() {
     setEditingBrand(null);
   }, []);
 
-  const handleDelete = useCallback(async (id: string, name: string) => {
-    confirmDialog.openDialog({
-      title: tCommon('deleteItem', { item: t('entityLabel') }),
-      message: tCommon('deleteConfirmWithName', { name }),
+
+  const handleDelete = useCallback((id: string, name: string) => {
+    openDialog({
+      title: tMessages('deleteConfirm'),
+      message: tMessages('deleteConfirmWithName', { name }),
       onConfirm: async () => {
-        await deleteMutation.mutateAsync(id);
-        refetch();
+        try {
+          await deleteBrandAsync(id);;
+          toastSuccess(tMessages('success'));
+          refetch();
+        } catch (error) {
+          toastError(tMessages('error') || 'حدث خطأ أثناء الحذف');
+        }
       },
     });
-  }, [confirmDialog, deleteMutation, refetch, t, tCommon]);
+  }, [openDialog, deleteBrandAsync, toastSuccess, toastError, refetch]);
 
   const columns = useMemo(() => [
     {
@@ -88,30 +113,32 @@ export default function BrandsPage() {
     },
     {
       header: t('fields.actions'),
-      className: "pr-6 text-right",
+      className: "pe-6 text-center",
       render: (brand: Brand) => (
-        <div className="flex justify-end gap-2.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+
+        <div className="flex justify-center gap-2.5">
           <Button
-            size="sm"
-            variant="secondary"
-            className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95"
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
             onClick={() => handleOpenModal(brand)}
-          >
-            {t('buttons.edit')}
+            disabled={deleteBrandPending || isLoading}           >
+            <Icons.Edit className="w-4 h-4" />
           </Button>
           <Button
-            size="sm"
-            variant="destructive"
-            className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
             onClick={() => handleDelete(brand._id, getTrans(brand.name))}
-            isLoading={deleteMutation.isPending}
+            isLoading={deleteBrandPending}
+            disabled={deleteBrandPending || isLoading}
           >
-            {t('buttons.delete')}
+            <Icons.Trash className="w-4 h-4" />
           </Button>
         </div>
       )
     }
-  ], [t, getTrans, handleOpenModal, handleDelete, deleteMutation.isPending]);
+  ], [getTrans, handleOpenModal, handleDelete, deleteBrandPending, isLoading]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -128,18 +155,22 @@ export default function BrandsPage() {
       <EntitySearchBar
         placeholder={t('searchPlaceholder')}
         onSearch={handleSearch}
+        defaultValue={search}
+        debounceMs={700}
+        disabled={deleteBrandPending || isLoading}
+
       />
 
       <EntityDataTable<Brand>
         data={data?.data}
         isLoading={isLoading}
         pagination={data?.meta?.pagination}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
         columns={columns}
         emptyState={{
-          title: tCommon('noData'),
-          description: "Try adjusting your search or create a new brand to get started.",
-          createLink: undefined,
+          title: tMessages('noData'),
+          description: t('emptyState.description'),
+          createLink: () => handleOpenModal(),
           createLabel: t('createBrand')
         }}
       />
@@ -148,7 +179,7 @@ export default function BrandsPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={editingBrand ? t('editBrand') : t('createBrand')}
-        description="Organize your store by creating meaningful product brands."
+        description={t('modalDescription')}
       >
         <BrandForm
           editingBrand={editingBrand}
@@ -161,15 +192,15 @@ export default function BrandsPage() {
       </Modal>
 
       <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        onClose={confirmDialog.closeDialog}
-        onConfirm={confirmDialog.handleConfirm}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
-        confirmText="Delete"
-        cancelText="Cancel"
+        isOpen={isConfirmOpen}
+        onClose={closeDialog}
+        onConfirm={handleConfirm}
+        title={confirmTitle}
+        message={confirmMessage}
+        confirmText={tButtons('confirm')}
+        cancelText={tButtons('cancel')}
         isDangerous={true}
-        isLoading={confirmDialog.isLoading}
+        isLoading={isConfirmLoading}
       />
     </div>
   );
