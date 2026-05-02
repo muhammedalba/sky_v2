@@ -7,6 +7,7 @@
       "createCategory": "Create Category",
       "editCategory": "Edit Category",
       "categoryList": "Category List",
+      "aiTranslateImprove": "Improve with AI",
       "fields": {
             "name": "Category Name",
             "productsCount": "Products Count",

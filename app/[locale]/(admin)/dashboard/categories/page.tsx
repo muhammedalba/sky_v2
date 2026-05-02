@@ -112,23 +112,24 @@ export default function CategoriesPage() {
       header: "Actions",
       className: "pr-6 text-right",
       render: (category: Category) => (
-        <div className="flex justify-end gap-2.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-          <Button
-            size="sm"
-            variant="secondary"
-            className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95"
-            onClick={() => handleOpenModal(category)}
-          >
-            {tCommon('edit')}
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
-            onClick={() => handleDelete(category._id, getTrans(category.name))}
-          >
-            {tCommon('delete')}
-          </Button>
+        <div className="flex justify-end gap-2.5">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
+              onClick={() => handleOpenModal(category)}            >
+              <Icons.Edit className="w-4 h-4" />
+              {/* {tCommon('edit')} */}
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
+              onClick={() => handleDelete(category._id, getTrans(category.name))}
+            >
+              <Icons.Trash className="w-4 h-4" />     
+                 {/* {tCommon('delete')} */}
+            </Button>
         </div>
       )
     }

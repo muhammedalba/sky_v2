@@ -4,8 +4,17 @@
       "editSubCategory": "Edit Sub Category",
       "searchPlaceholder": "Search sub-categories...",
       "subtitle": "Manage hierarchy levels",
+      "mainCategory": "Main Category",
       "fields": {
             "name": "Name",
             "parentCategory": "Parent Category"
+      },
+      "aiTranslateImprove": "Improve with AI",
+      "messages": {
+            "createSuccess": "Sub-category created successfully",
+            "updateSuccess": "Sub-category updated successfully",
+            "deleteTitle": "Delete Sub-Category",
+            "deleteConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+            "deleteSuccess": "Sub-category deleted successfully"
       }
 }

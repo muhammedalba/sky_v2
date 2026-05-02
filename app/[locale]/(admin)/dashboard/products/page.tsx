@@ -104,6 +104,186 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
     refetch();
 
   };
+  const columns = useMemo(() => [
+    {
+      header: t('fields.product', { defaultValue: 'Product' }),
+      className: "w-[300px] ps-6",
+      render: (product: Product, index: number) => (
+        <>
+          <Link href={`/${locale}/dashboard/products/${product.slug}/edit`} className="flex items-center gap-3">
+
+            <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
+              <ImageWithFallback
+                src={product.imageCover || ''}
+                alt={getTrans(product.title)}
+                fill
+                sizes="48px"
+                loading={index < 5 ? "eager" : "lazy"}
+                className="object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 overflow-hidden">
+              <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                {truncate(getTrans(product.title), 30)}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
+                  {product.variantCount ? `${product.variantCount} Variants` : 'Standard'}
+                </span>
+                {product.infoProductPdf && (
+                  <Badge variant="success" className="text-[9px] px-1.5 py-0 rounded-sm">PDF</Badge>
+                )}
+              </div>
+            </div>
+          </Link>
+          <div className="flex items-center gap-0.5 mt-1">
+            {[...Array(5)].map((_, i) => (
+              <Icons.Star
+                key={i}
+                className={`w-3 h-3 ${i < Math.round(product.ratingsAverage || 0) ? 'text-amber-400' : 'text-zinc-200'}`}
+              />
+            ))}
+            <span className="text-[10px] text-muted-foreground ml-1 font-medium">({product.ratingsAverage || 0})</span>
+          </div>
+
+        </>
+      )
+    },
+    {
+      header: t('fields.status', { defaultValue: 'Status' }),
+      className: "w-[150px]",
+      render: (product: Product) => (
+        <div className="flex flex-col gap-2">
+          <Switch
+            checked={product.isFeatured}
+            onChange={(e) => updateMutation.mutate({ id: product._id, data: { isFeatured: e.target.checked } })}
+            disabled={updateMutation.isPending}
+            label={getTrans({ ar: "مميز", en: "Featured" })}
+            className="scale-75 origin-left rtl:origin-right"
+          />
+          <Switch
+            checked={product.isActive}
+            onChange={(e) => updateMutation.mutate({ id: product._id, data: { isActive: e.target.checked } })}
+            disabled={updateMutation.isPending}
+            label={getTrans({ ar: "نشط", en: "Active" })}
+            className="scale-75 origin-left rtl:origin-right"
+          />
+        </div>
+      )
+    },
+    {
+      header: `${t('fields.category', { defaultValue: 'Category' })} & ${t('form.brand', { defaultValue: 'brand' })}`,
+      render: (product: Product) => (<>
+        <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+          {product.category && typeof product.category === 'object' && 'name' in product.category
+            ? getTrans(product.category.name)
+            : typeof product.category === 'string' ? product.category : '-'}
+        </Badge>
+        <i className="mb-1 block!" />
+        <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+          {product.brand && typeof product.brand === 'object' && 'name' in product.brand
+            ? getTrans(product.brand.name)
+            : typeof product.brand === 'string' ? product.brand : '-'}
+        </Badge>
+      </>
+      )
+    },
+    {
+      header: t('fields.price', { defaultValue: 'Price' }),
+      render: (product: Product) => {
+        const minPrice = product.priceRange?.min || 0;
+        const maxPrice = product.priceRange?.max || 0;
+        return (
+          <span className="font-bold text-sm text-foreground">
+            {minPrice === maxPrice
+              ? formatCurrency(minPrice, locale)
+              : `${formatCurrency(minPrice, locale)} - ${formatCurrency(maxPrice, locale)}`}
+          </span>
+        );
+      }
+    },
+    {
+      header: t('fields.inventory', { defaultValue: 'Inventory' }),
+      render: (product: Product) => {
+        if (product.isUnlimitedStock) {
+          return (<>
+            <Badge variant="default" className="rounded-full  p-1.5 font-bold text-xs border-indigo-500/20 text-primary bg-indigo-50/50 dark:bg-indigo-500/10 dark:text-indigo-400 gap-1.5 flex items-center w-fit group/badge hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all duration-300">
+              <Icons.Infinity className="w-4 h-4 group-hover/badge:rotate-12 transition-transform duration-500" />
+              {t('filters.unlimitedStock')}
+            </Badge>
+          </>
+          );
+        }
+        const stock = product.stockSummary ?? 0;
+        return (
+          <div className="flex flex-col gap-1 w-fit">
+            <span className="font-bold text-sm">
+              {stock} <span className="text-muted-foreground text-xs font-medium">in stock</span>
+            </span>
+            <Badge
+              variant={stock > 10 ? 'success' : stock > 0 ? 'warning' : 'danger'}
+              className="w-fit rounded-full px-2 py-0.5 font-bold text-[9px] uppercase tracking-wider"
+            >
+              {stock > 0 ? (stock > 10 ? 'In Stock' : 'Low Stock') : 'Out of Stock'}
+            </Badge>
+          </div>
+        );
+      }
+    },
+    {
+      header: t('fields.actions') || 'Actions',
+      className: "pe-6 text-end w-[120px]",
+      render: (product: Product) => (
+        <div className="flex justify-end gap-1 group-hover:scale-105 transition-all duration-300">
+          {viewTab === 'deleted' ? (
+            <>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="bg-success/10 hover:bg-success hover:text-white border border-success/30 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95 text-success dark:text-success"
+                onClick={() => handleRestore(product._id)}
+                isLoading={restoreMutation.isPending}
+              >
+                {t('form.restoreProduct')}
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
+                onClick={() => handleHardDelete(product._id, getTrans(product.title))}
+                isLoading={hardDeleteMutation.isPending}
+              >
+                {t('form.hardDelete')}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
+                onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
+              >
+                <Icons.Edit className="w-4 h-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
+                onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
+                isLoading={deleteMutation.isPending}
+              >
+                <Icons.Trash className="w-4 h-4" />
+              </Button>
+            </>
+          )}
+        </div>
+      )
+    }
+  ], [t, locale, router, getTrans, updateMutation, viewTab, handleRestore, handleHardDelete, handleSoftDelete]);
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
@@ -138,185 +318,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         isLoading={isLoading}
         pagination={data?.meta?.pagination}
         onPageChange={handlePageChange}
-        columns={[
-          {
-            header: t('fields.product', { defaultValue: 'Product' }),
-            className: "w-[300px] ps-6",
-            render: (product: Product, index: number) => (
-              <>
-                <Link href={`/${locale}/dashboard/products/${product.slug}/edit`} className="flex items-center gap-3">
-
-                  <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
-                    <ImageWithFallback
-                      src={product.imageCover || ''}
-                      alt={getTrans(product.title)}
-                      fill
-                      sizes="48px"
-                      loading={index < 5 ? "eager" : "lazy"}
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1 overflow-hidden">
-                    <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                      {truncate(getTrans(product.title), 30)}
-                    </span>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
-                        {product.variantCount ? `${product.variantCount} Variants` : 'Standard'}
-                      </span>
-                      {product.infoProductPdf && (
-                        <Badge variant="success" className="text-[9px] px-1.5 py-0 rounded-sm">PDF</Badge>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-                <div className="flex items-center gap-0.5 mt-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Icons.Star
-                      key={i}
-                      className={`w-3 h-3 ${i < Math.round(product.ratingsAverage || 0) ? 'text-amber-400' : 'text-zinc-200'}`}
-                    />
-                  ))}
-                  <span className="text-[10px] text-muted-foreground ml-1 font-medium">({product.ratingsAverage || 0})</span>
-                </div>
-
-              </>
-            )
-          },
-          {
-            header: t('fields.status', { defaultValue: 'Status' }),
-            className: "w-[150px]",
-            render: (product: Product) => (
-              <div className="flex flex-col gap-2">
-                <Switch
-                  checked={product.isFeatured}
-                  onChange={(e) => updateMutation.mutate({ id: product._id, data: { isFeatured: e.target.checked } })}
-                  disabled={updateMutation.isPending}
-                  label={getTrans({ ar: "مميز", en: "Featured" })}
-                  className="scale-75 origin-left rtl:origin-right"
-                />
-                <Switch
-                  checked={product.isActive}
-                  onChange={(e) => updateMutation.mutate({ id: product._id, data: { isActive: e.target.checked } })}
-                  disabled={updateMutation.isPending}
-                  label={getTrans({ ar: "نشط", en: "Active" })}
-                  className="scale-75 origin-left rtl:origin-right"
-                />
-              </div>
-            )
-          },
-          {
-            header: `${t('fields.category', { defaultValue: 'Category' })} & ${t('form.brand', { defaultValue: 'brand' })}`,
-            render: (product: Product) => (<>
-              <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                {product.category && typeof product.category === 'object' && 'name' in product.category
-                  ? getTrans(product.category.name)
-                  : typeof product.category === 'string' ? product.category : '-'}
-              </Badge>
-              <i className="mb-1 block!" />
-              <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                {product.brand && typeof product.brand === 'object' && 'name' in product.brand
-                  ? getTrans(product.brand.name)
-                  : typeof product.brand === 'string' ? product.brand : '-'}
-              </Badge>
-            </>
-            )
-          },
-          {
-            header: t('fields.price', { defaultValue: 'Price' }),
-            render: (product: Product) => {
-              const minPrice = product.priceRange?.min || 0;
-              const maxPrice = product.priceRange?.max || 0;
-              return (
-                <span className="font-bold text-sm text-foreground">
-                  {minPrice === maxPrice
-                    ? formatCurrency(minPrice, locale)
-                    : `${formatCurrency(minPrice, locale)} - ${formatCurrency(maxPrice, locale)}`}
-                </span>
-              );
-            }
-          },
-          {
-            header: t('fields.inventory', { defaultValue: 'Inventory' }),
-            render: (product: Product) => {
-              if (product.isUnlimitedStock) {
-                return (<>
-                  <Badge variant="default" className="rounded-full  p-1.5 font-bold text-xs border-indigo-500/20 text-primary bg-indigo-50/50 dark:bg-indigo-500/10 dark:text-indigo-400 gap-1.5 flex items-center w-fit group/badge hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all duration-300">
-                    <Icons.Infinity className="w-4 h-4 group-hover/badge:rotate-12 transition-transform duration-500" />
-                    {t('filters.unlimitedStock')}
-                  </Badge>
-                </>
-                );
-              }
-              const stock = product.stockSummary ?? 0;
-              return (
-                <div className="flex flex-col gap-1 w-fit">
-                  <span className="font-bold text-sm">
-                    {stock} <span className="text-muted-foreground text-xs font-medium">in stock</span>
-                  </span>
-                  <Badge
-                    variant={stock > 10 ? 'success' : stock > 0 ? 'warning' : 'danger'}
-                    className="w-fit rounded-full px-2 py-0.5 font-bold text-[9px] uppercase tracking-wider"
-                  >
-                    {stock > 0 ? (stock > 10 ? 'In Stock' : 'Low Stock') : 'Out of Stock'}
-                  </Badge>
-                </div>
-              );
-            }
-          },
-          {
-            header: t('fields.actions') || 'Actions',
-            className: "pe-6 text-end w-[120px]",
-            render: (product: Product) => (
-              <div className="flex justify-end gap-1 group-hover:scale-105 transition-all duration-300">
-                {viewTab === 'deleted' ? (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="bg-success/10 hover:bg-success hover:text-white border border-success/30 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95 text-success dark:text-success"
-                      onClick={() => handleRestore(product._id)}
-                      isLoading={restoreMutation.isPending}
-                    >
-                      {t('form.restoreProduct')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
-                      onClick={() => handleHardDelete(product._id, getTrans(product.title))}
-                      isLoading={hardDeleteMutation.isPending}
-                    >
-                      {t('form.hardDelete')}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
-                      onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
-                    >
-                      <Icons.Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
-                      onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
-                      isLoading={deleteMutation.isPending}
-                    >
-                      <Icons.Trash className="w-4 h-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            )
-          }
-        ]}
+        columns={columns}
         expandableContent={(product) => {
           if (!product.variants || product.variants.length === 0) {
             return <div className="text-sm text-muted-foreground py-2 text-center">No variants available</div>;

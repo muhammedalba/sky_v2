@@ -87,7 +87,7 @@ const SheetContent = React.forwardRef<
 SheetContent.displayName = "SheetContent";
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out animate-in duration-300",
+  "fixed z-50 gap-4 bg-background p-6 overflow-y-auto shadow-lg transition ease-in-out animate-in duration-300",
   {
     variants: {
       side: {

@@ -11,6 +11,7 @@ import { Input } from '@/shared/ui/Input';
 import { useCreateCategory, useUpdateCategory } from '@/features/categories/hooks/useCategories';
 import { useToast } from '@/shared/hooks/useToast';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
+import { Icons } from '@/shared/ui/Icons';
 
 interface CategoryFormProps {
   editingCategory: Category | null;
@@ -53,40 +54,35 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
     },
   });
 
-  const onSubmit = (data: CategoryInput) => {
+  const onSubmit = async (data: CategoryInput) => {
     const formData = new FormData();
     formData.append('name[en]', data.name.en);
     formData.append('name[ar]', data.name.ar);
     if (imageFile) formData.append('image', imageFile);
 
-    if (editingCategory) {
-      updateMutation.mutate({ id: editingCategory._id, data: formData }, {
-        onSuccess: () => {
-          toast.success(t('messages.updateSuccess'), data.name.en);
-          onSuccess();
-        },
-        onError: (error) => {
-          toast.error(error.message || t('messages.error'), data.name.en);
-        }
-      });
-    } else {
-      createMutation.mutateAsync(formData, {
-        onSuccess: () => {
-          toast.success(t('messages.createSuccess'), data.name.en);
-          onSuccess();
-        },
-        onError: (error) => {
-          toast.error(error.message || t('messages.error'), data.name.en);
-        }
-      });
-    }
+    try {
+      if (editingCategory) {
+        await updateMutation.mutateAsync({ id: editingCategory._id, data: formData });
+        toast.success(t('messages.updateSuccess'), data.name.en);
+      } else {
+        await createMutation.mutateAsync(formData);
+        toast.success(t('messages.createSuccess'), data.name.en);
+      }
+      onSuccess();
 
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || t('messages.error'), data.name.en);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="space-y-2">
         <Input
+          showAiAction
+          aiActionTooltip={t('aiTranslateImprove')}
+          icon={Icons.Edit}
           label={t('fields.name') + (' (English)')}
           {...register('name.en')}
           error={errors.name?.en ? tErrors('required') : undefined}
@@ -100,6 +96,9 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
 
         <Input
           label={t('fields.name') + (' (Arabic)')}
+          showAiAction
+          aiActionTooltip={t('aiTranslateImprove')}
+          icon={Icons.Edit}
           {...register('name.ar')}
           error={errors.name?.ar ? tErrors('required') : undefined}
           disabled={createMutation.isPending || updateMutation.isPending}

@@ -7,6 +7,7 @@
       "createCategory": "إنشاء فئة",
       "editCategory": "تعديل الفئة",
       "categoryList": "قائمة الفئات",
+      "aiTranslateImprove": "التحسين بواسطة الذكاء الاصطناعي",
       "fields": {
             "name": "اسم الفئة",
             "productsCount": "عدد المنتجات",

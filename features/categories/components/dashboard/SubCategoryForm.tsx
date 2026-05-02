@@ -6,13 +6,15 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { useCategories } from '@/features/categories/hooks/useCategories';
 import { useCreateSubCategory, useUpdateSubCategory } from '@/features/categories/hooks/useSubCategories';
-import { Category, SubCategory } from '@/types';
+import { Category, LocalizedString, SubCategory } from '@/types';
 import { useTranslations } from 'next-intl';
 import { useTrans } from '@/shared/hooks/useTrans';
 import { useState } from 'react';
-import Spinner from '@/shared/ui/Spinner';
+import { useParams } from 'next/navigation';
 import { SubCategoryFormValues, subCategorySchema } from '@/features/categories/category.schema';
-
+import { SearchableSelect, SearchOption } from '@/shared/ui/form/SearchableSelect';
+import { Icons } from '@/shared/ui/Icons';
+import { useToast } from '@/shared/hooks/useToast';
 
 interface SubCategoryFormProps {
   editingSubCategory: SubCategory | null;
@@ -24,12 +26,14 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
   const t = useTranslations('subCategories');
   const tCommon = useTranslations('buttons');
   const getTrans = useTrans();
+  const { locale } = useParams();
   const createMutation = useCreateSubCategory();
   const updateMutation = useUpdateSubCategory();
-  const [search, setSearch] = useState<string>(
-    editingSubCategory?.category ? getTrans(editingSubCategory.category.name) : ''
-  );
+  const toast = useToast();
+  const [search, setSearch] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
 
   const { data: categoriesData, isFetching: isCategoriesFetching } = useCategories(
     { fields: "name id", keywords: search },
@@ -40,7 +44,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
     register,
     handleSubmit,
     setValue,
-    control,
+    watch,
     formState: { errors }
   } = useForm<SubCategoryFormValues>({
     resolver: zodResolver(subCategorySchema),
@@ -53,10 +57,17 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
     },
   });
 
-  const selectedCategoryId = useWatch({
-    control,
-    name: 'category',
-  });
+  const watchedCategory = watch('category');
+
+  const onCategorySearch = (val: string) => setSearch(val);
+  const onCategoryOpen = () => setIsDropdownOpen(true);
+  const onCategoryChange = (val: string) => {
+    setValue('category', val, { shouldValidate: true });
+  };
+
+  const initialCategoryLabel = editingSubCategory?.category && typeof editingSubCategory.category === 'object'
+    ? getTrans(editingSubCategory.category.name)
+    : '';
 
   const onSubmit = async (data: SubCategoryFormValues) => {
     const payload = {
@@ -70,11 +81,14 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
     try {
       if (editingSubCategory) {
         await updateMutation.mutateAsync({ id: editingSubCategory._id, data: payload });
+        toast.success(t('messages.updateSuccess'), data.name.en);
       } else {
         await createMutation.mutateAsync(payload);
+        toast.success(t('messages.createSuccess'), data.name.en);
       }
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error?.message || t('messages.error'), data.name.en);
       console.error(error);
     }
   };
@@ -83,85 +97,47 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-            {t('fields.name') || 'Name'} (English)
-          </label>
           <Input
             {...register('name.en')}
-            placeholder="e.g. Smartphones"
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.en ? 'ring-2 ring-red-500' : ''}`}
+            label={t('fields.name') + ' (English)'}
+            error={errors.name?.en?.message}
+            disabled={updateMutation.isPending}
+            showAiAction
+            dir='ltr'
+            aiActionTooltip={t('aiTranslateImprove')}
+            icon={Icons.Edit}
           />
-          {errors.name?.en && <p className="text-destructive text-xs mt-1">{errors.name.en.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-            {t('fields.name') || 'Name'} (Arabic)
-          </label>
           <Input
             {...register('name.ar')}
-            placeholder="مثال: الهواتف الذكية"
+            label={t('fields.name') + ' (Arabic)'}
             dir="rtl"
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.name?.ar ? 'ring-2 ring-red-500' : ''}`}
+            error={errors.name?.ar?.message}
+            disabled={updateMutation.isPending}
+            showAiAction
+            aiActionTooltip={t('aiTranslateImprove')}
+            icon={Icons.Edit}
           />
-          {errors.name?.ar && <p className="text-destructive text-xs mt-1">{errors.name.ar.message}</p>}
         </div>
       </div>
 
-      <div className="space-y-2 relative">
-        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-          Parent Category
-        </label>
-        <Input
-          placeholder="Search for a category..."
-          value={search}
-          autoComplete="off"
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setIsDropdownOpen(true);
-            setValue('category', '', { shouldValidate: true });
-          }}
-          onFocus={() => setIsDropdownOpen(true)}
-          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
-          className={`w-full h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.category ? 'ring-2 ring-red-500' : ''}`}
-        />
-        <input type="hidden" {...register('category')} />
-
-        {isDropdownOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-            {isCategoriesFetching ? (
-              <div className="p-4 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                <Spinner className="w-4 h-4" /> Loading categories...
-              </div>
-            ) : categoriesData?.data && categoriesData.data.length > 0 ? (
-              <ul className="p-1">
-                {categoriesData.data.map((cat: Category) => (
-                  <li
-                    key={cat._id}
-                    onClick={() => {
-                      setValue('category', cat._id, { shouldValidate: true });
-                      setSearch(getTrans(cat.name));
-                      setIsDropdownOpen(false);
-                    }}
-                    className={`px-4 py-3 rounded-lg text-sm font-bold cursor-pointer transition-colors ${
-                      selectedCategoryId === cat._id 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'hover:bg-secondary/20'
-                    }`}
-                  >
-                    {getTrans(cat.name)}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="p-4 text-center text-sm text-muted-foreground">
-                No categories found.
-              </div>
-            )}
-          </div>
-        )}
-        {errors.category && <p className="text-destructive text-xs mt-1">{errors.category.message}</p>}
-      </div>
+      <SearchableSelect
+        icon={Icons.Categories}
+        iconColor="text-amber-500"
+        label={t('searchPlaceholder')}
+        value={watchedCategory || ''}
+        isLoading={isCategoriesFetching}
+        options={(categoriesData?.data as unknown as SearchOption[]) || []}
+        getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+        onSearch={onCategorySearch}
+        onOpen={onCategoryOpen}
+        onSelect={onCategoryChange}
+        error={tError(errors.category?.message)}
+        initialDisplayValue={initialCategoryLabel}
+        createLink={`/${locale}/dashboard/categories`}
+      />
 
       <div className="flex gap-3 pt-4">
         <Button

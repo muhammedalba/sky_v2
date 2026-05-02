@@ -32,7 +32,7 @@ export interface FilterErrors {
 }
 
 export function useProductFilters() {
-  const { getQueryParam, setQueryParams, setQueryParam } = useQueryState();
+  const { getQueryParam, setQueryParams } = useQueryState();
   const [filterErrors, setFilterErrors] = useState<FilterErrors>({});
 
   const filters = useMemo<ProductFilters>(() => ({

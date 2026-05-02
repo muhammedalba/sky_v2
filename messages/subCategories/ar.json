@@ -4,8 +4,17 @@
       "editSubCategory": "تعديل الفئة الفرعية",
       "searchPlaceholder": "البحث في الفئات الفرعية...",
       "subtitle": "إدارة مستويات التسلسل الهرمي",
+      "mainCategory": "الفئة الرئيسية",
       "fields": {
             "name": "الاسم",
             "parentCategory": "الفئة الأب"
+      },
+      "aiTranslateImprove": "التحسين بواسطة الذكاء الاصطناعي",
+      "messages": {
+            "createSuccess": "تم إنشاء الفئة الفرعية بنجاح",
+            "updateSuccess": "تم تحديث الفئة الفرعية بنجاح",
+            "deleteTitle": "حذف الفئة الفرعية",
+            "deleteConfirm": "هل أنت متأكد أنك تريد حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+            "deleteSuccess": "تم حذف الفئة الفرعية بنجاح"
       }
 }

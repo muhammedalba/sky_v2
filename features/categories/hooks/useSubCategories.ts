@@ -33,7 +33,7 @@ export function useSubCategory(id: string, options?: { all_langs?: boolean }) {
 
 export function useCreateSubCategory() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
@@ -42,17 +42,14 @@ export function useCreateSubCategory() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subCategories'] });
-      toast.success('Sub-category created successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create sub-category');
-    },
+ 
   });
 }
 
 export function useUpdateSubCategory() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Record<string, unknown> }) => {
@@ -62,18 +59,13 @@ export function useUpdateSubCategory() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['subCategories'] });
       queryClient.invalidateQueries({ queryKey: ['subCategories', variables.id] });
-      toast.success('Sub-category updated successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update sub-category');
-    },
+
   });
 }
 
 export function useDeleteSubCategory() {
   const queryClient = useQueryClient();
-  const toast = useToast();
-
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await subCategoriesApi.delete(id);
@@ -81,10 +73,6 @@ export function useDeleteSubCategory() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subCategories'] });
-      toast.success('Sub-category deleted successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete sub-category');
     },
   });
 }

@@ -26,7 +26,7 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, name, placeholder, labelClassName, disabled = false, value, icon, iconColor, inputWrapperClass, showAiAction, onAiAction, aiActionTooltip, aiActionDisabled, ...props }, ref) => {
+  ({ className, type, label, error, name, placeholder, labelClassName, disabled = false, value, icon, iconColor, inputWrapperClass, showAiAction, onAiAction, aiActionTooltip, aiActionDisabled=true, ...props }, ref) => {
     const IconComponent = icon;
     const [isFocused, setIsFocused] = React.useState(false);
     // Determine if label should float
@@ -77,20 +77,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         {showAiAction && (
-          <div className="absolute inset-y-0 inset-e-3 flex items-center justify-center">
+          <div className="absolute -top-1/3 inset-e-0 flex items-center justify-center  cursor-pointer">
             <Tooltip content={aiActionTooltip || ""}>
-              <button
-                type="button"
+                <button
+                type="button" 
                 onClick={onAiAction}
                 disabled={aiActionDisabled}
                 className={cn(
-                  "transition-all duration-200",
+                  "transition-all duration-200 cursor-pointer",
                   aiActionDisabled
-                    ? "text-slate-200 cursor-not-allowed"
+                    ? "text-warning/70  cursor-not-allowed"
                     : "text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg p-1.5"
                 )}
               >
-                <Icons.AiSpark className="h-4.5 w-4.5" />
+                <Icons.AiSpark className="h-4.5 w-4.5 " />
               </button>
             </Tooltip>
           </div>
