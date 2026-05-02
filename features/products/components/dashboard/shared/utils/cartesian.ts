@@ -39,10 +39,11 @@ export function cartesian(attrs: AttributeDefinition[]): Record<string, any>[] {
 /** Generates a stable string key for a variant combo (supports object values like {value, unit}). */
 export const getVariantKey = (attrs: Record<string, any> = {}): string =>
   Object.entries(attrs || {})
-    .sort()
+    .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, val]) => {
-      if (typeof val === 'object' && val !== null && 'value' in val && 'unit' in val) {
-        return `${k}:${val.value}(${val.unit})`;
+      if (typeof val === 'object' && val !== null && 'value' in val) {
+        const unitStr = (val as any).unit ? `(${(val as any).unit})` : '';
+        return `${k}:${(val as any).value}${unitStr}`;
       }
       return `${k}:${val}`; 
     })

@@ -23,16 +23,17 @@ import { ProductFiltersBar } from '@/features/products/components/dashboard/Prod
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import Link from 'next/link';
 
-type ViewTab = 'isActive' | 'deleted' | 'featured' | 'unlimited_stock' | 'notActive' | 'sort';
+type ViewTab = 'isActive' | 'deleted' | 'featured' | 'lowStock' | 'notActive' | 'sort' | 'unlimited_stock';
 
 // نقل الثوابت خارج المكون لمنع إعادة تخصيص الذاكرة
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
   isActive: {},
   deleted: { isDeleted: 'true' },
   featured: { isFeatured: 'true' },
-  unlimited_stock: { isUnlimitedStock: 'true' },
+  lowStock: { sort: 'stockSummary', isUnlimitedStock: 'false' },
   notActive: { isActive: 'false' },
-  sort: { sort: '-totalSold' },
+  sort: { sort: '-totalSold' }, 
+  unlimited_stock: { isUnlimitedStock: 'true' },
 };
 
 export default function ProductsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -70,6 +71,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
     { key: 'notActive' as ViewTab, label: t('filters.disabled'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
     { key: 'sort' as ViewTab, label: t('filters.sold'), activeClass: 'bg-amber-400 text-white shadow-md shadow-amber-500/20' },
     { key: 'featured' as ViewTab, label: t('filters.featured'), activeClass: 'bg-amber-500 text-white shadow-md shadow-amber-500/20' },
+    { key: 'lowStock' as ViewTab, label: t('filters.lowStock'), activeClass: 'bg-amber-500 text-white shadow-md shadow-amber-500/20' },
     { key: 'unlimited_stock' as ViewTab, label: t('filters.unlimitedStock'), activeClass: 'bg-sky-500 text-white shadow-md shadow-sky-500/20' },
     { key: 'deleted' as ViewTab, label: t('filters.deleted'), activeClass: 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20' },
   ], [t]);
@@ -361,8 +363,9 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           title: viewTab === 'deleted' ? t('form.noDeletedProducts')
             : viewTab === 'featured' ? t('filters.noFeatured')
               : viewTab === 'unlimited_stock' ? t('filters.noUnlimitedStock')
-                : viewTab === 'notActive' ? t('filters.noDisabled')
-                  : t('emptyState.noProducts'),
+                : viewTab === 'lowStock' ? t('filters.noLowStock')
+                  : viewTab === 'notActive' ? t('filters.noDisabled')
+                    : t('emptyState.noProducts'),
           description: viewTab === 'deleted'
             ? t('emptyState.deletedDesc')
             : t('emptyState.activeDesc'),

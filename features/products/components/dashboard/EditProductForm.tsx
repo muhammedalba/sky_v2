@@ -411,7 +411,14 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     existingImages.forEach((url) => formData.append('images', url));
     if (pdfFile) formData.append('infoProductPdf', pdfFile);
 
-    await updateMutation.mutateAsync({ id: initialData._id, data: formData });
+    updateMutation.mutate(
+      { id: initialData._id, data: formData },
+      {
+        onSuccess: () => {
+          router.push(`/${locale}/dashboard/products`);
+        },
+      }
+    );
   };
 
   // ─────────────────────────────────────────────────────

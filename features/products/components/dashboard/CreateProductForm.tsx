@@ -181,7 +181,11 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     if (galleryFiles.length > 0) galleryFiles.forEach((f) => formData.append('images', f));
     if (pdfFile) formData.append('infoProductPdf', pdfFile);
 
-    await createMutation.mutateAsync(formData);
+    createMutation.mutate(formData, {
+      onSuccess: () => {
+        router.push(`/${locale}/dashboard/products`);
+      }
+    });
   };
 
   // ─────────────────────────────────────────────────────

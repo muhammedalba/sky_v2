@@ -158,10 +158,10 @@ export function ProductFiltersBar() {
         <Button
           variant="outline"
           onClick={() => setIsDrawerOpen(true)}
-          className="h-12 px-5 gap-2.5 bg-background/50 border-border/40 font-bold relative"
+          className="h-12 px-5 gap-2.5 bg-background/50 border-border/40 font-bold relative title-gradient"
           id="advanced-filters-toggle"
         >
-          <Icons.Settings className="w-4 h-4" />
+          <Icons.Settings className="w-4 h-4 text-foreground/60" />
           {t('filters.advancedFilters', { defaultValue: 'Advanced Filters' })}
           {activeFilterCount > 0 && (
             <span className="absolute -top-2 -right-2 rtl:-right-auto rtl:-left-2 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-black shadow-md">

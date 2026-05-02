@@ -47,6 +47,7 @@
             "unlimitedStock": "Unlimited",
             "disabled": "Disabled",
             "deleted": "Deleted",
+            "noLowStock": "No low stock products",
             "noFeatured": "No featured products",
             "noUnlimitedStock": "No unlimited stock products",
             "noDisabled": "No disabled products",

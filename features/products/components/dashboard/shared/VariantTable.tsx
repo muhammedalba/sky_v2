@@ -61,10 +61,11 @@ export default function VariantTable({
   const getAttrLabel = (attrs: Record<string, any>) => {
     return Object.entries(attrs).map(([k, v]) => {
       if (typeof v === 'object' && v !== null && 'value' in v) {
-        return (v as any).value;
+        const val = v as { value: any; unit?: string };
+        return `${val.value}-${val.unit ? ` ${val.unit}` : ''}`;
       }
       return v;
-    }).join(' / ') || 'Default';
+    }).join('/') || 'Default';
   };
 
   return (
@@ -92,13 +93,15 @@ export default function VariantTable({
                   <tr className={`group transition-colors ${isDeleted ? 'bg-destructive/5' : 'hover:bg-muted/30'} ${isExpanded ? 'bg-muted/20' : ''}`}>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
-                        <span className={`font-semibold text-sm ${isDeleted ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+                        <span className={`font-semibold text-sm  ${isDeleted ? 'line-through text-muted-foreground' : 'title-gradient'}`}>
                           {variant.label || getAttrLabel(variant.attributes)}
                         </span>
                         <div className="flex gap-1.5 flex-wrap">
                           {Object.entries(variant.attributes).map(([k, v]) => (
                             <span key={k} className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground font-medium border border-border/40">
-                              {k}: {typeof v === 'object' && v !== null && 'value' in v ? (v as any).value : String(v)}
+                              {k}: {typeof v === 'object' && v !== null && 'value' in v 
+                                ? `${(v as any).value}${(v as any).unit ? ` ${(v as any).unit}` : ''}` 
+                                : String(v)}
                             </span>
                           ))}
                         </div>

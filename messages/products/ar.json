@@ -47,6 +47,7 @@
             "unlimitedStock": "غير محدود",
             "disabled": "معطّل",
             "deleted": "محذوف",
+            "noLowStock": "لا توجد منتجات بمخزون منخفض",
             "noFeatured": "لا توجد منتجات مميزة",
             "noUnlimitedStock": "لا توجد منتجات بمخزون غير محدود",
             "noDisabled": "لا توجد منتجات معطّلة",
