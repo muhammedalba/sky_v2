@@ -3,9 +3,8 @@
 import { Icons } from '@/shared/ui/Icons';
 import { Input } from '@/shared/ui/Input';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDebounce } from '@/shared/hooks/use-debounce';
-
 
 interface EntitySearchBarProps {
   placeholder?: string;
@@ -24,11 +23,23 @@ export default function EntitySearchBar({
 }: EntitySearchBarProps) {
   const [searchTerm, setSearchTerm] = useState(defaultValue || '');
   const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
+  
+  // نستخدم Ref لمنع البحث التلقائي عند فتح الصفحة لأول مرة
+  const isMounted = useRef(false);
+
+  // Sync internal state with external defaultValue (e.g. from URL/Parent)
+  useEffect(() => {
+    setSearchTerm(prev => prev !== (defaultValue || '') ? (defaultValue || '') : prev);
+  }, [defaultValue]);
 
   useEffect(() => {
-    onSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm, onSearch]);
-
+    if (isMounted.current) {
+      onSearch(debouncedSearchTerm);
+    } else {
+      isMounted.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchTerm]);
 
   return (
     <div
@@ -45,7 +56,6 @@ export default function EntitySearchBar({
           className="ps-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export default function SubCategoriesPage() {
 
   const { data, isLoading, refetch } = useSubCategories({ page, limit: 10, keywords: search, all_langs: true });
   const deleteMutation = useDeleteSubCategory();
-
+  console.log(data);
   const handleSearch = useCallback((value: string) => {
     setSearch(value);
     setPage(1);
@@ -78,7 +78,7 @@ export default function SubCategoriesPage() {
       header: "Parent Category",
       render: (sub: SubCategory) => (
         <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-          {getTrans(sub.category.name)}
+          {getTrans(sub?.category?.name)}
         </Badge>
       )
     },

@@ -33,8 +33,8 @@ export interface EntityDataTableProps<T> {
     title?: string;
     description?: string;
     icon?: ReactNode;
-    createLink?: string;
     createLabel?: string;
+    createLink?: () => void;
   };
   expandableContent?: (item: T) => ReactNode;
 }
@@ -178,15 +178,16 @@ export default function EntityDataTable<T extends { _id: string }>({
                       )}
                     </div>
                     {emptyState?.createLink && (
-                      <Link href={emptyState.createLink}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-xl px-6"
-                        >
-                          {emptyState.createLabel || tCommon('buttons.create')}
-                        </Button>
-                      </Link>
+
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="rounded-xl px-6 "
+                        onClick={emptyState.createLink}
+                      >
+                        {emptyState.createLabel || tCommon('buttons.create')}
+                      </Button>
+
                     )}
                   </div>
                 </TableCell>
@@ -197,7 +198,7 @@ export default function EntityDataTable<T extends { _id: string }>({
       </div>
 
       {pagination && pagination.numberOfPages > 1 && onPageChange && (
-          <Pagination pagination={pagination} onPageChange={onPageChange} />
+        <Pagination pagination={pagination} onPageChange={onPageChange} />
       )}
     </Card>
   );

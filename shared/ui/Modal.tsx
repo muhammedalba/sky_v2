@@ -3,6 +3,7 @@
 import { ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
+import { Button } from './Button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -39,7 +40,7 @@ export default function Modal({ isOpen, onClose, title, description, children, f
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed  inset-0 z-100 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-secondary-950/40 backdrop-blur-sm animate-in fade-in duration-300"
@@ -49,7 +50,7 @@ export default function Modal({ isOpen, onClose, title, description, children, f
       {/* Modal Container */}
       <div 
         className={cn(
-          'relative bg-background border border-border shadow-2xl rounded-[2rem] w-full overflow-hidden animate-in zoom-in-95 fade-in duration-300', 
+          'relative bg-background border border-border shadow-2xl rounded-4xl w-full  animate-in zoom-in-95 fade-in duration-300', 
           sizes[size]
         )}
       >
@@ -57,7 +58,7 @@ export default function Modal({ isOpen, onClose, title, description, children, f
         <div className="px-8 pt-8 pb-4 flex items-start justify-between">
           <div>
             {title && (
-              <h3 className="text-2xl font-black tracking-tight text-foreground">
+              <h3 className="text-2xl font-black tracking-tight title-gradient">
                 {title}
               </h3>
             )}
@@ -67,12 +68,14 @@ export default function Modal({ isOpen, onClose, title, description, children, f
               </p>
             )}
           </div>
-          <button
+          <Button
+            variant="destructive"
+            size="icon"
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
+            className='absolute -top-4 inset-e-0 rounded-full'
           >
-            <Icons.Menu className="w-5 h-5 rotate-45 scale-125" /> {/* Close icon fallback */}
-          </button>
+            <Icons.X className="w-5 h-5 " /> {/* Close icon fallback */}
+          </Button>
         </div>
 
         {/* Body */}

@@ -107,7 +107,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
-        title={t('title')}
+        title={t('title')} 
         subtitle={t('productList')}
         action={{
           label: t('createProduct'),
@@ -369,7 +369,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           description: viewTab === 'deleted'
             ? t('emptyState.deletedDesc')
             : t('emptyState.activeDesc'),
-          createLink: viewTab === 'isActive' ? `/${locale}/dashboard/products/create` : undefined,
+          createLink: viewTab === 'isActive' ? () => router.push(`/${locale}/dashboard/products/create`) : undefined,
           createLabel: viewTab === 'isActive' ? t('createProduct') : undefined
         }}
       />

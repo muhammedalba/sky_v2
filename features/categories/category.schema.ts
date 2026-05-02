@@ -5,7 +5,9 @@ export const categorySchema = z.object({
     en: z.string().min(2, 'required'),
     ar: z.string().min(2, 'required'),
   }),
-  image: z.any().optional(),
+  image: z.any().refine((val) => val instanceof File || (typeof val === 'string' && val.length > 0), {
+    message: 'required',
+  }).optional(),
 });
 
 export const subCategorySchema = z.object({

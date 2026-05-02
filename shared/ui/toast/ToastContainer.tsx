@@ -69,10 +69,10 @@ export default function ToastContainer() {
   const { toasts } = useToastStore();
 
   return createPortal(
-    <div className="fixed top-4 right-4 z-[100] flex flex-col items-end gap-3 w-full max-w-sm pointer-events-none px-4 sm:px-0">
+    <div className="fixed bottom-4 inset-r-4 z-1000 flex flex-col items-end gap-3 w-full max-w-sm pointer-events-none px-4 sm:px-0">
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} />
-      ))}
+      ))} 
     </div>,
     document.body
   );

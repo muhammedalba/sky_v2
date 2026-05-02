@@ -2,6 +2,7 @@
       "searchPlaceholder": "Search categories...",
       "title": "Categories",
       "subtitle": "Organize your store by creating meaningful categories.",
+      "totalResults": "{count} Categories found",
       "entityLabel": "Category",
       "createCategory": "Create Category",
       "editCategory": "Edit Category",

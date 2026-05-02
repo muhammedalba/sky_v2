@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, use } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCategories, useDeleteCategory } from '@/features/categories/hooks/useCategories';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
@@ -16,36 +16,41 @@ import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import CategoryForm from '@/features/categories/components/dashboard/CategoryForm';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
-
-
 import { useQueryState } from '@/shared/hooks/useQueryState';
 
-
-export default function CategoriesPage() {
+export default function CategoriesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
-
+  const { locale } = use(params);
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
-  const { data, isLoading, refetch } = useCategories({ page, limit: 10, keywords: search, all_langs: true });
 
-  const setPage = (val: number) => setQueryParam('page', val);
+  const queryParams = useMemo(() => ({
+    page, limit: 10, keywords: search, all_langs: true
+  }), [page, search]);
+
+  const { data, isLoading, refetch } = useCategories(queryParams);
+  console.log(data)
+  const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
+
+  // ── دالة بسيطة ومستقرة لتحديث الرابط مباشرة ──
+  const handleSearch = useCallback((value: string) => {
+    setQueryParams({ search: value, page: 1 });
+  }, [setQueryParams]);
+
   const getTrans = useTrans();
   const t = useTranslations('categories');
   const tMessages = useTranslations('messages');
   const tCommon = useTranslations('buttons');
-  const deleteMutation = useDeleteCategory();
+
+  const { mutateAsync: deleteCategoryAsync } = useDeleteCategory();
+  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
+  const { success: toastSuccess, error: toastError } = useToast();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const confirmDialog = useConfirmDialog();
-  const toast = useToast();
 
-  console.log('category data ', data);
   const handleOpenModal = useCallback((category?: Category) => {
-    if (category) {
-      setEditingCategory(category);
-    } else {
-      setEditingCategory(null);
-    }
+    setEditingCategory(category || null);
     setIsModalOpen(true);
   }, []);
 
@@ -54,24 +59,28 @@ export default function CategoriesPage() {
     setEditingCategory(null);
   }, []);
 
-  const handleDelete = useCallback(async (id: string, name: string) => {
-    confirmDialog.openDialog({
+  const handleDelete = useCallback((id: string, name: string) => {
+    openDialog({
       title: tMessages('deleteConfirm', { item: t('entityLabel') }),
       message: tMessages('deleteConfirmWithName', { name }),
       onConfirm: async () => {
-        await deleteMutation.mutateAsync(id);
-        toast.success(tMessages('success'));
-        refetch();
+        try {
+          await deleteCategoryAsync(id);
+          toastSuccess(tMessages('success'));
+          refetch();
+        } catch (error) {
+          toastError(tMessages('error') || 'حدث خطأ أثناء الحذف');
+        }
       },
     });
-  }, [confirmDialog, deleteMutation, refetch, t, toast, tMessages]);
+  }, [openDialog, deleteCategoryAsync, toastSuccess, toastError, refetch, t, tMessages]);
 
   const columns = useMemo(() => [
     {
       header: t('fields.image'),
       className: "w-[100px] pl-6",
       render: (category: Category) => (
-        <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-muted/60 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative ">
+        <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-muted/60 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
           <ImageWithFallback
             src={category.image || ''}
             alt={getTrans(category.name)}
@@ -89,19 +98,14 @@ export default function CategoriesPage() {
         </span>
       )
     },
-    // {
-    //   header: t('fields.productsCount'),
-    //   render: (category: Category) => (
-    //     <Badge variant="secondary" className="rounded-xl font-bold px-3 py-1 bg-muted/40 border-none group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-    //       {category.productsCount || 0} Products
-    //     </Badge>
-    //   )
-    // },
     {
       header: t('fields.subCategoriesCount'),
       render: (category: Category) => (
-        <Badge variant="secondary" className="rounded-xl font-bold px-3 py-1 bg-muted/40 border-none group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-          {category.subCategories?.length || category.subCategoriesCount || 0} Sub Categories
+        <Badge variant="secondary"  >
+          {t('fields.subCategoriesCount')}
+          <span className="font-bold text-primary/70 roup-hover:text-primary transition-colors ps-1">
+            ({category.SubCategories?.length || 0})
+          </span>
         </Badge>
       )
     },
@@ -123,59 +127,57 @@ export default function CategoriesPage() {
             variant="destructive"
             className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
             onClick={() => handleDelete(category._id, getTrans(category.name))}
-            isLoading={deleteMutation.isPending}
           >
             {tCommon('delete')}
           </Button>
         </div>
       )
     }
-  ], [getTrans, handleOpenModal, handleDelete, t, tCommon, deleteMutation.isPending]);
-
+  ], [getTrans, handleOpenModal, handleDelete, t, tCommon]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
       <EntityPageHeader
         title={t('title')}
         subtitle={t('subtitle')}
+        totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createCategory'),
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => handleOpenModal()
         }}
+        className='mb-8'
       />
 
-      {/* Search */}
       <EntitySearchBar
         placeholder={t('searchPlaceholder') || 'Search categories...'}
         defaultValue={search}
-        onSearch={(value) => {
-          setQueryParams({ search: value, page: 1 });
-        }}
+        onSearch={handleSearch}
+        debounceMs={700}
       />
 
-      {/* Table start */}
       <EntityDataTable<Category>
         data={data?.data}
         isLoading={isLoading}
         pagination={data?.meta?.pagination}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
         columns={columns}
         emptyState={{
           title: t('emptyState.title'),
           description: t('emptyState.description'),
-          icon: <Icons.Menu className="h-10 w-10 text-muted-foreground/40" />,
-        }}
-      />
-      {/* Table end */}
+          icon: <Icons.Categories className="h-10 w-10 text-muted-foreground/40" />,
+          createLabel: t('createCategory'),
+          createLink: () => handleOpenModal()
 
-      {/* Modal start */}
+        }}
+
+      />
+
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={editingCategory ? t('editCategory') : t('createCategory')}
-        description="Organize your store by creating meaningful categories."
+        description={t('emptyState.description')}
       >
         <CategoryForm
           editingCategory={editingCategory}
@@ -184,21 +186,21 @@ export default function CategoriesPage() {
             handleCloseModal();
           }}
           onCancel={handleCloseModal}
+
         />
       </Modal>
-      {/* Confirm Dialog start */}
+
       <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        onClose={confirmDialog.closeDialog}
-        onConfirm={confirmDialog.handleConfirm}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
+        isOpen={isConfirmOpen}
+        onClose={closeDialog}
+        onConfirm={handleConfirm}
+        title={confirmTitle}
+        message={confirmMessage}
         confirmText="Delete"
         cancelText="Cancel"
         isDangerous={true}
-        isLoading={confirmDialog.isLoading}
+        isLoading={isConfirmLoading}
       />
-      {/* Confirm Dialog end */}
     </div>
   );
 }

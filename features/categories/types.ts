@@ -8,7 +8,7 @@ export interface Category {
   image?: string;
   productsCount?: number;
   subCategoriesCount?: number;
-  subCategories?: SubCategory[];
+  SubCategories?: SubCategory[];
   createdAt?: string;
   updatedAt?: string;
   [key: string]: unknown;

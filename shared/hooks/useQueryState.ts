@@ -11,13 +11,26 @@ export function useQueryState() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const getQueryParam = useCallback(
-    (key: string, defaultValue: string = '') => {
-      return searchParams.get(key) || defaultValue;
+    <T extends string | number | boolean = string>(
+      key: string,
+      defaultValue?: T
+    ): T => {
+      const value = searchParams.get(key);
+
+      if (value === null) return (defaultValue ?? '') as T;
+
+      // محاولة ذكية لمعرفة نوع القيمة المطلوبة بناءً على القيمة الافتراضية
+      if (typeof defaultValue === 'number') return Number(value) as T;
+      if (typeof defaultValue === 'boolean') return (value === 'true') as T;
+
+      return value as T;
     },
     [searchParams]
   );
+
+
+
 
   const setQueryParam = useCallback(
     (key: string, value: string | number | null) => {
@@ -26,7 +39,7 @@ export function useQueryState() {
       const newValue = value !== null ? String(value) : null;
 
       if (newValue === oldValue || (newValue === null && oldValue === null)) return;
-      
+
       if (newValue === null || newValue === '') {
         params.delete(key);
       } else {
@@ -35,7 +48,7 @@ export function useQueryState() {
 
       const query = params.toString();
       const url = `${pathname}${query ? `?${query}` : ''}`;
-      
+
       router.push(url, { scroll: false });
     },
     [pathname, router, searchParams]
@@ -51,7 +64,7 @@ export function useQueryState() {
         const newValue = value !== null ? String(value) : null;
 
         if (newValue === oldValue) return;
-        
+
         hasChanged = true;
         if (newValue === null || newValue === '') {
           params.delete(key);
@@ -64,7 +77,7 @@ export function useQueryState() {
 
       const query = params.toString();
       const url = `${pathname}${query ? `?${query}` : ''}`;
-      
+
       router.push(url, { scroll: false });
     },
     [pathname, router, searchParams]
