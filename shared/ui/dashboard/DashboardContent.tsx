@@ -10,6 +10,7 @@ import { Icons } from '@/shared/ui/Icons';
 import { Badge } from '@/shared/ui/Badge';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { Order, Product } from '@/types';
+import ExternalPlatformsCenter from '@/features/dashboard/components/ExternalPlatformsCenter';
 
 export default function DashboardContent() {
   const t = useTranslations('dashboard');
@@ -218,6 +219,10 @@ export default function DashboardContent() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-8">
+        <ExternalPlatformsCenter />
       </div>
     </div>
   );

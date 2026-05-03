@@ -4,10 +4,26 @@
       "editBanner": "Edit Banner",
       "searchPlaceholder": "Search banners...",
       "subtitle": "Manage top-bar announcements",
+      "totalResults": "{count} Banners found",
+      "actions": "Actions",
+      "active": "Active",
+      "inactive": "Inactive",
+      "emptyState": {
+            "title": "No banners found",
+            "description": "Announce seasonal offers or important news at the top of your shop."
+      },
       "fields": {
             "text": "Banner Text",
             "link": "Link URL",
             "status": "Status",
-            "active": "Active (Show on website)"
+            "active": "Active (Show on website)",
+            "activeStatus": "Visibility status on store",
+            "textPlaceholder": "e.g. 🎉 Free Shipping on orders over $50!",
+            "linkPlaceholder": "https://example.com/sale"
+      },
+      "messages": {
+            "createSuccess": "Banner created successfully",
+            "updateSuccess": "Banner updated successfully",
+            "error": "Something went wrong, please try again"
       }
 }

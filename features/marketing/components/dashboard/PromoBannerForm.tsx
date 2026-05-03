@@ -1,14 +1,18 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
+import { Switch } from '@/shared/ui/Switch';
 import { useCreatePromoBanner, useUpdatePromoBanner } from '@/features/marketing/hooks/usePromoBanner';
 import { PromoBanner } from '@/types';
 import { useTranslations } from 'next-intl';
 import { PromoBannerFormValues, promoBannerSchema } from '@/features/marketing/marketing.schema';
+import { useToast } from '@/shared/hooks/useToast';
+import { cn } from '@/lib/utils';
+import { Textarea } from '@/shared/ui/Textarea';
 
 
 interface PromoBannerFormProps {
@@ -18,14 +22,16 @@ interface PromoBannerFormProps {
 }
 
 export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCancel }: PromoBannerFormProps) {
-  const t = useTranslations('navigation.promoBanners');
+  const t = useTranslations('promoBanners');
   const tCommon = useTranslations('buttons');
   const createMutation = useCreatePromoBanner();
   const updateMutation = useUpdatePromoBanner();
+  const toast = useToast();
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors }
   } = useForm<PromoBannerFormValues>({
     resolver: zodResolver(promoBannerSchema),
@@ -33,7 +39,7 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
       textEn: (editingPromoBanner?.text && typeof editingPromoBanner.text === 'object') ? (editingPromoBanner.text as { en: string }).en : (typeof editingPromoBanner?.text === 'string' ? editingPromoBanner.text : ''),
       textAr: (editingPromoBanner?.text && typeof editingPromoBanner.text === 'object') ? (editingPromoBanner.text as { ar: string }).ar : '',
       link: editingPromoBanner?.link || '',
-      isActive: editingPromoBanner?.isActive ?? true,
+      isActive: editingPromoBanner?.isActive ?? false,
     },
   });
 
@@ -50,12 +56,15 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
     try {
       if (editingPromoBanner) {
         await updateMutation.mutateAsync({ id: editingPromoBanner._id, data: payload });
+        toast.success(t('messages.updateSuccess'));
       } else {
         await createMutation.mutateAsync(payload);
+        toast.success(t('messages.createSuccess'));
       }
       onSuccess();
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || t('messages.error');
+      toast.error(errorMessage);
     }
   };
 
@@ -63,54 +72,54 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-            {t('fields.text') || 'Banner Text'} (English)
-          </label>
-          <Input 
-            {...register('textEn')} 
-            placeholder="🎉 Free Shipping on orders over $50!" 
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.textEn ? 'ring-2 ring-red-500' : ''}`}
+          <Textarea
+            {...register('textEn')}
+            label={t('fields.text') + ' (English)'}
+            placeholder={t('fields.textPlaceholder')}
+            dir='ltr'
+            error={errors.textEn?.message}
           />
-          {errors.textEn && <p className="text-destructive text-xs mt-1">{errors.textEn.message}</p>}
         </div>
-
         <div className="space-y-2">
-          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-            {t('fields.text') || 'Banner Text'} (Arabic)
-          </label>
-          <Input 
-            {...register('textAr')} 
-            placeholder="🎉 شحن مجاني للطلبات فوق 50 دولار!"
+          <Textarea
+            {...register('textAr')}
+            label={t('fields.text') + ' (Arabic)'}
+            placeholder={t('fields.textPlaceholder')}
             dir="rtl"
-            className={`h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold ${errors.textAr ? 'ring-2 ring-red-500' : ''}`}
+            error={errors.textAr?.message}
           />
-          {errors.textAr && <p className="text-destructive text-xs mt-1">{errors.textAr.message}</p>}
         </div>
       </div>
-
       <div className="space-y-2">
-        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-          {t('fields.link') || 'Link URL'} (optional)
-        </label>
-        <Input 
-          {...register('link')} 
-          placeholder="https://example.com/sale" 
+        <Input
+          {...register('link')}
+          label={t('fields.link') || 'Link URL'}
+          placeholder={t('fields.linkPlaceholder')}
           type="url"
-          className="h-12 rounded-xl bg-secondary/10 border-none focus-visible:ring-primary/20 font-bold"
+          error={errors.link?.message}
         />
-        {errors.link && <p className="text-destructive text-xs mt-1">{errors.link.message}</p>}
       </div>
 
-      <div className="flex items-center gap-3 bg-secondary/10 p-4 rounded-xl border-none">
-        <input 
-          type="checkbox" 
-          {...register('isActive')} 
-          id="isActive"
-          className="w-5 h-5 rounded-lg border-none bg-background text-primary focus:ring-primary/20 cursor-pointer"
+      <div className="flex items-center justify-between bg-secondary/5 p-5 rounded-2xl border border-border/40 transition-all hover:bg-secondary/10 group">
+        <div className="flex flex-col gap-0.5">
+          <label htmlFor="isActive" className="text-sm font-black text-foreground cursor-pointer select-none group-hover:text-primary transition-colors">
+            {t('fields.active') || 'Active (Show on website)'}
+          </label>
+          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">
+             {t('fields.activeStatus') || 'Visibility Status'}
+          </p>
+        </div>
+        <Controller
+          name="isActive"
+          control={control}
+          render={({ field }) => (
+            <Switch
+              id="isActive"
+              checked={field.value}
+              onChange={(e) => field.onChange(e.target.checked)}
+            />
+          )}
         />
-        <label htmlFor="isActive" className="text-sm font-bold text-muted-foreground cursor-pointer select-none">
-          {t('fields.active') || 'Active (Show on website)'}
-        </label>
       </div>
 
       <div className="flex gap-3 pt-4">
@@ -121,11 +130,11 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
         >
           {tCommon('save')}
         </Button>
-        <Button 
-            type="button" 
-            variant="outline" 
-            className="h-12 rounded-xl px-6 font-bold" 
-            onClick={onCancel}
+        <Button
+          type="button"
+          variant="outline"
+          className="h-12 rounded-xl px-6 font-bold"
+          onClick={onCancel}
         >
           {tCommon('cancel')}
         </Button>

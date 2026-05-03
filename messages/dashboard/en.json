@@ -9,5 +9,37 @@
       },
       "recentOrders": "Recent Orders",
       "topProducts": "Top Products",
-      "viewAll": "View All"
+      "viewAll": "View All",
+      "externalPlatforms": {
+            "title": "Command Center",
+            "description": "Quick access to external tools and platforms required to manage your business.",
+            "categories": {
+                  "seoWebmasters": "SEO & Webmasters",
+                  "analyticsTracking": "Analytics & Tracking",
+                  "adsEcommerce": "Ads & E-commerce",
+                  "performanceTrust": "Performance & Trust"
+            },
+            "links": {
+                  "googleSearchConsole": "Google Search Console",
+                  "googleSearchConsoleDesc": "Monitor site traffic and SEO indexing.",
+                  "bingWebmasterTools": "Bing Webmaster Tools",
+                  "bingWebmasterToolsDesc": "Microsoft's search engine visibility and analytics.",
+                  "googleAnalytics": "Google Analytics",
+                  "googleAnalyticsDesc": "Track user behavior and conversion rates.",
+                  "googleTagManager": "Google Tag Manager",
+                  "googleTagManagerDesc": "Manage tracking codes and pixels.",
+                  "googleMerchantCenter": "Google Merchant Center",
+                  "googleMerchantCenterDesc": "Manage product catalog for Google Shopping.",
+                  "metaBusinessSuite": "Meta Business Suite",
+                  "metaBusinessSuiteDesc": "Manage Facebook/Instagram presence and Meta Pixel.",
+                  "tiktokAdsManager": "TikTok Ads Manager",
+                  "tiktokAdsManagerDesc": "Manage TikTok ad campaigns and events.",
+                  "snapchatAdsManager": "Snapchat Ads Manager",
+                  "snapchatAdsManagerDesc": "Target audiences and manage Snapchat ads.",
+                  "pageSpeedInsights": "PageSpeed Insights",
+                  "pageSpeedInsightsDesc": "Check website performance and Core Web Vitals.",
+                  "googleBusinessProfile": "Google Business Profile",
+                  "googleBusinessProfileDesc": "Manage reviews and local business presence."
+            }
+      }
 }

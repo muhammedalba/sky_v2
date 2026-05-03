@@ -4,10 +4,26 @@
       "editBanner": "تعديل البنر",
       "searchPlaceholder": "البحث في البنرات...",
       "subtitle": "إدارة إعلانات الشريحة العلوية",
+      "totalResults": "تم العثور على {count} بنرات",
+      "actions": "الإجراءات",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "emptyState": {
+            "title": "لا يوجد بنرات ترويجية",
+            "description": "أعلن عن العروض الموسمية أو الأخبار المهمة في أعلى متجرك."
+      },
       "fields": {
             "text": "نص البنر",
             "link": "رابط الوصلة",
             "status": "الحالة",
-            "active": "نشط (يظهر على الموقع)"
+            "active": "نشط (يظهر على الموقع)",
+            "activeStatus": "حالة الظهور على المتجر",
+            "textPlaceholder": "مثال: 🎉 شحن مجاني للطلبات فوق 50 دولار!",
+            "linkPlaceholder": "https://example.com/sale"
+      },
+      "messages": {
+            "createSuccess": "تم إنشاء البنر بنجاح",
+            "updateSuccess": "تم تحديث البنر بنجاح",
+            "error": "حدث خطأ ما، يرجى المحاولة مرة أخرى"
       }
 }

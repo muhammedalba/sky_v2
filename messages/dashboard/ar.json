@@ -9,5 +9,37 @@
       },
       "recentOrders": "الطلبات الأخيرة",
       "topProducts": "المنتجات الأكثر مبيعاً",
-      "viewAll": "عرض الكل"
+      "viewAll": "عرض الكل",
+      "externalPlatforms": {
+            "title": "مركز القيادة",
+            "description": "وصول سريع للأدوات والمنصات الخارجية المطلوبة لإدارة عملك.",
+            "categories": {
+                  "seoWebmasters": "تحسين محركات البحث ومشرفي المواقع",
+                  "analyticsTracking": "التحليلات والتتبع",
+                  "adsEcommerce": "الإعلانات والتجارة الإلكترونية",
+                  "performanceTrust": "الأداء والثقة"
+            },
+            "links": {
+                  "googleSearchConsole": "Google Search Console",
+                  "googleSearchConsoleDesc": "مراقبة حركة مرور الموقع وفهرسة تحسين محركات البحث.",
+                  "bingWebmasterTools": "Bing Webmaster Tools",
+                  "bingWebmasterToolsDesc": "وضوح محرك بحث مايكروسوفت وتحليلاته.",
+                  "googleAnalytics": "Google Analytics",
+                  "googleAnalyticsDesc": "تتبع سلوك المستخدم ومعدلات التحويل.",
+                  "googleTagManager": "Google Tag Manager",
+                  "googleTagManagerDesc": "إدارة أكواد التتبع والبكسل.",
+                  "googleMerchantCenter": "Google Merchant Center",
+                  "googleMerchantCenterDesc": "إدارة كتالوج المنتجات لـ Google Shopping.",
+                  "metaBusinessSuite": "Meta Business Suite",
+                  "metaBusinessSuiteDesc": "إدارة التواجد على فيسبوك/إنستغرام و Meta Pixel.",
+                  "tiktokAdsManager": "TikTok Ads Manager",
+                  "tiktokAdsManagerDesc": "إدارة حملات تيك توك الإعلانية والأحداث.",
+                  "snapchatAdsManager": "Snapchat Ads Manager",
+                  "snapchatAdsManagerDesc": "استهداف الجمهور وإدارة إعلانات سناب شات.",
+                  "pageSpeedInsights": "PageSpeed Insights",
+                  "pageSpeedInsightsDesc": "التحقق من أداء الموقع ومؤشرات الويب الحيوية.",
+                  "googleBusinessProfile": "Google Business Profile",
+                  "googleBusinessProfileDesc": "إدارة المراجعات والتواجد التجاري المحلي."
+            }
+      }
 }
