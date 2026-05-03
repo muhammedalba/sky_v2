@@ -17,7 +17,8 @@
             "confirm": "Confirm",
             "retry": "Try Again",
             "clearAll": "Clear All",
-            "applyFilters": "Apply Filters"
+            "applyFilters": "Apply Filters",
+            "actions": "Actions"
       },
       "errors": {
             "required": "This field is required",

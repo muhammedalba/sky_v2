@@ -1,0 +1,48 @@
+{
+  "title": "Coupons",
+  "couponList": "Coupon List",
+  "subtitle": "Manage discount coupons and promo codes",
+  "totalResults": "{count} coupons found",
+  "searchPlaceholder": "Search coupons...",
+  "createCoupon": "Create Coupon",
+  "editCoupon": "Edit Coupon",
+  "entityLabel": "Coupon",
+  "fields": {
+    "basicInfo": "Basic Information",
+    "name": "Code / Name",
+    "type": "Type",
+    "discount": "Discount",
+    "expires": "Expiry Date",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "usage": "Usage",
+    "percentage": "Percentage",
+    "fixed": "Fixed Value",
+    "maxUsage": "Max Usage",
+    "minOrderAmount": "Min Order Amount",
+    "maxOrderAmount": "Max Order Amount",
+    "usageCount": "Usage Count",
+    "conditions": "Conditions & Limits",
+    "applyTo": "Apply To",
+    "applyItems": "Selected Items",
+    "options": {
+      "all": "All",
+      "products": "Specific Products",
+      "categories": "Specific Categories",
+      "brands": "Specific Brands"
+    },
+    "limit": "Limit",
+    "used": "Used"
+  },
+  "messages": {
+    "createSuccess": "Coupon created successfully",
+    "updateSuccess": "Coupon updated successfully",
+    "deleteSuccess": "Coupon deleted successfully",
+    "deleteConfirm": "Are you sure you want to delete this coupon?"
+  },
+  "emptyState": {
+    "title": "No coupons found",
+    "description": "Start rewarding your customers by creating discount codes."
+  }
+}

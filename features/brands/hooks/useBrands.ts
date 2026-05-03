@@ -5,7 +5,7 @@ import { Brand, ApiResponse } from '@/types';
 import { brandsApi } from '@/features/brands/api';
 
 export function useBrands(
-  params?: { page?: number; limit?: number; keywords?: string, all_langs?: boolean },
+  params?: { page?: number; limit?: number; keywords?: string, all_langs?: boolean, fields?: string },
   options?: { enabled?: boolean }
 ) {
   return useQuery({

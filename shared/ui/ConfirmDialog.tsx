@@ -66,13 +66,13 @@ export default function ConfirmDialog({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+      className="fixed inset-0 z-200 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
       onClick={onClose}
       role="alertdialog"
       aria-modal="true"
     >
       {/* Backdrop (خلفية أنعم) */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
 
       {/* Modal */}
       <div
@@ -92,26 +92,26 @@ export default function ConfirmDialog({
               }`}
             >
               {/* أبقيت على حيلتك الذكية بتدوير الأيقونة، لكن مع تحسين تموضعها */}
-              <Icons.Menu className={`w-6 h-6 ${isDangerous ? 'rotate-45' : ''}`} />
+              <Icons.Warning className={`w-6 h-6 `} />
             </div>
 
             {/* Text Content */}
-            <div className="flex-1 pt-1">
+            <div className="flex-1 pt-1 mt-3">
               <div className="flex items-start justify-between gap-4">
                 <h3 className="text-lg font-semibold text-foreground leading-none tracking-tight">
                   {title}
                 </h3>
                 <button
                   onClick={onClose}
-                  className="text-muted-foreground hover:text-foreground hover:bg-accent transition-colors p-1.5 rounded-md -mt-2 -me-2"
+                  className="text-muted-foreground cursor-pointer bg-accent hover:bg-accent/60 transition-colors p-1.5 rounded-md -mt-2 -me-2"
                   disabled={isLoading}
                   aria-label="Close dialog"
                 >
                   <Icons.X className="w-4 h-4 text-destructive" />
                 </button>
               </div>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                {message}
+              <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
+                {message} !
               </p>
             </div>
           </div>

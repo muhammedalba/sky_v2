@@ -56,7 +56,6 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
     ...apiParams,
     ...TAB_FILTER_PARAMS[viewTab],
   } as Record<string, unknown>);
-  console.log(" Products data", data?.data)
   const deleteMutation = useDeleteProduct();
   const restoreMutation = useRestoreProduct();
   const hardDeleteMutation = useHardDeleteProduct();

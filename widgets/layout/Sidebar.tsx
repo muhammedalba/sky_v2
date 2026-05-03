@@ -27,7 +27,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
     { name: t('products'), href: `/${l}/dashboard/products`, icon: 'Products', color: 'destructive' },
     { name: t('productAnalytics'), href: `/${l}/dashboard/products/statistics`, icon: 'BarChart' ,color: 'warning' },
     { name: t('categories'), href: `/${l}/dashboard/categories`, icon: 'Categories', color: 'success' },
-    { name: t('subCategories'), href: `/${l}/dashboard/sub-categories`, icon: 'SubCategories', color: 'secondary' },
+    { name: t('subCategories'), href: `/${l}/dashboard/sub-categories`, icon: 'SubCategories', color: 'muted-foreground' },
     { name: t('brands'), href: `/${l}/dashboard/brands`, icon: 'Brands', color: 'success' },
     { name: t('suppliers'), href: `/${l}/dashboard/suppliers`, icon: 'Users', color: 'info' },
     { name: t('coupons'), href: `/${l}/dashboard/coupons`, icon: 'Coupons', color: 'warning' },
@@ -36,7 +36,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
     { name: t('orders'), href: `/${l}/dashboard/orders`, icon: 'Orders', color: 'info' },
     { name: t('users'), href: `/${l}/dashboard/users`, icon: 'Users', color: 'warning/80' },
     { name: t('profile'), href: `/${l}/dashboard/profile`, icon: 'User', color: 'primary' },  
-    { name: t('settings'), href: `/${l}/dashboard/settings`, icon: 'Settings', color: 'secondary' },
+    { name: t('settings'), href: `/${l}/dashboard/settings`, icon: 'Settings', color: 'muted-foreground' },
   ];
 
   return (

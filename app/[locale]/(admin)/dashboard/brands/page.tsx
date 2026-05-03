@@ -145,6 +145,7 @@ export default function BrandsPage() {
       <EntityPageHeader
         title={t('title')}
         subtitle={t('subtitle')}
+        totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createBrand'),
           icon: <Icons.Plus className="w-5 h-5" />,

@@ -11,7 +11,6 @@ import { useCreateProduct } from '@/features/products/hooks/useProducts';
 import { useToast } from '@/shared/hooks/useToast';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
-import { Button } from '@/shared/ui/Button';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
 import AttributeBuilder, { AttributeDefinition } from './shared/AttributeBuilder';
 import VariantTable, { VariantRow } from './shared/VariantTable';
@@ -28,6 +27,7 @@ interface CreateProductFormProps {
 
 export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const t = useTranslations('products.form');
+  const tMessages = useTranslations('messages');
   const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
   const toast = useToast();
   const router = useRouter();
@@ -62,7 +62,6 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [coverError, setCoverError] = useState<string | null>(null);
 
   // ─── SubCategory selection state ─────────────────────
   const [selectedSubCategories, setSelectedSubCategories] = useState<SearchOption[]>([]);
@@ -181,11 +180,15 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     if (galleryFiles.length > 0) galleryFiles.forEach((f) => formData.append('images', f));
     if (pdfFile) formData.append('infoProductPdf', pdfFile);
 
-    createMutation.mutate(formData, {
-      onSuccess: () => {
-        router.push(`/${locale}/dashboard/products`);
-      }
-    });
+
+    try {
+      await createMutation.mutateAsync(formData);
+      toast.success(tMessages('createSuccess') || 'Product created successfully');
+      router.push(`/${locale}/dashboard/products`);
+    } catch (error) {
+      toast.error(tMessages('createError') || 'Error while creating product');
+      console.error(error);
+    }
   };
 
   // ─────────────────────────────────────────────────────
@@ -223,11 +226,10 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             />
           </div>
 
-          {/* ═══ RIGHT COLUMN ═══ */}
+          {/* ═══ RIGHT COLUMN ═══ */} 
           <div className="space-y-6">
             <ProductMediaPanel
               coverPreview={coverPreview}
-              coverError={coverError}
               coverFieldError={tError(errors.imageCover?.message as string)}
               onCoverChange={(file) => {
                 setCoverFile(file);

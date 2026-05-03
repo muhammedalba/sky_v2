@@ -12,8 +12,21 @@ export const couponSchema = z.object({
   name: z.string().min(3, 'Coupon code is required (min 3 characters)'),
   discount: z.number().min(1, 'Discount must be at least 1'),
   type: z.enum(['percentage', 'fixed']),
-  limit: z.number().optional(),
-  expires: z.string().optional(),
+  maxUsage: z.number().min(0).optional(),
+  expires: z.string().min(1, 'Expiry date is required'),
+  active: z.boolean().optional(),
+  minOrderAmount: z.number().min(0).optional(),
+  maxOrderAmount: z.number().min(0).optional(),
+  applyTo: z.enum(['all', 'products', 'categories', 'brands']).optional(),
+  applyItems: z.array(z.string()).optional(),
+}).refine(data => {
+  if (data.applyTo && data.applyTo !== 'all') {
+    return data.applyItems && data.applyItems.length > 0;
+  }
+  return true;
+}, {
+  message: 'At least one item must be selected',
+  path: ['applyItems']
 });
 
 export const promoBannerSchema = z.object({

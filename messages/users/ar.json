@@ -1,11 +1,30 @@
 {
       "title": "المستخدمون",
       "userList": "قائمة المستخدمين",
+      "subtitle": "إدارة المستخدمين",
+      "totalResults": "{count} مستخدم موجود",
+      "searchPlaceholder": "البحث عن مستخدمين...",
+      "createUser": "إضافة مستخدم",
+      "entityLabel": "المستخدم",
+      "editUser": "تعديل المستخدم",
       "fields": {
             "name": "الاسم",
             "email": "البريد الإلكتروني",
             "role": "الدور",
-            "createdAt": "تاريخ الإنشاء"
+            "createdAt": "تاريخ الإنشاء",
+            "avatar": "الصورة",
+            "logo": "الشعار",
+            "lastLogin": "آخر ظهور",
+            "totalOrders": "إجمالي الطلبات",
+            "phone": "الهاتف",
+            "status": "الحالة",
+            "active": "نشط",
+            "inactive": "غير نشط",
+            "actions": "الإجراءات",
+            "password": "كلمة المرور",
+            "passwordConfirm": "تأكيد كلمة المرور",
+            "basicInfo": "المعلومات الأساسية",
+            "security": "الأمان والحماية"
       },
       "roles": {
             "admin": "مدير",
@@ -16,6 +35,18 @@
             "updateRole": "تحديث الدور"
       },
       "messages": {
-            "roleUpdated": "تم تحديث دور المستخدم بنجاح"
+            "roleUpdated": "تم تحديث دور المستخدم بنجاح",
+            "createSuccess": "تم إنشاء المستخدم بنجاح",
+            "createError": "حدث خطأ أثناء إنشاء المستخدم",
+            "updateSuccess": "تم تحديث المستخدم بنجاح",
+            "updateError": "حدث خطأ أثناء تحديث المستخدم",
+            "deleteSuccess": "تم حذف المستخدم بنجاح",
+            "deleteError": "حدث خطأ أثناء حذف المستخدم",
+            "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف هذا المستخدم {name}؟",
+            "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟"
+      },
+      "emptyState": {
+            "title": "لم يتم العثور على مستخدمين",
+            "description": "تابع المستخدمين بإضافتهم إلى لوحة التحكم."
       }
 }

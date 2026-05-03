@@ -201,7 +201,7 @@ export default function DesktopNavbar({ categories }: DesktopNavbarProps) {
             <CartButton />
 
             {/* User */}
-            <UserAccountMenu iconOnly={true} dir="top" />
+            <UserAccountMenu iconOnly={true} dir="top" className="m-0" />
           </div>
         </div>
       </div>

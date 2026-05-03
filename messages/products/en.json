@@ -29,7 +29,9 @@
       },
       "messages": {
             "createSuccess": "Product created successfully",
+            "createError": "Error while creating product",
             "updateSuccess": "Product updated successfully",
+            "updateError": "Error while updating product",
             "deleteSuccess": "Product deleted successfully",
             "deleteConfirm": "Are you sure you want to delete this product?",
             "softDeleteTitle": "Delete Product",

@@ -29,7 +29,9 @@
       },
       "messages": {
             "createSuccess": "تم إنشاء المنتج بنجاح",
+            "createError": "حدث خطأ أثناء إنشاء المنتج",
             "updateSuccess": "تم تحديث المنتج بنجاح",
+            "updateError": "حدث خطأ أثناء تحديث المنتج",
             "deleteSuccess": "تم حذف المنتج بنجاح",
             "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
             "softDeleteTitle": "حذف المنتج",

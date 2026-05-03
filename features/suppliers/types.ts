@@ -7,7 +7,7 @@ export interface Supplier {
   contactName: string;
   website: URL;
   avatar?: string;
-  active: boolean;
+  isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
   [key: string]: unknown;

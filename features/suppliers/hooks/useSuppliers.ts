@@ -1,10 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-
 import { Supplier, ApiResponse } from '@/types';
-import { useToast } from '@/shared/hooks/useToast';
 import { suppliersApi } from '@/features/suppliers/api';
 
 export function useSuppliers(
@@ -35,60 +32,47 @@ export function useSupplier(id: string, options?: { allLangs?: boolean }) {
 
 export function useCreateSupplier() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (data: FormData) => {
       const response = await suppliersApi.create(data);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
-      toast.success('Supplier created successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create supplier');
-      console.log("Backend Error:", error);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['suppliers'] });
     },
   });
 }
 
 export function useUpdateSupplier() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: FormData }) => {
       const response = await suppliersApi.update(id, data);
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
-      queryClient.invalidateQueries({ queryKey: ['suppliers', variables.id] });
-      toast.success('Supplier updated successfully');
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ['suppliers']});
+      await queryClient.invalidateQueries({ queryKey: ['suppliers', variables.id] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update supplier');
-      console.log("Backend Error:", error);
-    },
+
   });
 }
 
 export function useDeleteSupplier() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await suppliersApi.delete(id);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
-      toast.success('Supplier deleted successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete supplier');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['suppliers']});
     },
   });
 }

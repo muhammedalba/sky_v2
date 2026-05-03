@@ -20,17 +20,18 @@ export interface UseProductsParams {
   sold_min?: string | number;
   sold_max?: string | number;
   isDeleted?: string | boolean;
+  fields?: string;
   [key: string]: any;
 }
 
-export function useProducts(params?: UseProductsParams) {
+export function useProducts(params?: UseProductsParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['products', params],
     queryFn: async () => {
       const response = await productsApi.getAll(params);
       return response;
     },
-    throwOnError: true,
+    enabled: options?.enabled !== undefined ? options.enabled : true,
   });
 }
 
@@ -48,24 +49,21 @@ export function useProduct(id: string, options?: { all_langs?: boolean }) {
   });
 }
 
-import { useToast } from '@/shared/hooks/useToast';
 import { productsApi } from '@/features/products/api';
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (data: Partial<Product> | FormData) => {
       const response = await productsApi.create(data);
       return response;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success('Product created successfully');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create product');
       console.log("Backend Error:", error);
     }
   });
@@ -73,78 +71,67 @@ export function useCreateProduct() {
 
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Product> | FormData }) => {
       const response = await productsApi.update(id, data);
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['products', variables.id] });
-      toast.success('Product updated successfully');
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await queryClient.invalidateQueries({ queryKey: ['products', variables.id] });
       
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update product');
       console.error("Backend Error:", error);
     }
   });
 }
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await productsApi.delete(id);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success('Product deleted successfully');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete product');
-    }
+  
   });
 }
 
 export function useRestoreProduct() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await productsApi.restore(id);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success('Product restored successfully');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to restore product');
-    }
+
   });
 }
 
 export function useHardDeleteProduct() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await productsApi.hardDelete(id);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success('Product permanently deleted');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete product permanently');
-    }
+
   });
 }

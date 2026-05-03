@@ -1,11 +1,30 @@
 {
       "title": "Users",
       "userList": "User List",
+      "subtitle": "Manage your users",
+      "totalResults": "{count} Users found",
+      "searchPlaceholder": "Search users...",
+      "createUser": "Add User",
+      "entityLabel": "User",
+      "editUser": "Edit User",
       "fields": {
             "name": "Name",
             "email": "Email",
             "role": "Role",
-            "createdAt": "Created At"
+            "createdAt": "Created At",
+            "avatar": "Avatar",
+            "logo": "Logo",
+            "lastLogin": "Last Login",
+            "totalOrders": "Total Orders",
+            "phone": "Phone",
+            "status": "Status",
+            "active": "Active",
+            "inactive": "Inactive",
+            "actions": "Actions",
+            "password": "Password",
+            "passwordConfirm": "Confirm Password",
+            "basicInfo": "Basic Information",
+            "security": "Security & Protection"
       },
       "roles": {
             "admin": "Admin",
@@ -16,6 +35,18 @@
             "updateRole": "Update Role"
       },
       "messages": {
-            "roleUpdated": "User role updated successfully"
+            "roleUpdated": "User role updated successfully",
+            "createSuccess": "User created successfully",
+            "createError": "Failed to create user",
+            "updateSuccess": "User updated successfully",
+            "updateError": "Failed to update user",
+            "deleteSuccess": "User deleted successfully",
+            "deleteError": "Failed to delete user",
+            "deleteConfirmWithName": "Are you sure you want to delete this user {name}?",
+            "deleteConfirm": "Are you sure you want to delete this user?"
+      },
+      "emptyState": {
+            "title": "No users found",
+            "description": "Keep track of your users by adding them to your dashboard."
       }
 }

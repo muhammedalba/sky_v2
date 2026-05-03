@@ -8,7 +8,6 @@ import { Icons } from '@/shared/ui/Icons';
 interface ProductMediaPanelProps {
   // Cover
   coverPreview: string | null;
-  coverError?: string | null;
   onCoverChange: (file: File) => void;
   onCoverRemove: () => void;
   coverFieldError?: string;
@@ -31,7 +30,6 @@ interface ProductMediaPanelProps {
  */
 export function ProductMediaPanel({
   coverPreview,
-  coverError,
   onCoverChange,
   onCoverRemove,
   coverFieldError,
@@ -61,7 +59,6 @@ export function ProductMediaPanel({
           onChange={onCoverChange}
           onRemove={onCoverRemove}
         />
-        {coverError && <p className="text-xs text-destructive font-medium">{coverError}</p>}
       </div>
 
       {/* Gallery */}

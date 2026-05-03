@@ -1,0 +1,34 @@
+{
+      "title": "الموردون",
+      "subtitle": "إدارة الموردين والبائعين الخاصين بك",
+      "totalResults": "تم العثور على {count} موردين",
+      "searchPlaceholder": "البحث في الموردين...",
+      "createSupplier": "إضافة مورد",
+      "entityLabel": "مورد",
+      "editSupplier": "تعديل المورد",
+      "fields": {
+            "logo": "الشعار",
+            "name": "اسم المورد",
+            "contact": "معلومات الاتصال",
+            "address": "العنوان",
+            "actions": "الإجراءات",
+            "active": "نشط",
+            "inactive": "غير نشط",
+            "status": "الحالة"
+      },
+      "aiTranslateImprove": "التحسين بواسطة الذكاء الاصطناعي",
+      "messages": {
+            "createSuccess": "تم إنشاء المورد بنجاح",
+            "createError": "حدث خطأ أثناء إنشاء المورد",
+            "updateSuccess": "تم تحديث المورد بنجاح",
+            "updateError": "حدث خطأ أثناء تحديث المورد",
+            "deleteSuccess": "تم حذف المورد بنجاح",
+            "deleteError": "حدث خطأ أثناء حذف المورد",
+            "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف هذا المورد {name}؟",
+            "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المورد؟"
+      },
+      "emptyState": {
+            "title": "لم يتم العثور على موردين",
+            "description": "تتبع البائعين الخاصين بك عن طريق إضافتهم إلى لوحة التحكم الخاصة بك."
+      }
+}

@@ -1,0 +1,48 @@
+{
+  "title": "الكوبونات",
+  "couponList": "قائمة الكوبونات",
+  "subtitle": "إدارة قسائم الخصم والأكواد الترويجية",
+  "totalResults": "{count} كوبون موجود",
+  "searchPlaceholder": "البحث عن كوبونات...",
+  "createCoupon": "إضافة كوبون",
+  "editCoupon": "تعديل الكوبون",
+  "entityLabel": "كوبون",
+  "fields": {
+    "basicInfo": "المعلومات الأساسية",
+    "name": "الكود / الاسم",
+    "type": "النوع",
+    "discount": "الخصم",
+    "expires": "تاريخ الانتهاء",
+    "status": "الحالة",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "usage": "الاستخدام",
+    "percentage": "نسبة مئوية",
+    "fixed": "قيمة ثابتة",
+    "maxUsage": "أقصى عدد للاستخدام",
+    "minOrderAmount": "الحد الأدنى للطلب",
+    "maxOrderAmount": "الحد الأقصى للطلب",
+    "usageCount": "تم استخدامه",
+    "conditions": "الشروط والقيود",
+    "applyTo": "تطبيق على",
+    "applyItems": "العناصر المشمولة",
+    "options": {
+      "all": "الكل",
+      "products": "منتجات محددة",
+      "categories": "تصنيفات محددة",
+      "brands": "ماركات محددة"
+    },
+    "limit": "الحد الأقصى",
+    "used": "المستخدم"
+  },
+  "messages": {
+    "createSuccess": "تم إنشاء الكوبون بنجاح",
+    "updateSuccess": "تم تحديث الكوبون بنجاح",
+    "deleteSuccess": "تم حذف الكوبون بنجاح",
+    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الكوبون؟"
+  },
+  "emptyState": {
+    "title": "لم يتم العثور على كوبونات",
+    "description": "ابدأ بمكافأة عملائك عن طريق إنشاء أكواد خصم."
+  }
+}

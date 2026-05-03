@@ -138,6 +138,8 @@ export default function SubCategoriesPage() {
       <EntityPageHeader
         title={t('title') || 'Sub Categories'}
         subtitle={t('subtitle')}
+        totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
+
         action={{
           label: t('createSubCategory'),
           icon: <Icons.Plus className="w-5 h-5" />,

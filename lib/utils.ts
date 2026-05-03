@@ -59,6 +59,38 @@ export function formatDateTime(date: string | Date, locale: string = 'en-US'): s
   }).format(d);
 }
 
+export function formatRelativeTime(date: string | Date, locale: string = 'ar-SA'): string {
+  if (!date) return '-';
+  const d = new Date(date);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
+
+  if (diffInSeconds < 60) {
+    return locale.startsWith('ar') ? 'الآن' : 'just now';
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'always' });
+    return rtf.format(-diffInMinutes, 'minute');
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24 && now.getDate() === d.getDate()) {
+    const time = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(d);
+    return locale.startsWith('ar') ? `اليوم، ${time}` : `Today, ${time}`;
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (yesterday.toDateString() === d.toDateString()) {
+    const time = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(d);
+    return locale.startsWith('ar') ? `أمس، ${time}` : `Yesterday, ${time}`;
+  }
+
+  return formatDateTime(date, locale);
+}
+
 export function getStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
     pending: 'bg-warning/10 text-warning',

@@ -24,7 +24,7 @@ import LogoutButton from './topbar/LogoutButton';
  * - ARIA accessibility compliance
  * - Logical properties support (RTL/LTR)
  */
-export default function UserAccountMenu({ iconOnly = false, dir = "bottom" }: { iconOnly?: boolean, dir?: string }) {
+export default function UserAccountMenu({ iconOnly = false, dir = "bottom", className = "m-4" }: { iconOnly?: boolean, dir?: string, className?: string }) {
     const t = useTranslations('store.nav');
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
@@ -76,7 +76,7 @@ export default function UserAccountMenu({ iconOnly = false, dir = "bottom" }: { 
     }, [isOpen]);
 
     return (
-        <div ref={menuRef} className={cn(iconOnly ? "bg-transparent m-4 relative" : "relative flex items-center gap-3 rounded-2xl border border-border/50 bg-background/50  m-3 p-2 shadow-sm hover:border-primary/30 transition-colors group")}>
+        <div ref={menuRef} className={cn( iconOnly ? "bg-transparent m-4 relative" : "relative flex items-center gap-3 rounded-2xl border border-border/50 bg-background/50  m-3 p-2 shadow-sm hover:border-primary/30 transition-colors group", className)}>
             {/* Trigger Button */}
             <button
                 onClick={toggleMenu}

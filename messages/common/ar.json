@@ -17,7 +17,8 @@
             "confirm": "تأكيد",
             "retry": "المحاولة مرة أخرى",
             "clearAll": "مسح الكل",
-            "applyFilters": "تطبيق الفلاتر"
+            "applyFilters": "تطبيق الفلاتر",
+            "actions": "الإجراءات"
       },
       "errors": {
             "required": "هذا الحقل مطلوب",

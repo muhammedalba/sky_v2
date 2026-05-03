@@ -1,0 +1,34 @@
+{
+      "title": "Suppliers",
+      "subtitle": "Manage your suppliers and vendors",
+      "totalResults": "{count} Suppliers found",
+      "searchPlaceholder": "Search suppliers...",
+      "createSupplier": "Add Supplier",
+      "entityLabel": "Supplier",
+      "editSupplier": "Edit Supplier",
+      "fields": {
+            "logo": "Logo",
+            "name": "Supplier Name",
+            "contact": "Contact Info",
+            "address": "Address",
+            "actions": "Actions",
+            "active": "Active",
+            "inactive": "Inactive",
+            "status": "Status"
+      },
+      "aiTranslateImprove": "Improve with AI",
+      "messages": {
+            "createSuccess": "Supplier created successfully",
+            "createError": "Failed to create supplier",
+            "updateSuccess": "Supplier updated successfully",
+            "updateError": "Failed to update supplier",
+            "deleteSuccess": "Supplier deleted successfully",
+            "deleteError": "Failed to delete supplier",
+            "deleteConfirmWithName": "Are you sure you want to delete this supplier {name}?",
+            "deleteConfirm": "Are you sure you want to delete this supplier?"
+      },
+      "emptyState": {
+            "title": "No suppliers found",
+            "description": "Keep track of your vendors by adding them to your dashboard."
+      }
+}

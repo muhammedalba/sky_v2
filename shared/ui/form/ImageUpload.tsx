@@ -39,22 +39,23 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
     onRemove();
   };
   return (
-    <div className={`flex flex-col gap-4 ${className}`}>
+    <div className={`flex flex-col gap-4  ${className}  `}>
       <div className="flex items-center gap-4">
         {preview ? (
-          <div className="relative w-40 h-40 rounded-xl  border border-border">
+          <div className="relative w-40 h-40 rounded-xl overflow-hidden  border border-border group">
             <Image
               src={preview}
               alt="Upload preview"
-              className="object-cover"
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
               fill
             />
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute -top-2 -inset-e-2.5 cursor-pointer hover:scale-110  p-1 bg-destructive/70 text-destructive-foreground rounded-full hover:bg-destructive transition-colors"
+              className="absolute inset-0 text-white bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+
             >
-              <Icons.X className="w-4 h-4 " /> {/* Use generic X or trash */}
+              <Icons.X className="w-7 h-7 " /> {/* Use generic X or trash */}
             </button>
           </div>
         ) : (

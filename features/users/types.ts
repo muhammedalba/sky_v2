@@ -6,7 +6,16 @@ export interface User {
   role: 'admin' | 'user' | 'manager';
   avatar?: string;
   phone?: string;
-  active?: boolean;
+  provider?: string;
+  passwordChangeAt?: Date;
+  passwordResetCode?: string;
+  passwordResetExpires?: Date;
+  lastEmailAttemptAt?: Date;
+  verificationCode?: string;
+  verificationExpires?: Date;
+  lastLogin?: Date;
+  totalOrders?: number;
+  isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

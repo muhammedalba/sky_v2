@@ -3,6 +3,7 @@
       "createSubCategory": "إنشاء فئة فرعية",
       "editSubCategory": "تعديل الفئة الفرعية",
       "searchPlaceholder": "البحث في الفئات الفرعية...",
+      "totalResults": "تم العثور على {count} فئات فرعية",
       "subtitle": "إدارة مستويات التسلسل الهرمي",
       "mainCategory": "الفئة الرئيسية",
       "fields": {

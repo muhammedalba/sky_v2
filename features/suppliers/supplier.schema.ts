@@ -8,7 +8,7 @@ export const supplierSchema = z.object({
   contactName: z.string().optional(),
   website: z.string().url().optional().or(z.literal('')),
   avatar: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-  active: z.boolean(),
+  isActive: z.boolean(),
 });
 
 export type SupplierFormValues = z.infer<typeof supplierSchema>;

@@ -5,16 +5,31 @@ import SupplierForm from '@/features/suppliers/components/dashboard/SupplierForm
 import { useSupplier } from '@/features/suppliers/hooks/useSuppliers';
 import { Skeleton } from '@/shared/ui/Skeleton';
 
-export default function EditSupplierPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
-  const { locale, id } = use(params);
+export default function EditSupplierPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { data: supplier, isLoading } = useSupplier(id, { allLangs: true });
 
-  if (isLoading) return <Skeleton className="h-[400px] w-full max-w-2xl mx-auto rounded-xl" />;
+  if (isLoading) {
+    return (
+      <div className="space-y-8 max-w-4xl mx-auto">
+        <Skeleton className="h-20 w-full rounded-3xl" />
+        <Skeleton className="h-[500px] w-full rounded-3xl" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Edit Supplier</h1>
-      {supplier && <SupplierForm locale={locale} initialData={supplier} />}
-    </div>
+    <>
+      {supplier ?  (
+        <SupplierForm
+          editingSupplier={supplier}
+          mode="edit"
+        />
+      ) : (
+        <div className="text-center text-muted-foreground">
+          not found
+        </div>
+      )}
+    </>
   );
 }

@@ -3,6 +3,7 @@
       "createSubCategory": "Create Sub Category",
       "editSubCategory": "Edit Sub Category",
       "searchPlaceholder": "Search sub-categories...",
+      "totalResults": "{count} Sub-categories found",
       "subtitle": "Manage hierarchy levels",
       "mainCategory": "Main Category",
       "fields": {

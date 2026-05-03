@@ -4,12 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ApiResponse, User } from '@/types';
 import { usersApi } from '@/features/users/api';
 
-export function useUsers(params?: { page?: number; limit?: number; role?: string, keywords?: string }) {
+export function useUsers(params?: { page?: number; limit?: number; role?: string, keywords?: string, isActive?: boolean }) {
   return useQuery({
     queryKey: ['users', params],
     queryFn: async () => {
-      const response = (await usersApi.getAll(params)) as unknown as ApiResponse<User[]>;
-      return response;
+      const response = await usersApi.getAll(params);
+      return response ;
     },
     throwOnError: true,
   });
@@ -19,7 +19,7 @@ export function useUser(id: string) {
   return useQuery({
     queryKey: ['users', id],
     queryFn: async () => {
-      const response = (await usersApi.getOne(id)) as unknown as ApiResponse<User>;
+      const response = await usersApi.getOne(id);
       return response.data;
     },
     enabled: !!id,
@@ -35,9 +35,49 @@ export function useUpdateUserRole() {
       const response = await usersApi.updateRole(id, role);
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['users', variables.id] });
+    onSuccess: async (_, variables) => {
+     await queryClient.invalidateQueries({ queryKey: ['users'] });
+      await queryClient.invalidateQueries({ queryKey: ['users', variables.id] });
+    },
+  });
+}
+
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: Record<string, unknown> | FormData) => {
+      const response = await usersApi.create(data);
+      return response.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Record<string, unknown> | FormData }) => {
+      const response = await usersApi.update(id, data);
+      return response.data;
+    },
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] });
+      await queryClient.invalidateQueries({ queryKey: ['users', variables.id] });
+    },
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await usersApi.delete(id);
+      return response.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 }

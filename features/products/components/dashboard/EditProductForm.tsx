@@ -13,7 +13,6 @@ import { useToast } from '@/shared/hooks/useToast';
 import { Product, ProductVariant, SubCategory } from '@/types';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
-import { Button } from '@/shared/ui/Button';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
 import AttributeBuilder, { AttributeDefinition } from './shared/AttributeBuilder';
 import VariantTable, { VariantRow } from './shared/VariantTable';
@@ -42,6 +41,8 @@ interface EditProductFormProps {
  */
 export default function EditProductForm({ locale, initialData, initialVariants = [] }: EditProductFormProps) {
   const t = useTranslations('products.form');
+  const tMessages = useTranslations('products.messages');
+
   const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
   const toast = useToast();
   const router = useRouter();
@@ -143,7 +144,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>(initialData.images || []);
   const [existingImages, setExistingImages] = useState<string[]>(initialData.images || []);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [coverError, setCoverError] = useState<string | null>(null);
 
   // ─── SubCategory selection state ─────────────────────
   const [selectedSubCategories, setSelectedSubCategories] = useState<SearchOption[]>(
@@ -374,11 +374,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
    * - تفصل المتغيرات في عمليات إنشاء، تحديث، وحذف.
    */
   const onSubmit = async (data: EditProductInput) => {
-    if (!coverFile && !initialData.imageCover) {
-      setCoverError(t('coverImageRequired'));
-      return;
-    }
-
     const formData = new FormData();
     formData.append('title', JSON.stringify(data.title));
     formData.append('description', JSON.stringify(data.description));
@@ -411,14 +406,14 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     existingImages.forEach((url) => formData.append('images', url));
     if (pdfFile) formData.append('infoProductPdf', pdfFile);
 
-    updateMutation.mutate(
-      { id: initialData._id, data: formData },
-      {
-        onSuccess: () => {
-          router.push(`/${locale}/dashboard/products`);
-        },
-      }
-    );
+    try {
+      await updateMutation.mutateAsync({ id: initialData._id, data: formData });
+      toast.success(tMessages('updateSuccess') || 'Product updated successfully');
+      router.push(`/${locale}/dashboard/products`);
+    } catch (error) {
+      toast.error(tMessages('updateError') || 'Error while updating product');
+      console.error(error);
+    }
   };
 
   // ─────────────────────────────────────────────────────
@@ -487,7 +482,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
           <div className="space-y-6">
             <ProductMediaPanel
               coverPreview={coverPreview}
-              coverError={coverError}
               coverFieldError={tError(errors.imageCover?.message as string)}
               onCoverChange={(file) => {
                 setCoverFile(file);
