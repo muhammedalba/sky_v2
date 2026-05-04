@@ -20,11 +20,10 @@ import { Select } from '@/shared/ui/Select';
 
 interface UserFormProps {
   editingUser?: User | null;
-  onCancel?: () => void;
   mode: 'create' | 'edit';
 }
 
-export default function UserForm({ editingUser, onCancel, mode }: UserFormProps) {
+export default function UserForm({ editingUser, mode }: UserFormProps) {
   const locale = useLocale();
   const t = useTranslations('users');
   const tButtons = useTranslations('buttons');
@@ -95,11 +94,9 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
   };
 
   const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
-      router.push(`/${locale}/dashboard/users`);
-    }
+
+    router.push(`/${locale}/dashboard/users`);
+
   };
 
   const isActive = watch('isActive');
@@ -135,6 +132,8 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
                 <Input
                   {...register('name')}
                   label={t('fields.name')}
+                  icon={Icons.User}
+                  disabled={createMutation.isPending || updateMutation.isPending}
                   error={errors.name?.message}
                 />
               </div>
@@ -142,8 +141,10 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
               <div className="space-y-2">
                 <Input
                   {...register('email')}
+                  icon={Icons.Mail}
                   label={t('fields.email')}
                   type="email"
+                  disabled={createMutation.isPending || updateMutation.isPending}
                   error={errors.email?.message}
                 />
               </div>
@@ -151,8 +152,10 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
               <div className="space-y-2">
                 <Input
                   {...register('phone')}
+                  icon={Icons.Phone}
                   label={t('fields.phone')}
                   dir="ltr"
+                  disabled={createMutation.isPending || updateMutation.isPending}
                   error={errors.phone?.message}
                 />
               </div>
@@ -160,6 +163,7 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
               <div className="space-y-2">
                 <Select
                   label={t('fields.role')}
+                  icon={Icons.Shield}
                   {...register('role')}
                   options={[
                     { value: 'user', label: t('roles.user') },
@@ -167,6 +171,7 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
                     { value: 'manager', label: t('roles.manager') },
                   ]}
                   // value={watch('role')}
+                  disabled={createMutation.isPending || updateMutation.isPending}
                   error={errors.role?.message}
                 />
               </div>
@@ -190,8 +195,10 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
                 <Input
                   {...register('password')}
                   type="password"
+                  icon={Icons.Key}
                   label={t('fields.password')}
                   placeholder={mode === 'edit' ? '******** (Leave empty to keep)' : '********'}
+                  disabled={createMutation.isPending || updateMutation.isPending}
                   error={errors.password?.message}
                 />
               </div>
@@ -200,8 +207,10 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
                 <Input
                   {...register('confirmPassword')}
                   type="password"
+                  icon={Icons.Key}
                   label={t('fields.passwordConfirm')}
                   placeholder={mode === 'edit' ? '******** (Leave empty to keep)' : '********'}
+                  disabled={createMutation.isPending || updateMutation.isPending}
                   error={errors.confirmPassword?.message}
                 />
               </div>
@@ -247,6 +256,7 @@ export default function UserForm({ editingUser, onCancel, mode }: UserFormProps)
             <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/40">
               <Switch
                 checked={isActive}
+                disabled={createMutation.isPending || updateMutation.isPending}
                 onChange={(e) => setValue('isActive', e.target.checked, { shouldDirty: true })}
               />
               <div className="space-y-1">

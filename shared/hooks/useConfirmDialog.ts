@@ -5,6 +5,7 @@ interface ConfirmDialogState {
   title?: string;
   message?: string;
   onConfirm?: () => void | Promise<void>;
+  isDangerous?: boolean;
 }
 
 export function useConfirmDialog() {
@@ -17,16 +18,19 @@ export function useConfirmDialog() {
     title,
     message,
     onConfirm,
+    isDangerous,
   }: {
     title?: string;
     message?: string;
     onConfirm: () => void | Promise<void>;
+    isDangerous?: boolean;
   }) => {
     setState({
       isOpen: true,
       title,
       message,
       onConfirm,
+      isDangerous,
     });
   };
 
@@ -55,6 +59,7 @@ export function useConfirmDialog() {
     title: state.title,
     message: state.message,
     isLoading,
+    isDangerous: state.isDangerous,
     openDialog,
     closeDialog,
     handleConfirm,

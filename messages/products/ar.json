@@ -75,6 +75,8 @@
             "cancel": "إلغاء",
             "confirm": "تأكيد",
             "save": "حفظ التغييرات",
+            "editProduct": "تعديل المنتج",
+            "softDelete": "حذف المنتج",
             "publish": "نشر المنتج",
             "basicInformation": "المعلومات الأساسية",
             "basicDesc": "إعداد العنوان والوصف حسب اللغة",

@@ -167,7 +167,7 @@ export default function SuppliersPage() {
         <Switch
           checked={supplier.isActive}
           onChange={() => handleToggleStatus(supplier)}
-          disabled={updateSupplierPending}
+          disabled={updateSupplierPending || isLoading || deleteSupplierPending}
         />
       )
     },
@@ -181,7 +181,7 @@ export default function SuppliersPage() {
             variant="ghost"
             className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
             onClick={() => router.push(`/${locale}/dashboard/suppliers/${supplier.slug}/edit`)}
-            disabled={deleteSupplierPending || isLoading}
+            disabled={deleteSupplierPending || isLoading || updateSupplierPending}
           >
             <Icons.Edit className="w-4 h-4" />
           </Button>
@@ -191,7 +191,7 @@ export default function SuppliersPage() {
             className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
             onClick={() => handleDelete(supplier._id, supplier.name)}
             isLoading={deleteSupplierPending}
-            disabled={deleteSupplierPending || isLoading}
+            disabled={deleteSupplierPending || isLoading || updateSupplierPending}
           >
             <Icons.Trash className="w-4 h-4" />
           </Button>
@@ -209,7 +209,8 @@ export default function SuppliersPage() {
         action={{
           label: t('createSupplier'),
           icon: <Icons.Plus className="w-5 h-5" />,
-          onClick: () => router.push(`/${locale}/dashboard/suppliers/create`)
+          onClick: () => router.push(`/${locale}/dashboard/suppliers/create`),
+          disabled: deleteSupplierPending || isLoading || updateSupplierPending
         }}
       />
 
@@ -219,6 +220,7 @@ export default function SuppliersPage() {
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
+              disabled={deleteSupplierPending || isLoading || updateSupplierPending}
               className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
             >
               {tab.label}
@@ -232,7 +234,7 @@ export default function SuppliersPage() {
         onSearch={handleSearch}
         defaultValue={search}
         debounceMs={700}
-        disabled={deleteSupplierPending || isLoading}
+        disabled={deleteSupplierPending || isLoading || updateSupplierPending}
       />
 
       <EntityDataTable<Supplier>

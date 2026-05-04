@@ -22,6 +22,7 @@ import { useProductFilters } from '@/features/products/hooks/useProductFilters';
 import { ProductFiltersBar } from '@/features/products/components/dashboard/ProductFiltersBar';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import Link from 'next/link';
+import { Tooltip } from '@/shared/ui/Tooltip';
 
 type ViewTab = 'isActive' | 'deleted' | 'featured' | 'lowStock' | 'notActive' | 'sort' | 'unlimited_stock';
 
@@ -32,7 +33,7 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
   featured: { isFeatured: 'true' },
   lowStock: { sort: 'stockSummary', isUnlimitedStock: 'false' },
   notActive: { isActive: 'false' },
-  sort: { sort: '-totalSold' }, 
+  sort: { sort: '-totalSold' },
   unlimited_stock: { isUnlimitedStock: 'true' },
 };
 
@@ -49,22 +50,21 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   const confirmDialog = useConfirmDialog();
   const getTrans = useTrans();
 
-  // جلب البيانات
+  // get data
   const { data, isLoading, refetch } = useProducts({
     page,
     limit: 10,
     ...apiParams,
     ...TAB_FILTER_PARAMS[viewTab],
   } as Record<string, unknown>);
-  const deleteMutation = useDeleteProduct();
-  const restoreMutation = useRestoreProduct();
-  const hardDeleteMutation = useHardDeleteProduct();
-  const updateMutation = useUpdateProduct();
 
-  // الدوال المساعدة
-  const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
-  const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
+  const { mutateAsync: deleteMutation, isPending: deleteProductPending } = useDeleteProduct();
+  const { mutateAsync: restoreMutation, isPending: restoreProductPending } = useRestoreProduct();
+  const { mutateAsync: hardDeleteMutation, isPending: hardDeleteProductPending } = useHardDeleteProduct();
+  const { mutateAsync: updateMutation, isPending: updateProductPending } = useUpdateProduct();
 
+
+  // tabs 
   const tabs = useMemo(() => [
     { key: 'isActive' as ViewTab, label: t('filters.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
     { key: 'notActive' as ViewTab, label: t('filters.disabled'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
@@ -74,31 +74,38 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
     { key: 'unlimited_stock' as ViewTab, label: t('filters.unlimitedStock'), activeClass: 'bg-sky-500 text-white shadow-md shadow-sky-500/20' },
     { key: 'deleted' as ViewTab, label: t('filters.deleted'), activeClass: 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20' },
   ], [t]);
-
+  // handle pagination
+  const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
+  // handle tab change
+  const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
+  // handle soft delete
   const handleSoftDelete = (id: string, title: string) => {
     confirmDialog.openDialog({
       title: t('messages.softDeleteTitle'),
       message: t('messages.softDeleteConfirm', { title }),
+      isDangerous: false,
       onConfirm: async () => {
-        await deleteMutation.mutateAsync(id);
+        await deleteMutation(id);
         refetch();
       },
     });
   };
-
+  // handle hard delete
   const handleHardDelete = (id: string, title: string) => {
     confirmDialog.openDialog({
       title: t('form.hardDelete'),
       message: `${t('messages.hardDeleteConfirm')}\n\n"${title}"`,
+      isDangerous: true,
       onConfirm: async () => {
-        await hardDeleteMutation.mutateAsync(id);
+        await hardDeleteMutation(id);
         refetch();
       },
     });
   };
+  // handle restore
   const handleRestore = async (id: string) => {
 
-    await restoreMutation.mutateAsync(id);
+    await restoreMutation(id);
 
     refetch();
 
@@ -157,15 +164,15 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         <div className="flex flex-col gap-2">
           <Switch
             checked={product.isFeatured}
-            onChange={(e) => updateMutation.mutate({ id: product._id, data: { isFeatured: e.target.checked } })}
-            disabled={updateMutation.isPending}
+            onChange={(e) => updateMutation({ id: product._id, data: { isFeatured: e.target.checked } })}
+            disabled={updateProductPending}
             label={getTrans({ ar: "مميز", en: "Featured" })}
             className="scale-75 origin-left rtl:origin-right"
           />
           <Switch
             checked={product.isActive}
-            onChange={(e) => updateMutation.mutate({ id: product._id, data: { isActive: e.target.checked } })}
-            disabled={updateMutation.isPending}
+            onChange={(e) => updateMutation({ id: product._id, data: { isActive: e.target.checked } })}
+            disabled={updateProductPending}
             label={getTrans({ ar: "نشط", en: "Active" })}
             className="scale-75 origin-left rtl:origin-right"
           />
@@ -237,46 +244,61 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
       render: (product: Product) => (
         <div className="flex justify-end gap-1 group-hover:scale-105 transition-all duration-300">
           {viewTab === 'deleted' ? (
-            <>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="bg-success/10 hover:bg-success hover:text-white border border-success/30 rounded-xl px-5 h-9 font-bold shadow-sm transition-all active:scale-95 text-success dark:text-success"
-                onClick={() => handleRestore(product._id)}
-                isLoading={restoreMutation.isPending}
-              >
-                {t('form.restoreProduct')}
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="rounded-xl px-5 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95"
-                onClick={() => handleHardDelete(product._id, getTrans(product.title))}
-                isLoading={hardDeleteMutation.isPending}
-              >
-                {t('form.hardDelete')}
-              </Button>
-            </>
+
+            <div className="flex justify-center gap-2 transition-all duration-300">
+              <Tooltip content={t('form.restoreProduct')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                  onClick={() => handleRestore(product._id)}
+                  isLoading={restoreProductPending}
+                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                >
+                  <Icons.Restore className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+ 
+              <Tooltip content={t('form.hardDelete')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                  onClick={() => handleHardDelete(product._id, getTrans(product.title))}
+                  isLoading={hardDeleteProductPending}
+                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                >
+                  <Icons.Trash className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            </div>
           ) : (
-            <>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
-                onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
-              >
-                <Icons.Edit className="w-4 h-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
-                onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
-                isLoading={deleteMutation.isPending}
-              >
-                <Icons.Trash className="w-4 h-4" />
-              </Button>
-            </>
+            <div className="flex justify-center gap-2 transition-all duration-300">
+              <Tooltip content={t('form.editProduct')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                  onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
+                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                >
+                  <Icons.Edit className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+
+              <Tooltip content={t('form.softDelete')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                  onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
+                  isLoading={deleteProductPending}
+                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                >
+                  <Icons.Trash className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            </div>
           )}
         </div>
       )
@@ -286,7 +308,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
-        title={t('title')} 
+        title={t('title')}
         subtitle={t('productList')}
         action={{
           label: t('createProduct'),
@@ -302,7 +324,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
-              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
+              className={`px-5 cursor-pointer py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
             >
               {tab.label}
             </button>
@@ -381,7 +403,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         onConfirm={confirmDialog.handleConfirm}
         title={confirmDialog.title}
         message={confirmDialog.message}
-        isDangerous
+        isDangerous={confirmDialog.isDangerous}
         isLoading={confirmDialog.isLoading}
         cancelText={t('form.cancel')}
         confirmText={t('form.confirm')}

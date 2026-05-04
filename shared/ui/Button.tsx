@@ -21,6 +21,8 @@ const buttonVariants = cva(
           "hover:bg-accent/80 cursor-pointer hover:text-accent-foreground hover:-translate-y-0.5",
         link:
           "text-primary cursor-pointer underline-offset-4 hover:underline hover:opacity-80 hover:-translate-y-0.5",
+        warning:"bg-warning cursor-pointer text-warning-foreground shadow-sm hover:bg-warning/90 hover:shadow-md hover:-translate-y-0.5",
+        info:"bg-info cursor-pointer text-info-foreground shadow-sm hover:bg-info/90 hover:shadow-md hover:-translate-y-0.5",
       },
       size: {
         default: "h-10 px-5 py-2",

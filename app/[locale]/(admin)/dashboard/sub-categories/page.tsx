@@ -17,6 +17,7 @@ import Modal from '@/shared/ui/Modal';
 import SubCategoryForm from '@/features/categories/components/dashboard/SubCategoryForm';
 import { SubCategory } from '@/types';
 import { useQueryState } from '@/shared/hooks/useQueryState';
+import { Tooltip } from '@/shared/ui/Tooltip';
 
 export default function SubCategoriesPage() {
   // get query params
@@ -109,25 +110,31 @@ export default function SubCategoriesPage() {
       header: "Actions",
       className: "ps-6 text-center",
       render: (sub: SubCategory) => (
-        <div className="flex justify-center gap-2.5">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
-            disabled={deleteSubCategoryPending || isLoading}
-            onClick={() => handleOpenModal(sub)}           >
-            <Icons.Edit className="w-4 h-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
-            disabled={deleteSubCategoryPending || isLoading}
-            onClick={() => handleDelete(sub._id, getTrans(sub.name))}
-            isLoading={isLoading}
-          >
-            <Icons.Trash className="w-4 h-4" />
-          </Button>
+        <div className="flex justify-center gap-2 transition-all duration-300">
+          <Tooltip content={tButtons('edit')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+              onClick={() => handleOpenModal(sub)}
+              disabled={deleteSubCategoryPending || isLoading}
+            >
+              <Icons.Edit className="h-4 w-4" />
+            </Button>
+          </Tooltip>
+
+          <Tooltip content={tButtons('delete')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+              onClick={() => handleDelete(sub._id, getTrans(sub.name))}
+              isLoading={deleteSubCategoryPending}
+              disabled={deleteSubCategoryPending || isLoading}
+            >
+              <Icons.Trash className="h-4 w-4" />
+            </Button>
+          </Tooltip>
         </div>
       )
     }
@@ -143,7 +150,8 @@ export default function SubCategoriesPage() {
         action={{
           label: t('createSubCategory'),
           icon: <Icons.Plus className="w-5 h-5" />,
-          onClick: () => handleOpenModal()
+          onClick: () => handleOpenModal(),
+          disabled: deleteSubCategoryPending || isLoading 
         }}
       />
 
@@ -195,7 +203,7 @@ export default function SubCategoriesPage() {
         message={confirmDialog.message}
         confirmText={tButtons('confirm')}
         cancelText={tButtons('cancel')}
-        isDangerous={true}
+        isDangerous={confirmDialog.isDangerous}
         isLoading={confirmDialog.isLoading}
       />
     </div>

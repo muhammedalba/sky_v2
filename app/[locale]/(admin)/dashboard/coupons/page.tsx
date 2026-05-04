@@ -19,6 +19,7 @@ import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { Coupon } from '@/types';
 import { Switch } from '@/shared/ui/Switch';
 import { useToast } from '@/shared/hooks/useToast';
+import { Tooltip } from '@/shared/ui/Tooltip';
 
 
 type ViewTab = 'active' | 'notActive';
@@ -44,11 +45,11 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
   const queryParams = useMemo(() => ({
     page, limit: 10, keywords: search, ...TAB_FILTER_PARAMS[viewTab]
   }), [page, search, viewTab]);
-  
+
   const { data, isLoading, refetch } = useCoupons(queryParams);
 
-  const deleteMutation = useDeleteCoupon();
-  const updateCoupon = useUpdateCoupon();
+  const { mutateAsync: deleteCouponAsync, isPending: deleteCouponPending } = useDeleteCoupon();
+  const { mutateAsync: updateCouponAsync, isPending: updateCouponPending } = useUpdateCoupon();
   const confirmDialog = useConfirmDialog();
   const toast = useToast();
 
@@ -67,7 +68,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
   const handleStatusChange = useCallback(async (coupon: Coupon, newStatus: boolean) => {
     if (newStatus === undefined) return;
     try {
-      await updateCoupon.mutateAsync({
+      await updateCouponAsync({
         id: coupon._id,
         data: { active: newStatus }
       });
@@ -77,21 +78,21 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
       const errorMessage = error instanceof Error ? error.message : t('messages.updateError');
       toast.error(errorMessage);
     }
-  }, [updateCoupon, toast, t, refetch]);
+  }, [updateCouponAsync, toast, t, refetch]);
 
 
 
   const handleDelete = useCallback((id: string, name: string) => {
     confirmDialog.openDialog({
       title: t('messages.deleteConfirm'),
-      message: t('messages.deleteConfirm'),
+      message: t('messages.deleteConfirmWithName', { name }),
       onConfirm: async () => {
-        await deleteMutation.mutateAsync(id);
+        await deleteCouponAsync(id);
         refetch();
       },
     });
-  }, [confirmDialog, deleteMutation, refetch, t]);
- 
+  }, [confirmDialog, deleteCouponAsync, refetch, t]);
+
   const tabs = useMemo(() => [
     { key: 'active' as ViewTab, label: t('fields.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
     { key: 'notActive' as ViewTab, label: t('fields.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
@@ -185,30 +186,36 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
     },
     {
       header: tButtons('actions'),
-      className: "pr-6 text-right",
+      className: "ps-6 text-center",
       render: (coupon: Coupon) => (
-        <div className="flex justify-end gap-2.5  transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-          <Button
-            size="sm"
-            variant="secondary"
-            className="bg-background/80 hover:bg-primary hover:text-white border border-border/60 rounded-xl px-4 h-9 font-bold shadow-sm transition-all active:scale-95 flex items-center gap-2"
-            onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
-          >
-            <Icons.Edit className="w-3.5 h-3.5" />
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            className="rounded-xl px-4 h-9 font-bold shadow-sm shadow-destructive/10 hover:shadow-destructive/20 transition-all active:scale-95 flex items-center gap-2"
-            onClick={() => handleDelete(coupon._id, coupon.name)}
-            isLoading={deleteMutation.isPending && deleteMutation.variables === coupon._id}
-          >
-            <Icons.Trash className="w-3.5 h-3.5" />
-          </Button>
+        <div className="flex justify-center gap-2 transition-all duration-300">
+          <Tooltip content={tButtons('edit')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+              onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
+              disabled={updateCouponPending || isLoading || deleteCouponPending}                   >
+              <Icons.Edit className="h-4 w-4" />
+            </Button>
+          </Tooltip>
+
+          <Tooltip content={tButtons('delete')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+              onClick={() => handleDelete(coupon._id, coupon.name)}
+              isLoading={deleteCouponPending}
+              disabled={deleteCouponPending || isLoading || updateCouponPending}
+            >
+              <Icons.Trash className="h-4 w-4" />
+            </Button>
+          </Tooltip>
         </div>
       )
     }
-  ], [t, tButtons, locale, router, handleDelete, deleteMutation]);
+  ], [t, tButtons, locale, router, handleDelete, deleteCouponPending, updateCouponPending]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -220,6 +227,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
           label: t('createCoupon'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/coupons/create`),
+          disabled: updateCouponPending || isLoading || deleteCouponPending
         }}
       />
 
@@ -267,7 +275,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
         message={confirmDialog.message}
         confirmText={tButtons('delete')}
         cancelText={tButtons('cancel')}
-        isDangerous={true}
+        isDangerous={confirmDialog.isDangerous}
         isLoading={confirmDialog.isLoading}
       />
     </div>

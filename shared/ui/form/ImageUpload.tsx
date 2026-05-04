@@ -6,6 +6,7 @@ import { Icons } from '@/shared/ui/Icons';
 import Image from 'next/image';
 import ErrorMessage from '../ErrorMessage';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface ImageUploadProps {
   onChange: (file: File) => void;
@@ -16,6 +17,7 @@ interface ImageUploadProps {
 }
 
 export default function ImageUpload({ value, onChange, onRemove, className, error }: ImageUploadProps) {
+  const t = useTranslations('common');
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | undefined>(value);
 
@@ -40,12 +42,12 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
   };
   return (
     <div className={`flex flex-col gap-4  ${className}  `}>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 justify-center">
         {preview ? (
           <div className="relative w-40 h-40 rounded-xl overflow-hidden  border border-border group">
             <Image
               src={preview}
-              alt="Upload preview"
+              alt={t('upload.preview')}
               className="object-cover group-hover:scale-110 transition-transform duration-500"
               fill
             />
@@ -64,7 +66,7 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
             className={cn(`w-40 h-40 rounded-xl border-dashed border-2 ${error ? "border-destructive" : "border-muted-foreground/20 "} hover:border-primary/50 bg-secondary/20 flex flex-col items-center justify-center cursor-pointer transition-colors group`)}
           >
             <Icons.Products className="w-8 h-8 text-muted-foreground group-hover:text-primary mb-2" />
-            <span className="text-xs text-muted-foreground font-medium group-hover:text-primary">Upload Image</span>
+            <span className="text-xs text-muted-foreground font-medium group-hover:text-primary">{t('upload.title')}</span>
           </div>
         )}
       </div>

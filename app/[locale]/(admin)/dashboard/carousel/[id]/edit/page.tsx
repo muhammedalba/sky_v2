@@ -1,28 +1,33 @@
 'use client';
 
-import { use } from 'react';
+import { useParams } from 'next/navigation';
 import CarouselForm from '@/features/marketing/components/dashboard/CarouselForm';
 import { useCarouselItem } from '@/features/marketing/hooks/useCarousel';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { useRouter } from 'next/navigation';
 
-export default function EditCarouselPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
-  const { locale, id } = use(params);
-  const router = useRouter();
-  const { data: carousel, isLoading } = useCarouselItem(id, { all_langs: true });
-
-  if (isLoading) return <Skeleton className="h-[400px] w-full max-w-4xl mx-auto rounded-xl" />;
+export default function EditCarouselPage() {
+  const { id } = useParams();
+  const { data: carousel, isLoading } = useCarouselItem(id as string, { all_langs: true });
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 space-y-8">
+        <div className="h-16 w-full bg-muted/20 animate-pulse rounded-2xl mb-8" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <Skeleton className="h-64 w-full rounded-2xl" />
+            <Skeleton className="h-40 w-full rounded-2xl" />
+          </div>
+          <Skeleton className="h-96 w-full rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Edit Carousel Slide</h1>
-      {carousel && (
-        <CarouselForm 
-          editingCarousel={carousel} 
-          onSuccess={() => router.push(`/${locale}/dashboard/carousel`)}
-          onCancel={() => router.push(`/${locale}/dashboard/carousel`)}
-        />
-      )}
+    <div className="container mx-auto p-6">
+      <CarouselForm 
+        initialData={carousel}
+      />
     </div>
   );
 }

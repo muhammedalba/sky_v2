@@ -174,9 +174,9 @@ export default function VariantTable({
                               type="button"
                               onClick={() => onUnmarkDelete && onUnmarkDelete(variant._id!)}
                               className="p-2 rounded-lg bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition-colors"
-                              title="Restore"
+                              title={t('restoreProduct')}
                             >
-                              <Icons.Check className="w-4 h-4" />
+                              <Icons.Restore className="w-4 h-4" />
                             </button>
                           )
                         ) : (
@@ -184,9 +184,9 @@ export default function VariantTable({
                             type="button"
                             onClick={() => removeVariant(idx)}
                             className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-                            title="Delete"
+                            title={t('deleteVariant')}
                           >
-                            <Icons.X className="w-4 h-4" />
+                            <Icons.Trash className="w-4 h-4" />
                           </button>
                         )}
                       </div>

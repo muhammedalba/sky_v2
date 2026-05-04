@@ -44,6 +44,7 @@ export default function FormStickyHeader({
           variant="secondary"
           className="rounded-xl font-bold"
           onClick={() => router.push(backUrl)}
+          disabled={isSubmitting}
         >
           {cancelLabel}
         </Button>
@@ -52,6 +53,7 @@ export default function FormStickyHeader({
           form={formId}
           className="rounded-xl font-bold shadow-lg shadow-primary/20 hover:shadow-xl transition-all"
           isLoading={isSubmitting}
+          disabled={isSubmitting}
         >
           {saveLabel}
         </Button>

@@ -2,10 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useToast } from '@/shared/hooks/useToast';
 import { carouselApi } from '@/features/marketing/carousel.api';
 
-export function useCarousel(params?: { page?: number; limit?: number, keywords?: string, all_langs?: boolean }) {
+export function useCarousel(params?: { page?: number; limit?: number, keywords?: string, all_langs?: boolean, isActive?: boolean }) {
   return useQuery({
     queryKey: ['carousel', params],
     queryFn: async () => {
@@ -21,7 +20,7 @@ export function useCarouselItem(id: string, options?: { all_langs?: boolean }) {
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
       const response = await carouselApi.getOne(id, params);
-      return response.data.data;
+      return response.data;
     },
     enabled: !!id,
   });
@@ -29,58 +28,44 @@ export function useCarouselItem(id: string, options?: { all_langs?: boolean }) {
 
 export function useCreateCarousel() {
   const queryClient = useQueryClient();
-  const toast = useToast();
 
   return useMutation({
     mutationFn: async (data: FormData) => {
       const response = await carouselApi.create(data);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['carousel'] });
-      toast.success('Carousel item created successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create carousel item');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['carousel'] });
     },
   });
 }
 
 export function useUpdateCarousel() {
   const queryClient = useQueryClient();
-  const toast = useToast();
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: FormData }) => {
       const response = await carouselApi.update(id, data);
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['carousel'] });
-      queryClient.invalidateQueries({ queryKey: ['carousel', variables.id] });
-      toast.success('Carousel item updated successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update carousel item');
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ['carousel'] });
+      await queryClient.invalidateQueries({ queryKey: ['carousel', variables.id] });
     },
   });
 }
 
 export function useDeleteCarousel() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
 
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await carouselApi.delete(id);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['carousel'] });
-      toast.success('Carousel item deleted successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete carousel item');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['carousel'] });
     },
   });
 }

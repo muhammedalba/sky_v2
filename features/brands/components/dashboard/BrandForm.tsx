@@ -122,6 +122,7 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
           className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20 "
           type="submit"
           isLoading={createMutation.isPending || updateMutation.isPending}
+          disabled={createMutation.isPending || updateMutation.isPending}
         >
           {tCommon('save')}
         </Button>
@@ -130,6 +131,7 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
           variant="outline"
           className="h-12 rounded-xl px-6 font-bold"
           onClick={onCancel}
+          disabled={createMutation.isPending || updateMutation.isPending}
         >
           {tCommon('cancel')}
         </Button>

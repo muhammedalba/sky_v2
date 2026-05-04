@@ -126,6 +126,8 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
           type="submit"
           isLoading={createMutation.isPending || updateMutation.isPending}
+
+          disabled={createMutation.isPending || updateMutation.isPending}
         >
           {tCommon('save')}
         </Button>

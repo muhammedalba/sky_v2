@@ -14,7 +14,8 @@ interface EntityPageHeaderProps {
     icon?: ReactNode;
     onClick: () => void;
     className?: string;
-  };
+    disabled?: boolean;
+    };
   className?: string;
   totalResults?: string;
 }
@@ -47,6 +48,7 @@ export default function EntityPageHeader({
       {action && (
         <Button
           onClick={action.onClick}
+          disabled={action.disabled}
           className={cn(
             "h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95",
             action.className

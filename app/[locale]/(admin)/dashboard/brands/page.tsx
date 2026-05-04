@@ -16,6 +16,7 @@ import { useTrans } from '@/shared/hooks/useTrans';
 import { Brand } from '@/types';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useToast } from '@/shared/hooks/useToast';
+import { Tooltip } from '@/shared/ui/Tooltip';
 
 export default function BrandsPage() {
   // get page and search from query params
@@ -40,7 +41,7 @@ export default function BrandsPage() {
 
   const getTrans = useTrans();
   // hooks
-  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
+  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage, isDangerous: isConfirmDangerous } = useConfirmDialog();
   const { success: toastSuccess, error: toastError } = useToast();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -115,26 +116,30 @@ export default function BrandsPage() {
       header: t('fields.actions'),
       className: "pe-6 text-center",
       render: (brand: Brand) => (
+        <div className="flex justify-center gap-2 transition-all duration-300">
+          <Tooltip content={tButtons('edit')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+              onClick={() => handleOpenModal(brand)}
+              disabled={deleteBrandPending || isLoading || isConfirmLoading}                   >
+              <Icons.Edit className="h-4 w-4" />
+            </Button>
+          </Tooltip>
 
-        <div className="flex justify-center gap-2.5">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors "
-            onClick={() => handleOpenModal(brand)}
-            disabled={deleteBrandPending || isLoading}           >
-            <Icons.Edit className="w-4 h-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors "
-            onClick={() => handleDelete(brand._id, getTrans(brand.name))}
-            isLoading={deleteBrandPending}
-            disabled={deleteBrandPending || isLoading}
-          >
-            <Icons.Trash className="w-4 h-4" />
-          </Button>
+          <Tooltip content={tButtons('delete')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+              onClick={() => handleDelete(brand._id, getTrans(brand.name))}
+              isLoading={deleteBrandPending}
+              disabled={deleteBrandPending || isLoading || isConfirmLoading}
+            >
+              <Icons.Trash className="h-4 w-4" />
+            </Button>
+          </Tooltip>
         </div>
       )
     }
@@ -200,7 +205,7 @@ export default function BrandsPage() {
         message={confirmMessage}
         confirmText={tButtons('confirm')}
         cancelText={tButtons('cancel')}
-        isDangerous={true}
+        isDangerous={isConfirmDangerous}
         isLoading={isConfirmLoading}
       />
     </div>

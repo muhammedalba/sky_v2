@@ -20,11 +20,10 @@ import { cn } from '@/lib/utils';
 
 interface SupplierFormProps {
   editingSupplier?: Supplier | null;
-  onCancel?: () => void;
   mode: 'create' | 'edit';
 }
 
-export default function SupplierForm({ editingSupplier, onCancel, mode }: SupplierFormProps) {
+export default function SupplierForm({ editingSupplier, mode }: SupplierFormProps) {
   // locale
   const locale = useLocale();
   // translations
@@ -65,7 +64,6 @@ export default function SupplierForm({ editingSupplier, onCancel, mode }: Suppli
 
   // handlers
   const onSubmit = async (data: SupplierFormValues) => {
-    console.log("onSubmit",data);
     const formData = new FormData();
     formData.append('name', data.name);
     if (data.email) formData.append('email', data.email);
@@ -96,11 +94,7 @@ export default function SupplierForm({ editingSupplier, onCancel, mode }: Suppli
   };
   // 
   const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
       router.back();
-    }
   };
 
   return (
@@ -112,7 +106,7 @@ export default function SupplierForm({ editingSupplier, onCancel, mode }: Suppli
         cancelLabel={tButtons('cancel')}
         saveLabel={tButtons('save')}
         formId={formId}
-        isSubmitting={false}
+        isSubmitting={createMutation.isPending || updateMutation.isPending}
         backUrl={`/${locale}/dashboard/suppliers`}
       />
 
@@ -206,6 +200,7 @@ export default function SupplierForm({ editingSupplier, onCancel, mode }: Suppli
             className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20 "
             type="submit"
             isLoading={createMutation.isPending || updateMutation.isPending}
+            disabled={createMutation.isPending || updateMutation.isPending}
           >
             {tButtons('save')}
           </Button>
@@ -214,6 +209,7 @@ export default function SupplierForm({ editingSupplier, onCancel, mode }: Suppli
             variant="outline"
             className="h-12 rounded-xl px-8 font-bold"
             onClick={handleCancel}
+            disabled={createMutation.isPending || updateMutation.isPending}
           >
             {tButtons('cancel')}
           </Button>

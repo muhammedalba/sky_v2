@@ -25,7 +25,7 @@ export default function ConfirmDialog({
   message = 'Are you sure you want to proceed?',
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  isDangerous = false,
+  isDangerous = true,
   isLoading = false,
 }: ConfirmDialogProps) {
   // 1. حل مشكلة Hydration في Next.js (SSR)
@@ -85,11 +85,10 @@ export default function ConfirmDialog({
           <div className="flex items-start gap-4 sm:gap-5">
             {/* Icon */}
             <div
-              className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center ring-8 ${
-                isDangerous
+              className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center ring-8 ${isDangerous
                   ? 'bg-destructive/10 text-destructive ring-destructive/5'
-                  : 'bg-primary/10 text-primary ring-primary/5'
-              }`}
+                  : 'bg-warning/10 text-warning ring-warning/5'
+                }`}
             >
               {/* أبقيت على حيلتك الذكية بتدوير الأيقونة، لكن مع تحسين تموضعها */}
               <Icons.Warning className={`w-6 h-6 `} />
@@ -103,7 +102,7 @@ export default function ConfirmDialog({
                 </h3>
                 <button
                   onClick={onClose}
-                  className="text-muted-foreground cursor-pointer bg-accent hover:bg-accent/60 transition-colors p-1.5 rounded-md -mt-2 -me-2"
+                  className="absolute inset-e-4 top-4 text-muted-foreground cursor-pointer bg-accent hover:bg-accent/60 transition-colors p-1.5 rounded-md -mt-2 -me-2"
                   disabled={isLoading}
                   aria-label="Close dialog"
                 >
@@ -128,7 +127,7 @@ export default function ConfirmDialog({
             {cancelText}
           </Button>
           <Button
-            variant={isDangerous ? 'destructive' : 'default'}
+            variant={isDangerous ? 'destructive' : 'warning'}
             onClick={handleConfirm}
             isLoading={isLoading}
             className="w-full sm:w-auto rounded-xl font-semibold"

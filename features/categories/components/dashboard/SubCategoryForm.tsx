@@ -144,6 +144,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
           className="flex-1 h-12 rounded-xl font-black shadow-lg shadow-primary/20"
           type="submit"
           isLoading={createMutation.isPending || updateMutation.isPending}
+          disabled={createMutation.isPending || updateMutation.isPending}
         >
           {tCommon('save')}
         </Button>
@@ -152,6 +153,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
           variant="outline"
           className="h-12 rounded-xl px-6 font-bold"
           onClick={onCancel}
+          disabled={createMutation.isPending || updateMutation.isPending}
         >
           {tCommon('cancel')}
         </Button>

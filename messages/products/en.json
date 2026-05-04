@@ -75,6 +75,8 @@
             "cancel": "Cancel",
             "confirm": "Confirm",
             "save": "Save Changes",
+            "editProduct": "Edit Product",
+            "softDelete": "Delete Product",
             "actions": "Actions",
             "publish": "Publish Product",
             "basicInformation": "Basic Information",

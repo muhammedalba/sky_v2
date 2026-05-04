@@ -227,6 +227,7 @@ export default function UsersPage() {
           <Switch
             checked={user.isActive !== false}
             onChange={(e) => handleStatusChange(user, e.target.checked)}
+            disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
           />
           <span className={cn(
             "text-xs font-bold uppercase tracking-wider",
@@ -248,6 +249,8 @@ export default function UsersPage() {
               size="icon"
               className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
               onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
+              disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+
             >
               <Icons.Edit className="h-4 w-4" />
             </Button>
@@ -259,6 +262,9 @@ export default function UsersPage() {
               size="icon"
               className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
               onClick={() => handleDelete(user._id, user.name)}
+              disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+              isLoading={deleteMutation.isPending}
+
             >
               <Icons.Trash className="h-4 w-4" />
             </Button>
@@ -283,6 +289,8 @@ export default function UsersPage() {
           label: t('createUser'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/users/create`),
+          disabled: deleteMutation.isPending || isLoading || updateMutation.isPending
+
         }}
       />
 
@@ -291,6 +299,7 @@ export default function UsersPage() {
           defaultValue={search}
           onSearch={handleSearch}
           placeholder={t('searchPlaceholder')}
+          disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
         />
 
         <div className="border-b border-border/40 pb-4">
@@ -336,7 +345,6 @@ export default function UsersPage() {
         message={confirmMessage}
         confirmText={tButtons('confirm')}
         cancelText={tButtons('cancel')}
-        isDangerous={true}
         isLoading={isConfirmLoading}
       />
     </div>

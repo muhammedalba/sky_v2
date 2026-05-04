@@ -4,9 +4,33 @@
       "editSlide": "تعديل الشريحة",
       "searchPlaceholder": "البحث في الشرائح...",
       "subtitle": "إدارة سلايدر الصفحة الرئيسية",
+      "totalResults": "تم العثور على {count} شرائح",
+      "entityLabel": "شريحة",
+      "modalDescription": "تكوين شرائح واجهة الصفحة الرئيسية.",
       "fields": {
+            "basicInfo": "المعلومات الأساسية",
+            "basicInfoDescription": "تكوين النصوص والأوصاف لهذه الشريحة",
             "description": "الوصف",
+            "descriptionPlaceholder": "مثال: تخفيضات الصيف المميزة",
             "status": "الحالة",
-            "image": "صورة الشريحة"
+            "image": "صورة الشريحة",
+            "active": "نشط",
+            "inactive": "غير نشط",
+            "actions": "الإجراءات",
+            "large": "كبير (كمبيوتر)",
+            "medium": "متوسط (تابلت)",
+            "small": "صغير (موبايل)",
+            "descriptionEn": "الوصف (الإنجليزية)",
+            "descriptionAr": "الوصف (العربية)",
+            "statusDescription": "التحكم في ظهور هذه الشريحة للعملاء في الصفحة الرئيسية"
+      },
+      "messages": {
+            "addSuccess": "تم إضافة الشريحة بنجاح",
+            "updateSuccess": "تم تحديث الشريحة بنجاح",
+            "error": "حدث خطأ، يرجى المحاولة مرة أخرى"
+      },
+      "emptyState": {
+            "title": "لم يتم العثور على شرائح",
+            "description": "اجذب عملائك بصور هيرو جميلة وعالية الدقة."
       }
 }

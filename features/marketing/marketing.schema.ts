@@ -6,6 +6,7 @@ export const carouselSchema = z.object({
   carouselLg: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
   carouselMd: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
   carouselSm: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
+  isActive: z.boolean().optional(),
 });
 
 export const couponSchema = z.object({

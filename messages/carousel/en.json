@@ -4,9 +4,33 @@
       "editSlide": "Edit Slide",
       "searchPlaceholder": "Search slides...",
       "subtitle": "Manage your home page slider",
+      "totalResults": "{count} slides found",
+      "entityLabel": "Slide",
+      "modalDescription": "Configure your home page hero banner slides.",
       "fields": {
+            "basicInfo": "Basic Info",
+            "basicInfoDescription": "Configure text and descriptions for this slide",
             "description": "Description",
+            "descriptionPlaceholder": "e.g. Featured Summer Sale",
             "status": "Status",
-            "image": "Slide Image"
+            "image": "Slide Image",
+            "active": "Active",
+            "inactive": "Inactive",
+            "actions": "Actions",
+            "large": "Large (Desktop)",
+            "medium": "Medium (Tablet)",
+            "small": "Small (Mobile)",
+            "descriptionEn": "Description (English)",
+            "descriptionAr": "Description (Arabic)",
+            "statusDescription": "Control if this slide is visible to customers on the home page"
+      },
+      "messages": {
+            "addSuccess": "Slide added successfully",
+            "updateSuccess": "Slide updated successfully",
+            "error": "An error occurred, please try again"
+      },
+      "emptyState": {
+            "title": "No slides found",
+            "description": "Engage your customers with beautiful high-resolution hero images."
       }
 }

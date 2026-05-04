@@ -24,7 +24,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           ref={ref}
           type={showPassword ? 'text' : 'password'}
           className={cn(
-            `appearance-none  `
+            `appearance-none`
           )}
           error={error}
         />
@@ -37,7 +37,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           {showPassword ? (
             <Icons.EyeOff className="w-5 h-5" />
           ) : (
-            <Icons.Eye className="w-5 h-5" />
+            <Icons.Eye className="w-5 h-5" /> 
           )}
         </button>
       </div>

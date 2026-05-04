@@ -156,5 +156,10 @@
       "new": "New Solution",
       "activeOrders": "Ongoing Supplies"
     }
+  },
+  "upload": {
+    "title": "Upload Image",
+    "preview": "Upload preview",
+    "remove": "Remove image"
   }
 }

@@ -18,6 +18,7 @@ import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { Switch } from '@/shared/ui/Switch';
 import { cn } from '@/lib/utils';
+import { Tooltip } from '@/shared/ui/Tooltip';
 
 type ViewTab = 'active' | 'notActive';
 
@@ -32,7 +33,7 @@ export default function PromoBannersPage() {
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
   const viewTab = (getQueryParam('tab', 'active') as ViewTab);
-  
+
   // create query params
   const queryParams = useMemo(() => ({
     page, limit: 10, keywords: search, all_langs: true, ...TAB_FILTER_PARAMS[viewTab]
@@ -41,11 +42,10 @@ export default function PromoBannersPage() {
   // get data from api
   const { data, isLoading, refetch } = usePromoBanners(queryParams);
   const { mutateAsync: deletePromoBannerAsync, isPending: deletePromoBannerPending } = useDeletePromoBanner();
-  const updateBanner = useUpdatePromoBanner();
-;
+  const { mutateAsync: updateBannerAsync, isPending: updateBannerPending } = useUpdatePromoBanner();
   // handle page change
   const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
-  
+
   // handle search
   const handleSearch = useCallback((value: string) => {
     setQueryParams({ search: value, page: 1 });
@@ -82,7 +82,7 @@ export default function PromoBannersPage() {
 
   const handleStatusChange = useCallback(async (banner: PromoBanner, newStatus: boolean) => {
     try {
-      await updateBanner.mutateAsync({
+      await updateBannerAsync({
         id: banner._id,
         data: { isActive: newStatus }
       });
@@ -92,7 +92,7 @@ export default function PromoBannersPage() {
       const errorMessage = error.response?.data?.message || error.message || t('messages.error');
       toastError(errorMessage);
     }
-  }, [updateBanner, toastSuccess, toastError, t, refetch]);
+  }, [updateBannerAsync, toastSuccess, toastError, t, refetch]);
 
   const handleDelete = useCallback((id: string, text: string) => {
     openDialog({
@@ -135,10 +135,10 @@ export default function PromoBannersPage() {
       header: t('fields.link') || "Link",
       render: (item: PromoBanner) => (
         item.link ? (
-          <a 
-            href={item.link} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href={item.link}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-2 group/link max-w-[200px]"
             onClick={(e) => e.stopPropagation()}
           >
@@ -177,26 +177,30 @@ export default function PromoBannersPage() {
       header: t('actions') || "Actions",
       className: "pe-6 text-center",
       render: (item: PromoBanner) => (
-        <div className="flex justify-center gap-2.5">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-12 w-12 rounded-lg hover:bg-primary/10 text-primary transition-colors"
-            onClick={() => handleOpenModal(item)}
-            disabled={deletePromoBannerPending || isLoading}
-          >
-            <Icons.Edit className="w-4 h-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-12 w-12 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
-            onClick={() => handleDelete(item._id, getTrans(item.text))}
-            disabled={deletePromoBannerPending || isLoading}
-            isLoading={deletePromoBannerPending}
-          >
-            <Icons.Trash className="w-4 h-4" />
-          </Button>
+        <div className="flex justify-center gap-2 transition-all duration-300">
+          <Tooltip content={tButtons('edit')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+              onClick={() => handleOpenModal(item)}
+              disabled={deletePromoBannerPending || isLoading || updateBannerPending}                   >
+              <Icons.Edit className="h-4 w-4" />
+            </Button>
+          </Tooltip>
+
+          <Tooltip content={tButtons('delete')}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+              onClick={() => handleDelete(item._id, getTrans(item.text))}
+              disabled={deletePromoBannerPending || isLoading || updateBannerPending}
+              isLoading={deletePromoBannerPending}
+            >
+              <Icons.Trash className="h-4 w-4" />
+            </Button>
+          </Tooltip>
         </div>
       )
     }
@@ -211,7 +215,8 @@ export default function PromoBannersPage() {
         action={{
           label: t('addBanner') || 'Add Banner',
           icon: <Icons.Plus className="w-5 h-5" />,
-          onClick: () => handleOpenModal()
+          onClick: () => handleOpenModal(),
+          disabled: deletePromoBannerPending || isLoading || updateBannerPending
         }}
         className='mb-8'
       />
@@ -222,7 +227,7 @@ export default function PromoBannersPage() {
           defaultValue={search}
           onSearch={handleSearch}
           debounceMs={700}
-          disabled={deletePromoBannerPending || isLoading}
+          disabled={deletePromoBannerPending || isLoading || updateBannerPending}
         />
 
         <div className="border-b border-border/40 pb-4">
@@ -231,7 +236,7 @@ export default function PromoBannersPage() {
               <button
                 key={tab.key}
                 onClick={() => handleTabChange(tab.key)}
-                className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
+                className={`px-5 py-2 cursor-pointer rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
               >
                 {tab.label}
               </button>
