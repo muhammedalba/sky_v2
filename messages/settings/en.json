@@ -1,0 +1,68 @@
+{
+  "title": "Store Settings",
+  "description": "Manage your store details, payments, and notifications.",
+  "saveBtn": "Save All Settings",
+  "savingBtn": "Saving...",
+  "tabs": {
+    "general": "General Info",
+    "region": "Region & Currency",
+    "payments": "Payment Gateways",
+    "notifications": "Notifications"
+  },
+  "general": {
+    "title": "General Store Info",
+    "desc": "Update your brand name, logo, and contact details.",
+    "logoTitle": "Store Logo",
+    "logoDesc": "Recommended size: 512x512px. Max 2MB.",
+    "logoBtn": "Change Logo",
+    "upload": "Upload",
+    "storeName": "Store Name",
+    "contactEmail": "Contact Email",
+    "supportPhone": "Support Phone",
+    "storeDesc": "Store Description"
+  },
+  "region": {
+    "title": "Region & Currency",
+    "desc": "Configure your physical location and base currency.",
+    "country": "Country",
+    "timezone": "Timezone",
+    "currency": "Default Currency",
+    "currencyDesc": "Prices will be calculated based on this default currency.",
+    "countries": {
+      "sa": "Saudi Arabia",
+      "ae": "United Arab Emirates",
+      "eg": "Egypt",
+      "us": "United States"
+    },
+    "timezones": {
+      "ast": "Arabia Standard Time (AST)",
+      "gst": "Gulf Standard Time (GST)",
+      "utc": "UTC"
+    },
+    "currencies": {
+      "sar": "SAR - Saudi Riyal",
+      "aed": "AED - UAE Dirham",
+      "usd": "USD - US Dollar"
+    }
+  },
+  "payments": {
+    "title": "Payment Gateways",
+    "desc": "Enable or disable checkout payment methods.",
+    "stripe": "Stripe",
+    "stripeDesc": "Accept credit cards securely.",
+    "paypal": "PayPal",
+    "paypalDesc": "Fast and secure global payments.",
+    "cod": "Cash on Delivery",
+    "codDesc": "Customers pay upon receiving goods."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "desc": "Manage how the system communicates with you.",
+    "emailNewOrder": "New Order Email",
+    "emailNewOrderDesc": "Receive an email notification immediately when a customer places an order.",
+    "smsLowStock": "Low Stock SMS",
+    "smsLowStockDesc": "Get text messages when product inventory drops below the threshold.",
+    "dailyReport": "Daily Summary Report",
+    "dailyReportDesc": "A daily email at 8:00 AM with yesterday's total sales and metrics."
+  }
+}

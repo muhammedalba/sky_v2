@@ -187,7 +187,7 @@ export default function UserAccountMenu({ iconOnly = false, dir = "bottom", clas
                     role="menu"
                     aria-orientation="vertical"
                     className={cn(
-                        "absolute   mt-3 w-64 bg-background border border-border/50 rounded-3xl shadow-2xl p-2 z-150",
+                        "absolute overflow-y-hidden  mt-3 w-64 bg-background border border-border/50 rounded-3xl shadow-2xl  z-150",
                         "animate-in fade-in zoom-in-95 duration-200",
                         bottom
                     )}
@@ -195,8 +195,9 @@ export default function UserAccountMenu({ iconOnly = false, dir = "bottom", clas
                 >
                     {isLoggedIn ? (
                         <>
-                            <div className="p-3 border-b border-border/30 mb-1">
-                                <p className="text-sm font-bold truncate">{user?.name}</p>
+                            <div className="p-3 border-b border-border/30 mb-1 bg-muted/50 ">
+                                <p className="text-sm font-bold truncate title-gradient">{user?.name}</p>
+                                
                                 <p className="text-[11px] text-muted-foreground truncate">
                                     {user?.email}
                                 </p>

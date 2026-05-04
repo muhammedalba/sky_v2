@@ -37,7 +37,7 @@ export function useLogin() {
     },
     onSuccess: (response: ApiResponse<LoginResponseData>) => {
       handleAuthSuccess(response, queryClient);
-      toast.success(response?.message || "تم تسجيل الدخول بنجاح");
+      toast.success("تم تسجيل الدخول بنجاح");
     },
     onError: (error: ApiError) => {
       toast.error(error?.message || "حدث خطأ");
@@ -82,7 +82,7 @@ export function useForgotPassword() {
       const response = await authApi.forgotPassword(email);
       return response.data;
     },
-    
+
   });
 }
 

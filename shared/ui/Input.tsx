@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import ErrorMessage from "./ErrorMessage";
 import { Icons } from "./Icons";
 import { Tooltip } from "./Tooltip";
+import { PasswordStrength } from "@/features/auth/components/AuthClientComponents";
 
 
 export interface InputProps
@@ -26,7 +27,7 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, name, placeholder, labelClassName, disabled = false, value, icon, iconColor, inputWrapperClass, showAiAction, onAiAction, aiActionTooltip, aiActionDisabled=true, ...props }, ref) => {
+  ({ className, type, label, error, name, placeholder, labelClassName, disabled = false, value, icon, iconColor, inputWrapperClass, showAiAction, onAiAction, aiActionTooltip, aiActionDisabled = true, ...props }, ref) => {
     const IconComponent = icon;
     const [isFocused, setIsFocused] = React.useState(false);
     // Determine if label should float
@@ -79,8 +80,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {showAiAction && (
           <div className="absolute -top-1/3 inset-e-0 flex items-center justify-center  cursor-pointer">
             <Tooltip content={aiActionTooltip || ""}>
-                <button
-                type="button" 
+              <button
+                type="button"
                 onClick={onAiAction}
                 disabled={aiActionDisabled}
                 className={cn(
@@ -96,6 +97,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
         )}
       </div>
+      {name === "password" && <PasswordStrength name="password" />}
       {error && <ErrorMessage message={error} />}
     </div>
     )

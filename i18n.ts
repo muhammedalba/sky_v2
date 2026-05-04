@@ -7,7 +7,7 @@ export type Locale = (typeof locales)[number];
 async function loadLocaleMessages(locale: string) {
   try {
     // Explicit switch for Turbopack stability
-    let common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons;
+    let common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings;
     
     if (locale === 'ar') {
       common = (await import(`./messages/common/ar.json`)).default;
@@ -26,6 +26,7 @@ async function loadLocaleMessages(locale: string) {
       promoBanners = (await import(`./messages/promoBanners/ar.json`)).default;
       suppliers = (await import(`./messages/suppliers/ar.json`)).default;
       coupons = (await import(`./messages/coupons/ar.json`)).default;
+      settings = (await import(`./messages/settings/ar.json`)).default;
     } else {
       common = (await import(`./messages/common/en.json`)).default;
       dashboard = (await import(`./messages/dashboard/en.json`)).default;
@@ -43,6 +44,7 @@ async function loadLocaleMessages(locale: string) {
       promoBanners = (await import(`./messages/promoBanners/en.json`)).default;
       suppliers = (await import(`./messages/suppliers/en.json`)).default;
       coupons = (await import(`./messages/coupons/en.json`)).default;
+      settings = (await import(`./messages/settings/en.json`)).default;
     }
 
     return {
@@ -67,6 +69,7 @@ async function loadLocaleMessages(locale: string) {
       promoBanners,
       suppliers,
       coupons,
+      settings,
     };
   } catch (error) {
     console.error(`[i18n] Error loading translation files for ${locale}:`, error);

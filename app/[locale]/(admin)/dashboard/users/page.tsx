@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useCallback } from 'react';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
+import { getUser } from '@/lib/auth';
 
 
 export default function UsersPage() {
@@ -30,6 +31,7 @@ export default function UsersPage() {
   const tMessages = useTranslations('users.messages');
   const router = useRouter();
   const toast = useToast();
+  const currentUser = getUser();
 
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
@@ -41,7 +43,7 @@ export default function UsersPage() {
     keywords: search,
     isActive: activeTab === 'active' ? undefined : false
   });
-  console.log(data);
+
 
   const deleteMutation = useDeleteUser();
   const updateMutation = useUpdateUser();
@@ -105,13 +107,15 @@ export default function UsersPage() {
       case 'admin':
         return 'destructive';
       case 'manager':
-        return 'outline';
+        return 'default';
       default:
         return 'secondary';
     }
   }, []);
 
-  const columns = useMemo(() => [
+  const columns = useMemo(() => {
+    const isSuperAdmin = currentUser?.email ? env.HIDDEN_EMAILS.includes(currentUser.email) : false;
+    return [
     {
       header: t('fields.logo'),
       className: "w-[100px] pl-6",
@@ -242,7 +246,7 @@ export default function UsersPage() {
       header: t('fields.actions'),
       className: "text-right pr-6",
       render: (user: User) => (
-        <div className="flex items-center justify-end gap-2  transition-opacity">
+        <div className={cn(`flex items-center justify-end gap-2  transition-opacity ${user.role === 'admin' && !isSuperAdmin ? 'hidden' : ''}`)}>
           <Tooltip content={t('editUser')}>
             <Button
               variant="outline"
@@ -272,7 +276,8 @@ export default function UsersPage() {
         </div>
       )
     }
-  ], [t, tButtons, locale, router, handleStatusChange, handleDelete, getRoleBadgeVariant]);
+  ];
+  }, [t, tButtons, locale, router, handleStatusChange, handleDelete, getRoleBadgeVariant, currentUser?.email, env.HIDDEN_EMAILS, deleteMutation.isPending, isLoading, updateMutation.isPending]);
 
   const viewTabs = useMemo(() => [
     { id: 'active', label: t('fields.active'), value: 'active', icon: Icons.Check, activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },

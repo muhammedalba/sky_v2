@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
@@ -25,6 +25,7 @@ import { cn, formatDateTime, formatRelativeTime } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { setUser } from '@/lib/auth';
+import { PasswordStrength } from '@/features/auth/components/AuthClientComponents';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -399,42 +400,45 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 </p>
               </div>
 
-              <form
-                onSubmit={passwordForm.handleSubmit((data) =>
-                  changePasswordMutation.mutate(data)
-                )}
-                className="space-y-5"
-              >
+              <FormProvider {...passwordForm}>
+                <form
+                  onSubmit={passwordForm.handleSubmit((data) =>
+                    changePasswordMutation.mutate(data)
+                  )}
+                  className="space-y-5"
+                >
 
-                <div className="border-t border-dashed border-border/60 pt-5" />
+                  <div className="border-t border-dashed border-border/60 pt-5" />
 
-                {/* New Password */}
-                <PasswordInput
-                  {...passwordForm.register('password')}
-                  label={t('fields.newPassword')}
-                  icon={Icons.Shield}
-                  error={passwordForm.formState.errors.password?.message}
-                />
+                  {/* New Password */}
+                  <PasswordInput
+                    {...passwordForm.register('password')}
+                    label={t('fields.newPassword')}
+                    icon={Icons.Shield}
+                    error={passwordForm.formState.errors.password?.message}
+                    
+                  />
+                   <PasswordStrength name="password" />
+                  {/* Confirm Password */}
+                  <PasswordInput
+                    {...passwordForm.register('confirmPassword')}
+                    label={t('fields.confirmPassword')}
+                    icon={Icons.Shield}
+                    error={passwordForm.formState.errors.confirmPassword?.message}
+                  />
 
-                {/* Confirm Password */}
-                <PasswordInput
-                  {...passwordForm.register('confirmPassword')}
-                  label={t('fields.confirmPassword')}
-                  icon={Icons.Shield}
-                  error={passwordForm.formState.errors.confirmPassword?.message}
-                />
-
-                <div className="flex justify-end pt-2">
-                  <Button
-                    type="submit"
-                    variant="secondary"
-                    isLoading={changePasswordMutation.isPending}
-                    className="min-w-[160px] font-bold"
-                  >
-                    {t('buttons.updatePassword')}
-                  </Button>
-                </div>
-              </form>
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      type="submit"
+                      variant="secondary"
+                      isLoading={changePasswordMutation.isPending}
+                      className="min-w-[160px] font-bold"
+                    >
+                      {t('buttons.updatePassword')}
+                    </Button>
+                  </div>
+                </form>
+              </FormProvider>
             </CardContent>
           </Card>
         </div>
