@@ -66,7 +66,7 @@ export default function SettingsPage() {
       </div>
 
        {/* Support Section */}
-       <div className="max-w-4xl p-8 rounded-[2rem] bg-gradient-to-br from-primary to-indigo-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-primary/20">
+       <div className="max-w-4xl p-8 rounded-4xl bg-linear-to-brfrom-primary to-indigo-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-primary/20">
           <div>
              <h3 className="text-2xl font-black tracking-tight">Need help with your store?</h3>
              <p className="opacity-80 font-medium mt-1">Our premium support team is available 24/7 to help you scale.</p>

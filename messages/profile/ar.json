@@ -1,21 +1,38 @@
 {
-      "title": "إعدادات الملف الشخصي",
-      "personalInfo": "المعلومات الشخصية",
-      "changePassword": "تغيير كلمة المرور",
-      "fields": {
-            "name": "الاسم الكامل",
-            "email": "البريد الإلكتروني",
-            "role": "دور الحساب",
-            "currentPassword": "كلمة المرور الحالية",
-            "newPassword": "كلمة المرور الجديدة",
-            "confirmPassword": "تأكيد كلمة المرور الجديدة"
-      },
-      "buttons": {
-            "saveChanges": "حفظ التغييرات",
-            "updatePassword": "تحديث كلمة المرور"
-      },
-      "messages": {
-            "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
-            "passwordChanged": "تم تغيير كلمة المرور بنجاح!"
-      }
+  "title": "إعدادات الملف الشخصي",
+  "personalInfo": "المعلومات الشخصية",
+  "personalInfoDescription": "قم بتحديث اسمك وبريدك الإلكتروني وبيانات الاتصال.",
+  "changePassword": "تغيير كلمة المرور",
+  "changePasswordDescription": "حافظ على أمان حسابك بكلمة مرور قوية وفريدة.",
+  "passwordSecurityNote": "اختر كلمة مرور لا تقل عن 8 أحرف وتتضمن مزيجاً من الأحرف والأرقام والرموز. لا تشارك كلمة مرورك مع أحد.",
+  "tabs": {
+    "general": "المعلومات العامة",
+    "security": "الأمان"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "lastLogin": "آخر تسجيل دخول",
+  "avatar": {
+    "title": "الصورة الشخصية",
+    "description": "انقر على الصورة لتحميل صورة جديدة."
+  },
+  "fields": {
+    "name": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "role": "دور الحساب",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور الجديدة"
+  },
+  "buttons": {
+    "saveChanges": "حفظ التغييرات",
+    "updatePassword": "تحديث كلمة المرور"
+  },
+  "messages": {
+    "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+    "passwordChanged": "تم تغيير كلمة المرور بنجاح!"
+  }
 }

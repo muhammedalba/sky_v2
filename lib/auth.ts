@@ -58,6 +58,7 @@ export const clearTokens = (): void => {
   document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  window.dispatchEvent(new Event('auth-change'));
 };
 
 export const removeAuthToken = (): void => {
@@ -69,6 +70,7 @@ export const setUser = (user: User): void => {
   const userStr = JSON.stringify(user);
   localStorage.setItem('user', userStr);
   setCookie('user', encodeURIComponent(userStr));
+  window.dispatchEvent(new Event('auth-change'));
 };
 
 export const getUser = (): User | null => {

@@ -93,11 +93,6 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
     }
   };
 
-  const handleCancel = () => {
-
-    router.push(`/${locale}/dashboard/users`);
-
-  };
 
   const isActive = watch('isActive');
 

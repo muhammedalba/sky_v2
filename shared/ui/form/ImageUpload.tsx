@@ -14,9 +14,10 @@ interface ImageUploadProps {
   className?: string;
   value?: string;
   error?: string | null | undefined;
+  loading?: "eager" | "lazy";
 }
 
-export default function ImageUpload({ value, onChange, onRemove, className, error }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, onRemove, className, error, loading = "lazy" }: ImageUploadProps) {
   const t = useTranslations('common');
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | undefined>(value);
@@ -50,6 +51,8 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
               alt={t('upload.preview')}
               className="object-cover group-hover:scale-110 transition-transform duration-500"
               fill
+              loading={loading}
+              priority={loading === "eager"}
             />
             <button
               type="button"

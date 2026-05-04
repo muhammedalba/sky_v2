@@ -1,21 +1,38 @@
 {
-      "title": "Profile Settings",
-      "personalInfo": "Personal Information",
-      "changePassword": "Change Password",
-      "fields": {
-            "name": "Full Name",
-            "email": "Email Address",
-            "role": "Account Role",
-            "currentPassword": "Current Password",
-            "newPassword": "New Password",
-            "confirmPassword": "Confirm New Password"
-      },
-      "buttons": {
-            "saveChanges": "Save Changes",
-            "updatePassword": "Update Password"
-      },
-      "messages": {
-            "profileUpdated": "Profile updated successfully!",
-            "passwordChanged": "Password changed successfully!"
-      }
+  "title": "Profile Settings",
+  "personalInfo": "Personal Information",
+  "personalInfoDescription": "Update your name, email and contact details.",
+  "changePassword": "Change Password",
+  "changePasswordDescription": "Keep your account secure with a strong, unique password.",
+  "passwordSecurityNote": "Choose a password that is at least 8 characters long and includes a mix of letters, numbers, and symbols. Never share your password with anyone.",
+  "tabs": {
+    "general": "General Info",
+    "security": "Security"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "lastLogin": "Last Login",
+  "avatar": {
+    "title": "Profile Picture",
+    "description": "Click the avatar to upload a new photo."
+  },
+  "fields": {
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "role": "Account Role",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password"
+  },
+  "buttons": {
+    "saveChanges": "Save Changes",
+    "updatePassword": "Update Password"
+  },
+  "messages": {
+    "profileUpdated": "Profile updated successfully!",
+    "passwordChanged": "Password changed successfully!"
+  }
 }
