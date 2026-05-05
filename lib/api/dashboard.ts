@@ -13,7 +13,7 @@ const ENDPOINTS = {
   SUPPLIER_STATS: env.ENDPOINTS.SUPPLIERS.STATS,
   USER_STATS: env.ENDPOINTS.USERS.STATS,
   ORDER_STATS: env.ENDPOINTS.ORDERS.STATS,
-  TOP_PRODUCTS: `${env.ENDPOINTS.PRODUCTS.BASE}?limit=10&sort=-totalSold`,
+  PRODUCTS_STATS: env.ENDPOINTS.PRODUCTS.STATS,
   MARKETING_STATS: env.ENDPOINTS.ORDERS.MARKETING_STATS,
 };
 
@@ -30,7 +30,7 @@ export const dashboardApi = {
   getStats: async (params?: DashboardParams) => {
     const dateParams = buildDateParams(params);
 
-    const [categories, subCategories, brands, suppliers, users, orders, MARKETING_STATS, topProducts] =
+    const [categories, subCategories, brands, suppliers, users, orders, MARKETING_STATS, productsStats] =
       await Promise.all([
         // Static stats — no date range needed
         apiClient.get(ENDPOINTS.CATEGORY_STATS),
@@ -41,8 +41,10 @@ export const dashboardApi = {
         apiClient.get(ENDPOINTS.USER_STATS,       { params: dateParams }),
         apiClient.get(ENDPOINTS.ORDER_STATS,      { params: dateParams }),
         apiClient.get(ENDPOINTS.MARKETING_STATS,  { params: dateParams }),
-        apiClient.get(ENDPOINTS.TOP_PRODUCTS),
+        apiClient.get(ENDPOINTS.PRODUCTS_STATS,   { params: dateParams }),
       ]);
+
+    const productsStatsData = productsStats.data.data || productsStats.data;
 
     return {
       stats: {
@@ -50,7 +52,7 @@ export const dashboardApi = {
         subCategories: subCategories.data.data || subCategories.data,
         brands:        brands.data.data        || brands.data,
       },
-      topProducts:   topProducts.data.data   || topProducts.data,
+      topProducts:   productsStatsData.topProducts || [],
       suppliers:     suppliers.data.data     || suppliers.data,
       users:         users.data.data         || users.data,
       orders:        orders.data.data        || orders.data,
