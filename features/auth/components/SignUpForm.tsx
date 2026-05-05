@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { useToast } from '@/shared/hooks/useToast';
 import { User, Mail, Lock } from 'lucide-react';
 import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
-import { SocialLoginSection, PasswordStrength } from './AuthClientComponents';
+import { SocialLoginSection } from './AuthClientComponents';
 import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
@@ -51,8 +51,6 @@ export default function SignUpForm({ locale }: { locale: string }) {
           <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-4">
             <div className="">
               <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
-              {/* Password Strength Indicator */}
-              <PasswordStrength name="password" />
             </div>
             <SmartPasswordInput name="confirmPassword" label={t('confirmPassword')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
           </div>

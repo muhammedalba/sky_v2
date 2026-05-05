@@ -37,12 +37,7 @@ export function useLogin() {
     },
     onSuccess: (response: ApiResponse<LoginResponseData>) => {
       handleAuthSuccess(response, queryClient);
-      toast.success("تم تسجيل الدخول بنجاح");
     },
-    onError: (error: ApiError) => {
-      toast.error(error?.message || "حدث خطأ");
-
-    }
   });
 }
 

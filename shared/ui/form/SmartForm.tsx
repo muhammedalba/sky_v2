@@ -12,7 +12,7 @@ import SuccessMessage from '@/shared/ui/SuccessMessage';
 interface SmartFormProps<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: DefaultValues<T>;
-  onSubmit: (data: T) => void; 
+  onSubmit: (data: T) => void;
   isLoading?: boolean;
   serverError?: string | null;
   successMessage?: string | null;
@@ -69,8 +69,7 @@ export const useSmartMutation = <TData, TError, TVariables>(
         if (options.onSuccess) options.onSuccess(data, variables);
       },
       onError: (err: any) => {
-        const error = err as AxiosError<{ message: string }>;
-        const message = error.response?.data?.message || tErrors('serverError');
+        const message = err?.message || tErrors('serverError');
         setServerError(message);
         if (options.onError) options.onError(err);
       },

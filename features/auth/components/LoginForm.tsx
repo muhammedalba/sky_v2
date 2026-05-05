@@ -10,14 +10,20 @@ import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
 import { SocialLoginSection } from './AuthClientComponents';
 import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
+import { useToast } from '@/shared/hooks/useToast';
 
 export default function LoginForm({ locale }: { locale: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('auth');
+  const toast=useToast()
 
   const loginMutation = useSmartMutation(useLogin(), {
-    onSuccess: () => router.push(`/${locale}/dashboard`),
+    onSuccess: () => {
+      toast.success(t('loginSuccess'))
+      router.push(`/${locale}/dashboard`);
+      },
+    
   });
 
   const successMessage =

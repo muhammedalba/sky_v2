@@ -25,7 +25,6 @@ import { cn, formatDateTime, formatRelativeTime } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { setUser } from '@/lib/auth';
-import { PasswordStrength } from '@/features/auth/components/AuthClientComponents';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -418,7 +417,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     error={passwordForm.formState.errors.password?.message}
                     
                   />
-                   <PasswordStrength name="password" />
                   {/* Confirm Password */}
                   <PasswordInput
                     {...passwordForm.register('confirmPassword')}
