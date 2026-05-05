@@ -23,6 +23,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
   const l = locale || env.DEFAULT_LOCALE ;
 
   const navigation: { name: string; href: string; icon: keyof typeof Icons; color: string }[] = [
+    { name: t('externalPlatforms'), href: `/${l}/dashboard/external-platforms`, icon: 'Command', color: 'primary' },
     { name: t('dashboard'), href: `/${l}/dashboard`, icon: 'Dashboard' ,color: 'primary' },
     { name: t('products'), href: `/${l}/dashboard/products`, icon: 'Products', color: 'destructive' },
     { name: t('productAnalytics'), href: `/${l}/dashboard/products/statistics`, icon: 'BarChart' ,color: 'warning' },

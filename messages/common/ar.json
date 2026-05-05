@@ -56,7 +56,8 @@
             "coupons": "القسائم",
             "carousel": "شريط الصور",
             "promoBanners": "البانرات الترويجية",
-            "productAnalytics": "تحليلات المنتجات"
+            "productAnalytics": "تحليلات المنتجات",
+            "externalPlatforms": "مركز القيادة"
       },
       "auth": {
     "login": "تسجيل الدخول",

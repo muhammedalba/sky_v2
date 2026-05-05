@@ -123,6 +123,27 @@ export default function ExternalPlatformsCenter() {
         },
       ],
     },
+    {
+      category: t("categories.infrastructureDatabase"),
+      links: [
+        {
+          title: t("links.mongoAtlas"),
+          url: "https://cloud.mongodb.com/",
+          desc: t("links.mongoAtlasDesc"),
+          icon: Icons.Database,
+          iconColor: "text-green-600 dark:text-green-400",
+          iconBg: "bg-green-100 dark:bg-green-900/30",
+        },
+        {
+          title: t("links.aivenRedis"),
+          url: "https://console.aiven.io/",
+          desc: t("links.aivenRedisDesc"),
+          icon: Icons.Database,
+          iconColor: "text-rose-600 dark:text-rose-400",
+          iconBg: "bg-rose-100 dark:bg-rose-900/30",
+        },
+      ],
+    },
   ];
 
   return (

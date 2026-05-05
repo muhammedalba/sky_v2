@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { Lock, Mail } from 'lucide-react';
 import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
 import { SocialLoginSection } from './AuthClientComponents';
-import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
+import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 import { useToast } from '@/shared/hooks/useToast';
 
@@ -18,13 +18,13 @@ export default function LoginForm({ locale }: { locale: string }) {
   const t = useTranslations('auth');
   const toast=useToast()
 
-  const loginMutation = useSmartMutation(useLogin(), {
-    onSuccess: () => {
-      toast.success(t('loginSuccess'))
-      router.push(`/${locale}/dashboard`);
-      },
-    
-  });
+  const loginMutation = useLogin();
+
+  const onSubmit = async (data: any) => {
+    await loginMutation.mutateAsync(data);
+    toast.success(t('loginSuccess'));
+    router.push(`/${locale}/dashboard`);
+  };
 
   const successMessage =
     searchParams?.get('signup') === 'success' ? t('signupSuccess') :
@@ -39,9 +39,9 @@ export default function LoginForm({ locale }: { locale: string }) {
       <SmartForm
         schema={loginSchema}
         defaultValues={{ email: '', password: '' }}
-        onSubmit={loginMutation.mutate}
-        serverError={loginMutation.serverError}
+        onSubmit={onSubmit}
         successMessage={successMessage}
+        networkErrorMessage={t('serverError')}
       >
         <div className="space-y-4">
           <SmartInput

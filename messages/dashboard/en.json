@@ -17,7 +17,8 @@
                   "seoWebmasters": "SEO & Webmasters",
                   "analyticsTracking": "Analytics & Tracking",
                   "adsEcommerce": "Ads & E-commerce",
-                  "performanceTrust": "Performance & Trust"
+                  "performanceTrust": "Performance & Trust",
+                  "infrastructureDatabase": "Infrastructure & Database"
             },
             "links": {
                   "googleSearchConsole": "Google Search Console",
@@ -39,7 +40,11 @@
                   "pageSpeedInsights": "PageSpeed Insights",
                   "pageSpeedInsightsDesc": "Check website performance and Core Web Vitals.",
                   "googleBusinessProfile": "Google Business Profile",
-                  "googleBusinessProfileDesc": "Manage reviews and local business presence."
+                  "googleBusinessProfileDesc": "Manage reviews and local business presence.",
+                  "mongoAtlas": "MongoDB Atlas",
+                  "mongoAtlasDesc": "Cloud database service for modern applications.",
+                  "aivenRedis": "Aiven Redis",
+                  "aivenRedisDesc": "Managed Redis for high-performance caching."
             }
       }
 }

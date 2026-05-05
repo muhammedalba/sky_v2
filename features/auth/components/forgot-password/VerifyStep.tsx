@@ -5,34 +5,35 @@ import { verifyResetCodeSchema, type VerifyResetCodeInput } from '@/features/aut
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
 import { useToast } from '@/shared/hooks/useToast';
-import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
+import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput } from '@/shared/ui/form/SmartFields';
 
 interface VerifyStepProps {
   onSuccess: () => void;
-  onError: (error: unknown) => void;
   onChangeEmail: () => void;
 }
  
-const VerifyStep = ({ onSuccess, onError, onChangeEmail }: VerifyStepProps) => {
+const VerifyStep = ({ onSuccess, onChangeEmail }: VerifyStepProps) => {
   const t = useTranslations('auth');
   const toast = useToast();
 
-  const verifyMutation = useSmartMutation(useVerifyResetCode(), {
-    onSuccess: () => {
-      onSuccess();
-      toast.success(t('resetSuccess'));
-    },
-    onError: (error) => {
-      onError(error);
-    },
-  });
+  const verifyMutation = useVerifyResetCode();
+
+  const onSubmit = async (data: VerifyResetCodeInput) => {
+    await verifyMutation.mutateAsync(data.resetCode, {
+      onSuccess: () => {
+        onSuccess();
+        toast.success(t('resetSuccess'));
+      }
+    });
+  };
 
   return (
     <SmartForm
       schema={verifyResetCodeSchema}
       defaultValues={{ resetCode: '' }}
-      onSubmit={(data) => verifyMutation.mutate(data.resetCode)}
+      onSubmit={onSubmit}
+      networkErrorMessage={t("serverError")}
       className="space-y-6 animate-in fade-in slide-in-from-right-4"
     >
       <SmartInput

@@ -56,7 +56,8 @@
             "coupons": "Coupons",
             "carousel": "Carousel",
             "promoBanners": "Promo Banners",
-            "productAnalytics": "Product Analytics"
+            "productAnalytics": "Product Analytics",
+            "externalPlatforms": "Command Center"
       },
       "auth": {
     "login": "Sign In",

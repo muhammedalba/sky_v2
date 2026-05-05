@@ -54,7 +54,6 @@ export function useMe() {
 
 export function useRegister() {
   const queryClient = useQueryClient();
-  const toast = useToast();
 
   return useMutation({
     mutationFn: async (data: FormData) => {
@@ -62,12 +61,7 @@ export function useRegister() {
     },
     onSuccess: (response: ApiResponse<LoginResponseData>) => {
       handleAuthSuccess(response, queryClient);
-      toast.success(response?.message || "تم تسجيل الدخول بنجاح");
     },
-    onError: (error: ApiError) => {
-      toast.error(error?.message || "حدث خطأ");
-
-    }
   });
 }
 

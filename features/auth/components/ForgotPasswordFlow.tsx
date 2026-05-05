@@ -4,7 +4,6 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import ErrorMessage from '@/shared/ui/ErrorMessage';
 import StepWizard from '@/shared/ui/StepWizard';
 import { LogInIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
@@ -31,21 +30,11 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
     }
     return '';
   });
-  const [serverError, setServerError] = useState<string | null>(null);
 
   const t = useTranslations('auth');
-  const tErrors = useTranslations('errors');
   const router = useRouter();
 
-  // Helper type for safely accessing error props
-  type ErrorResponse = { response?: { data?: { message?: string } } };
-
-  const handleError = (err: unknown) => {
-    setServerError((err as ErrorResponse).response?.data?.message || tErrors('serverError'));
-  };
-
   const handleRequestSuccess = (email: string) => {
-    setServerError(null);
     setSubmittedEmail(email);
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('reset-email', email);
@@ -54,12 +43,10 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
   };
 
   const handleVerifySuccess = () => {
-    setServerError(null);
     setStep('RESET');
   };
 
   const handleChangeEmail = () => {
-    setServerError(null);
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('reset-email');
     }
@@ -81,20 +68,16 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
 
       <StepWizard currentStep={stepNumber} totalSteps={3} className="mb-10" />
 
-      {serverError && <ErrorMessage showIcon={true} message={serverError} className="mb-6 animate-in slide-in-from-top-1 px-4 py-3 rounded-2xl" />}
-
       <div className=" ">
         {step === 'REQUEST' && (
           <RequestStep
             onSuccess={handleRequestSuccess}
-            onError={handleError}
           />
         )}
 
         {step === 'VERIFY' && (
           <VerifyStep
             onSuccess={handleVerifySuccess}
-            onError={handleError}
             onChangeEmail={handleChangeEmail}
           />
         )}
@@ -102,7 +85,6 @@ const ForgotPasswordFlow = ({ locale }: { locale: string }) => {
         {step === 'RESET' && (
           <ResetStep
             email={submittedEmail}
-            onError={handleError}
           />
         )}
       </div>

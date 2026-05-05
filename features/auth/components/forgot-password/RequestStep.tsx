@@ -5,33 +5,34 @@ import { forgotPasswordSchema, type ForgotPasswordInput } from '@/features/auth/
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
 import { useToast } from '@/shared/hooks/useToast';
-import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
+import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput } from '@/shared/ui/form/SmartFields';
 
 interface RequestStepProps {
   onSuccess: (email: string) => void;
-  onError: (error: unknown) => void;
 }
 
-const RequestStep = ({ onSuccess, onError }: RequestStepProps) => {
+const RequestStep = ({ onSuccess }: RequestStepProps) => {
   const t = useTranslations('auth');
   const toast = useToast();
 
-  const forgotMutation = useSmartMutation<void, unknown, string>(useForgotPassword(), {
-    onSuccess: (_data, email) => {
-      onSuccess(email);
-      toast.success(t('codeSentSuccessfully'));
-    },
-    onError: (error) => {
-      onError(error);
-    },
-  });
+  const forgotMutation = useForgotPassword();
+
+  const onSubmit = async (data: ForgotPasswordInput) => {
+    await forgotMutation.mutateAsync(data.email, {
+      onSuccess: () => {
+        onSuccess(data.email);
+        toast.success(t('codeSentSuccessfully'));
+      }
+    });
+  };
 
   return (
     <SmartForm
       schema={forgotPasswordSchema}
       defaultValues={{ email: '' }}
-      onSubmit={(data) => forgotMutation.mutate(data.email)}
+      networkErrorMessage={t("serverError")}
+      onSubmit={onSubmit}
       className="space-y-5 animate-in fade-in slide-in-from-right-4"
     >
       <SmartInput
@@ -41,9 +42,9 @@ const RequestStep = ({ onSuccess, onError }: RequestStepProps) => {
         label={t('email')}
         className="h-12 px-4"
       />
-      <Button 
-        type="submit" 
-        className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all" 
+      <Button
+        type="submit"
+        className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
         size="lg"
         isLoading={forgotMutation.isPending}
       >

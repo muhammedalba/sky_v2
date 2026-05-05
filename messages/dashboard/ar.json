@@ -17,7 +17,8 @@
                   "seoWebmasters": "تحسين محركات البحث ومشرفي المواقع",
                   "analyticsTracking": "التحليلات والتتبع",
                   "adsEcommerce": "الإعلانات والتجارة الإلكترونية",
-                  "performanceTrust": "الأداء والثقة"
+                  "performanceTrust": "الأداء والثقة",
+                  "infrastructureDatabase": "البنية التحتية وقواعد البيانات"
             },
             "links": {
                   "googleSearchConsole": "Google Search Console",
@@ -39,7 +40,11 @@
                   "pageSpeedInsights": "PageSpeed Insights",
                   "pageSpeedInsightsDesc": "التحقق من أداء الموقع ومؤشرات الويب الحيوية.",
                   "googleBusinessProfile": "Google Business Profile",
-                  "googleBusinessProfileDesc": "إدارة المراجعات والتواجد التجاري المحلي."
+                  "googleBusinessProfileDesc": "إدارة المراجعات والتواجد التجاري المحلي.",
+                  "mongoAtlas": "MongoDB Atlas",
+                  "mongoAtlasDesc": "خدمة قاعدة البيانات السحابية للتطبيقات الحديثة.",
+                  "aivenRedis": "Aiven Redis",
+                  "aivenRedisDesc": "إدارة Redis للتخزين المؤقت والمراسلة عالية الأداء."
             }
       }
 }

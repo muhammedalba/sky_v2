@@ -9,7 +9,7 @@ import { useToast } from '@/shared/hooks/useToast';
 import { User, Mail, Lock } from 'lucide-react';
 import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
 import { SocialLoginSection } from './AuthClientComponents';
-import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
+import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
 export default function SignUpForm({ locale }: { locale: string }) {
@@ -17,19 +17,16 @@ export default function SignUpForm({ locale }: { locale: string }) {
   const t = useTranslations('auth');
   const toast = useToast();
 
-  const registerMutation = useSmartMutation(useRegister(), {
-    onSuccess: () => {
-      toast.success(t('signupSuccess'));
-      router.push(`/${locale}/login?signup=success`);
-    },
-  });
+  const registerMutation = useRegister();
 
-  const onSubmit = (data: RegisterInput) => {
+  const onSubmit = async (data: RegisterInput) => {
     const formDataToSubmit = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formDataToSubmit.append(key, value as string);
     });
-    registerMutation.mutate(formDataToSubmit);
+    await registerMutation.mutateAsync(formDataToSubmit);
+    toast.success(t('signupSuccess'));
+    router.push(`/${locale}/login?signup=success`);
   };
 
   return (
@@ -42,7 +39,7 @@ export default function SignUpForm({ locale }: { locale: string }) {
         schema={registerSchema}
         defaultValues={{ name: '', email: '', password: '', confirmPassword: '' }}
         onSubmit={onSubmit}
-        serverError={registerMutation.serverError}
+        networkErrorMessage={t('serverError')}
       >
         <div className="space-y-4">
           <SmartInput name="name" label={t('name')} icon={User} disabled={registerMutation.isPending} className="h-12" />

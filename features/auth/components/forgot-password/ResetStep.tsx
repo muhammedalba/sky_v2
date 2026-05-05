@@ -7,38 +7,29 @@ import { useTranslations } from 'next-intl';
 import { Lock } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useToast } from '@/shared/hooks/useToast';
-import { SmartForm, useSmartMutation } from '@/shared/ui/form/SmartForm';
+import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
 interface ResetStepProps {
   email: string;
-  onError: (error: unknown) => void;
 }
 
-const ResetStep = ({ email, onError }: ResetStepProps) => {
+const ResetStep = ({ email }: ResetStepProps) => {
   const t = useTranslations('auth');
   const router = useRouter();
   const { locale } = useParams();
   const toast = useToast();
 
-  const resetMutation = useSmartMutation(useResetPassword(), {
-    onSuccess: () => {
-      toast.success(t('successReset'));
-      router.push(`/${locale}/login?reset=success`);
-    },
-    onError: (error) => {
-      onError(error);
-    },
-  });
+  const resetMutation = useResetPassword();
 
-  const onSubmit = (data: ResetPasswordInput) => {
+  const onSubmit = async (data: ResetPasswordInput) => {
     if (!email) {
-      const error = { response: { data: { message: 'Email is missing. Please restart the process.' } } };
-      onError(error);
-      resetMutation.setServerError(error.response.data.message);
-      return;
+      throw new Error('Email is missing. Please restart the process.');
     }
-    resetMutation.mutate({ email, password: data.password });
+    
+    await resetMutation.mutateAsync({ email, password: data.password });
+    toast.success(t('successReset'));
+    router.push(`/${locale}/login?reset=success`);
   };
 
   return (
@@ -46,6 +37,7 @@ const ResetStep = ({ email, onError }: ResetStepProps) => {
       schema={resetPasswordSchema}
       defaultValues={{ password: '', confirmPassword: '' }}
       onSubmit={onSubmit}
+      networkErrorMessage={t("serverError")}
       className="space-y-5 animate-in fade-in slide-in-from-right-4"
     >
       <div className="space-y-4">
