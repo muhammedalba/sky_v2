@@ -25,7 +25,7 @@ const TopbarActions = () => {
   };
 
   return (
-    <div className="flex items-center gap-3 flex-shrink-0">
+    <div className="flex items-center gap-3 shrink-0">
       {/* Locale Switcher */}
       <div className="flex items-center bg-muted/40 rounded-lg p-1 border border-border/40">
         {(['en', 'ar'] as const).map((l) => (

@@ -1,204 +1,356 @@
 "use client";
 
-import React from "react";
-import { Icons } from "@/shared/ui/Icons";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/shared/ui/Icons";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
-// Types
+/**
+ * Types & Interfaces
+ */
 interface PlatformLink {
-  title: string;
+  id: string;
+  brand: string;
   url: string;
-  desc: string;
   icon: React.ElementType;
-  iconColor: string;
-  iconBg: string;
+  color: {
+    text: string;
+    bg: string;
+    border: string;
+    glow: string;
+  };
 }
 
-interface PlatformCategory {
-  category: string;
-  links: PlatformLink[];
+interface PlatformGroup {
+  id: string;
+  icon: React.ElementType;
+  platforms: PlatformLink[];
 }
+
+/**
+ * PlatformCard Component
+ * High-end widget-style card with sophisticated hover effects and brand identity.
+ */
+const PlatformCard = ({ platform, index, isVisible }: { platform: PlatformLink; index: number; isVisible: boolean }) => {
+  const t = useTranslations("dashboard.externalPlatforms.links");
+  const Icon = platform.icon;
+
+  return (
+    <a
+      href={platform.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "group relative flex flex-col h-full p-6 rounded-[24px] border bg-card/40 backdrop-blur-xl transition-all duration-700 overflow-hidden",
+        "hover:-translate-y-1 hover:shadow-xl hover:border-primary/20",
+        isVisible 
+          ? "opacity-100 translate-y-0" 
+          : "opacity-0 translate-y-12",
+        platform.color.border
+      )}
+      style={{ 
+        transitionDelay: `${index * 100}ms`,
+      }}
+    >
+      {/* Glow Effect */}
+      <div className={cn(
+        "absolute inset-0 transition-opacity duration-700 z-0 bg-linear-to-br",
+        platform.color.glow
+      )} />
+
+      {/* Content Container */}
+      <div className="relative z-10 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className={cn(
+              "flex items-center justify-center w-14 h-14 rounded-[18px] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-6",
+              platform.color.bg
+            )}>
+              <Icon className={cn("w-7 h-7", platform.color.text)} />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary/70 bg-primary/5 px-2 py-0.5 rounded-full">
+                  {platform.brand}
+                </span>
+              </div>
+              <h4 className="text-lg font-extrabold text-foreground tracking-tight group-hover:text-primary transition-colors leading-tight mt-1">
+                {t(platform.id)}
+              </h4>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary/50 border border-border/50 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+            <Icons.ExternalLink className="w-4 h-4 text-primary" />
+          </div>
+        </div>
+
+        <p className="text-[15px] text-muted-foreground leading-relaxed grow font-medium">
+          {t(`${platform.id}Desc`)}
+        </p>
+
+        {/* Modern Action Bar */}
+        <div className="mt-8 pt-5 border-t border-border/40 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="relative flex h-2 w-2">
+              <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <div className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </div>
+            <span className="text-[12px] font-bold text-muted-foreground/80 tracking-wide uppercase">
+              {platform.brand === "Google" ? "Authenticated" : "Active Service"}
+            </span>
+          </div>
+          <Icons.ChevronRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary transition-all duration-300 transform group-hover:translate-x-1" />
+        </div>
+      </div>
+
+      {/* Subtle Inner Highlight */}
+      <div className="absolute inset-0 rounded-[24px] ring-1 ring-inset ring-foreground/3 dark:ring-white/5 pointer-events-none z-20" />
+    </a>
+  );
+};
+
+const PlatformSection = ({ group, t }: { group: PlatformGroup; t: any }) => {
+  const GroupIcon = group.icon;
+
+  return (
+    <ScrollReveal animation="none" className="space-y-10">
+      {(isVisible) => (
+        <>
+          <div className={cn(
+            "flex items-center gap-8 transition-all duration-1000 delay-100",
+            isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+          )}>
+            <div className="flex items-center gap-4">
+              <div className="p-3.5 rounded-2xl bg-secondary/60 border border-border/60 shadow-inner backdrop-blur-sm">
+                <GroupIcon className="w-6 h-6 text-warning" />
+              </div>
+              <h3 className="text-3xl font-black title-gradient tracking-tight">
+                {t(`categories.${group.id}`)}
+              </h3>
+            </div>
+            <div className="h-px flex-1 bg-linear-to-r from-border via-border/40 to-transparent" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10">
+            {group.platforms.map((platform, pIdx) => (
+              <PlatformCard 
+                key={platform.id} 
+                platform={platform} 
+                index={pIdx}
+                isVisible={isVisible}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </ScrollReveal>
+  );
+};
 
 export default function ExternalPlatformsCenter() {
   const t = useTranslations("dashboard.externalPlatforms");
 
-  const PLATFORM_DATA: PlatformCategory[] = [
+  const PLATFORM_GROUPS: PlatformGroup[] = [
     {
-      category: t("categories.seoWebmasters"),
-      links: [
+      id: "marketingGrowth",
+      icon: Icons.AiSpark,
+      platforms: [
         {
-          title: t("links.googleSearchConsole"),
-          url: "https://search.google.com/search-console",
-          desc: t("links.googleSearchConsoleDesc"),
-          icon: Icons.Search,
-          iconColor: "text-blue-600 dark:text-blue-400",
-          iconBg: "bg-blue-100 dark:bg-blue-900/30",
-        },
-        {
-          title: t("links.bingWebmasterTools"),
-          url: "https://www.bing.com/webmasters",
-          desc: t("links.bingWebmasterToolsDesc"),
-          icon: Icons.Globe,
-          iconColor: "text-teal-600 dark:text-teal-400",
-          iconBg: "bg-teal-100 dark:bg-teal-900/30",
-        },
-      ],
-    },
-    {
-      category: t("categories.analyticsTracking"),
-      links: [
-        {
-          title: t("links.googleAnalytics"),
-          url: "https://analytics.google.com/",
-          desc: t("links.googleAnalyticsDesc"),
-          icon: Icons.BarChart3,
-          iconColor: "text-orange-600 dark:text-orange-400",
-          iconBg: "bg-orange-100 dark:bg-orange-900/30",
-        },
-        {
-          title: t("links.googleTagManager"),
-          url: "https://tagmanager.google.com/",
-          desc: t("links.googleTagManagerDesc"),
-          icon: Icons.Tags,
-          iconColor: "text-indigo-600 dark:text-indigo-400",
-          iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
-        },
-      ],
-    },
-    {
-      category: t("categories.adsEcommerce"),
-      links: [
-        {
-          title: t("links.googleMerchantCenter"),
+          id: "googleMerchantCenter",
+          brand: "Google",
           url: "https://merchants.google.com/",
-          desc: t("links.googleMerchantCenterDesc"),
           icon: Icons.ShoppingBag,
-          iconColor: "text-emerald-600 dark:text-emerald-400",
-          iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+          color: {
+            text: "text-emerald-600 ",
+            bg: "bg-muted",
+            border: "border ",
+            glow: "from-emerald-500/5 via-transparent to-transparent",
+          },
         },
         {
-          title: t("links.metaBusinessSuite"),
+          id: "metaBusinessSuite",
+          brand: "Meta",
           url: "https://business.facebook.com/",
-          desc: t("links.metaBusinessSuiteDesc"),
-          icon: Icons.MetaBrand,
-          iconColor: "text-blue-700 dark:text-blue-500",
-          iconBg: "bg-blue-100 dark:bg-blue-900/30",
+          icon: Icons.Infinity,
+          color: {
+            text: "text-blue-600 ",
+            bg: "bg-muted",
+            border: "border",
+            glow: "from-blue-500/5 via-transparent to-transparent",
+          },
         },
         {
-          title: t("links.tiktokAdsManager"),
+          id: "tiktokAdsManager",
+          brand: "TikTok",
           url: "https://ads.tiktok.com/",
-          desc: t("links.tiktokAdsManagerDesc"),
           icon: Icons.TikTokBrand,
-          iconColor: "text-zinc-900 dark:text-white",
-          iconBg: "bg-zinc-100 dark:bg-zinc-800/50",
+          color: {
+            text: "text-zinc-900 ",
+            bg: "bg-zinc-100 ",
+            border: "border",
+            glow: "from-zinc-500/5 via-transparent to-transparent",
+          },
         },
         {
-          title: t("links.snapchatAdsManager"),
+          id: "snapchatAdsManager",
+          brand: "Snapchat",
           url: "https://ads.snapchat.com/",
-          desc: t("links.snapchatAdsManagerDesc"),
           icon: Icons.SnapchatBrand,
-          iconColor: "text-yellow-500",
-          iconBg: "bg-yellow-100 dark:bg-yellow-900/30",
+          color: {
+            text: "text-amber-600 ",
+            bg: "bg-amber-50 ",
+            border: "border",
+            glow: "from-amber-500/5 via-transparent to-transparent",
+          },
         },
       ],
     },
     {
-      category: t("categories.performanceTrust"),
-      links: [
+      id: "analyticsOptimization",
+      icon: Icons.BarChart3,
+      platforms: [
         {
-          title: t("links.pageSpeedInsights"),
+          id: "googleAnalytics",
+          brand: "Google",
+          url: "https://analytics.google.com/",
+          icon: Icons.BarChart3,
+          color: {
+            text: "text-orange-600 ",
+            bg: "bg-orange-50 ",
+            border: "border",
+            glow: "from-orange-500/5 via-transparent to-transparent",
+          },
+        },
+        {
+          id: "googleTagManager",
+          brand: "Google",
+          url: "https://tagmanager.google.com/",
+          icon: Icons.Tags,
+          color: {
+            text: "text-indigo-600 ",
+            bg: "bg-indigo-50 ",
+            border: "border",
+            glow: "from-indigo-500/5 via-transparent to-transparent",
+          },
+        },
+        {
+          id: "googleSearchConsole",
+          brand: "Google",
+          url: "https://search.google.com/search-console",
+          icon: Icons.Search,
+          color: {
+            text: "text-blue-500 ",
+            bg: "bg-blue-50 ",
+            border: "border",
+            glow: "from-blue-500/5 via-transparent to-transparent",
+          },
+        },
+        {
+          id: "pageSpeedInsights",
+          brand: "Web.dev",
           url: "https://pagespeed.web.dev/",
-          desc: t("links.pageSpeedInsightsDesc"),
           icon: Icons.Gauge,
-          iconColor: "text-red-600 dark:text-red-400",
-          iconBg: "bg-red-100 dark:bg-red-900/30",
-        },
-        {
-          title: t("links.googleBusinessProfile"),
-          url: "https://business.google.com/",
-          desc: t("links.googleBusinessProfileDesc"),
-          icon: Icons.Store,
-          iconColor: "text-sky-600 dark:text-sky-400",
-          iconBg: "bg-sky-100 dark:bg-sky-900/30",
+          color: {
+            text: "text-rose-600 ",
+            bg: "bg-rose-50 ",
+            border: "border",
+            glow: "from-rose-500/5 via-transparent to-transparent",
+          },
         },
       ],
     },
     {
-      category: t("categories.infrastructureDatabase"),
-      links: [
+      id: "presenceTrust",
+      icon: Icons.Shield,
+      platforms: [
         {
-          title: t("links.mongoAtlas"),
-          url: "https://cloud.mongodb.com/",
-          desc: t("links.mongoAtlasDesc"),
-          icon: Icons.Database,
-          iconColor: "text-green-600 dark:text-green-400",
-          iconBg: "bg-green-100 dark:bg-green-900/30",
+          id: "googleBusinessProfile",
+          brand: "Google",
+          url: "https://business.google.com/",
+          icon: Icons.Store,
+          color: {
+            text: "text-sky-600 ",
+            bg: "bg-sky-50 ",
+            border: "border",
+            glow: "from-sky-500/5 via-transparent to-transparent",
+          },
         },
         {
-          title: t("links.aivenRedis"),
-          url: "https://console.aiven.io/",
-          desc: t("links.aivenRedisDesc"),
+          id: "bingWebmasterTools",
+          brand: "Microsoft",
+          url: "https://www.bing.com/webmasters",
+          icon: Icons.Globe,
+          color: {
+            text: "text-teal-600 ",
+            bg: "bg-teal-50 ",
+            border: "border",
+            glow: "from-teal-500/5 via-transparent to-transparent",
+          },
+        },
+      ],
+    },
+    {
+      id: "technicalInfrastructure",
+      icon: Icons.Database,
+      platforms: [
+        {
+          id: "mongoAtlas",
+          brand: "MongoDB",
+          url: "https://cloud.mongodb.com/",
           icon: Icons.Database,
-          iconColor: "text-rose-600 dark:text-rose-400",
-          iconBg: "bg-rose-100 dark:bg-rose-900/30",
+          color: {
+            text: "text-green-600 ",
+            bg: "bg-green-50 ",
+            border: "border",
+            glow: "from-green-500/5 via-transparent to-transparent",
+          },
+        },
+        {
+          id: "aivenRedis",
+          brand: "Redis",
+          url: "https://console.aiven.io/",
+          icon: Icons.Database,
+          color: {
+            text: "text-red-600 ",
+            bg: "bg-red-50 ",
+            border: "border",
+            glow: "from-red-500/5 via-transparent to-transparent",
+          },
         },
       ],
     },
   ];
 
   return (
-    <div className="space-y-8 w-full">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">
-          {t("title")}
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          {t("description")}
-        </p>
-      </div>
+    <div className="space-y-16 w-full pb-32">
+      {/* Premium Header Section */}
+      <header className="flex flex-col gap-5 max-w-4xl border-b pb-6">
+        <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 w-fit animate-in fade-in slide-in-from-left-10 duration-700">
+          <Icons.Infinity className="w-4 h-4 text-primary" />
+          <span className="text-[13px] font-black text-primary uppercase tracking-[0.2em]">
+            Ecosystem Hub
+          </span>
+        </div>
+        
+        <div className={cn(
+          "space-y-3 transition-all duration-1000 delay-300",
+          "animate-in fade-in slide-in-from-bottom-10"
+        )}>
+          <h2 className="text-2xl font-black tracking-tight title-gradient sm:text-3xl lg:text-4xl">
+            {t("title")}
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl font-medium">
+            {t("description")}
+          </p>
+        </div>
+      </header>
 
-      <div className="space-y-8">
-        {PLATFORM_DATA.map((section, idx) => (
-          <div key={idx} className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
-              {section.category}
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {section.links.map((link, linkIdx) => {
-                const Icon = link.icon;
-
-                return (
-                  <a
-                    key={linkIdx}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative flex flex-col justify-between p-5 rounded-xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-border/80"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div
-                        className={`flex items-center justify-center w-10 h-10 rounded-lg ${link.iconBg}`}
-                      >
-                        <Icon className={`w-5 h-5 ${link.iconColor}`} />
-                      </div>
-
-                      <Icons.ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-foreground" />
-                    </div>
-
-                    <div className="mt-4">
-                      <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {link.title}
-                      </h4>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                        {link.desc}
-                      </p>
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
+      {/* Categories & Links */}
+      <div className="space-y-24">
+        {PLATFORM_GROUPS.map((group) => (
+          <PlatformSection key={group.id} group={group} t={t} />
         ))}
       </div>
     </div>

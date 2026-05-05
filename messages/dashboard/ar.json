@@ -5,46 +5,104 @@
             "totalProducts": "إجمالي المنتجات",
             "totalOrders": "إجمالي الطلبات",
             "totalRevenue": "إجمالي الإيرادات",
-            "totalUsers": "إجمالي المستخدمين"
+            "totalUsers": "إجمالي المستخدمين",
+            "activeCoupons": "الكوبونات النشطة",
+            "brands": "العلامات التجارية",
+            "subCategories": "الفئات الفرعية",
+            "suppliers": "الموردون"
       },
       "recentOrders": "الطلبات الأخيرة",
       "topProducts": "المنتجات الأكثر مبيعاً",
       "viewAll": "عرض الكل",
+      "dateFilter": {
+            "label": "نطاق التاريخ",
+            "from": "من",
+            "to": "إلى",
+            "apply": "تطبيق",
+            "reset": "إعادة تعيين",
+            "invalidRange": "تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية"
+      },
+      "sections": {
+            "overview": {
+                  "title": "نظرة عامة على المتجر",
+                  "desc": "مؤشرات الأداء الرئيسية لهذه الفترة"
+            },
+            "trends": {
+                  "title": "اتجاهات النشاط",
+                  "desc": "نشاط الطلبات اليومية وتسجيل المستخدمين"
+            },
+            "breakdown": {
+                  "title": "تحليل الجمهور والمبيعات",
+                  "desc": "أدوار المستخدمين وتوزيع الحالات وقنوات البيع"
+            },
+            "products": {
+                  "title": "المنتجات والعملاء والموردون",
+                  "desc": "أفضل المنتجات أداءً وأبرز العملاء وإحصائيات الموردين"
+            },
+            "marketing": {
+                  "title": "التسويق والكوبونات",
+                  "desc": "أداء الكوبونات وتكاليف قنوات التسويق"
+            }
+      },
+      "productsSection": {
+            "topProducts": "أفضل 10 منتجات مبيعاً",
+            "topProductsDesc": "مرتبة حسب إجمالي الوحدات المباعة",
+            "productsCount": "{count} منتجات",
+            "noProducts": "لا تتوفر بيانات للمنتجات",
+            "featured": "مميز",
+            "unlimited": "غير محدود",
+            "sold": "مباع: {count}",
+            "variants": "{count} متغير",
+            "variantsPlural": "{count} متغيرات",
+            "active": "نشط",
+            "inactive": "غير نشط",
+            "stock": "المخزون: {count}",
+            "topCustomers": "أفضل العملاء",
+            "topCustomersDesc": "الأعلى في تكرار الطلبات هذه الفترة",
+            "noCustomers": "لا تتوفر بيانات للعملاء هذه الفترة",
+            "orders": "{count} طلبات",
+            "suppliersOverview": "نظرة عامة على الموردين",
+            "totalSuppliers": "الإجمالي: {count} مورد",
+            "noSuppliers": "لم يتم العثور على موردين"
+      },
+      "error": {
+            "title": "فشل تحميل لوحة التحكم",
+            "desc": "يرجى التحقق من الاتصال والمحاولة مرة أخرى."
+      },
       "externalPlatforms": {
-            "title": "مركز القيادة",
-            "description": "وصول سريع للأدوات والمنصات الخارجية المطلوبة لإدارة عملك.",
+            "title": "نظام المنصات المتكامل",
+            "description": "وصول مركزي إلى الأدوات العالمية التي تدعم نمو متجرك وبنيتك التحتية.",
             "categories": {
-                  "seoWebmasters": "تحسين محركات البحث ومشرفي المواقع",
-                  "analyticsTracking": "التحليلات والتتبع",
-                  "adsEcommerce": "الإعلانات والتجارة الإلكترونية",
-                  "performanceTrust": "الأداء والثقة",
-                  "infrastructureDatabase": "البنية التحتية وقواعد البيانات"
+                  "marketingGrowth": "التسويق والنمو",
+                  "analyticsOptimization": "التحليلات والتحسين",
+                  "presenceTrust": "التواجد والثقة",
+                  "technicalInfrastructure": "البنية التحتية التقنية"
             },
             "links": {
-                  "googleSearchConsole": "Google Search Console",
-                  "googleSearchConsoleDesc": "مراقبة حركة مرور الموقع وفهرسة تحسين محركات البحث.",
-                  "bingWebmasterTools": "Bing Webmaster Tools",
-                  "bingWebmasterToolsDesc": "وضوح محرك بحث مايكروسوفت وتحليلاته.",
-                  "googleAnalytics": "Google Analytics",
-                  "googleAnalyticsDesc": "تتبع سلوك المستخدم ومعدلات التحويل.",
-                  "googleTagManager": "Google Tag Manager",
-                  "googleTagManagerDesc": "إدارة أكواد التتبع والبكسل.",
-                  "googleMerchantCenter": "Google Merchant Center",
-                  "googleMerchantCenterDesc": "إدارة كتالوج المنتجات لـ Google Shopping.",
-                  "metaBusinessSuite": "Meta Business Suite",
-                  "metaBusinessSuiteDesc": "إدارة التواجد على فيسبوك/إنستغرام و Meta Pixel.",
-                  "tiktokAdsManager": "TikTok Ads Manager",
-                  "tiktokAdsManagerDesc": "إدارة حملات تيك توك الإعلانية والأحداث.",
-                  "snapchatAdsManager": "Snapchat Ads Manager",
-                  "snapchatAdsManagerDesc": "استهداف الجمهور وإدارة إعلانات سناب شات.",
-                  "pageSpeedInsights": "PageSpeed Insights",
-                  "pageSpeedInsightsDesc": "التحقق من أداء الموقع ومؤشرات الويب الحيوية.",
-                  "googleBusinessProfile": "Google Business Profile",
-                  "googleBusinessProfileDesc": "إدارة المراجعات والتواجد التجاري المحلي.",
-                  "mongoAtlas": "MongoDB Atlas",
-                  "mongoAtlasDesc": "خدمة قاعدة البيانات السحابية للتطبيقات الحديثة.",
-                  "aivenRedis": "Aiven Redis",
-                  "aivenRedisDesc": "إدارة Redis للتخزين المؤقت والمراسلة عالية الأداء."
+                  "googleSearchConsole": "أداء البحث",
+                  "googleSearchConsoleDesc": "تحسين الظهور العضوي ومراقبة صحة محركات البحث.",
+                  "bingWebmasterTools": "ظهور Bing",
+                  "bingWebmasterToolsDesc": "أقصى استفادة من نظام البحث التابع لشركة مايكروسوفت.",
+                  "googleAnalytics": "ذكاء العملاء",
+                  "googleAnalyticsDesc": "تحليل عميق لسلوك الزوار وبيانات التحويل.",
+                  "googleTagManager": "نظام التتبع",
+                  "googleTagManagerDesc": "نشر وإدارة بكسلات التسويق بدون أكواد برمجية.",
+                  "googleMerchantCenter": "كتالوج المنتجات",
+                  "googleMerchantCenterDesc": "مزامنة مخزونك مع Google Shopping وإعلاناته.",
+                  "metaBusinessSuite": "تجارة Meta",
+                  "metaBusinessSuiteDesc": "توسيع علامتك التجارية عبر فيسبوك وإنستغرام.",
+                  "tiktokAdsManager": "تسويق TikTok",
+                  "tiktokAdsManagerDesc": "جذب الجماهير الشابة بحملات فيديو أولية.",
+                  "snapchatAdsManager": "إدارة إعلانات Snap",
+                  "snapchatAdsManagerDesc": "دفع النمو عبر منصة سناب شات الإعلانية الإبداعية.",
+                  "pageSpeedInsights": "تدقيق الأداء",
+                  "pageSpeedInsightsDesc": "التحقق من مؤشرات الويب الحيوية وكفاءة التحميل.",
+                  "googleBusinessProfile": "التواجد المحلي",
+                  "googleBusinessProfileDesc": "إدارة سمعتك وبصمتك في البحث المحلي (Local SEO).",
+                  "mongoAtlas": "محرك قواعد البيانات",
+                  "mongoAtlasDesc": "تخزين سحابي عالي التوفر لبيانات متجرك الحساسة.",
+                  "aivenRedis": "تحسين التخزين المؤقت",
+                  "aivenRedisDesc": "تسريع الأداء باستخدام مجموعات Redis المدارة."
             }
       }
 }

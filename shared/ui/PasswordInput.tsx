@@ -4,19 +4,22 @@ import React, { forwardRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './Input';
 import { Icons } from './Icons';
+import { PasswordStrength } from '@/features/auth/components/AuthClientComponents';
+import ErrorMessage from './ErrorMessage';
 
 interface PasswordInputProps extends React.ComponentProps<typeof Input> {
   label?: string;
   error?: string;
   icon?: React.ComponentType<{ className?: string }>;
+  showStrength?: boolean;
 }
 
 const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ className, label, error, icon, ...props }, ref) => {
+  ({ className, label, error, icon, showStrength = true, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
-   
+
     return (<div className="w-full">
-      <div className="relative ">
+      <div className="relative mb-2">
         <Input
           {...props}
           label={label}
@@ -26,7 +29,6 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           className={cn(
             `appearance-none`
           )}
-          error={error}
         />
         <button
           type="button"
@@ -37,10 +39,12 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           {showPassword ? (
             <Icons.EyeOff className="w-5 h-5" />
           ) : (
-            <Icons.Eye className="w-5 h-5" /> 
+            <Icons.Eye className="w-5 h-5" />
           )}
         </button>
       </div>
+      {props.name === "password" && showStrength && <PasswordStrength name="password" />}
+      {error && <ErrorMessage message={error} />}
     </div>);
   }
 );

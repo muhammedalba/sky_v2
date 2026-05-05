@@ -5,46 +5,104 @@
             "totalProducts": "Total Products",
             "totalOrders": "Total Orders",
             "totalRevenue": "Total Revenue",
-            "totalUsers": "Total Users"
+            "totalUsers": "Total Users",
+            "activeCoupons": "Active Coupons",
+            "brands": "Brands",
+            "subCategories": "Sub-Categories",
+            "suppliers": "Suppliers"
       },
       "recentOrders": "Recent Orders",
       "topProducts": "Top Products",
       "viewAll": "View All",
+      "dateFilter": {
+            "label": "Date Range",
+            "from": "From",
+            "to": "To",
+            "apply": "Apply",
+            "reset": "Reset",
+            "invalidRange": "Start date cannot be after end date"
+      },
+      "sections": {
+            "overview": {
+                  "title": "Store Overview",
+                  "desc": "Key performance indicators for this period"
+            },
+            "trends": {
+                  "title": "Activity Trends",
+                  "desc": "Daily orders and user registration activity"
+            },
+            "breakdown": {
+                  "title": "Audience & Sales Breakdown",
+                  "desc": "User roles, status distribution, order statuses, and sales channels"
+            },
+            "products": {
+                  "title": "Products, Customers & Suppliers",
+                  "desc": "Top performing products, best customers, and supplier stats"
+            },
+            "marketing": {
+                  "title": "Marketing & Coupons",
+                  "desc": "Coupon performance and marketing channel costs"
+            }
+      },
+      "productsSection": {
+            "topProducts": "Top Products by Sales",
+            "topProductsDesc": "Ranked Top 10 by total units sold",
+            "productsCount": "{count} products",
+            "noProducts": "No products data available",
+            "featured": "Featured",
+            "unlimited": "Unlimited",
+            "sold": "{count} sold",
+            "variants": "{count} variant",
+            "variantsPlural": "{count} variants",
+            "active": "Active",
+            "inactive": "Inactive",
+            "stock": "Stock: {count}",
+            "topCustomers": "Top Customers",
+            "topCustomersDesc": "Highest order frequency this period",
+            "noCustomers": "No customer data for this period",
+            "orders": "{count} orders",
+            "suppliersOverview": "Suppliers Overview",
+            "totalSuppliers": "Total: {count} supplier(s)",
+            "noSuppliers": "No suppliers found"
+      },
+      "error": {
+            "title": "Failed to load dashboard",
+            "desc": "Please check your connection and try again."
+      },
       "externalPlatforms": {
-            "title": "Command Center",
-            "description": "Quick access to external tools and platforms required to manage your business.",
+            "title": "Platform Ecosystem",
+            "description": "Centralized access to the world-class tools powering your store's growth and infrastructure.",
             "categories": {
-                  "seoWebmasters": "SEO & Webmasters",
-                  "analyticsTracking": "Analytics & Tracking",
-                  "adsEcommerce": "Ads & E-commerce",
-                  "performanceTrust": "Performance & Trust",
-                  "infrastructureDatabase": "Infrastructure & Database"
+                  "marketingGrowth": "Marketing & Growth",
+                  "analyticsOptimization": "Analytics & Optimization",
+                  "presenceTrust": "Presence & Trust",
+                  "technicalInfrastructure": "Technical Infrastructure"
             },
             "links": {
-                  "googleSearchConsole": "Google Search Console",
-                  "googleSearchConsoleDesc": "Monitor site traffic and SEO indexing.",
-                  "bingWebmasterTools": "Bing Webmaster Tools",
-                  "bingWebmasterToolsDesc": "Microsoft's search engine visibility and analytics.",
-                  "googleAnalytics": "Google Analytics",
-                  "googleAnalyticsDesc": "Track user behavior and conversion rates.",
-                  "googleTagManager": "Google Tag Manager",
-                  "googleTagManagerDesc": "Manage tracking codes and pixels.",
-                  "googleMerchantCenter": "Google Merchant Center",
-                  "googleMerchantCenterDesc": "Manage product catalog for Google Shopping.",
-                  "metaBusinessSuite": "Meta Business Suite",
-                  "metaBusinessSuiteDesc": "Manage Facebook/Instagram presence and Meta Pixel.",
-                  "tiktokAdsManager": "TikTok Ads Manager",
-                  "tiktokAdsManagerDesc": "Manage TikTok ad campaigns and events.",
-                  "snapchatAdsManager": "Snapchat Ads Manager",
-                  "snapchatAdsManagerDesc": "Target audiences and manage Snapchat ads.",
-                  "pageSpeedInsights": "PageSpeed Insights",
-                  "pageSpeedInsightsDesc": "Check website performance and Core Web Vitals.",
-                  "googleBusinessProfile": "Google Business Profile",
-                  "googleBusinessProfileDesc": "Manage reviews and local business presence.",
-                  "mongoAtlas": "MongoDB Atlas",
-                  "mongoAtlasDesc": "Cloud database service for modern applications.",
-                  "aivenRedis": "Aiven Redis",
-                  "aivenRedisDesc": "Managed Redis for high-performance caching."
+                  "googleSearchConsole": "Search Performance",
+                  "googleSearchConsoleDesc": "Optimize organic reach and monitor search health.",
+                  "bingWebmasterTools": "Bing Visibility",
+                  "bingWebmasterToolsDesc": "Maximize exposure on Microsoft's search ecosystem.",
+                  "googleAnalytics": "Customer Intelligence",
+                  "googleAnalyticsDesc": "Deep-dive into visitor behavior and conversion data.",
+                  "googleTagManager": "Tag Ecosystem",
+                  "googleTagManagerDesc": "Deploy and manage marketing pixels without code.",
+                  "googleMerchantCenter": "Product Catalog",
+                  "googleMerchantCenterDesc": "Sync your inventory with Google Shopping & Ads.",
+                  "metaBusinessSuite": "Meta Commerce",
+                  "metaBusinessSuiteDesc": "Scale your brand across Facebook and Instagram.",
+                  "tiktokAdsManager": "TikTok Marketing",
+                  "tiktokAdsManagerDesc": "Engage younger audiences with video-first campaigns.",
+                  "snapchatAdsManager": "Snap Ad Manager",
+                  "snapchatAdsManagerDesc": "Drive growth via Snapchat's creative ad platform.",
+                  "pageSpeedInsights": "Performance Audit",
+                  "pageSpeedInsightsDesc": "Validate Core Web Vitals and loading efficiency.",
+                  "googleBusinessProfile": "Local Presence",
+                  "googleBusinessProfileDesc": "Manage your reputation and local SEO footprint.",
+                  "mongoAtlas": "Database Engine",
+                  "mongoAtlasDesc": "High-availability cloud storage for your store data.",
+                  "aivenRedis": "Cache Optimization",
+                  "aivenRedisDesc": "Accelerate performance with managed Redis clusters."
             }
       }
 }

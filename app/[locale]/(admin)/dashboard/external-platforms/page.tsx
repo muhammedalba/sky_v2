@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import ExternalPlatformsCenter from '@/features/dashboard/components/ExternalPlatformsCenter';
+import { env } from '@/lib/env';
 
 export const metadata: Metadata = {
-  title: 'External Platforms | SkyGalaxy Admin',
+  title: `External Platforms | ${env.APP_NAME} - Admin`,
   description: 'Quick access to external tools and platforms required to manage your business.',
 };
 

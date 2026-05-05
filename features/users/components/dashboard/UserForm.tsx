@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
 import { cn } from '@/lib/utils';
 import { Select } from '@/shared/ui/Select';
+import PasswordInput from '@/shared/ui/PasswordInput';
 
 interface UserFormProps {
   editingUser?: User | null;
@@ -190,9 +191,8 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Input
+                  <PasswordInput
                     {...register('password')}
-                    type="password"
                     icon={Icons.Key}
                     label={t('fields.password')}
                     placeholder={mode === 'edit' ? '******** (Leave empty to keep)' : '********'}
@@ -203,9 +203,8 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Input
+                  <PasswordInput
                     {...register('confirmPassword')}
-                    type="password"
                     icon={Icons.Key}
                     label={t('fields.passwordConfirm')}
                     placeholder={mode === 'edit' ? '******** (Leave empty to keep)' : '********'}

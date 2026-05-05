@@ -1,15 +1,14 @@
 'use client';
 
-import { dashboardApi } from '@/lib/api/dashboard';
+import { dashboardApi, DashboardParams } from '@/lib/api/dashboard';
 import { useQuery } from '@tanstack/react-query';
 
-export function useDashboardStats() {
+export function useDashboardStats(params?: DashboardParams) {
   return useQuery({
-    queryKey: ['dashboard', 'stats'],
+    queryKey: ['dashboard', 'stats', params],
     queryFn: async () => {
-      return await dashboardApi.getStats();
+      return await dashboardApi.getStats(params);
     },
     throwOnError: true,
   });
 }
-

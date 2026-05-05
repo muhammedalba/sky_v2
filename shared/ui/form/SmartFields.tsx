@@ -12,11 +12,13 @@ interface BaseFieldProps {
   className?: string;
   disabled?: boolean;
   errorNamespace?: string;
+  showStrength?: boolean;
 }
 
 export function SmartInput({ 
   name, 
   errorNamespace = 'errors',
+  showStrength = true,
   ...props 
 }: BaseFieldProps & { type?: string }) {
   const { register, formState: { errors }, control } = useFormContext();
@@ -40,11 +42,11 @@ export function SmartInput({
 export function SmartPasswordInput({ 
   name, 
   errorNamespace = 'errors',
+  showStrength,
   ...props 
 }: BaseFieldProps) {
   const { register, formState: { errors }, control } = useFormContext();
   const tErrors = useTranslations(errorNamespace);
-  
   const value = useWatch({ control, name });
   const error = errors[name]?.message as string | undefined;
 
@@ -54,6 +56,7 @@ export function SmartPasswordInput({
       {...props}
       value={value}
       error={error ? tErrors(error as any) : undefined}
+      showStrength={showStrength}
     />
   );
 }

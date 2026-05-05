@@ -205,13 +205,40 @@
                   "startDate": "تاريخ البدء",
                   "endDate": "تاريخ الانتهاء",
                   "apply": "تطبيق الفلاتر",
-                  "reset": "إعادة تعيين"
+                  "reset": "إعادة تعيين",
+                  "invalidRange": "تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية"
             },
             "overview": {
+                  "title": "نظرة عامة",
                   "totalProducts": "إجمالي المنتجات",
                   "stockValue": "قيمة المخزون",
                   "unitsSold": "إجمالي الوحدات المباعة",
-                  "stockHealth": "صحة المخزون"
+                  "stockHealth": "صحة المخزون",
+                  "activeProducts": "المنتجات النشطة",
+                  "activeProductsDesc": "ظاهرة حالياً",
+                  "totalStock": "إجمالي المخزون",
+                  "totalStockDesc": "وحدات في المخزن",
+                  "lowStockItems": "عناصر منخفضة المخزون",
+                  "lowStockDesc": "تحتاج إلى تجديد",
+                  "simpleProducts": "منتجات بسيطة",
+                  "simpleProductsDesc": "متغير واحد",
+                  "variableProducts": "منتجات متغيرة",
+                  "variableProductsDesc": "متعددة المتغيرات",
+                  "brands": "العلامات التجارية",
+                  "brandsDesc": "خطوط العلامات النشطة",
+                  "suppliers": "الموردون",
+                  "suppliersDesc": "شركاء التوريد",
+                  "newThisPeriod": "+{count} هذه الفترة"
+            },
+            "sections": {
+                  "compositionTitle": "تكوين المنتجات وتوزيعها",
+                  "compositionDesc": "تفصيل الأنواع وانتشار الفئات",
+                  "subcategoryTitle": "الفئات الفرعية وأداء العلامات",
+                  "subcategoryDesc": "عدد المنتجات لكل فئة فرعية وعلامة تجارية",
+                  "supplierTitle": "مخزون الموردين",
+                  "supplierDesc": "عناصر المخزون وقيمة الاستثمار لكل مورد",
+                  "topProductsTitle": "أفضل المنتجات",
+                  "topProductsDesc": "مرتبة حسب الوحدات المباعة وقيمة المخزون"
             },
             "charts": {
                   "composition": "تكوين المنتجات",
@@ -219,8 +246,23 @@
                   "inventory": "حالة المخزون",
                   "trends": "اتجاهات النشر",
                   "simple": "منتجات بسيطة",
-                  "variable": "منتجات بمتغيرات"
+                  "variable": "منتجات بمتغيرات",
+                  "subcategoryDistribution": "توزيع الفئات الفرعية",
+                  "subcategoryDesc": "المنتجات لكل فئة فرعية",
+                  "brandPerformance": "أداء العلامات",
+                  "brandDesc": "عدد المنتجات لكل علامة",
+                  "stockBySupplier": "المخزون حسب المورد",
+                  "stockBySupplierDesc": "إجمالي الوحدات في المخزن",
+                  "investmentShare": "حصة الاستثمار",
+                  "investmentShareDesc": "توزيع قيمة الموردين",
+                  "noBrandData": "لا توجد بيانات علامات",
+                  "noSupplierData": "لا توجد بيانات موردين",
+                  "noProductData": "لا توجد بيانات منتجات",
+                  "soldUnits": "{count} مباع",
+                  "stockValue": "قيمة المخزون",
+                  "investment": "الاستثمار: {value}"
             },
+            "refresh": "تحديث",
             "inventory": {
                   "outOfStock": "نفد من المخزون",
                   "lowStock": "عناصر بمخزون منخفض",

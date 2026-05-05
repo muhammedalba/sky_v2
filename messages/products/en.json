@@ -205,13 +205,40 @@
                   "startDate": "Start Date",
                   "endDate": "End Date",
                   "apply": "Apply Filters",
-                  "reset": "Reset"
+                  "reset": "Reset",
+                  "invalidRange": "Start date cannot be after end date"
             },
             "overview": {
+                  "title": "Overview",
                   "totalProducts": "Total Products",
                   "stockValue": "Stock Value",
                   "unitsSold": "Total Units Sold",
-                  "stockHealth": "Inventory Health"
+                  "stockHealth": "Inventory Health",
+                  "activeProducts": "Active Products",
+                  "activeProductsDesc": "Currently visible",
+                  "totalStock": "Total Stock",
+                  "totalStockDesc": "Units in inventory",
+                  "lowStockItems": "Low Stock Items",
+                  "lowStockDesc": "Needs restocking",
+                  "simpleProducts": "Simple Products",
+                  "simpleProductsDesc": "Single variant",
+                  "variableProducts": "Variable Products",
+                  "variableProductsDesc": "Multi-variant",
+                  "brands": "Brands",
+                  "brandsDesc": "Active brand lines",
+                  "suppliers": "Suppliers",
+                  "suppliersDesc": "Sourcing partners",
+                  "newThisPeriod": "+{count} this period"
+            },
+            "sections": {
+                  "compositionTitle": "Product Composition & Distribution",
+                  "compositionDesc": "Type breakdown and category spread",
+                  "subcategoryTitle": "Subcategories & Brand Performance",
+                  "subcategoryDesc": "Product count per subcategory and brand",
+                  "supplierTitle": "Supplier Inventory",
+                  "supplierDesc": "Stock items and investment value per supplier",
+                  "topProductsTitle": "Top Products",
+                  "topProductsDesc": "Ranked by units sold and stock value"
             },
             "charts": {
                   "composition": "Product Composition",
@@ -219,8 +246,23 @@
                   "inventory": "Inventory Status",
                   "trends": "Publication Trends",
                   "simple": "Simple Products",
-                  "variable": "Variable Products"
+                  "variable": "Variable Products",
+                  "subcategoryDistribution": "Subcategory Distribution",
+                  "subcategoryDesc": "Products per subcategory",
+                  "brandPerformance": "Brand Performance",
+                  "brandDesc": "Product count per brand",
+                  "stockBySupplier": "Stock by Supplier",
+                  "stockBySupplierDesc": "Total units in inventory",
+                  "investmentShare": "Investment Share",
+                  "investmentShareDesc": "Supplier value distribution",
+                  "noBrandData": "No brand data available",
+                  "noSupplierData": "No supplier data",
+                  "noProductData": "No product data available",
+                  "soldUnits": "{count} sold",
+                  "stockValue": "Stock value",
+                  "investment": "Investment: {value}"
             },
+            "refresh": "Refresh",
             "inventory": {
                   "outOfStock": "Out of Stock",
                   "lowStock": "Low Stock Items",

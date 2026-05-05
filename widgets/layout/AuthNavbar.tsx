@@ -14,6 +14,7 @@ import Image from 'next/image';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 import { env } from '@/lib/env';
 import SidebarHeader from './sidebar/SidebarHeader';
+import TopbarActions from './topbar/TopbarActions';
 
 export default function AuthNavbar() {
     const t = useTranslations('store.nav');
@@ -95,7 +96,6 @@ export default function AuthNavbar() {
                                 priority
                             />
                         </Link>
-
                         {/* Desktop Navigation */}
                         <div className="hidden lg:flex items-center bg-muted/30 backdrop-blur-md rounded-full px-2 py-1 border border-white/5 shadow-inner">
                             {navItems.map((item) => (
@@ -113,27 +113,9 @@ export default function AuthNavbar() {
                                 </Link>
                             ))}
                         </div>
-
                         {/* Actions */}
                         <div className="flex items-center gap-2 relative z-110">
-                            <div className="hidden sm:flex items-center gap-1.5 p-1 bg-muted/40 backdrop-blur-md border border-white/5 rounded-full shadow-inner">
-                                <LanguageSwitcher />
-                                <button
-                                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                                    className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-all duration-300 text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95 shadow-sm"
-                                    aria-label="Toggle theme"
-                                >
-                                    {theme === 'light' ? (
-                                        <Icons.Moon className="h-4 w-4" />
-                                    ) : (
-                                        <Icons.Sun className="h-4 w-4" />
-                                    )}
-                                </button>
-                            </div>
-                           
-                            {/* User Menu */}
-                           
-
+                            <TopbarActions />
                             {/* Mobile Menu Toggle */}
                             <button
                                 onClick={(e) => {

@@ -1,32 +1,60 @@
 import { apiClient } from './client';
 import { env } from '../env';
 
+export interface DashboardParams {
+  startDate?: string;
+  endDate?: string;
+}
+
 const ENDPOINTS = {
-  PRODUCT_STATS: env.ENDPOINTS.PRODUCTS.STATS,
   CATEGORY_STATS: env.ENDPOINTS.CATEGORIES.STATS,
+  SUB_CATEGORY_STATS: env.ENDPOINTS.SUP_CATEGORIES.STATS,
+  BRAND_STATS: env.ENDPOINTS.BRANDS.STATS,
+  SUPPLIER_STATS: env.ENDPOINTS.SUPPLIERS.STATS,
   USER_STATS: env.ENDPOINTS.USERS.STATS,
   ORDER_STATS: env.ENDPOINTS.ORDERS.STATS,
-  RECENT_ORDERS: '/order?limit=5',
-  TOP_PRODUCTS: '/products?limit=5',
+  TOP_PRODUCTS: `${env.ENDPOINTS.PRODUCTS.BASE}?limit=10&sort=-totalSold`,
+  MARKETING_STATS: env.ENDPOINTS.ORDERS.MARKETING_STATS,
 };
 
+/** Convert YYYY-MM-DD → ISO datetime (start / end of day) */
+function buildDateParams(params?: DashboardParams): Record<string, string> | undefined {
+  if (!params?.startDate && !params?.endDate) return undefined;
+  const query: Record<string, string> = {};
+  if (params.startDate) query.startDate = new Date(`${params.startDate}T00:00:00`).toISOString();
+  if (params.endDate)   query.endDate   = new Date(`${params.endDate}T23:59:59`).toISOString();
+  return query;
+}
+
 export const dashboardApi = {
-  getStats: async () => {
-    const [products, categories, users, orders, recentOrders, topProducts] = await Promise.all([
-      apiClient.get(ENDPOINTS.PRODUCT_STATS),
-      apiClient.get(ENDPOINTS.CATEGORY_STATS),
-      apiClient.get(ENDPOINTS.USER_STATS),
-      apiClient.get(ENDPOINTS.ORDER_STATS),
-      apiClient.get(ENDPOINTS.RECENT_ORDERS),
-      apiClient.get(ENDPOINTS.TOP_PRODUCTS),
-    ]);
+  getStats: async (params?: DashboardParams) => {
+    const dateParams = buildDateParams(params);
+
+    const [categories, subCategories, brands, suppliers, users, orders, MARKETING_STATS, topProducts] =
+      await Promise.all([
+        // Static stats — no date range needed
+        apiClient.get(ENDPOINTS.CATEGORY_STATS),
+        apiClient.get(ENDPOINTS.SUB_CATEGORY_STATS),
+        apiClient.get(ENDPOINTS.BRAND_STATS),
+        apiClient.get(ENDPOINTS.SUPPLIER_STATS),
+        // Time-sensitive stats — pass date range
+        apiClient.get(ENDPOINTS.USER_STATS,       { params: dateParams }),
+        apiClient.get(ENDPOINTS.ORDER_STATS,      { params: dateParams }),
+        apiClient.get(ENDPOINTS.MARKETING_STATS,  { params: dateParams }),
+        apiClient.get(ENDPOINTS.TOP_PRODUCTS),
+      ]);
+
     return {
-      products: products.data.data || products.data,
-      categories: categories.data.data || categories.data,
-      users: users.data.data || users.data,
-      orders: orders.data.data || orders.data,
-      recentOrders: recentOrders.data.data || recentOrders.data,
-      topProducts: topProducts.data.data || topProducts.data,
+      stats: {
+        categories:    categories.data.data    || categories.data,
+        subCategories: subCategories.data.data || subCategories.data,
+        brands:        brands.data.data        || brands.data,
+      },
+      topProducts:   topProducts.data.data   || topProducts.data,
+      suppliers:     suppliers.data.data     || suppliers.data,
+      users:         users.data.data         || users.data,
+      orders:        orders.data.data        || orders.data,
+      marketingStats: MARKETING_STATS.data.data || MARKETING_STATS.data,
     };
   },
 };

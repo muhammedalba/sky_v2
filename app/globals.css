@@ -86,6 +86,55 @@
       background-position: 100% 50%;
     }
   }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-in-from-bottom {
+    from {
+      transform: translateY(var(--tw-enter-translate-y, 20px));
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-from-left {
+    from {
+      transform: translateX(var(--tw-enter-translate-x, -20px));
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 700ms;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fade-in {
+    animation-name: fade-in;
+  }
+
+  .slide-in-from-bottom-10 {
+    --tw-enter-translate-y: 40px;
+    animation-name: slide-in-from-bottom, fade-in;
+  }
+
+  .slide-in-from-left-10 {
+    --tw-enter-translate-x: -40px;
+    animation-name: slide-in-from-left, fade-in;
+  }
 }
 
 @layer base {

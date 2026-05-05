@@ -60,6 +60,7 @@ export default function LoginForm({ locale }: { locale: string }) {
               icon={Lock}
               disabled={loginMutation.isPending}
               className="h-12"
+              showStrength={false}
             />
             <div className="flex justify-end">
               <Link href={`/${locale}/forgot-password`} className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">

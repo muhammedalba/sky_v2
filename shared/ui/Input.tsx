@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils"
 import ErrorMessage from "./ErrorMessage";
 import { Icons } from "./Icons";
 import { Tooltip } from "./Tooltip";
-import { PasswordStrength } from "@/features/auth/components/AuthClientComponents";
 
 
 export interface InputProps
@@ -50,7 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             props.onBlur?.(e);
           }}
           className={cn(
-            `peer w-full border py-3 text-sm md:text-md leading-relaxed focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 
+            `peer w-full border py-3 text-sm leading-relaxed focus:outline-none px-4 rounded-xl border-border/50 bg-secondary/30 
             transition-all duration-200 focus:border-primary/50 group-hover:border-primary/30 placeholder-transparent focus:placeholder-muted-foreground ${error ? 'focus:border-destructive border-destructive' : ''}`,
             showAiAction && "pe-12",
             className
@@ -97,7 +96,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
         )}
       </div>
-      {name === "password" && <PasswordStrength name="password" />}
       {error && <ErrorMessage message={error} />}
     </div>
     )
