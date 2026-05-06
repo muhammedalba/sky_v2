@@ -1,11 +1,12 @@
 import * as z from 'zod';
+import { optionalImageSchema } from '@/lib/validation';
 
 export const carouselSchema = z.object({
   descriptionEn: z.string().optional(),
   descriptionAr: z.string().optional(),
-  carouselLg: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-  carouselMd: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
-  carouselSm: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
+  carouselLg: optionalImageSchema,
+  carouselMd: optionalImageSchema,
+  carouselSm: optionalImageSchema,
   isActive: z.boolean().optional(),
 });
 

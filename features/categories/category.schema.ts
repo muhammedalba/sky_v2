@@ -1,13 +1,12 @@
 import * as z from 'zod';
+import { optionalImageSchema } from '@/lib/validation';
 
 export const categorySchema = z.object({
   name: z.object({
     en: z.string().min(2, 'required'),
     ar: z.string().min(2, 'required'),
   }),
-  image: z.any().refine((val) => val instanceof File || (typeof val === 'string' && val.length > 0), {
-    message: 'required',
-  }).optional(),
+  image: optionalImageSchema,
 });
 
 export const subCategorySchema = z.object({

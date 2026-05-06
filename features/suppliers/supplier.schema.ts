@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { optionalImageSchema } from '@/lib/validation';
 
 export const supplierSchema = z.object({
   name: z.string().min(2, 'English name is required').max(100, 'English name is required'),
@@ -7,7 +8,7 @@ export const supplierSchema = z.object({
   address: z.string().optional(),
   contactName: z.string().optional(),
   website: z.string().url().optional().or(z.literal('')),
-  avatar: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
+  avatar: optionalImageSchema,
   isActive: z.boolean(),
 });
 

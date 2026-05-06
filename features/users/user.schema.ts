@@ -1,9 +1,10 @@
 import * as z from 'zod';
+import { optionalImageSchema } from '@/lib/validation';
 
 export const profileSchema = z.object({
   name: z.string().min(2, 'required'),
   email: z.string().email('invalidEmail'),
-  avatar: z.any().optional(),
+  avatar: optionalImageSchema,
   phone: z.string().max(15, 'tooLong').min(10, 'tooShort').optional(),
 });
 
@@ -25,7 +26,7 @@ const baseUserFields = {
   role: z.enum(['admin', 'user', 'manager']),
   isActive: z.boolean(),
   phone: z.string().optional(),
-  avatar: z.any().optional(),
+  avatar: optionalImageSchema,
 };
 
 // مخطط الإنشاء (كلمة المرور إجبارية)
