@@ -1,8 +1,8 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
 import { useTranslations } from 'next-intl';
+import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
 
 interface CompositionChartProps {
   data: {
@@ -25,34 +25,10 @@ export function CompositionChart({ data }: CompositionChartProps) {
         <CardTitle className="text-lg font-semibold">{t('composition')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  borderRadius: '12px',
-                  border: 'none',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <Legend verticalAlign="bottom" height={36} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        <PieCompositionChart 
+          data={chartData} 
+          height={300}
+        />
       </CardContent>
     </Card>
   );

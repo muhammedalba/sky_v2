@@ -4,22 +4,22 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors duration-500  focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+          "border-transparent bg-primary/10 text-primary shadow hover:bg-primary hover:text-primary-foreground",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-transparent bg-foreground/5  shadow hover:bg-secondary text-foreground",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
+          "border-transparent bg-destructive/10 text-destructive shadow hover:bg-destructive/80 hover:text-destructive-foreground",
         danger:
-          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
+          "border-transparent bg-destructive/10 text-destructive shadow hover:bg-destructive/80 hover:text-destructive-foreground",
         success:
-          "border-transparent bg-success text-success-foreground shadow hover:bg-success/80",
+          "border-transparent shadow hover:bg-success text-[10px] bg-success/10 text-success hover:text-white",
         warning:
-          "border-transparent bg-warning text-warning-foreground shadow hover:bg-warning/80",
+          "border-transparent bg-warning/10 text-warning shadow hover:bg-warning/80 hover:text-warning-foreground",
         outline: "text-foreground",
       },
     },

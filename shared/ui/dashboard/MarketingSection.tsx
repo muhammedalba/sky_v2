@@ -2,23 +2,24 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import type { DashboardData } from './types';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function MarketingSection({ d }: { d?: DashboardData }) {
+  const t = useTranslations('dashboard.marketingSection');
+  const locale = useLocale();
   const mo = d?.marketingStats?.overview;
   const topCoupons = d?.marketingStats?.topPerformingCoupons ?? [];
   const period = d?.marketingStats?.period;
-
   const periodStr = period
-    ? `${new Date(period.start).toLocaleDateString()} – ${new Date(period.end).toLocaleDateString()}`
-    : null;
-
+    ? `${formatDate(period.start)} → ${formatDate(period.end!)}`
+    : '';
   const couponSummary = [
-    { label: 'Total Coupons', value: mo?.totalCoupons ?? 0, color: 'text-foreground', bg: 'bg-secondary/40' },
-    { label: 'Active', value: mo?.activeCoupons ?? 0, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: 'Expired', value: mo?.expiredCoupons ?? 0, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-    { label: 'Mktg Cost', value: formatCurrency(mo?.totalMarketingCost ?? 0), color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+    { label: t('totalCoupons'), value: mo?.totalCoupons ?? 0, color: 'text-foreground', bg: 'bg-secondary/40' },
+    { label: t('active'), value: mo?.activeCoupons ?? 0, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { label: t('expired'), value: mo?.expiredCoupons ?? 0, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { label: t('mktgCost'), value: formatCurrency(mo?.totalMarketingCost ?? 0, locale), color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
   ];
 
   return (
@@ -29,7 +30,7 @@ export function MarketingSection({ d }: { d?: DashboardData }) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base font-bold">Marketing Overview</CardTitle>
+              <CardTitle className="text-base font-bold">{t('marketingOverview')}</CardTitle>
               {periodStr && <CardDescription>{periodStr}</CardDescription>}
             </div>
             <div className="p-2 rounded-xl bg-indigo-500/10">
@@ -52,8 +53,8 @@ export function MarketingSection({ d }: { d?: DashboardData }) {
       {/* Top Performing Coupons */}
       <Card className="border-none shadow-md bg-background">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-bold">Top Performing Coupons</CardTitle>
-          <CardDescription>Highest usage & revenue contribution</CardDescription>
+          <CardTitle className="text-base font-bold">{t('topPerformingCoupons')}</CardTitle>
+          <CardDescription>{t('topPerformingCouponsDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           {topCoupons.length === 0 ? (
@@ -61,8 +62,8 @@ export function MarketingSection({ d }: { d?: DashboardData }) {
               <div className="p-3 rounded-full bg-secondary/50">
                 <Icons.Coupons className="w-6 h-6 text-muted-foreground" />
               </div>
-              <p className="text-sm text-muted-foreground">No coupon usage recorded</p>
-              <p className="text-xs text-muted-foreground/60">Create active coupons to see performance here</p>
+              <p className="text-sm text-muted-foreground">{t('noUsage')}</p>
+              <p className="text-xs text-muted-foreground/60">{t('createCoupons')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -72,7 +73,7 @@ export function MarketingSection({ d }: { d?: DashboardData }) {
                     {c.code ?? `COUPON-${i + 1}`}
                   </Badge>
                   <div className="flex-1 flex items-center justify-between gap-2">
-                    <span className="text-xs text-muted-foreground">{c.usageCount ?? 0} uses</span>
+                    <span className="text-xs text-muted-foreground">{t('uses', { count: c.usageCount ?? 0 })}</span>
                     {c.discount != null && (
                       <Badge variant="secondary" className="text-[10px] text-amber-600">-{c.discount}</Badge>
                     )}

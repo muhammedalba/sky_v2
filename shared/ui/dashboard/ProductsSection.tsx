@@ -5,17 +5,10 @@ import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
 import { formatCurrency } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { getProductTitle, CHART_COLORS } from './types';
+import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
+import { getProductTitle } from './types';
+import { CHART_COLORS } from '@/shared/ui/charts/ChartUtils';
 import type { DashboardData } from './types';
-
-const tooltipStyle = {
-  backgroundColor: 'hsl(var(--background))',
-  borderRadius: '10px',
-  border: '1px solid hsl(var(--border))',
-  boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
-  fontSize: 12,
-};
 
 function StarRating({ rating, qty }: { rating: number; qty?: number }) {
   return (
@@ -46,7 +39,7 @@ export function ProductsSection({ d }: { d?: DashboardData }) {
   return (
     <div className="space-y-6">
       {/* Row 1: Top Products (full width) */}
-      <Card className="border-none shadow-md bg-background">
+      <Card className="border  shadow-md bg-background">
         <CardHeader className="pb-2 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-base font-bold">{t('topProducts')}</CardTitle>
@@ -129,7 +122,7 @@ export function ProductsSection({ d }: { d?: DashboardData }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Top Customers */}
-        <Card className="border-none shadow-md bg-background">
+        <Card className="border shadow-md bg-background">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-bold">{t('topCustomers')}</CardTitle>
             <CardDescription>{t('topCustomersDesc')}</CardDescription>
@@ -167,7 +160,7 @@ export function ProductsSection({ d }: { d?: DashboardData }) {
         </Card>
 
         {/* Suppliers */}
-        <Card className="border-none shadow-md bg-background">
+        <Card className="border shadow-md bg-background">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-bold">{t('suppliersOverview')}</CardTitle>
             <CardDescription>{t('totalSuppliers', { count: d?.suppliers?.totalSuppliers ?? 0 })}</CardDescription>
@@ -175,16 +168,16 @@ export function ProductsSection({ d }: { d?: DashboardData }) {
           <CardContent className="space-y-4">
             {supplierStatusData.length > 0 && (
               <div className="h-32">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={supplierStatusData} cx="50%" cy="50%" innerRadius={30} outerRadius={50} paddingAngle={3} dataKey="value">
-                      {supplierStatusData.map((entry, i) => (
-                        <Cell key={i} fill={entry.name === t('active') ? '#22c55e' : '#f59e0b'} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={tooltipStyle} />
-                  </PieChart>
-                </ResponsiveContainer>
+                <PieCompositionChart 
+                  data={supplierStatusData.map(s => ({
+                    ...s,
+                    color: s.name === t('active') ? '#22c55e' : '#f59e0b'
+                  }))}
+                  height={128}
+                  innerRadius={30}
+                  outerRadius={50}
+                  showLegend={false}
+                />
               </div>
             )}
             <div className="space-y-2">

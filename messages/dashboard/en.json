@@ -1,5 +1,7 @@
 {
       "title": "Dashboard",
+      "subtitle": "Monitor performance, sales, and activity in real-time",
+      "refresh": "Refresh Data",
       "welcome": "Welcome to your dashboard",
       "stats": {
             "totalProducts": "Total Products",
@@ -15,7 +17,7 @@
       "topProducts": "Top Products",
       "viewAll": "View All",
       "dateFilter": {
-            "label": "Date Range",
+            "label": "Select a date range",
             "from": "From",
             "to": "To",
             "apply": "Apply",
@@ -64,6 +66,52 @@
             "suppliersOverview": "Suppliers Overview",
             "totalSuppliers": "Total: {count} supplier(s)",
             "noSuppliers": "No suppliers found"
+      },
+      "trendsSection": {
+            "dailyOrders": "Daily Orders",
+            "userRegistrations": "User Registrations",
+            "currentPeriod": "Current period"
+      },
+      "breakdownSection": {
+            "userRoles": "User Roles",
+            "userStatus": "User Status",
+            "orderStatus": "Order Status",
+            "noOrders": "No orders",
+            "salesChannelsTitle": "Sales Channels Comparison",
+            "salesChannelsDesc": "Organic vs Marketing — Revenue, Orders & Discounts",
+            "organic": "Organic",
+            "marketing": "Marketing",
+            "orders": "Orders",
+            "revenue": "Revenue",
+            "discount": "Discount"
+      },
+      "marketingSection": {
+            "totalCoupons": "Total Coupons",
+            "active": "Active",
+            "expired": "Expired",
+            "mktgCost": "Mktg Cost",
+            "marketingOverview": "Marketing Overview",
+            "topPerformingCoupons": "Top Performing Coupons",
+            "topPerformingCouponsDesc": "Highest usage & revenue contribution",
+            "noUsage": "No coupon usage recorded",
+            "createCoupons": "Create active coupons to see performance here",
+            "uses": "{count} uses"
+      },
+      "kpiGrid": {
+            "totalOrders": "Total Orders (Period)",
+            "allOrders": "All: {count}",
+            "totalRevenue": "Total Revenue",
+            "aov": "AOV: {amount}",
+            "validOrders": "Valid Orders",
+            "totalUsers": "Total Users",
+            "newUsers": "+{count} new",
+            "activeCoupons": "Active Coupons",
+            "totalCoupons": "Total: {count}",
+            "marketingCost": "Marketing Cost",
+            "categories": "Categories",
+            "subCategories": "Sub: {count}",
+            "brands": "Brands",
+            "suppliers": "Suppliers: {count}"
       },
       "error": {
             "title": "Failed to load dashboard",

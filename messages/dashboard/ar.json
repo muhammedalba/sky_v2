@@ -1,5 +1,7 @@
 {
       "title": "لوحة التحكم",
+      "subtitle": "مراقبة الأداء والمبيعات والنشاط في الوقت الفعلي",
+      "refresh": "تحديث البيانات",
       "welcome": "مرحباً بك في لوحة التحكم",
       "stats": {
             "totalProducts": "إجمالي المنتجات",
@@ -15,7 +17,7 @@
       "topProducts": "المنتجات الأكثر مبيعاً",
       "viewAll": "عرض الكل",
       "dateFilter": {
-            "label": "نطاق التاريخ",
+            "label": "اختر نطاق التاريخ",
             "from": "من",
             "to": "إلى",
             "apply": "تطبيق",
@@ -64,6 +66,52 @@
             "suppliersOverview": "نظرة عامة على الموردين",
             "totalSuppliers": "الإجمالي: {count} مورد",
             "noSuppliers": "لم يتم العثور على موردين"
+      },
+      "trendsSection": {
+            "dailyOrders": "الطلبات اليومية",
+            "userRegistrations": "تسجيلات المستخدمين",
+            "currentPeriod": "الفترة الحالية"
+      },
+      "breakdownSection": {
+            "userRoles": "أدوار المستخدمين",
+            "userStatus": "حالة المستخدمين",
+            "orderStatus": "حالة الطلبات",
+            "noOrders": "لا توجد طلبات",
+            "salesChannelsTitle": "مقارنة قنوات البيع",
+            "salesChannelsDesc": "العضوي مقابل التسويق — الإيرادات، الطلبات، والخصومات",
+            "organic": "عضوي",
+            "marketing": "تسويقي",
+            "orders": "الطلبات",
+            "revenue": "الإيرادات",
+            "discount": "الخصومات"
+      },
+      "marketingSection": {
+            "totalCoupons": "إجمالي الكوبونات",
+            "active": "نشط",
+            "expired": "منتهي",
+            "mktgCost": "تكلفة التسويق",
+            "marketingOverview": "نظرة عامة على التسويق",
+            "topPerformingCoupons": "أفضل الكوبونات أداءً",
+            "topPerformingCouponsDesc": "أعلى معدل استخدام ومساهمة في الإيرادات",
+            "noUsage": "لم يتم تسجيل استخدام للكوبونات",
+            "createCoupons": "قم بإنشاء كوبونات نشطة لرؤية الأداء هنا",
+            "uses": "{count} استخدام"
+      },
+      "kpiGrid": {
+            "totalOrders": "إجمالي الطلبات (الفترة)",
+            "allOrders": "الكل: {count}",
+            "totalRevenue": "إجمالي الإيرادات",
+            "aov": "متوسط الطلب: {amount}",
+            "validOrders": "الطلبات الصالحة",
+            "totalUsers": "إجمالي المستخدمين",
+            "newUsers": "+{count} جديد",
+            "activeCoupons": "الكوبونات النشطة",
+            "totalCoupons": "الإجمالي: {count}",
+            "marketingCost": "تكلفة التسويق",
+            "categories": "الفئات",
+            "subCategories": "الفرعية: {count}",
+            "brands": "العلامات التجارية",
+            "suppliers": "الموردون: {count}"
       },
       "error": {
             "title": "فشل تحميل لوحة التحكم",

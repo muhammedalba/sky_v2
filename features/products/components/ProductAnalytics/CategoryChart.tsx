@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Rectangle } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
 import { useTranslations } from 'next-intl';
 
@@ -23,7 +23,7 @@ export function CategoryChart({ data }: CategoryChartProps) {
       </CardHeader>
       <CardContent>
         <div className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
             <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
               <XAxis type="number" hide />
@@ -45,11 +45,17 @@ export function CategoryChart({ data }: CategoryChartProps) {
                   boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                 }}
               />
-              <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
+              <Bar 
+                dataKey="value" 
+                radius={[0, 4, 4, 0]} 
+                barSize={20}
+                shape={(props: any) => (
+                  <Rectangle 
+                    {...props} 
+                    fill={COLORS[props.index % COLORS.length]} 
+                  />
+                )}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
