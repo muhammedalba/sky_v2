@@ -39,7 +39,8 @@
     "createSuccess": "تم إنشاء الكوبون بنجاح",
     "updateSuccess": "تم تحديث الكوبون بنجاح",
     "deleteSuccess": "تم حذف الكوبون بنجاح",
-    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الكوبون؟"
+    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الكوبون؟",
+    "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف الكوبون {name}؟"
   },
   "emptyState": {
     "title": "لم يتم العثور على كوبونات",

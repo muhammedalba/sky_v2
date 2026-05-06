@@ -1,8 +1,9 @@
 'use client';
 
+import { useEffect, useState, useRef } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, Legend 
+  Tooltip, Legend 
 } from 'recharts';
 import { 
   CHART_TOOLTIP_STYLE, 
@@ -31,6 +32,24 @@ export function BarGroupChart({
   showGrid = true,
   tooltipFormatter,
 }: BarGroupChartProps) {
+  const [isMounted, setIsMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      if (w > 0) setWidth(w);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   
   if (!data || data.length === 0) {
     return (
@@ -44,9 +63,14 @@ export function BarGroupChart({
   }
 
   return (
-    <div className={cn("w-full", className)} style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+    <div ref={containerRef} className={cn("w-full", className)} style={{ height }}>
+      {isMounted && width > 0 && (
+        <BarChart 
+          width={width} 
+          height={typeof height === 'number' ? height : 300} 
+          data={data} 
+          margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
+        >
           {showGrid && <CartesianGrid {...CHART_GRID_STYLE} vertical={false} />}
           
           <XAxis 
@@ -88,7 +112,7 @@ export function BarGroupChart({
             />
           ))}
         </BarChart>
-      </ResponsiveContainer>
+      )}
     </div>
   );
 }

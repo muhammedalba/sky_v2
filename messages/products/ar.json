@@ -155,6 +155,9 @@
                   "invalidNumber": "يجب إدخال رقم صحيح",
                   "coverImageRequired": "صورة الغلاف مطلوبة.",
                   "maxGalleryImagesReached": "يمكنك رفع 3 صور كحد أقصى.",
+                  "invalidImageFormat": "صيغة الصورة غير مدعومة (فقط JPG, PNG, WebP).",
+                  "invalidPdfFormat": "يجب أن يكون الملف بصيغة PDF فقط.",
+                  "fileTooLarge": "حجم الملف كبير جداً (الحد الأقصى 5 ميجابايت).",
                   "positiveNumber": "يجب أن يكون الرقم موجباً"
             },
             "deleteVariant": "حذف المتغير",

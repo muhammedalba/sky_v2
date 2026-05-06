@@ -1,24 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useProductStats } from '@/features/products/hooks/useProductStats';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  Rectangle,
+} from 'recharts';
+
+import { useProductStats } from '@/features/products/hooks/useProductStats';
 import { StatCard, StatCardProps } from '@/shared/ui/StatCard';
 import { CompositionChart } from './CompositionChart';
 import { CategoryChart } from './CategoryChart';
 import { DateRangeFilter } from '@/shared/ui/DateRangeFilter';
 import { SectionWrapper } from '@/shared/ui/SectionWrapper';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import ErrorMessage from '@/shared/ui/ErrorMessage';
-import { Badge } from '@/shared/ui/Badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
-import { cn, formatCurrency, formatDate } from '@/lib/utils';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Rectangle, PieChart, Pie, Legend,
-} from 'recharts';
+import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
+import { CHART_TOOLTIP_STYLE, CHART_COLORS } from '@/shared/ui/charts/ChartUtils';
+import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
+import { Icons } from '@/shared/ui/Icons';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+
 interface ProductStats {
   summary: {
     totalProducts: number;
@@ -36,32 +40,42 @@ interface ProductStats {
   dateRange: { start: string; end: string };
 }
 
-// ─── Palette ─────────────────────────────────────────────────────────────────
-import {
-  CHART_TOOLTIP_STYLE,
-  CHART_COLORS,
-} from '@/shared/ui/charts/ChartUtils';
-import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
-import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
-import { Icons } from '@/shared/ui/Icons';
+type BadgeVariant = StatCardProps['badgeVariant'];
+
+interface CardDef {
+  Icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string | number;
+  sub: string;
+  badgeVariant: BadgeVariant;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const SKELETON_COUNT = 8;
+
+const ACCENT_MAP = [
+  { from: 'from-indigo-500/5',  icon: 'text-indigo-500',  bg: 'bg-indigo-500/5'  },
+  { from: 'from-violet-500/5',  icon: 'text-violet-500',  bg: 'bg-violet-500/10' },
+  { from: 'from-emerald-500/5', icon: 'text-emerald-500', bg: 'bg-emerald-500/5'  },
+  { from: 'from-amber-500/5',   icon: 'text-amber-500',   bg: 'bg-amber-500/5'   },
+  { from: 'from-sky-500/5',     icon: 'text-sky-500',     bg: 'bg-sky-500/5'     },
+  { from: 'from-rose-500/5',    icon: 'text-rose-500',    bg: 'bg-rose-500/5'    },
+  { from: 'from-teal-500/5',    icon: 'text-teal-500',    bg: 'bg-teal-500/5'    },
+  { from: 'from-pink-500/5',    icon: 'text-pink-500',    bg: 'bg-pink-500/10'   },
+] as const;
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-// here we define a colors map for the stat cards
-const accentMap = [
-  { from: 'from-indigo-500/5', icon: 'text-indigo-500', bg: 'bg-indigo-500/5' },
-  { from: 'from-violet-500/5', icon: 'text-violet-500', bg: 'bg-violet-500/10 ' },
-  { from: 'from-emerald-500/5', icon: 'text-emerald-500', bg: 'bg-emerald-500/5' },
-  { from: 'from-amber-500/5', icon: 'text-amber-500', bg: 'bg-amber-500/5' },
-  { from: 'from-sky-500/5', icon: 'text-sky-500', bg: 'bg-sky-500/5' },
-  { from: 'from-rose-500/5', icon: 'text-rose-500', bg: 'bg-rose-500/5' },
-  { from: 'from-teal-500/5', icon: 'text-teal-500', bg: 'bg-teal-500/5' },
-  { from: 'from-pink-500/5', icon: 'text-pink-500', bg: 'bg-pink-500/10' },
-];
+interface HorizontalBarProps {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+  sub?: string;
+}
 
-function HorizontalBar({ label, value, max, color, sub }: {
-  label: string; value: number; max: number; color: string; sub?: string;
-}) {
+function HorizontalBar({ label, value, max, color, sub }: HorizontalBarProps) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <div className="space-y-1">
@@ -70,10 +84,32 @@ function HorizontalBar({ label, value, max, color, sub }: {
         <span className="font-black tabular-nums" style={{ color }}>{value}</span>
       </div>
       <div className="h-2 rounded-full bg-secondary overflow-hidden">
-        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, backgroundColor: color }} />
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${pct}%`, backgroundColor: color }}
+        />
       </div>
       {sub && <p className="text-[10px] text-muted-foreground">{sub}</p>}
     </div>
+  );
+}
+
+// ─── Custom Bar Shape ─────────────────────────────────────────────────────────
+
+interface BarShapeProps {
+  index?: number;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+function ColoredBar(props: BarShapeProps) {
+  return (
+    <Rectangle
+      {...props}
+      fill={CHART_COLORS[(props.index ?? 0) % CHART_COLORS.length]}
+    />
   );
 }
 
@@ -82,42 +118,148 @@ function HorizontalBar({ label, value, max, color, sub }: {
 export function ProductAnalyticsContainer() {
   const t = useTranslations('products.statistics');
   const locale = useLocale();
+
   const [params, setParams] = useState<{ startDate?: string; endDate?: string }>({});
   const [isMounted, setIsMounted] = useState(false);
+
   const { data: raw, isLoading, error, refetch, isRefetching } = useProductStats(params);
+
+  // Chart dimension tracking
+  const subcatRef = useRef<HTMLDivElement>(null);
+  const [subcatWidth, setSubcatWidth] = useState(0);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  // Track subcategory chart width
+  useEffect(() => {
+    const el = subcatRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      if (w > 0) setSubcatWidth(w);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const stats = raw as ProductStats | undefined;
-
   const summary = stats?.summary;
-  const periodLabel = stats?.dateRange
-    ? `${formatDate(stats.dateRange?.start)} → ${formatDate(stats.dateRange?.end!)}`
-    : '';
 
-  // Derived
-  const maxBrand = Math.max(...(stats?.brandPerformance ?? []).map(b => b.productCount), 1);
-  const maxSupplierItems = Math.max(...(stats?.supplierStats ?? []).map(s => s.totalItems), 1);
-  const topProducts = stats?.topProducts ?? [];
-  const maxSold = Math.max(...topProducts.map(p => p.totalSold), 1);
+  // ─── Derived values (memoized) ─────────────────────────────────────────────
 
-  const cards = [
-    { Icon: Icons.Package, label: t('overview.totalProducts'), value: summary?.totalProducts ?? 0, sub: t('overview.newThisPeriod', { count: summary?.currentPeriodProducts ?? 0 }), badgeVariant: (summary?.currentPeriodProducts ?? 0) > 0 ? 'default' : 'destructive' },
-    { Icon: Icons.Activity, label: t('overview.activeProducts'), value: summary?.statusBreakdown?.['true'] ?? 0, sub: t('overview.activeProductsDesc'), badgeVariant: (summary?.statusBreakdown?.['true'] ?? 0) > 0 ? 'success' : 'destructive' },
-    { Icon: Icons.Box, label: t('overview.totalStock'), value: (summary?.totalStock ?? 0).toLocaleString(), sub: t('overview.totalStockDesc'), badgeVariant: (summary?.totalStock ?? 0) > 0 ? 'success' : 'destructive' },
-    { Icon: Icons.AlertTriangle, label: t('overview.lowStockItems'), value: summary?.lowStockCount ?? 0, sub: t('overview.lowStockDesc'), badgeVariant: (summary?.lowStockCount ?? 0) > 0 ? 'destructive' : 'success' },
-    { Icon: Icons.BarChart3, label: t('overview.simpleProducts'), value: summary?.composition?.simple ?? 0, sub: t('overview.simpleProductsDesc'), badgeVariant: (summary?.composition?.simple ?? 0) > 0 ? 'success' : 'secondary' },
-    { Icon: Icons.BarChart3, label: t('overview.variableProducts'), value: summary?.composition?.variable ?? 0, sub: t('overview.variableProductsDesc'), badgeVariant: (summary?.composition?.variable ?? 0) > 0 ? 'success' : 'secondary' },
-    { Icon: Icons.TrendingUp, label: t('overview.brands'), value: stats?.brandPerformance?.length ?? 0, sub: t('overview.brandsDesc'), badgeVariant: (stats?.brandPerformance?.length ?? 0) > 0 ? 'success' : 'secondary' },
-    { Icon: Icons.Package, label: t('overview.suppliers'), value: stats?.supplierStats?.length ?? 0, sub: t('overview.suppliersDesc'), badgeVariant: (stats?.supplierStats?.length ?? 0) > 0 ? 'success' : 'secondary' },
-  ];
+  const periodLabel = useMemo(
+    () =>
+      stats?.dateRange
+        ? `${formatDate(stats.dateRange.start)} → ${formatDate(stats.dateRange.end)}`
+        : '',
+    [stats?.dateRange],
+  );
+
+  const topProducts = useMemo(() => stats?.topProducts ?? [], [stats?.topProducts]);
+
+  const maxBrand = useMemo(
+    () => Math.max(...(stats?.brandPerformance ?? []).map((b) => b.productCount), 1),
+    [stats?.brandPerformance],
+  );
+
+  const maxSupplierItems = useMemo(
+    () => Math.max(...(stats?.supplierStats ?? []).map((s) => s.totalItems), 1),
+    [stats?.supplierStats],
+  );
+
+  const maxSold = useMemo(
+    () => Math.max(...topProducts.map((p) => p.totalSold), 1),
+    [topProducts],
+  );
+
+  const supplierPieData = useMemo(
+    () =>
+      (stats?.supplierStats ?? []).map((s, i) => ({
+        name: s.supplierName,
+        value: s.investmentValue || 0,
+        color: CHART_COLORS[i % CHART_COLORS.length],
+      })),
+    [stats?.supplierStats],
+  );
+
+  const cards = useMemo<CardDef[]>(() => [
+    {
+      Icon: Icons.Package,
+      label: t('overview.totalProducts'),
+      value: summary?.totalProducts ?? 0,
+      sub: t('overview.newThisPeriod', { count: summary?.currentPeriodProducts ?? 0 }),
+      badgeVariant: (summary?.currentPeriodProducts ?? 0) > 0 ? 'default' : 'destructive',
+    },
+    {
+      Icon: Icons.Activity,
+      label: t('overview.activeProducts'),
+      value: summary?.statusBreakdown?.['true'] ?? 0,
+      sub: t('overview.activeProductsDesc'),
+      badgeVariant: (summary?.statusBreakdown?.['true'] ?? 0) > 0 ? 'success' : 'destructive',
+    },
+    {
+      Icon: Icons.Box,
+      label: t('overview.totalStock'),
+      value: (summary?.totalStock ?? 0).toLocaleString(),
+      sub: t('overview.totalStockDesc'),
+      badgeVariant: (summary?.totalStock ?? 0) > 0 ? 'success' : 'destructive',
+    },
+    {
+      Icon: Icons.AlertTriangle,
+      label: t('overview.lowStockItems'),
+      value: summary?.lowStockCount ?? 0,
+      sub: t('overview.lowStockDesc'),
+      badgeVariant: (summary?.lowStockCount ?? 0) > 0 ? 'destructive' : 'success',
+    },
+    {
+      Icon: Icons.BarChart3,
+      label: t('overview.simpleProducts'),
+      value: summary?.composition?.simple ?? 0,
+      sub: t('overview.simpleProductsDesc'),
+      badgeVariant: (summary?.composition?.simple ?? 0) > 0 ? 'success' : 'secondary',
+    },
+    {
+      Icon: Icons.BarChart3,
+      label: t('overview.variableProducts'),
+      value: summary?.composition?.variable ?? 0,
+      sub: t('overview.variableProductsDesc'),
+      badgeVariant: (summary?.composition?.variable ?? 0) > 0 ? 'success' : 'secondary',
+    },
+    {
+      Icon: Icons.TrendingUp,
+      label: t('overview.brands'),
+      value: stats?.brandPerformance?.length ?? 0,
+      sub: t('overview.brandsDesc'),
+      badgeVariant: (stats?.brandPerformance?.length ?? 0) > 0 ? 'success' : 'secondary',
+    },
+    {
+      Icon: Icons.Package,
+      label: t('overview.suppliers'),
+      value: stats?.supplierStats?.length ?? 0,
+      sub: t('overview.suppliersDesc'),
+      badgeVariant: (stats?.supplierStats?.length ?? 0) > 0 ? 'success' : 'secondary',
+    },
+  ], [summary, stats?.brandPerformance, stats?.supplierStats, t]);
+
+  // ─── Handlers (memoized) ───────────────────────────────────────────────────
+
+  const handleApply = useCallback(
+    (p: { startDate?: string; endDate?: string }) => setParams(p),
+    [],
+  );
+
+  const handleReset = useCallback(() => setParams({}), []);
+
+  const handleRefetch = useCallback(() => { void refetch(); }, [refetch]);
+
+  // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
       <EntityPageHeader
         title={t('title')}
         subtitle={t('subtitle')}
@@ -125,46 +267,55 @@ export function ProductAnalyticsContainer() {
         action={{
           label: t('refresh'),
           icon: <Icons.RefreshCw className="w-4 h-4" />,
-          onClick: () => refetch(),
-          disabled: isLoading || isRefetching
-
+          onClick: handleRefetch,
+          disabled: isLoading || isRefetching,
         }}
       />
-      {/* ── Filters ────────────────────────────────────────────────────────── */}
+
+      {/* ── Filters ─────────────────────────────────────────────────────────── */}
       <DateRangeFilter
-        onApply={(p) => setParams(p)}
-        onReset={() => setParams({})}
+        onApply={handleApply}
+        onReset={handleReset}
         isLoading={isLoading || isRefetching}
       />
 
-      {/* ── KPI Cards ──────────────────────────────────────────────────────── */}
+      {/* ── Error Banner ────────────────────────────────────────────────────── */}
+      {error && (
+        <div className="rounded-2xl p-4 bg-destructive/10 border border-destructive/20 flex items-center gap-3">
+          <Icons.AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+          <p className="text-sm text-destructive font-medium">
+            {t('alerts.fetchError')}
+          </p>
+        </div>
+      )}
+
+      {/* ── KPI Cards ───────────────────────────────────────────────────────── */}
       <SectionWrapper title={t('overview.title')} desc={t('sections.compositionDesc')}>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-          {isLoading ? (
-            Array(8).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)
-          ) : (
-            cards.map((c, i) => {
-              const a = accentMap[i % accentMap.length];
-              return (
-                <StatCard
-                  key={i}
-                  title={c.label}
-                  value={c.value}
-                  Icon={c.Icon}
-                  badge={c.sub}
-                  colorFrom={a.from}
-                  colorBg={a.bg}
-                  colorIcon={a.icon}
-                  badgeVariant={(c.badgeVariant as StatCardProps['badgeVariant']) || "success"}
-                />
-              );
-            })
-
-          )}
+          {isLoading
+            ? Array.from({ length: SKELETON_COUNT }, (_, i) => (
+                <Skeleton key={i} className="h-32 rounded-2xl" />
+              ))
+            : cards.map((c, i) => {
+                const a = ACCENT_MAP[i % ACCENT_MAP.length];
+                return (
+                  <StatCard
+                    key={c.label}
+                    title={c.label}
+                    value={c.value}
+                    Icon={c.Icon}
+                    badge={c.sub}
+                    colorFrom={a.from}
+                    colorBg={a.bg}
+                    colorIcon={a.icon}
+                    badgeVariant={c.badgeVariant ?? 'success'}
+                  />
+                );
+              })}
         </div>
       </SectionWrapper>
 
-      {/* ── Composition + Category ─────────────────────────────────────────── */}
+      {/* ── Composition + Category ───────────────────────────────────────────── */}
       <SectionWrapper
         title={t('sections.compositionTitle')}
         desc={t('sections.compositionDesc')}
@@ -184,7 +335,7 @@ export function ProductAnalyticsContainer() {
         </div>
       </SectionWrapper>
 
-      {/* ── Subcategory + Brand ────────────────────────────────────────────── */}
+      {/* ── Subcategory + Brand ──────────────────────────────────────────────── */}
       <SectionWrapper
         title={t('sections.subcategoryTitle')}
         desc={t('sections.subcategoryDesc')}
@@ -204,40 +355,35 @@ export function ProductAnalyticsContainer() {
                   <CardDescription>{t('charts.subcategoryDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="w-full" style={{ height: 224 }}>
-                    {isMounted && (
-                      <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
-                        <BarChart
-                          data={stats?.subcategoryStats ?? []}
-                          layout="vertical"
-                          margin={{ left: 10, right: 20 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
-                          <XAxis type="number" hide />
-                          <YAxis
-                            dataKey="name"
-                            type="category"
-                            width={120}
-                            fontSize={11}
-                            tick={{ fill: '#94a3b8' }}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                          <Bar
-                            dataKey="value"
-                            name={t('charts.subcategoryDistribution')}
-                            radius={[0, 6, 6, 0]}
-                            barSize={18}
-                            shape={(props: any) => (
-                              <Rectangle
-                                {...props}
-                                fill={CHART_COLORS[props.index % CHART_COLORS.length]}
-                              />
-                            )}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
+                  <div ref={subcatRef} className="w-full" style={{ height: 224 }}>
+                    {subcatWidth > 0 && (
+                      <BarChart
+                        width={subcatWidth}
+                        height={224}
+                        data={stats?.subcategoryStats ?? []}
+                        layout="vertical"
+                        margin={{ left: 10, right: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
+                        <XAxis type="number" hide />
+                        <YAxis
+                          dataKey="name"
+                          type="category"
+                          width={120}
+                          fontSize={11}
+                          tick={{ fill: '#94a3b8' }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+                        <Bar
+                          dataKey="value"
+                          name={t('charts.subcategoryDistribution')}
+                          radius={[0, 6, 6, 0]}
+                          barSize={18}
+                          shape={<ColoredBar />}
+                        />
+                      </BarChart>
                     )}
                   </div>
                 </CardContent>
@@ -269,7 +415,7 @@ export function ProductAnalyticsContainer() {
         </div>
       </SectionWrapper>
 
-      {/* ── Supplier Stats ─────────────────────────────────────────────────── */}
+      {/* ── Supplier Stats ───────────────────────────────────────────────────── */}
       <SectionWrapper
         title={t('sections.supplierTitle')}
         desc={t('sections.supplierDesc')}
@@ -311,11 +457,7 @@ export function ProductAnalyticsContainer() {
                 <div className="w-full" style={{ height: 208 }}>
                   {isMounted && (
                     <PieCompositionChart
-                      data={(stats?.supplierStats ?? []).map((s, i) => ({
-                        name: s.supplierName,
-                        value: s.investmentValue || 0,
-                        color: CHART_COLORS[i % CHART_COLORS.length]
-                      }))}
+                      data={supplierPieData}
                       height={208}
                       innerRadius={45}
                       outerRadius={70}
@@ -329,7 +471,7 @@ export function ProductAnalyticsContainer() {
         )}
       </SectionWrapper>
 
-      {/* ── Top Products ───────────────────────────────────────────────────── */}
+      {/* ── Top Products ─────────────────────────────────────────────────────── */}
       <SectionWrapper
         title={t('sections.topProductsTitle')}
         desc={t('sections.topProductsDesc')}
@@ -344,8 +486,13 @@ export function ProductAnalyticsContainer() {
               ) : (
                 <div className="space-y-3">
                   {topProducts.map((product, idx) => (
-                    <div key={product._id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/30 transition-colors border border-border/40">
-                      <span className="text-sm font-black text-muted-foreground w-6 shrink-0">#{idx + 1}</span>
+                    <div
+                      key={product._id}
+                      className="flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/30 transition-colors border border-border/40"
+                    >
+                      <span className="text-sm font-black text-muted-foreground w-6 shrink-0">
+                        #{idx + 1}
+                      </span>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm truncate">{product.name}</p>
                         <div className="flex items-center gap-2 mt-1.5">
@@ -361,7 +508,9 @@ export function ProductAnalyticsContainer() {
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="font-black text-sm text-foreground">{formatCurrency(product.stockValue, locale)}</p>
+                        <p className="font-black text-sm text-foreground">
+                          {formatCurrency(product.stockValue, locale)}
+                        </p>
                         <p className="text-[10px] text-muted-foreground">{t('charts.stockValue')}</p>
                       </div>
                     </div>
@@ -373,7 +522,7 @@ export function ProductAnalyticsContainer() {
         )}
       </SectionWrapper>
 
-      {/* ── Low Stock Alert ─────────────────────────────────────────────────── */}
+      {/* ── Low Stock Alert ──────────────────────────────────────────────────── */}
       {!isLoading && (summary?.lowStockCount ?? 0) > 0 && (
         <div className="rounded-2xl p-5 bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
           <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-600 shrink-0">
@@ -385,10 +534,9 @@ export function ProductAnalyticsContainer() {
               {t('alerts.lowStockMessage', { count: summary?.lowStockCount ?? 0 })}
             </p>
           </div>
-          
         </div>
-
       )}
+
     </div>
   );
 }

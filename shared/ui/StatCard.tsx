@@ -24,8 +24,6 @@ export function StatCard({
   title, value, Icon, badge, description, trend, className,
   colorFrom = 'from-primary/5', colorBg = 'bg-primary/10 dark:bg-primary/20', colorIcon = 'text-primary', badgeVariant
 }: StatCardProps) {
-console.log(badgeVariant);
-
   return (
     <Card className={cn("relative overflow-hidden border-none shadow-md bg-background group hover:shadow-xl transition-all duration-300 flex flex-col", className)}>
       <div className={cn("absolute inset-0 bg-linear-to-br to-transparent pointer-events-none", colorFrom)} />

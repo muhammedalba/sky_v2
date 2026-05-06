@@ -156,6 +156,9 @@
                   "invalidNumber": "Invalid number",
                   "coverImageRequired": "Cover image required.",
                   "maxGalleryImagesReached": "You can upload a maximum of 3 images.",
+                  "invalidImageFormat": "Invalid image format (only JPG, PNG, WebP supported).",
+                  "invalidPdfFormat": "File must be in PDF format only.",
+                  "fileTooLarge": "File size is too large (max 5MB).",
                   "positiveNumber": "Number must be positive"
             },
             "deleteVariant": "Delete Variant",

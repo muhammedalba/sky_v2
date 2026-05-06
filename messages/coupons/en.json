@@ -39,7 +39,8 @@
     "createSuccess": "Coupon created successfully",
     "updateSuccess": "Coupon updated successfully",
     "deleteSuccess": "Coupon deleted successfully",
-    "deleteConfirm": "Are you sure you want to delete this coupon?"
+    "deleteConfirm": "Are you sure you want to delete this coupon?",
+    "deleteConfirmWithName": "Are you sure you want to delete the coupon {name}?"
   },
   "emptyState": {
     "title": "No coupons found",

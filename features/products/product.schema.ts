@@ -42,6 +42,9 @@ export const updateVariantSchema = variantSchema.extend({
   _id: z.string(),
 }).partial().required({ _id: true });
 
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 // ─── Shared product base fields ─────────────────────────
 const productBaseSchema = z.object({
   title: z.object({
@@ -64,12 +67,56 @@ const productBaseSchema = z.object({
   brand: z.string().optional(),
   supplier: z.string().optional(),
   allowedAttributes: z.array(attributeDefinitionSchema).optional(),
-  imageCover: z.any().refine((val) => val instanceof File || (typeof val === 'string' && val.length > 0), {
-    message: 'validation.coverImageRequired',
-  }),
-  galleryImages: z.array(z.any()).optional(),
-  pdfFile: z.any().optional(),
-  
+  imageCover: z.any()
+    .refine((val) => val instanceof File || (typeof val === 'string' && val.length > 0), {
+      message: 'validation.coverImageRequired',
+    })
+    .refine((val) => {
+      if (!(val instanceof File)) return true;
+      return ALLOWED_IMAGE_TYPES.includes(val.type);
+    }, {
+      message: 'validation.invalidImageFormat',
+    })
+    .refine((val) => {
+      if (!(val instanceof File)) return true;
+      return val.size <= MAX_FILE_SIZE;
+    }, {
+      message: 'validation.fileTooLarge',
+    }),
+  galleryImages: z.array(z.any())
+    .optional()
+    .refine((files) => {
+      if (!files) return true;
+      return files.every((file) => {
+        if (!(file instanceof File)) return true;
+        return ALLOWED_IMAGE_TYPES.includes(file.type);
+      });
+    }, {
+      message: 'validation.invalidImageFormat',
+    })
+    .refine((files) => {
+      if (!files) return true;
+      return files.every((file) => {
+        if (!(file instanceof File)) return true;
+        return file.size <= MAX_FILE_SIZE;
+      });
+    }, {
+      message: 'validation.fileTooLarge',
+    }),
+  pdfFile: z.any()
+    .optional()
+    .refine((val) => {
+      if (!val || !(val instanceof File)) return true;
+      return val.type === 'application/pdf';
+    }, {
+      message: 'validation.invalidPdfFormat',
+    })
+    .refine((val) => {
+      if (!val || !(val instanceof File)) return true;
+      return val.size <= MAX_FILE_SIZE * 2; // 10MB for PDF
+    }, {
+      message: 'validation.fileTooLarge',
+    }),
 });
 
 // ─── CREATE: variants as simple array ────────────────────

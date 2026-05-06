@@ -1,31 +1,52 @@
 'use client';
+
+import { useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Badge } from '@/shared/ui/Badge';
+import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
+import { BarGroupChart } from '@/shared/ui/charts/BarGroupChart';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { CHART_COLORS } from './types';
 import type { DashboardData } from './types';
-import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
-import { BarGroupChart } from '@/shared/ui/charts/BarGroupChart';
-import { useTranslations } from 'next-intl';
 
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS_COLOR: Record<string, string> = {
-  active: '#22c55e',
-  inactive: '#f59e0b',
-  pending: '#f59e0b',
-  delivered: '#22c55e',
-  cancelled: '#ef4444',
-  processing: '#6366f1',
-  shipped: '#14b8a6',
-  returned: '#ec4899',
-  unverified: '#94a3b8',
+  active:      '#22c55e',
+  inactive:    '#f59e0b',
+  pending:     '#f59e0b',
+  delivered:   '#22c55e',
+  cancelled:   '#ef4444',
+  processing:  '#6366f1',
+  shipped:     '#14b8a6',
+  returned:    '#ec4899',
+  unverified:  '#94a3b8',
 };
 
-function DonutCard({ title, data }: { title: string; data: { name: string; value: number }[] }) {
-  const chartData = data.map((d, i) => ({
-    ...d,
-    color: STATUS_COLOR[d.name.toLowerCase()] ?? CHART_COLORS[i % CHART_COLORS.length]
-  }));
+const BAR_COLORS = {
+  orders:   '#6366f1',
+  revenue:  '#22c55e',
+  discount: '#f59e0b',
+} as const;
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+interface DonutCardProps {
+  title: string;
+  data: { name: string; value: number }[];
+}
+
+function DonutCard({ title, data }: DonutCardProps) {
+  const chartData = useMemo(
+    () =>
+      data.map((item, i) => ({
+        ...item,
+        color: STATUS_COLOR[item.name.toLowerCase()] ?? CHART_COLORS[i % CHART_COLORS.length],
+      })),
+    [data],
+  );
 
   return (
     <Card className="border-none shadow-md bg-background">
@@ -52,70 +73,119 @@ function DonutCard({ title, data }: { title: string; data: { name: string; value
   );
 }
 
-export function BreakdownSection({ d }: { d?: DashboardData }) {
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+interface BreakdownSectionProps {
+  d?: DashboardData;
+}
+
+export function BreakdownSection({ d }: BreakdownSectionProps) {
   const t = useTranslations('dashboard.breakdownSection');
 
-  const roleData = Object.entries(d?.users?.roleBreakdown ?? {}).map(([name, value]) => ({ name, value }));
-  const statusData = Object.entries(d?.users?.statusBreakdown ?? {})
-    .map(([name, value]) => ({ name: name === 'null' ? 'unverified' : name, value }));
-  const orderStatusData = Object.entries(d?.orders?.statusBreakdown ?? {})
-    .map(([name, value]) => ({ name, value }));
+  // ─── Derived data (memoized) ─────────────────────────────────────────────
 
-  const salesData = d?.marketingStats?.salesBreakdown
-    ? [
+  const roleData = useMemo(
+    () => Object.entries(d?.users?.roleBreakdown ?? {}).map(([name, value]) => ({ name, value })),
+    [d?.users?.roleBreakdown],
+  );
+
+  const statusData = useMemo(
+    () =>
+      Object.entries(d?.users?.statusBreakdown ?? {}).map(([name, value]) => ({
+        name: name === 'null' ? 'unverified' : name,
+        value,
+      })),
+    [d?.users?.statusBreakdown],
+  );
+
+  const orderStatusData = useMemo(
+    () => Object.entries(d?.orders?.statusBreakdown ?? {}).map(([name, value]) => ({ name, value })),
+    [d?.orders?.statusBreakdown],
+  );
+
+  const orderStatusWithFallback = useMemo(
+    () => orderStatusData.length > 0 ? orderStatusData : [{ name: t('noOrders'), value: 1 }],
+    [orderStatusData, t],
+  );
+
+  const salesData = useMemo(() => {
+    const sb = d?.marketingStats?.salesBreakdown;
+    if (!sb) return [];
+    return [
       {
-        name: t('organic'),
-        orders: d.marketingStats.salesBreakdown.organic.orders,
-        revenue: d.marketingStats.salesBreakdown.organic.revenue,
-        discount: d.marketingStats.salesBreakdown.organic.discount,
+        name:     t('organic'),
+        orders:   sb.organic.orders,
+        revenue:  sb.organic.revenue,
+        discount: sb.organic.discount,
       },
       {
-        name: t('marketing'),
-        orders: d.marketingStats.salesBreakdown.marketing.orders,
-        revenue: d.marketingStats.salesBreakdown.marketing.revenue,
-        discount: d.marketingStats.salesBreakdown.marketing.discount,
+        name:     t('marketing'),
+        orders:   sb.marketing.orders,
+        revenue:  sb.marketing.revenue,
+        discount: sb.marketing.discount,
       },
-    ]
-    : [];
+    ];
+  }, [d?.marketingStats?.salesBreakdown, t]);
+
+  const bars = useMemo(() => [
+    { dataKey: 'orders',   name: t('orders'),   color: BAR_COLORS.orders   },
+    { dataKey: 'revenue',  name: t('revenue'),  color: BAR_COLORS.revenue  },
+    { dataKey: 'discount', name: t('discount'), color: BAR_COLORS.discount },
+  ], [t]);
+
+  const tooltipFormatter = useCallback(
+    (v: number | string, name: string): [string | number, string] => {
+      const revenueName  = t('revenue');
+      const discountName = t('discount');
+      const formatted =
+        name === revenueName || name === discountName
+          ? formatCurrency(Number(v))
+          : v;
+      return [formatted, name];
+    },
+    [t],
+  );
+
+  // ─── Derived period label ────────────────────────────────────────────────
+
+  const period = d?.marketingStats?.period;
+  const periodLabel = useMemo(
+    () => period ? `${formatDate(period.start)} → ${formatDate(period.end)}` : null,
+    [period],
+  );
+
+  // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DonutCard title={t('userRoles')} data={roleData} />
-        <DonutCard title={t('userStatus')} data={statusData} />
-        <DonutCard title={t('orderStatus')} data={orderStatusData.length > 0 ? orderStatusData : [{ name: t('noOrders'), value: 1 }]} />
+        <DonutCard title={t('userRoles')}   data={roleData} />
+        <DonutCard title={t('userStatus')}  data={statusData} />
+        <DonutCard title={t('orderStatus')} data={orderStatusWithFallback} />
       </div>
-
 
       <Card className="border-none shadow-md bg-background">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-bold">{t('salesChannelsTitle')}</CardTitle>
           <CardDescription>
-                {t('salesChannelsDesc')}
-                {d?.marketingStats?.period && (
-                  <span className="ms-2 text-[11px] text-muted-foreground">
-                    ({formatDate(d.marketingStats.period.start)} → {formatDate(d.marketingStats.period.end)})
-                  </span>
-                )}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <BarGroupChart
-                data={salesData}
-                xAxisKey="name"
-                height={250}
-                bars={[
-                  { dataKey: 'orders', name: t('orders'), color: '#6366f1' },
-                  { dataKey: 'revenue', name: t('revenue'), color: '#22c55e' },
-                  { dataKey: 'discount', name: t('discount'), color: '#f59e0b' },
-                ]}
-                tooltipFormatter={(v, name) => [
-                  name === t('revenue') || name === t('discount') ? formatCurrency(Number(v)) : v, name
-                ]}
-              />
-            </CardContent>
-          </Card>
-
+            {t('salesChannelsDesc')}
+            {periodLabel && (
+              <span className="ms-2 text-[11px] text-muted-foreground">
+                ({periodLabel})
+              </span>
+            )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <BarGroupChart
+            data={salesData}
+            xAxisKey="name"
+            height={250}
+            bars={bars}
+            tooltipFormatter={tooltipFormatter}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

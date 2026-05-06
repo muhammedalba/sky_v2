@@ -76,7 +76,7 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/jpg"
         className="hidden"
         onChange={handleFileChange}
       />

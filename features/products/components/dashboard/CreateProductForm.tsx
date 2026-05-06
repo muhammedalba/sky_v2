@@ -27,7 +27,7 @@ interface CreateProductFormProps {
 
 export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const t = useTranslations('products.form');
-  const tMessages = useTranslations('messages');
+  const tMessages = useTranslations('products.messages');
   const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
   const toast = useToast();
   const router = useRouter();
@@ -185,12 +185,11 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       await createMutation.mutateAsync(formData);
       toast.success(tMessages('createSuccess') || 'Product created successfully');
       router.push(`/${locale}/dashboard/products`);
-    } catch (error) {
-      toast.error(tMessages('createError') || 'Error while creating product');
+    } catch (error: any) {
+      toast.error(error?.message || tMessages('createError') || 'Error while creating product');
       console.error(error);
     }
   };
-
   // ─────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────
@@ -226,7 +225,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             />
           </div>
 
-          {/* ═══ RIGHT COLUMN ═══ */} 
+          {/* ═══ RIGHT COLUMN ═══ */}
           <div className="space-y-6">
             <ProductMediaPanel
               coverPreview={coverPreview}

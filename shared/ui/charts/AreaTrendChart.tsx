@@ -1,8 +1,9 @@
 'use client';
 
+import { useEffect, useState, useRef } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer 
+  Tooltip 
 } from 'recharts';
 import { 
   CHART_TOOLTIP_STYLE, 
@@ -29,6 +30,25 @@ export function AreaTrendChart({
   className,
   showGrid = true,
 }: AreaTrendChartProps) {
+  const [isMounted, setIsMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      if (w > 0) setWidth(w);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  
   const gradId = `grad-${dataKey}`;
 
   if (!data || data.length === 0) {
@@ -43,9 +63,9 @@ export function AreaTrendChart({
   }
 
   return (
-    <div className={cn("w-full", className)} style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+    <div ref={containerRef} className={cn("w-full", className)} style={{ height }}>
+      {isMounted && width > 0 && (
+        <AreaChart width={width} height={typeof height === 'number' ? height : 300} data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={color} stopOpacity={0.15} />
@@ -86,7 +106,7 @@ export function AreaTrendChart({
             animationDuration={1500}
           />
         </AreaChart>
-      </ResponsiveContainer>
+      )}
     </div>
   );
 }

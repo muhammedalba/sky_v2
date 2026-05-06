@@ -7,17 +7,17 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Switch } from '@/shared/ui/Switch';
-import { 
-  Store, 
-  Globe, 
-  CreditCard, 
-  Bell, 
-  UploadCloud, 
-  Save, 
-  Loader2, 
-  Mail, 
-  Phone, 
-  MapPin 
+import {
+  Store,
+  Globe,
+  CreditCard,
+  Bell,
+  UploadCloud,
+  Save,
+  Loader2,
+  Mail,
+  Phone,
+  MapPin
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
@@ -58,15 +58,26 @@ export default function SettingsPage() {
 
   // --- Menu Definitions ---
   const tabs = [
-    { id: 'general', label: t('tabs.general'), icon: Store,activeClass:'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]',inactiveClass:'bg-transparent text-primary hover:bg-accent/50 hover:text-primary/70' },
-    { id: 'region', label: t('tabs.region'), icon: Globe,activeClass:'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]',inactiveClass:'bg-transparent text-success hover:bg-accent/50 hover:text-success/70' },
-    { id: 'payments', label: t('tabs.payments'), icon: CreditCard,activeClass:'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]',inactiveClass:'bg-transparent text-warning hover:bg-accent/50 hover:text-warning' },
-    { id: 'notifications', label: t('tabs.notifications'), icon: Bell,activeClass:'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]',inactiveClass:'bg-transparent text-destructive hover:bg-accent/50 hover:text-destructive' },
+    { id: 'general', label: t('tabs.general'), icon: Store, activeClass: 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]', inactiveClass: 'bg-transparent text-primary hover:bg-accent/50 hover:text-primary/70' },
+    { id: 'region', label: t('tabs.region'), icon: Globe, activeClass: 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]', inactiveClass: 'bg-transparent text-success hover:bg-accent/50 hover:text-success/70' },
+    { id: 'payments', label: t('tabs.payments'), icon: CreditCard, activeClass: 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]', inactiveClass: 'bg-transparent text-warning hover:bg-accent/50 hover:text-warning' },
+    { id: 'notifications', label: t('tabs.notifications'), icon: Bell, activeClass: 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]', inactiveClass: 'bg-transparent text-destructive hover:bg-accent/50 hover:text-destructive' },
   ];
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20 animate-in fade-in duration-500">
-      
+      {/*  */}
+      <div className="rounded-2xl p-5 bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
+        <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-600 shrink-0">
+          <Icons.AlertTriangle className="w-5 h-5" />
+        </div>
+        <div>
+          <h4 className="text-base font-bold text-amber-600">تنبيه</h4>
+          <p className="text-sm text-amber-600/80 mt-0.5">
+           هذه الصفحة ما زالت قيد التطوير يرجى العودة لاحقا
+          </p>
+        </div>
+      </div>
       {/* 1. Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-6 rounded-3xl border border-border/50 shadow-xs ">
         <div>
@@ -77,7 +88,7 @@ export default function SettingsPage() {
             {t('description')}
           </p>
         </div>
-        <Button 
+        <Button
           onClick={handleSave}
           disabled={isSaving}
           className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
@@ -92,7 +103,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* 2. Vertical Sidebar Navigation */}
         <aside className="lg:col-span-3 space-y-2">
           {tabs.map((tab) => {
@@ -104,8 +115,8 @@ export default function SettingsPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-start font-bold transition-all duration-300",
-                  isActive 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]" 
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]"
                     : "bg-transparent text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                 )}
               >
@@ -118,7 +129,7 @@ export default function SettingsPage() {
 
         {/* 3. Settings Content Area */}
         <div className="lg:col-span-9 space-y-6">
-          
+
           {/* GENERAL INFO SECTION */}
           <div className={cn("space-y-6 animate-in slide-in-from-bottom-4 duration-500", activeTab !== 'general' && 'hidden')}>
             <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
@@ -145,41 +156,41 @@ export default function SettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Input 
-                      value={storeInfo.name} 
+                    <Input
+                      value={storeInfo.name}
                       label={t('general.storeName')}
                       icon={Icons.Edit}
-                      onChange={(e) => setStoreInfo({...storeInfo, name: e.target.value})}
+                      onChange={(e) => setStoreInfo({ ...storeInfo, name: e.target.value })}
                       className="rounded-xl h-11 focus-visible:ring-primary"
                     />
                   </div>
                   <div className="space-y-2">
-                      <Input 
-                        type="email"
-                        label={t('general.contactEmail')}
-                        icon={Icons.Mail}
-                        value={storeInfo.email}
-                        onChange={(e) => setStoreInfo({...storeInfo, email: e.target.value})}
-                        className="rounded-xl h-11 ps-10 focus-visible:ring-primary"
-                      />
+                    <Input
+                      type="email"
+                      label={t('general.contactEmail')}
+                      icon={Icons.Mail}
+                      value={storeInfo.email}
+                      onChange={(e) => setStoreInfo({ ...storeInfo, email: e.target.value })}
+                      className="rounded-xl h-11 ps-10 focus-visible:ring-primary"
+                    />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                      <Input 
-                        value={storeInfo.phone}
-                        label={t('general.supportPhone')}
-                        icon={Icons.Phone}
-                        onChange={(e) => setStoreInfo({...storeInfo, phone: e.target.value})}
-                        className="rounded-xl h-11 ps-10 focus-visible:ring-primary"
-                      />
+                    <Input
+                      value={storeInfo.phone}
+                      label={t('general.supportPhone')}
+                      icon={Icons.Phone}
+                      onChange={(e) => setStoreInfo({ ...storeInfo, phone: e.target.value })}
+                      className="rounded-xl h-11 ps-10 focus-visible:ring-primary"
+                    />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                      <Textarea 
-                        label={t('general.storeDesc')}
-                        icon={Icons.Edit}
-                        value={storeInfo.description}
-                        onChange={(e) => setStoreInfo({...storeInfo, description: e.target.value})}
-                        className="rounded-xl min-h-[100px] focus-visible:ring-primary"
-                      />
+                    <Textarea
+                      label={t('general.storeDesc')}
+                      icon={Icons.Edit}
+                      value={storeInfo.description}
+                      onChange={(e) => setStoreInfo({ ...storeInfo, description: e.target.value })}
+                      className="rounded-xl min-h-[100px] focus-visible:ring-primary"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -248,24 +259,24 @@ export default function SettingsPage() {
                       <p className="text-xs text-muted-foreground">{t('payments.stripeDesc')}</p>
                     </div>
                   </div>
-                  <Switch 
-                    checked={gateways.stripe} 
-                    onChange={(e) => setGateways({...gateways, stripe: e.target.checked})} 
+                  <Switch
+                    checked={gateways.stripe}
+                    onChange={(e) => setGateways({ ...gateways, stripe: e.target.checked })}
                   />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-2xl border border-border/50 bg-background hover:border-primary/40 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-muted  flex items-center justify-center text-blue-600 ">
                       <Globe className="w-6 h-6" />
-                    </div> 
+                    </div>
                     <div>
                       <h4 className="font-bold text-sm">{t('payments.paypal')}</h4>
                       <p className="text-xs text-muted-foreground">{t('payments.paypalDesc')}</p>
                     </div>
                   </div>
-                  <Switch 
-                    checked={gateways.paypal} 
-                    onChange={(e) => setGateways({...gateways, paypal: e.target.checked})} 
+                  <Switch
+                    checked={gateways.paypal}
+                    onChange={(e) => setGateways({ ...gateways, paypal: e.target.checked })}
                   />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-2xl border border-border/50 bg-background hover:border-primary/40 transition-colors">
@@ -278,9 +289,9 @@ export default function SettingsPage() {
                       <p className="text-xs text-muted-foreground">{t('payments.codDesc')}</p>
                     </div>
                   </div>
-                  <Switch 
-                    checked={gateways.cod} 
-                    onChange={(e) => setGateways({...gateways, cod: e.target.checked})} 
+                  <Switch
+                    checked={gateways.cod}
+                    onChange={(e) => setGateways({ ...gateways, cod: e.target.checked })}
                   />
                 </div>
               </CardContent>
@@ -297,12 +308,12 @@ export default function SettingsPage() {
                 <CardDescription>{t('notifications.desc')}</CardDescription>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                
+
                 <label className="flex items-start gap-4 p-4 rounded-2xl border border-border/50 cursor-pointer hover:bg-accent/30 transition-colors">
                   <div className="mt-0.5">
-                    <Switch 
-                      checked={notifications.emailNewOrder} 
-                      onChange={(e) => setNotifications({...notifications, emailNewOrder: e.target.checked})} 
+                    <Switch
+                      checked={notifications.emailNewOrder}
+                      onChange={(e) => setNotifications({ ...notifications, emailNewOrder: e.target.checked })}
                     />
                   </div>
                   <div>
@@ -313,9 +324,9 @@ export default function SettingsPage() {
 
                 <label className="flex items-start gap-4 p-4 rounded-2xl border border-border/50 cursor-pointer hover:bg-accent/30 transition-colors">
                   <div className="mt-0.5">
-                    <Switch 
-                      checked={notifications.smsLowStock} 
-                      onChange={(e) => setNotifications({...notifications, smsLowStock: e.target.checked})} 
+                    <Switch
+                      checked={notifications.smsLowStock}
+                      onChange={(e) => setNotifications({ ...notifications, smsLowStock: e.target.checked })}
                     />
                   </div>
                   <div>
@@ -326,9 +337,9 @@ export default function SettingsPage() {
 
                 <label className="flex items-start gap-4 p-4 rounded-2xl border border-border/50 cursor-pointer hover:bg-accent/30 transition-colors">
                   <div className="mt-0.5">
-                    <Switch 
-                      checked={notifications.dailyReport} 
-                      onChange={(e) => setNotifications({...notifications, dailyReport: e.target.checked})} 
+                    <Switch
+                      checked={notifications.dailyReport}
+                      onChange={(e) => setNotifications({ ...notifications, dailyReport: e.target.checked })}
                     />
                   </div>
                   <div>

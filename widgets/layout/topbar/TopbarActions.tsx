@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useTransition } from 'react';
+import React, { memo, useTransition, useCallback } from 'react';
 import { useUIStore } from '@/store/ui-store';
 import { useRouter, usePathname } from '@/navigation';
 import { useParams } from 'next/navigation';
@@ -8,33 +8,47 @@ import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
 
 const TopbarActions = () => {
-  const { theme, setTheme } = useUIStore();
+  // 1. استخراج القيم بشكل محدد لتحسين الأداء
+  const theme = useUIStore((state) => state.theme);
+  const setTheme = useUIStore((state) => state.setTheme);
+  
   const { locale } = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  const toggleTheme = () => {
+  // 2. تحصين دالة تغيير المظهر باستخدام useCallback
+  const toggleTheme = useCallback(() => {
     setTheme(theme === 'light' ? 'dark' : 'light');
-  };
+  }, [theme, setTheme]);
 
-  const switchLocale = (newLocale: 'en' | 'ar') => {
+  // 3. تحصين دالة تغيير اللغة باستخدام useCallback
+  const switchLocale = useCallback((newLocale: 'en' | 'ar') => {
+    if (newLocale === locale || isPending) return; // منع التغيير إذا كان هو المختار حالياً أو قيد المعالجة
+
     startTransition(() => {
       router.replace(pathname, { locale: newLocale });
     });
-  };
+  }, [locale, isPending, pathname, router]);
 
   return (
     <div className="flex items-center gap-3 shrink-0">
       {/* Locale Switcher */}
-      <div className="flex items-center bg-muted/40 rounded-lg p-1 border border-border/40">
+      <div className={cn(
+        "flex items-center bg-muted/40 rounded-lg p-1 border border-border/40 transition-opacity",
+        isPending && "opacity-50 pointer-events-none" // تعتيم الأزرار أثناء الانتقال
+      )}>
         {(['en', 'ar'] as const).map((l) => (
           <button
             key={l}
+            type="button" // تحديد النوع لضمان عدم سلوكه كـ Submit
             onClick={() => switchLocale(l)}
+            disabled={isPending}
             className={cn(
-              "px-2.5 py-1 rounded-md text-[10px] uppercase font-bold transition-all",
-              locale === l ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+              "px-2.5 py-1 cursor-pointer active:scale-110 rounded-md text-[10px] uppercase font-bold transition-all",
+              locale === l 
+                ? "bg-background shadow-sm text-primary" 
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             {l}
@@ -46,8 +60,9 @@ const TopbarActions = () => {
 
       {/* Theme Toggle */}
       <button
+        type="button"
         onClick={toggleTheme}
-        className="p-2 rounded-lg hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground"
+        className="p-2 rounded-lg hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         aria-label="Toggle theme"
       >
         {theme === 'light' ? (
@@ -60,4 +75,6 @@ const TopbarActions = () => {
   );
 };
 
+// الحفاظ على memo لضمان عدم إعادة التصيير إلا عند تغير الـ Props (التي هي فارغة هنا) 
+// أو تغير الحالات المستهلكة داخلياً
 export default memo(TopbarActions);

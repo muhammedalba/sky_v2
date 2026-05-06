@@ -67,7 +67,7 @@ export default function GalleryUpload({
                 <Icons.Plus className="w-5 h-5 text-muted-foreground" />
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files?.[0]) onAdd(e.target.files[0]);

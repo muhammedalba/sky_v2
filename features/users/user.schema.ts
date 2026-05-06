@@ -4,7 +4,7 @@ export const profileSchema = z.object({
   name: z.string().min(2, 'required'),
   email: z.string().email('invalidEmail'),
   avatar: z.any().optional(),
-  phone: z.string().max(15, 'invalidPhone').min(11, 'invalidPhone').optional(),
+  phone: z.string().max(15, 'tooLong').min(10, 'tooShort').optional(),
 });
 
 export const changePasswordSchema = z.object({
