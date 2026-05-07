@@ -77,7 +77,7 @@ export default function AuthNavbar() {
         <>
             <nav
                 className={cn(
-                    'fixed top-0 w-full z-1000 transition-all duration-500 ease-in-out py-2',
+                    'fixed top-0 w-full z-40 transition-all duration-500 ease-in-out py-2',
                     scrolled
                         ? ' bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
                         : ' bg-transparent'

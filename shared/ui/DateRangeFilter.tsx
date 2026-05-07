@@ -81,7 +81,7 @@ export function DateRangeFilter({ onApply, onReset, isLoading }: DateRangeFilter
   );
 
   return (
-    <div className="sticky top-16 z-50 flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-background border border-border/50 shadow-sm">
+    <div className="sticky top-16 z-20 flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-background border border-border/50 shadow-sm">
       <div className="flex flex-wrap items-end gap-3 flex-1">
         <div className="flex-1">
           <Popover open={open} onOpenChange={setOpen}>
