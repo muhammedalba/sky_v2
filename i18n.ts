@@ -10,41 +10,49 @@ async function loadLocaleMessages(locale: string) {
     let common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings;
     
     if (locale === 'ar') {
-      common = (await import(`./messages/common/ar.json`)).default;
-      dashboard = (await import(`./messages/dashboard/ar.json`)).default;
-      products = (await import(`./messages/products/ar.json`)).default;
-      categories = (await import(`./messages/categories/ar.json`)).default;
-      orders = (await import(`./messages/orders/ar.json`)).default;
-      users = (await import(`./messages/users/ar.json`)).default;
-      profile = (await import(`./messages/profile/ar.json`)).default;
-      home = (await import(`./messages/home/ar.json`)).default;
-      contact = (await import(`./messages/contact/ar.json`)).default;
-      store = (await import(`./messages/store/ar.json`)).default;
-      brands = (await import(`./messages/brands/ar.json`)).default;
-      carousel = (await import(`./messages/carousel/ar.json`)).default;
-      subCategories = (await import(`./messages/subCategories/ar.json`)).default;
-      promoBanners = (await import(`./messages/promoBanners/ar.json`)).default;
-      suppliers = (await import(`./messages/suppliers/ar.json`)).default;
-      coupons = (await import(`./messages/coupons/ar.json`)).default;
-      settings = (await import(`./messages/settings/ar.json`)).default;
+      [
+        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings
+      ] = await Promise.all([
+        import(`./messages/common/ar.json`).then(m => m.default),
+        import(`./messages/dashboard/ar.json`).then(m => m.default),
+        import(`./messages/products/ar.json`).then(m => m.default),
+        import(`./messages/categories/ar.json`).then(m => m.default),
+        import(`./messages/orders/ar.json`).then(m => m.default),
+        import(`./messages/users/ar.json`).then(m => m.default),
+        import(`./messages/profile/ar.json`).then(m => m.default),
+        import(`./messages/home/ar.json`).then(m => m.default),
+        import(`./messages/contact/ar.json`).then(m => m.default),
+        import(`./messages/store/ar.json`).then(m => m.default),
+        import(`./messages/brands/ar.json`).then(m => m.default),
+        import(`./messages/carousel/ar.json`).then(m => m.default),
+        import(`./messages/subCategories/ar.json`).then(m => m.default),
+        import(`./messages/promoBanners/ar.json`).then(m => m.default),
+        import(`./messages/suppliers/ar.json`).then(m => m.default),
+        import(`./messages/coupons/ar.json`).then(m => m.default),
+        import(`./messages/settings/ar.json`).then(m => m.default)
+      ]);
     } else {
-      common = (await import(`./messages/common/en.json`)).default;
-      dashboard = (await import(`./messages/dashboard/en.json`)).default;
-      products = (await import(`./messages/products/en.json`)).default;
-      categories = (await import(`./messages/categories/en.json`)).default;
-      orders = (await import(`./messages/orders/en.json`)).default;
-      users = (await import(`./messages/users/en.json`)).default;
-      profile = (await import(`./messages/profile/en.json`)).default;
-      home = (await import(`./messages/home/en.json`)).default;
-      contact = (await import(`./messages/contact/en.json`)).default;
-      store = (await import(`./messages/store/en.json`)).default;
-      brands = (await import(`./messages/brands/en.json`)).default;
-      carousel = (await import(`./messages/carousel/en.json`)).default;
-      subCategories = (await import(`./messages/subCategories/en.json`)).default;
-      promoBanners = (await import(`./messages/promoBanners/en.json`)).default;
-      suppliers = (await import(`./messages/suppliers/en.json`)).default;
-      coupons = (await import(`./messages/coupons/en.json`)).default;
-      settings = (await import(`./messages/settings/en.json`)).default;
+      [
+        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings
+      ] = await Promise.all([
+        import(`./messages/common/en.json`).then(m => m.default),
+        import(`./messages/dashboard/en.json`).then(m => m.default),
+        import(`./messages/products/en.json`).then(m => m.default),
+        import(`./messages/categories/en.json`).then(m => m.default),
+        import(`./messages/orders/en.json`).then(m => m.default),
+        import(`./messages/users/en.json`).then(m => m.default),
+        import(`./messages/profile/en.json`).then(m => m.default),
+        import(`./messages/home/en.json`).then(m => m.default),
+        import(`./messages/contact/en.json`).then(m => m.default),
+        import(`./messages/store/en.json`).then(m => m.default),
+        import(`./messages/brands/en.json`).then(m => m.default),
+        import(`./messages/carousel/en.json`).then(m => m.default),
+        import(`./messages/subCategories/en.json`).then(m => m.default),
+        import(`./messages/promoBanners/en.json`).then(m => m.default),
+        import(`./messages/suppliers/en.json`).then(m => m.default),
+        import(`./messages/coupons/en.json`).then(m => m.default),
+        import(`./messages/settings/en.json`).then(m => m.default)
+      ]);
     }
 
     return {
