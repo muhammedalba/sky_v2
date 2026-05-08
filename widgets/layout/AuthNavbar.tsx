@@ -8,7 +8,6 @@ import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
 import { useEffect, useState, useCallback } from 'react';
 import { useUIStore } from '@/store/ui-store';
-import LanguageSwitcher from '@/widgets/layout/LanguageSwitcher';
 import { getUser, isAuthenticated, logout } from '@/lib/auth';
 import Image from 'next/image';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
@@ -23,7 +22,6 @@ export default function AuthNavbar() {
     const [scrolled, setScrolled] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { theme, setTheme } = useUIStore();
 
     const [user, setUser] = useState<any>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -159,10 +157,10 @@ export default function AuthNavbar() {
                 >
                     <div className="p-6 border-b border-border/50 flex items-center justify-between bg-accent/20">
                         <SidebarHeader locale={locale} />
-                        <button  
+                        <button
                             onClick={() => setMobileMenuOpen(false)}
                             className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
-                        > 
+                        >
                             <Icons.X className="h-5 w-5" />
                         </button>
                     </div>
@@ -194,29 +192,20 @@ export default function AuthNavbar() {
                             {/* Theme Toggle */}
                             <div className="flex items-center justify-between px-4">
                                 <span className="text-sm font-bold">{t('theme')}</span>
-                                <button
-                                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                                    className="w-12 h-6 rounded-full bg-accent relative transition-colors duration-300"
-                                >
-                                    <div className={cn(
-                                        "absolute top-1 w-4 h-4 rounded-full transition-all duration-300 flex items-center justify-center shadow-sm",
-                                        theme === 'dark' ? "left-7 bg-primary" : "left-1 bg-muted-foreground"
-                                    )}>
-                                        {theme === 'dark' ? <Icons.Moon className="w-2.5 h-2.5 text-white" /> : <Icons.Sun className="w-2.5 h-2.5 text-white" />}
-                                    </div>
-                                </button>
+                                <TopbarActions showLocaleSwitcher={false} showBar={false} />
+
                             </div>
 
                             {/* Language Switcher */}
                             <div className="flex items-center justify-between px-4">
                                 <span className="text-sm font-bold">{t('language')}</span>
-                                <LanguageSwitcher variant="secondary" className="rounded-xl h-10 px-4" />
+                                <TopbarActions showThemeSwitcher={false} showBar={false} />
                             </div>
                         </div>
                     </div>
 
                     <div className=" border-t border-border/50 bg-accent/10">
-                       <UserAccountMenu />       
+                        <UserAccountMenu />
                     </div>
                 </div>
             </div>

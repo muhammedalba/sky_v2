@@ -74,10 +74,10 @@ const SheetContent = React.forwardRef<
       >
         {children}
         <button 
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
+          className="absolute inset-e-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
           onClick={() => context.onOpenChange(false)}
         >
-          <Icons.Menu className="h-4 w-4" />
+          <Icons.X className="size-5" />
           <span className="sr-only">Close</span>
         </button>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, useState } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Link } from '@/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -9,6 +9,7 @@ import type { CategoryItem } from './CategoriesScroller';
 import Image from 'next/image';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 import SidebarHeader from '@/widgets/layout/sidebar/SidebarHeader';
+import { Icons } from '@/shared/ui/Icons';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -190,7 +191,7 @@ export default function SideDrawer({
             className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
             aria-label="Close menu"
           >
-            <X size={20} />
+            <Icons.X className='size-5' />
           </button>
         </div>
 

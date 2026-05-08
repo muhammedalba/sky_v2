@@ -7,11 +7,11 @@ import { Link, usePathname, useRouter } from '@/navigation';
 import { useCartStore } from '@/store/cart-store';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/store/ui-store';
-import LanguageSwitcher from '@/widgets/layout/LanguageSwitcher';
 import { Icons } from '@/shared/ui/Icons';
 import Image from 'next/image';
 import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
+import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -166,21 +166,9 @@ export default function DesktopNavbar({ categories }: DesktopNavbarProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-1 shrink-0">
-            {/* Theme Toggle */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-accent/50 text-muted-foreground hover:text-foreground transition-all"
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? (
-                <Icons.Moon className="h-[18px] w-[18px]" />
-              ) : (
-                <Icons.Sun className="h-[18px] w-[18px]" />
-              )}
-            </button>
 
             {/* Language */}
-            <LanguageSwitcher />
+            <TopbarActions />
 
             {/* Orders */}
             <Link

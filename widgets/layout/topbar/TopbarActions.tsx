@@ -7,17 +7,17 @@ import { useParams } from 'next/navigation';
 import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
 
-const TopbarActions = () => {
+const TopbarActions = ({ showThemeSwitcher = true, showLocaleSwitcher = true, showBar = true }: { showThemeSwitcher?: boolean, showLocaleSwitcher?: boolean, showBar?: boolean }) => {
   // 1. استخراج القيم بشكل محدد لتحسين الأداء
   const theme = useUIStore((state) => state.theme);
   const setTheme = useUIStore((state) => state.setTheme);
-  
+
   const { locale } = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  // 2. تحصين دالة تغيير المظهر باستخدام useCallback
+  // 2. تحصين دالة تغيير المظهر باستخدام useCallbackhem
   const toggleTheme = useCallback(() => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   }, [theme, setTheme]);
@@ -32,9 +32,9 @@ const TopbarActions = () => {
   }, [locale, isPending, pathname, router]);
 
   return (
-    <div className="flex items-center gap-3 shrink-0">
+    <div className="flex items-center gap-3 ">
       {/* Locale Switcher */}
-      <div className={cn(
+      {showLocaleSwitcher && <div className={cn(
         "flex items-center bg-muted/40 rounded-lg p-1 border border-border/40 transition-opacity",
         isPending && "opacity-50 pointer-events-none" // تعتيم الأزرار أثناء الانتقال
       )}>
@@ -46,20 +46,18 @@ const TopbarActions = () => {
             disabled={isPending}
             className={cn(
               "px-2.5 py-1 cursor-pointer active:scale-110 rounded-md text-[10px] uppercase font-bold transition-all",
-              locale === l 
-                ? "bg-background shadow-sm text-primary" 
+              locale === l
+                ? "bg-background shadow-sm text-primary"
                 : "text-muted-foreground hover:text-foreground"
             )}
-          >
+          > 
             {l}
           </button>
         ))}
-      </div>
+      </div>}
 
-      <div className="h-4 w-px bg-border/60" />
-
-      {/* Theme Toggle */}
-      <button
+      {showBar && <div className="h-4 w-px bg-border/60" />}
+      {showThemeSwitcher && <button
         type="button"
         onClick={toggleTheme}
         className="p-2 rounded-lg hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
@@ -70,7 +68,7 @@ const TopbarActions = () => {
         ) : (
           <Icons.Sun className="h-4 w-4" />
         )}
-      </button>
+      </button>}
     </div>
   );
 };

@@ -1,15 +1,14 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { Menu, Search, X, Sun, Moon } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useRouter } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { useUIStore } from '@/store/ui-store';
-import LanguageSwitcher from '@/widgets/layout/LanguageSwitcher';
 import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
 import SideDrawer from './SideDrawer';
 import { useDebounce } from '@/shared/hooks/use-debounce';
+import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
+import { Icons } from '@/shared/ui/Icons';
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -53,10 +52,10 @@ function MobileSearchInput() {
 
 
   return (
-    <form onSubmit={handleSubmit} className="flex-1 relative">
+    <form onSubmit={handleSubmit} className="flex-1 relative w-1/4 sm:w-full  ">
       <div
         className={cn(
-          'flex items-center gap-2',
+          'flex items-center gap-2 ',
           'h-10 rounded-xl',
           'bg-muted/60 border',
           'px-3',
@@ -66,7 +65,7 @@ function MobileSearchInput() {
             : 'border-border/40'
         )}
       >
-        <Search size={16} className="text-muted-foreground shrink-0" />
+        <Icons.Search className="size-5 text-muted-foreground shrink-0" />
         <input
           type="search"
           value={query}
@@ -83,7 +82,7 @@ function MobileSearchInput() {
             onClick={clearSearch}
             className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <X size={14} />
+            <Icons.X className="size-5" />
           </button>
         )}
       </div>
@@ -95,7 +94,6 @@ function MobileSearchInput() {
 
 export default function MobileTopBar({ categories }: MobileTopBarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { theme, setTheme } = useUIStore();
 
   return (
     <>
@@ -113,7 +111,7 @@ export default function MobileTopBar({ categories }: MobileTopBarProps) {
         }}
       >
         {/* Row 1: Hamburger + Search + Actions */}
-        <div className="flex items-center gap-2 px-3 py-2.5">
+        <div className="flex items-center gap-2 px-4 py-2.5">
           <button
             onClick={() => setDrawerOpen(true)}
             className={cn(
@@ -127,36 +125,13 @@ export default function MobileTopBar({ categories }: MobileTopBarProps) {
             )}
             aria-label="Open menu"
           >
-            <Menu size={20} strokeWidth={2} />
+            <Icons.Menu className='size-5' />
           </button>
 
           <MobileSearchInput />
 
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={cn(
-              'shrink-0',
-              'w-9 h-9 rounded-xl',
-              'flex items-center justify-center',
-              'bg-muted/50 hover:bg-accent',
-              'text-foreground/70 hover:text-foreground',
-              'transition-all duration-200',
-              'active:scale-95'
-            )}
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? (
-              <Moon size={18} strokeWidth={1.8} />
-            ) : (
-              <Sun size={18} strokeWidth={1.8} />
-            )}
-          </button>
-
           {/* Language Switcher */}
-          <div className="shrink-0">
-            <LanguageSwitcher className="h-9 w-9 rounded-xl bg-muted/50 hover:bg-accent px-0 text-xs" />
-          </div>
+            <TopbarActions />
         </div>
 
         {/* Row 2: Categories Scroller */}
