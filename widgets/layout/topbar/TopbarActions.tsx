@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useTransition, useCallback } from 'react';
+import  { memo, useTransition, useCallback } from 'react';
 import { useUIStore } from '@/store/ui-store';
 import { useRouter, usePathname } from '@/navigation';
 import { useParams } from 'next/navigation';
@@ -60,7 +60,7 @@ const TopbarActions = ({ showThemeSwitcher = true, showLocaleSwitcher = true, sh
       {showThemeSwitcher && <button
         type="button"
         onClick={toggleTheme}
-        className="p-2 rounded-lg hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        className="p-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors text-foreground hover:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         aria-label="Toggle theme"
       >
         {theme === 'light' ? (
@@ -73,6 +73,4 @@ const TopbarActions = ({ showThemeSwitcher = true, showLocaleSwitcher = true, sh
   );
 };
 
-// الحفاظ على memo لضمان عدم إعادة التصيير إلا عند تغير الـ Props (التي هي فارغة هنا) 
-// أو تغير الحالات المستهلكة داخلياً
 export default memo(TopbarActions);

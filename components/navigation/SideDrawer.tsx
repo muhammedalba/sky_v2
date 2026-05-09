@@ -175,16 +175,7 @@ export default function SideDrawer({
       >
         {/* Header */}
         <div className="p-5 border-b border-border/50 flex items-center justify-between bg-accent/10">
-          {/* <div className="flex items-center gap-3">
-            <Image
-              src="/images/auth-logo.png"
-              alt={`${appName} Logo`}
-              width={36}
-              height={36}
-              className="object-contain"
-            />
-            <span className="font-black tracking-tight text-lg">{appName}</span>
-          </div> */}
+
           <SidebarHeader locale={locale} />
           <button
             onClick={onClose}
@@ -241,7 +232,7 @@ export default function SideDrawer({
         </div>
 
         {/* Footer */}
-         <UserAccountMenu />
+         <UserAccountMenu locale={locale} />
       </div>
     </div>
   );

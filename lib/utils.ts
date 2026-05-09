@@ -106,3 +106,10 @@ export function truncate(str: string, length: number): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + '...';
 }
+
+export function getLocalizedValue<T>(value: T | { [key: string]: T } | any, locale: string): T {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value[locale] || value['ar'] || value['en'] || Object.values(value)[0];
+  }
+  return value as T;
+}

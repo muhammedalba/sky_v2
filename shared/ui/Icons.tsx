@@ -3,9 +3,17 @@ export type IconProps = {
 };
 
 export const Icons = {
-  Dashboard: ({ className }: IconProps) => (
+  Home: ({ className }: IconProps) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+  ),
+  Dashboard: ({ className }: IconProps) => (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="7" height="9" x="3" y="3" rx="1" />
+      <rect width="7" height="5" x="14" y="3" rx="1" />
+      <rect width="7" height="9" x="14" y="12" rx="1" />
+      <rect width="7" height="5" x="3" y="16" rx="1" />
     </svg>
   ),
   Products: ({ className }: IconProps) => (
@@ -291,6 +299,13 @@ export const Icons = {
       <path d="M16 10a4 4 0 0 1-8 0" />
     </svg>
   ),
+  ShoppingCart: ({ className }: IconProps) => (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  ),
   MetaBrand: ({ className }: IconProps) => (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor">
       <path d="M12.016 12C9.531 12 8 13.535 8 15.485c0 1.954 1.531 3.485 4.016 3.485 2.484 0 4.015-1.531 4.015-3.485C16.031 13.535 14.5 12 12.016 12zM21.5 12c0-3.594-2.906-6.5-6.5-6.5-2.266 0-4.25 1.141-5.406 2.875C8.422 6.641 6.438 5.5 4.188 5.5c-3.594 0-6.5 2.906-6.5 6.5S.594 18.5 4.188 18.5c2.266 0 4.25-1.141 5.406-2.875 1.156 1.734 3.14 2.875 5.406 2.875 3.594 0 6.5-2.906 6.5-6.5zM4.188 16.273c-2.359 0-4.273-1.914-4.273-4.273s1.914-4.273 4.273-4.273c2.203 0 4.031 1.656 4.25 3.797H6.281v1.906h2.156c-.219 2.125-2.047 3.797-4.25 3.797zm7.828-5.727c-1.391 0-2.609.953-3.141 2.227-.328.75-.328 1.625 0 2.391.532 1.274 1.75 2.227 3.141 2.227s2.609-.953 3.141-2.227c.328-.766.328-1.641 0-2.391-.532-1.274-1.75-2.227-3.141-2.227zm8.484 5.727c-2.203 0-4.031-1.672-4.25-3.797h2.156v-1.906h-2.156c.219-2.141 2.047-3.797 4.25-3.797 2.359 0 4.273 1.914 4.273 4.273s-1.914 4.273-4.273 4.273z" />
@@ -360,6 +375,21 @@ export const Icons = {
   TrendingUp: ({ className }: IconProps) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12" />
+    </svg>
+  ),
+  Download: ({ className }: IconProps) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    </svg>
+  ),
+  FileText: ({ className }: IconProps) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  Truck: ({ className }: IconProps) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 14H5V7h10v7h-3m4-4h3l3 3v4h-3M6 18a2 2 0 11-4 0 2 2 0 014 0zm14 0a2 2 0 11-4 0 2 2 0 014 0z" />
     </svg>
   ),
 };

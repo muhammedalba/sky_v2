@@ -1,38 +1,26 @@
 {
-  "title": "Profile Settings",
-  "personalInfo": "Personal Information",
-  "personalInfoDescription": "Update your name, email and contact details.",
-  "changePassword": "Change Password",
-  "changePasswordDescription": "Keep your account secure with a strong, unique password.",
-  "passwordSecurityNote": "Choose a password that is at least 8 characters long and includes a mix of letters, numbers, and symbols. Never share your password with anyone.",
+  "title": "My Account",
+  "welcome": "Welcome back, {name}",
   "tabs": {
-    "general": "General Info",
-    "security": "Security"
+    "profile": "Profile",
+    "orders": "My Orders",
+    "addresses": "Addresses",
+    "settings": "Settings"
   },
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive"
+  "sections": {
+    "profile_summary": "Profile Summary",
+    "recent_orders": "Recent Orders",
+    "address_book": "Address Book"
   },
-  "lastLogin": "Last Login",
-  "avatar": {
-    "title": "Profile Picture",
-    "description": "Click the avatar to upload a new photo."
+  "stats": {
+    "total_orders": "Total Orders",
+    "active_orders": "Active Orders",
+    "saved_items": "Saved Items"
   },
-  "fields": {
-    "name": "Full Name",
-    "email": "Email Address",
-    "phone": "Phone Number",
-    "role": "Account Role",
-    "currentPassword": "Current Password",
-    "newPassword": "New Password",
-    "confirmPassword": "Confirm New Password"
-  },
-  "buttons": {
-    "saveChanges": "Save Changes",
-    "updatePassword": "Update Password"
-  },
-  "messages": {
-    "profileUpdated": "Profile updated successfully!",
-    "passwordChanged": "Password changed successfully!"
+  "actions": {
+    "edit_profile": "Edit Profile",
+    "view_all_orders": "View All Orders",
+    "add_address": "Add New Address",
+    "logout": "Logout"
   }
 }

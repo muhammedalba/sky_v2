@@ -25,12 +25,12 @@ export default function SidebarHeader({ locale, Collapsed = false, onNavigate, }
             width={40}
             height={40}
             className="object-contain"
-            priority
+            
           />
         </div>
         {!isCollapsed && (
           <div className="flex flex-col">
-            <span className="font-black text-lg tracking-tight whitespace-nowrap bg-clip-text text-transparent animate-gradient bg-linear-to-br from-info via-foreground/30 to-primary">
+            <span className="font-black text-lg tracking-tight whitespace-nowrap title-gradient">
               {appName}
             </span>
             <span className="text-[10px] font-bold text-info uppercase tracking-[0.2em] leading-none mt-1 relative">

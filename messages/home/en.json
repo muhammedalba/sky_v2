@@ -1,21 +1,106 @@
 {
-      "hero": {
-            "title": "Manage Your Store with Next-Gen Intelligence",
-            "subtitle": "Experience the future of e-commerce management. Powerful tools, real-time analytics, and seamless control for your business growth.",
-            "cta_dashboard": "Go to Dashboard",
-            "cta_learn_more": "Learn More"
+  "brand": {
+    "name": "Sky Galaxy",
+    "tagline": "For Insulation & Construction Trade"
+  },
+  "common": {
+    "currency": "SAR",
+    "add_to_cart": "Add to Cart",
+    "view_all": "View All"
+  },
+  "actions": {
+    "quick_quote": "Quick Quote",
+    "shop_now": "Shop Now"
+  },
+  "hero": {
+    "badge_text": "#1 Choice for Contractors & Firms",
+    "description": "The largest platform for supplying waterproofing, thermal insulation, and adhesives. Global quality, competitive prices, and immediate supply for your projects.",
+    "cta_shop": "Browse Store Now",
+    "cta_categories": "View Categories",
+    "trust_badges": {
+      "certified": "Certified Products",
+      "delivery": "Fast Project Delivery",
+      "warranty": "Quality Assurance"
+    },
+    "featured_card": {
+      "badge": "Special Offer",
+      "title": "4mm Bitumen Insulation Rolls",
+      "desc": "Complies with Saudi specifications, ideal for roofs and foundations."
+    }
+  },
+  "trust": {
+    "label": "Partners in Success & Suppliers"
+  },
+  "categories": {
+    "title": "Browse Categories",
+    "description": "Everything you need for your project from specialized insulation and construction materials, categorized for easy access.",
+    "view_all": "View All Categories",
+    "featured_label": "Most Requested Categories",
+    "shop_category": "Shop Category",
+    "items": {
+      "waterproofing": {
+        "title": "Waterproofing Materials",
+        "desc": "Wide range of bitumen rolls, cementitious insulators, and acrylics for roofs and foundations."
       },
-      "features": {
-            "secure_title": "Secure Access",
-            "secure_desc": "Enterprise-grade security for your data and role-based permissions.",
-            "stats_title": "Real-time Stats",
-            "stats_desc": "Monitor your sales, products, and categories in real-time.",
-            "global_title": "Global reach",
-            "global_desc": "Full RTL support and multiple language translations included."
+      "thermal": {
+        "title": "Thermal Insulation",
+        "desc": "Polystyrene boards, spray foam..."
       },
-      "featured_products": "Featured Products",
-      "meta": {
-            "title": "Welcome to Sky Galaxy",
-            "description": "Experience the future of e-commerce management with Sky Galaxy's intelligent dashboard."
+      "adhesives": {
+        "title": "Adhesives & Epoxy",
+        "desc": "Tile adhesives, floor epoxy..."
       }
+    }
+  },
+  "best_sellers": {
+    "badge": "Store",
+    "title": "Best Selling Products",
+    "description": "Carefully selected products that meet the highest technical specifications for major projects.",
+    "view_all": "Shop All Products",
+    "reviews_label": "Excellent Reviews"
+  },
+  "promo": {
+    "badge": "For Contractors & Major Projects",
+    "title": "Wholesale Prices & Continuous Supply Contracts",
+    "description": "We offer special prices and payment facilities for large projects and engineering firms, with full commitment to supply schedules and quality specifications.",
+    "cta_quote": "Request Project Quote",
+    "cta_catalog": "Download Catalog (PDF)"
+  },
+  "why": {
+    "title": "Why Choose Sky Galaxy?",
+    "description": "We are not just suppliers; we are partners in your project's success. We ensure you get the best materials that extend building life and raise efficiency.",
+    "features": {
+      "quality": {
+        "title": "Internationally Certified Quality",
+        "desc": "Our materials comply with the highest Gulf and international standards."
+      },
+      "pricing": {
+        "title": "Competitive Prices",
+        "desc": "We connect you with the best factories to offer premium quality at a cost that fits your budget."
+      },
+      "logistics": {
+        "title": "Integrated Logistics Support",
+        "desc": "A fleet ready to deliver your orders to any location within the Kingdom accurately."
+      }
+    }
+  },
+  "stats": {
+    "years": "Years of Experience",
+    "projects": "Completed Projects",
+    "partners": "Partners & Suppliers",
+    "quality": "Quality Assurance"
+  },
+  "testimonials": {
+    "title": "What They Say About Sky Galaxy",
+    "description": "Our customers' trust is the fundamental pillar upon which we build our success."
+  },
+  "projects": {
+    "badge": "Our Portfolio",
+    "title": "Successfully Supplied Projects",
+    "view_all": "View All Projects"
+  },
+  "meta": {
+    "title": "Sky Galaxy - Best Insulation & Construction Materials in KSA",
+    "description": "Sky Galaxy is your premier destination for waterproofing, thermal insulation, adhesives, and modern construction systems in Saudi Arabia. High quality and fast supply."
+  }
 }

@@ -17,5 +17,5 @@ export async function generateMetadata({ params }: Props) {
 
 export default function HomePage({ params }: Props) {
   const { locale } = use(params);
-  return <HomeClient />;
+  return <HomeClient locale={locale} />;
 }

@@ -1,0 +1,35 @@
+{
+  "title": "Request a Quote",
+  "subtitle": "Tell us about your project requirements and we will provide a customized offer shortly.",
+  "form": {
+    "name": "Full Name",
+    "company": "Company Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "product": "Product of Interest",
+    "quantity": "Estimated Quantity",
+    "message": "Additional Details",
+    "attachment": "Attach Specification (Optional)",
+    "submit": "Submit Request",
+    "submitting": "Submitting...",
+    "success": "Request Sent Successfully!",
+    "success_message": "Our technical team will contact you soon to discuss the details.",
+    "placeholders": {
+      "name": "Enter your name",
+      "company": "Enter company name",
+      "email": "example@domain.com",
+      "phone": "05xxxxxxxx",
+      "product": "Select product or service",
+      "quantity": "e.g. 500 sqm",
+      "message": "Explain your requirements in detail..."
+    }
+  },
+  "info": {
+    "fast_response": "Fast Response",
+    "fast_response_desc": "We guarantee a response to all inquiries within 24 working hours.",
+    "technical_support": "Technical Support",
+    "technical_support_desc": "Our engineering team is ready to provide technical consultations for your project.",
+    "competitive_prices": "Competitive Pricing",
+    "competitive_prices_desc": "We offer the best rates for large-scale projects and wholesale supply."
+  }
+}

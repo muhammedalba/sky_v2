@@ -72,15 +72,15 @@ export default function AuthNavbar() {
 
 
     return (
-        <>
-            <nav
-                className={cn(
-                    'fixed top-0 w-full z-40 transition-all duration-500 ease-in-out py-2',
-                    scrolled
-                        ? ' bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
-                        : ' bg-transparent'
-                )}
-            >
+    <>
+    <nav
+        className={cn(
+            'fixed top-0 w-full z-40 transition-all duration-500 ease-in-out py-2',
+            scrolled
+            ? ' bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
+            : ' bg-transparent'
+        )}
+    >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-12">
                         {/* Logo */}
@@ -127,10 +127,9 @@ export default function AuthNavbar() {
                         </div>
                     </div>
                 </div>
-            </nav>
-
-            {/* Mobile Sidebar (Drawer) */}
-            <div
+    </nav>
+     {/* Mobile Sidebar (Drawer) */}
+     <div
                 className={cn(
                     "fixed inset-0 z-9999 lg:hidden transition-all duration-500",
                     mobileMenuOpen ? "visible" : "invisible pointer-events-none"
@@ -205,10 +204,10 @@ export default function AuthNavbar() {
                     </div>
 
                     <div className=" border-t border-border/50 bg-accent/10">
-                        <UserAccountMenu />
+                        <UserAccountMenu locale={locale} />
                     </div>
                 </div>
-            </div>
-        </>
+     </div>
+     </>
     );
 }

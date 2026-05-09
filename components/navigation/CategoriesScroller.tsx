@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from '@/navigation';
 import { useLocale } from 'next-intl';
@@ -30,18 +30,23 @@ interface CategoriesScrollerProps {
 
 // ─── Scroll Arrow Button ──────────────────────────────────────────────────────
 
-function ScrollArrow({
+const ScrollArrow = memo(function ScrollArrow({
   direction,
   onClick,
   visible,
+  isRtl, // تمت إضافة هذه الخاصية لعكس الأيقونات في اللغة العربية
 }: {
   direction: 'start' | 'end';
   onClick: () => void;
   visible: boolean;
+  isRtl: boolean;
 }) {
   if (!visible) return null;
 
   const isStart = direction === 'start';
+  // في اللغة العربية (RTL): سهم البداية يجب أن يشير لليمين والنهاية لليسار.
+  // في اللغة الإنجليزية (LTR): سهم البداية يشير لليسار والنهاية لليمين.
+  const showLeftArrow = isRtl ? !isStart : isStart;
 
   return (
     <button
@@ -59,18 +64,18 @@ function ScrollArrow({
         isStart ? 'inset-s-0' : 'inset-e-0'
       )}
     >
-      {isStart ? (
+      {showLeftArrow ? (
         <ChevronLeft size={16} strokeWidth={2.5} />
       ) : (
         <ChevronRight size={16} strokeWidth={2.5} />
       )}
     </button>
   );
-}
+});
 
 // ─── Category Item with Dropdown ────────────────────────────────────────────────
 
-function CategoryItemWithDropdown({
+const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
   category,
   variant,
 }: {
@@ -88,7 +93,12 @@ function CategoryItemWithDropdown({
     right: number | 'auto';
   }>({ top: 0, left: 0, right: 'auto' });
 
-  // Update fixed position based on trigger rect
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   const updatePosition = useCallback(() => {
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
@@ -108,45 +118,41 @@ function CategoryItemWithDropdown({
     }
   }, [locale]);
 
-  // Handle scroll to close or reposition
+  const closeDropdown = useCallback(() => setOpen(false), []);
+
   useEffect(() => {
     if (!open) return;
-    const handleScroll = () => {
-      setOpen(false); // Close on scroll for better UX
-    };
-    window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('scroll', closeDropdown, true);
+    window.addEventListener('resize', closeDropdown);
     return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('scroll', closeDropdown, true);
+      window.removeEventListener('resize', closeDropdown);
     };
-  }, [open]);
+  }, [open, closeDropdown]);
 
-  // Hover Handlers (Desktop & Mobile)
-  const handleEnter = () => {
+  const handleEnter = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (hasSubs) {
       updatePosition();
       setOpen(true);
     }
-  };
+  }, [hasSubs, updatePosition]);
 
-  const handleLeave = () => {
-    timeoutRef.current = setTimeout(() => setOpen(false), 100);
-  };
+  const handleLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(closeDropdown, 100);
+  }, [closeDropdown]);
 
-  // Click Handler (Desktop & Mobile)
-  const handleClick = (e: React.MouseEvent) => {
-    if (hasSubs) {
-      e.preventDefault();
-      if (!open) updatePosition();
-      setOpen(!open);
-    }
-  };
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (!hasSubs) return;
+    e.preventDefault();
+    setOpen((prev) => {
+      if (!prev) updatePosition();
+      return !prev;
+    });
+  }, [hasSubs, updatePosition]);
 
   const isDesktop = variant === 'desktop';
 
-  // Desktop Trigger UI
   const DesktopTrigger = () => (
     <Link
       href={`/products?category=${category._id}`}
@@ -169,7 +175,6 @@ function CategoryItemWithDropdown({
     </Link>
   );
 
-  // Mobile Trigger UI
   const MobileTrigger = () => (
     <Link
       href={`/products?category=${category._id}`}
@@ -209,13 +214,12 @@ function CategoryItemWithDropdown({
     >
       {isDesktop ? <DesktopTrigger /> : <MobileTrigger />}
 
-      {/* Flyout Submenu (Fixed Position to escape overflow: hidden) */}
       {open && hasSubs && (
         <div
           className={cn(
             'fixed mt-1 min-w-[200px] max-w-[280px]',
             'bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl',
-            'p-1.5 z-100000', // high z-index to stay above everything
+            'p-1.5 z-[100000]', 
             'animate-in fade-in zoom-in-95 duration-150'
           )}
           style={{
@@ -226,10 +230,9 @@ function CategoryItemWithDropdown({
           onMouseEnter={handleEnter}
           onMouseLeave={handleLeave}
         >
-          {/* Link to all products in this category */}
           <Link
             href={`/products?category=${category._id}`}
-            onClick={() => setOpen(false)}
+            onClick={closeDropdown}
             className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary/8 text-sm font-bold text-primary transition-colors mb-1 border-b border-border/20 pb-2"
           >
             {category.image && (
@@ -237,18 +240,18 @@ function CategoryItemWithDropdown({
                 src={category.image}
                 alt=""
                 className="w-5 h-5 rounded object-cover"
+                loading="lazy"
               />
             )}
             {category.name}
           </Link>
 
-          {/* Subcategories */}
           <div className="space-y-0.5 max-h-[60vh] overflow-y-auto scrollbar-thin">
             {category.subCategories!.map((sub) => (
               <Link
                 key={sub._id}
                 href={`/products?subCategory=${sub._id}`}
-                onClick={() => setOpen(false)}
+                onClick={closeDropdown}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-accent/50 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30 group-hover:bg-primary shrink-0 transition-colors" />
@@ -260,11 +263,11 @@ function CategoryItemWithDropdown({
       )}
     </div>
   );
-}
+});
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function CategoriesScroller({
+function CategoriesScroller({
   categories,
   className,
   variant = 'mobile',
@@ -275,24 +278,27 @@ export default function CategoriesScroller({
   const [canScrollStart, setCanScrollStart] = useState(false);
   const [canScrollEnd, setCanScrollEnd] = useState(false);
 
-  // Check scroll position to show/hide arrows
+  // تم تصحيح المعادلة هنا لتكون متوافقة 100% مع اللغتين بدون الحاجة لشروط منعكسة
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const { scrollLeft, scrollWidth, clientWidth } = el;
     const maxScroll = scrollWidth - clientWidth;
-    const absScroll = Math.abs(scrollLeft);
 
-    // In RTL, scrollLeft is negative (or 0 at start)
-    if (isRtl) {
-      setCanScrollEnd(absScroll > 2);
-      setCanScrollStart(absScroll < maxScroll - 2);
-    } else {
-      setCanScrollStart(scrollLeft > 2);
-      setCanScrollEnd(scrollLeft < maxScroll - 2);
+    // إذا لم يكن هناك تمرير من الأساس، قم بإخفاء الأسهم
+    if (maxScroll <= 0) {
+      setCanScrollStart(false);
+      setCanScrollEnd(false);
+      return;
     }
-  }, [isRtl]);
+
+    // باستخدام Math.abs نضمن أن القيمة السالبة للتمرير في اللغة العربية يتم قراءتها كمسافة صحيحة
+    const absScroll = Math.abs(Math.round(scrollLeft));
+
+    setCanScrollStart(absScroll > 2);
+    setCanScrollEnd(absScroll < maxScroll - 2);
+  }, []);
 
   useEffect(() => {
     updateScrollState();
@@ -309,18 +315,21 @@ export default function CategoriesScroller({
     };
   }, [updateScrollState, categories]);
 
-  const scroll = (direction: 'start' | 'end') => {
+  const scrollStart = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-
     const amount = el.clientWidth * 0.6;
-    const sign = direction === 'end' ? 1 : -1;
-    // In LTR: end = right (+), start = left (-)
-    // In RTL: end = left (-), start = right (+)
-    const scrollAmount = isRtl ? -sign * amount : sign * amount;
-
+    const scrollAmount = isRtl ? amount : -amount;
     el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  };
+  }, [isRtl]);
+
+  const scrollEnd = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.6;
+    const scrollAmount = isRtl ? -amount : amount;
+    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  }, [isRtl]);
 
   if (!categories.length) return null;
 
@@ -329,13 +338,15 @@ export default function CategoriesScroller({
       {/* Scroll Arrows */}
       <ScrollArrow
         direction="start"
-        onClick={() => scroll('start')}
+        onClick={scrollStart}
         visible={canScrollStart}
+        isRtl={isRtl} // تمرير حالة اللغة لعكس الأيقونة
       />
       <ScrollArrow
         direction="end"
-        onClick={() => scroll('end')}
+        onClick={scrollEnd}
         visible={canScrollEnd}
+        isRtl={isRtl} // تمرير حالة اللغة لعكس الأيقونة
       />
 
       {/* Gradient fades */}
@@ -363,3 +374,5 @@ export default function CategoriesScroller({
     </div>
   );
 }
+
+export default memo(CategoriesScroller);

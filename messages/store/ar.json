@@ -17,7 +17,8 @@
             "cart": "السلة",
             "account": "حسابي",
             "search": "ابحث عن منتجات...",
-            "all_categories": "جميع الأقسام"
+            "all_categories": "جميع الأقسام",
+            "quote": "طلب سعر"
       },
       "footer": {
             "rights": "جميع الحقوق محفوظة."

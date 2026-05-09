@@ -1,189 +1,277 @@
 'use client';
 
-import { useMemo } from 'react';
-import { Home, Package, ShoppingCart, User, LayoutGrid } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/navigation';
-import { useCartStore } from '@/store/cart-store';
+import { memo, useMemo } from 'react';
+import {
+  Home,
+  Store,
+  ShoppingCart,
+  User,
+  MessageSquareQuote,
+} from 'lucide-react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { useTranslations, useLocale } from 'next-intl';
+// السحر هنا: نستخدم usePathname الخاصة بـ next-intl والتي تتجاهل لغة الرابط تلقائياً
+import { Link, usePathname } from '@/navigation';
+import { cn } from '@/lib/utils';
+
+// ─────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────
 
 interface NavItem {
   key: string;
-  href: string;
-  icon: typeof Home;
-  badge?: number;
+  // اجعل المسار يطابق المسار الفعلي لصفحتك الرئيسية لتجنب الـ Redirect
+  href: string; 
+  icon: any;
+  isCTA?: boolean;
 }
 
-// ─── Cart Badge ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+// Nav Item Component
+// ─────────────────────────────────────────────────────────
 
-function CartBadge({ count }: { count: number }) {
-  if (count <= 0) return null;
-
-  const display = count > 99 ? '99+' : String(count);
-
-  return (
-    <span
-      className="
-        absolute -top-1.5 -end-2.5
-        min-w-[18px] h-[18px] px-1
-        flex items-center justify-center
-        text-[10px] font-bold leading-none
-        text-white bg-red-500
-        rounded-full
-        ring-2 ring-background
-        animate-badge-pop
-        pointer-events-none
-        select-none
-      "
-      aria-label={`${count} items in cart`}
-    >
-      {display}
-    </span>
-  );
-}
-
-// ─── Nav Item Button ──────────────────────────────────────────────────────────
-
-function NavItemButton({
+const BottomNavItem = memo(function BottomNavItem({
   item,
-  isActive,
   label,
+  isActive,
 }: {
   item: NavItem;
-  isActive: boolean;
   label: string;
+  isActive: boolean;
 }) {
+  const Icon = item.icon;
+
+  if (item.isCTA) {
+    return (
+      <Link
+        href={item.href}
+        aria-label={label}
+        className="relative flex flex-1 items-center justify-center outline-none"
+      >
+        <button
+          className={cn(
+            'relative flex h-[62px] w-[62px]',
+            'items-center justify-center',
+            '-translate-y-6', 
+
+            'rounded-[24px]',
+            'bg-gradient-to-br from-primary to-primary/80',
+            'border border-white/20',
+            'shadow-[0_10px_30px_rgba(var(--primary-rgb),0.4)]',
+            'backdrop-blur-xl',
+
+            // Spring Animation
+            'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
+            'active:scale-90 hover:scale-105 hover:-translate-y-7'
+          )}
+        >
+          <div
+            className={cn(
+              'absolute inset-0 rounded-[24px]',
+              'bg-primary/40 blur-xl mix-blend-screen'
+            )}
+          />
+
+          <div className="relative z-10 flex flex-col items-center justify-center">
+            <Icon
+              size={24}
+              strokeWidth={2.5}
+              className="text-white drop-shadow-md"
+            />
+            <span className="mt-1 text-[10px] font-bold text-white tracking-wide">
+              {label}
+            </span>
+          </div>
+        </button>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={item.href}
-      className={`
-        relative flex flex-col items-center justify-center
-        gap-0.5 flex-1
-        min-h-[56px] pt-1.5 pb-1
-        transition-all duration-200 ease-out
-        outline-none
-        group
-        select-none
-        ${isActive
-          ? 'text-primary'
-          : 'text-muted-foreground hover:text-foreground'
-        }
-      `}
-      aria-current={isActive ? 'page' : undefined}
+      aria-label={label}
+      className={cn(
+        'relative z-10 flex h-full flex-1 items-center justify-center',
+        'select-none outline-none active:scale-95 transition-transform duration-300'
+      )}
     >
-      {/* Active indicator pill */}
-      <span
-        className={`
-          absolute top-0 inset-x-auto
-          h-[3px] rounded-full
-          bg-primary
-          transition-all duration-300 ease-out
-          ${isActive ? 'w-8 opacity-100' : 'w-0 opacity-0'}
-        `}
-      />
-
-      {/* Icon container */}
-      <span
-        className={`
-          relative flex items-center justify-center
-          w-6 h-6
-          transition-transform duration-200 ease-out
-          ${isActive
-            ? 'scale-110'
-            : 'scale-100 group-hover:scale-105 group-active:scale-95'
-          }
-        `}
+      <div
+        className={cn(
+          'relative z-10 flex flex-col items-center justify-center gap-1',
+          'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
+          'will-change-transform',
+          isActive ? '-translate-y-1.5' : 'translate-y-0'
+        )}
       >
-        <item.icon
-          size={22}
-          strokeWidth={isActive ? 2.5 : 1.8}
-          className="transition-all duration-200"
+        <div className="relative flex items-center justify-center">
+          <div
+            className={cn(
+              'absolute inset-0 rounded-full blur-md',
+              'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
+              isActive ? 'scale-150 opacity-100 bg-primary/20' : 'scale-0 opacity-0'
+            )}
+          />
+
+          <Icon
+            size={22}
+            strokeWidth={isActive ? 2.5 : 2}
+            className={cn(
+              'relative z-10 transition-colors duration-300',
+              isActive ? 'text-primary' : 'text-muted-foreground/70'
+            )}
+          />
+        </div>
+
+        <span
+          className={cn(
+            'text-[10px] font-bold tracking-wide',
+            'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
+            isActive
+              ? 'text-primary opacity-100 scale-100'
+              : 'text-muted-foreground/70 opacity-0 scale-75 absolute -bottom-4 pointer-events-none'
+          )}
+        >
+          {label}
+        </span>
+
+        <div
+          className={cn(
+            'absolute -bottom-[12px]',
+            'h-[4px] rounded-full bg-primary',
+            'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
+            isActive ? 'w-[16px] opacity-100' : 'w-0 opacity-0'
+          )}
         />
-        {item.badge !== undefined && <CartBadge count={item.badge} />}
-      </span>
-
-      {/* Label */}
-      <span
-        className={`
-          text-[10px] leading-tight tracking-wide
-          transition-all duration-200
-          ${isActive ? 'font-bold opacity-100' : 'font-medium opacity-70'}
-        `}
-      >
-        {label}
-      </span>
+      </div>
     </Link>
   );
-}
+});
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+// Main Component
+// ─────────────────────────────────────────────────────────
 
 export default function MobileBottomNav() {
+  const pathname = usePathname(); 
+  const locale = useLocale();
   const t = useTranslations('store.nav');
-  const pathname = usePathname();
-  const cartItemCount = useCartStore((state) =>
-    state.items.reduce((total, item) => total + item.quantity, 0)
-  );
 
-  const navItems: NavItem[] = useMemo(
+  const isRtl = locale === 'ar';
+
+  const navItems = useMemo<NavItem[]>(
     () => [
-      { key: 'home', href: '/home', icon: Home },
-      { key: 'categories', href: '/products', icon: LayoutGrid },
-      { key: 'cart', href: '/cart', icon: ShoppingCart, badge: cartItemCount },
-      { key: 'orders', href: '/orders', icon: Package },
+      // 💡 ملاحظة: إذا كانت صفحتك الرئيسية مسارها الفعلي هو /home، قم بتغيير href إلى /home لمنع إعادة التحميل
+      { key: 'home', href: '/', icon: Home },
+      { key: 'store', href: '/products', icon: Store },
+      { key: 'quote', href: '/request-quote', icon: MessageSquareQuote, isCTA: true },
+      { key: 'cart', href: '/cart', icon: ShoppingCart },
       { key: 'account', href: '/account', icon: User },
     ],
-    [cartItemCount]
+    []
   );
 
-  // Translation map for nav keys
-  const labelMap: Record<string, string> = useMemo(
+  const labels = useMemo(
     () => ({
       home: t('home'),
-      categories: t('products'),
-      cart: t.has('cart') ? t('cart') : 'Cart',
-      orders: t('orders'),
-      account: t.has('account') ? t('account') : t('profile'),
+      store: t('products'),
+      quote: 'عرض سعر',
+      cart: t('cart'),
+      account: t('account') || t('profile'),
     }),
     [t]
   );
 
-  return (
-    <nav
-      id="mobile-bottom-nav"
-      aria-label="Mobile navigation"
-      className="
-        mobile-bottom-nav
-        fixed bottom-0 inset-x-0 z-50
-        md:hidden
-        bg-background/80 backdrop-blur-xl backdrop-saturate-150
-        border-t border-border/50
-        shadow-[0_-1px_12px_rgba(0,0,0,0.06)]
-        dark:shadow-[0_-1px_12px_rgba(0,0,0,0.25)]
-      "
-      style={{
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      }}
-    >
-      <div className="flex items-stretch justify-around max-w-lg mx-auto">
-        {navItems.map((item) => {
-          // Match active state: exact for home, startsWith for others
-          const isActive =
-            item.href === '/home'
-              ? pathname === '/home' || pathname === '/'
-              : pathname.startsWith(item.href);
+  // تحديث ذكي لتحديد الصفحة النشطة وتجاوز مشكلة الرئيسية
+  const activeIndex = navItems.findIndex((item) => {
+    // إذا كان الرابط هو الرئيسية، نتحقق من / أو /home 
+    if (item.href === '/' || item.href === '/home') {
+      return pathname === '/' || pathname === '/home';
+    }
+    return pathname.startsWith(item.href);
+  });
 
-          return (
-            <NavItemButton
-              key={item.key}
-              item={item}
-              isActive={isActive}
-              label={labelMap[item.key] ?? item.key}
+  const safeActiveIndex = activeIndex !== -1 ? activeIndex : 0;
+  const hideBubble = activeIndex === -1 || navItems[activeIndex]?.isCTA;
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes navEntry {
+          0% { transform: translateY(120px) scale(0.95); opacity: 0; }
+          100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-nav-entry {
+          animation: navEntry 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+      `}} />
+
+      <div
+        className={cn(
+          'fixed inset-x-0 bottom-6 z-[100]',
+          'flex justify-center px-4 md:hidden',
+          'pointer-events-none'
+        )}
+      >
+        <nav
+          className={cn(
+            'animate-nav-entry pointer-events-auto relative',
+            'flex h-[76px] w-full max-w-[420px]',
+            'items-center justify-between px-2',
+            'bg-white/70 dark:bg-black/60',
+            'backdrop-blur-[24px] backdrop-saturate-[1.8]',
+            'border border-white/40 dark:border-white/10',
+            'rounded-[2.5rem]',
+            'shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1),0_0_0_1px_rgba(255,255,255,0.2)_inset]',
+            'dark:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)_inset]',
+            'overflow-visible'
+          )}
+        >
+          <div
+            className={cn(
+              'pointer-events-none absolute inset-0 opacity-[0.03] rounded-[2.5rem]',
+              '[background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Cg fill=%27white%27 fill-opacity=%271%27%3E%3Ccircle cx=%272%27 cy=%272%27 r=%271%27/%3E%3C/g%3E%3C/svg%3E")]'
+            )}
+          />
+
+          <div
+            className={cn(
+              'absolute top-2 bottom-2 start-0 z-0 pointer-events-none',
+              'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
+              'will-change-transform',
+              hideBubble ? 'opacity-0 scale-75' : 'opacity-100 scale-100'
+            )}
+            style={{
+              width: '20%',
+              transform: `translateX(${isRtl ? -(safeActiveIndex * 100) : safeActiveIndex * 100}%)`,
+            }}
+          >
+            <div
+              className={cn(
+                'relative h-full mx-1.5 rounded-2xl',
+                'bg-gradient-to-b from-primary/15 to-primary/5 dark:from-primary/20 dark:to-primary/5',
+                'border border-primary/20',
+                'shadow-[0_4px_16px_rgba(var(--primary-rgb),0.1)]'
+              )}
             />
-          );
-        })}
+          </div>
+
+          <div className="relative flex h-full w-full items-center justify-around">
+            {navItems.map((item, index) => {
+              const isActive = index === activeIndex;
+
+              return (
+                <BottomNavItem
+                  key={item.key}
+                  item={item}
+                  label={labels[item.key as keyof typeof labels]}
+                  isActive={isActive}
+                />
+              );
+            })}
+          </div>
+        </nav>
       </div>
-    </nav>
+    </>
   );
 }

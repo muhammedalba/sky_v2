@@ -1,7 +1,12 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Product, ApiResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import { Product, ApiResponse, ProductVariant } from '@/types';
+
+export interface ProductWithAllLangs {
+  product: Product;
+  variants: ProductVariant[];
+}
 
 export interface UseProductsParams {
   page?: number;
@@ -35,7 +40,9 @@ export function useProducts(params?: UseProductsParams, options?: { enabled?: bo
   });
 }
 
-export function useProduct(id: string, options?: { all_langs?: boolean }) {
+export function useProduct(id: string, options: { all_langs: true }): UseQueryResult<ProductWithAllLangs, Error>;
+export function useProduct(id: string, options?: { all_langs?: false }): UseQueryResult<Product, Error>;
+export function useProduct(id: string, options?: { all_langs?: boolean }): UseQueryResult<any, Error> {
   const all_langs = options?.all_langs ?? false;
   return useQuery({
     queryKey: ['products', id, { all_langs }],

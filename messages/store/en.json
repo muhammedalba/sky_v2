@@ -17,7 +17,8 @@
             "cart": "Cart",
             "account": "Account",
             "search": "Search products...",
-            "all_categories": "All Categories"
+            "all_categories": "All Categories",
+            "quote": "Get Quote"
       },
       "footer": {
             "rights": "All rights reserved."

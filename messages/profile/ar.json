@@ -1,38 +1,26 @@
 {
-  "title": "إعدادات الملف الشخصي",
-  "personalInfo": "المعلومات الشخصية",
-  "personalInfoDescription": "قم بتحديث اسمك وبريدك الإلكتروني وبيانات الاتصال.",
-  "changePassword": "تغيير كلمة المرور",
-  "changePasswordDescription": "حافظ على أمان حسابك بكلمة مرور قوية وفريدة.",
-  "passwordSecurityNote": "اختر كلمة مرور لا تقل عن 8 أحرف وتتضمن مزيجاً من الأحرف والأرقام والرموز. لا تشارك كلمة مرورك مع أحد.",
+  "title": "حسابي",
+  "welcome": "أهلاً بك، {name}",
   "tabs": {
-    "general": "المعلومات العامة",
-    "security": "الأمان"
+    "profile": "الملف الشخصي",
+    "orders": "طلباتي",
+    "addresses": "عناوين الشحن",
+    "settings": "الإعدادات"
   },
-  "status": {
-    "active": "نشط",
-    "inactive": "غير نشط"
+  "sections": {
+    "profile_summary": "ملخص الحساب",
+    "recent_orders": "الطلبات الأخيرة",
+    "address_book": "دفتر العناوين"
   },
-  "lastLogin": "آخر تسجيل دخول",
-  "avatar": {
-    "title": "الصورة الشخصية",
-    "description": "انقر على الصورة لتحميل صورة جديدة."
+  "stats": {
+    "total_orders": "إجمالي الطلبات",
+    "active_orders": "طلبات قيد التنفيذ",
+    "saved_items": "منتجات محفوظة"
   },
-  "fields": {
-    "name": "الاسم الكامل",
-    "email": "البريد الإلكتروني",
-    "phone": "رقم الهاتف",
-    "role": "دور الحساب",
-    "currentPassword": "كلمة المرور الحالية",
-    "newPassword": "كلمة المرور الجديدة",
-    "confirmPassword": "تأكيد كلمة المرور الجديدة"
-  },
-  "buttons": {
-    "saveChanges": "حفظ التغييرات",
-    "updatePassword": "تحديث كلمة المرور"
-  },
-  "messages": {
-    "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
-    "passwordChanged": "تم تغيير كلمة المرور بنجاح!"
+  "actions": {
+    "edit_profile": "تعديل الملف الشخصي",
+    "view_all_orders": "عرض كل الطلبات",
+    "add_address": "إضافة عنوان جديد",
+    "logout": "تسجيل الخروج"
   }
 }

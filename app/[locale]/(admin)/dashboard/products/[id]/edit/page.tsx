@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import EditProductForm from '@/features/products/components/dashboard/EditProductForm';
-import { useProduct } from '@/features/products/hooks/useProducts';
+import { useProduct, ProductWithAllLangs } from '@/features/products/hooks/useProducts';
 import { Skeleton } from '@/shared/ui/Skeleton';
 
 export default function EditProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
@@ -31,7 +31,7 @@ export default function EditProductPage({ params }: { params: Promise<{ locale: 
   return (
     <EditProductForm
       locale={locale}
-      initialData={productRes.product || []}
+      initialData={productRes.product}
       initialVariants={productRes.variants || []}
     />
   );

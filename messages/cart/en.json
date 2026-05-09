@@ -1,0 +1,24 @@
+{
+  "title": "Shopping Cart",
+  "empty": {
+    "title": "Your cart is currently empty",
+    "subtitle": "Looks like you haven't added any products yet. Browse our products and start building your project.",
+    "cta": "Browse Products"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax (15%)",
+    "total": "Total Amount",
+    "checkout": "Proceed to Checkout",
+    "free": "Free",
+    "calculated_at_checkout": "Calculated at checkout"
+  },
+  "item": {
+    "remove": "Remove",
+    "quantity": "Quantity",
+    "stock_available": "In Stock",
+    "out_of_stock": "Out of Stock"
+  }
+}

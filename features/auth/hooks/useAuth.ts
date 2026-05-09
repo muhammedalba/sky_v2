@@ -121,3 +121,16 @@ export function useLogout() {
   });
 }
 
+export function useAuth() {
+  const { data: user, isLoading } = useMe();
+  const { mutate: logout } = useLogout();
+
+  return {
+    user,
+    isLoading,
+    isAuthenticated: !!user,
+    logout,
+  };
+}
+
+
