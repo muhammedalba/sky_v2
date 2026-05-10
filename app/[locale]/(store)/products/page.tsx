@@ -34,7 +34,7 @@ export default function ProductsPage() {
 
   return (
     <>
-      <div className="bg-muted/30 py-12 border-b border-border/50">
+      <div className="bg-muted/30 pt-40     py-12 border-b border-border/50">
          <div className="max-w-7xl mx-auto px-4 text-center">
             <h1 className="text-4xl font-black mb-4">Shop All Products</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">

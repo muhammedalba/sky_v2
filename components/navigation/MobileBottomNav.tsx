@@ -1,18 +1,13 @@
 'use client';
 
 import { memo, useMemo } from 'react';
-import {
-  Home,
-  Store,
-  ShoppingCart,
-  User,
-  MessageSquareQuote,
-} from 'lucide-react';
 
 import { useTranslations, useLocale } from 'next-intl';
 // السحر هنا: نستخدم usePathname الخاصة بـ next-intl والتي تتجاهل لغة الرابط تلقائياً
 import { Link, usePathname } from '@/navigation';
 import { cn } from '@/lib/utils';
+import { Icons } from '@/shared/ui/Icons';
+import { isAdmin, isAuthenticated } from '@/lib/auth';
 
 // ─────────────────────────────────────────────────────────
 // Types
@@ -20,8 +15,7 @@ import { cn } from '@/lib/utils';
 
 interface NavItem {
   key: string;
-  // اجعل المسار يطابق المسار الفعلي لصفحتك الرئيسية لتجنب الـ Redirect
-  href: string; 
+  href: string;
   icon: any;
   isCTA?: boolean;
 }
@@ -52,14 +46,12 @@ const BottomNavItem = memo(function BottomNavItem({
           className={cn(
             'relative flex h-[62px] w-[62px]',
             'items-center justify-center',
-            '-translate-y-6', 
-
+            '-translate-y-6',
             'rounded-[24px]',
-            'bg-gradient-to-br from-primary to-primary/80',
+            'bg-linear-to-br from-primary to-primary/80',
             'border border-white/20',
             'shadow-[0_10px_30px_rgba(var(--primary-rgb),0.4)]',
             'backdrop-blur-xl',
-
             // Spring Animation
             'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
             'active:scale-90 hover:scale-105 hover:-translate-y-7'
@@ -74,11 +66,9 @@ const BottomNavItem = memo(function BottomNavItem({
 
           <div className="relative z-10 flex flex-col items-center justify-center">
             <Icon
-              size={24}
-              strokeWidth={2.5}
-              className="text-white drop-shadow-md"
+              className="size-6 text-white drop-shadow-md"
             />
-            <span className="mt-1 text-[10px] font-bold text-white tracking-wide">
+            <span className=" text-[10px] font-bold text-white tracking-wide">
               {label}
             </span>
           </div>
@@ -93,7 +83,9 @@ const BottomNavItem = memo(function BottomNavItem({
       aria-label={label}
       className={cn(
         'relative z-10 flex h-full flex-1 items-center justify-center',
-        'select-none outline-none active:scale-95 transition-transform duration-300'
+        'select-none outline-none active:scale-95 transition-transform duration-300',
+        "hover:scale-105 hover:-translate-y-1 group",
+
       )}
     >
       <div
@@ -104,7 +96,7 @@ const BottomNavItem = memo(function BottomNavItem({
           isActive ? '-translate-y-1.5' : 'translate-y-0'
         )}
       >
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center ">
           <div
             className={cn(
               'absolute inset-0 rounded-full blur-md',
@@ -114,10 +106,9 @@ const BottomNavItem = memo(function BottomNavItem({
           />
 
           <Icon
-            size={22}
-            strokeWidth={isActive ? 2.5 : 2}
             className={cn(
-              'relative z-10 transition-colors duration-300',
+              'relative z-10 transition-colors duration-300 group-hover:text-primary',
+              'size-[22px]',
               isActive ? 'text-primary' : 'text-muted-foreground/70'
             )}
           />
@@ -137,7 +128,7 @@ const BottomNavItem = memo(function BottomNavItem({
 
         <div
           className={cn(
-            'absolute -bottom-[12px]',
+            'absolute bottom-[-12px]',
             'h-[4px] rounded-full bg-primary',
             'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
             isActive ? 'w-[16px] opacity-100' : 'w-0 opacity-0'
@@ -153,20 +144,22 @@ const BottomNavItem = memo(function BottomNavItem({
 // ─────────────────────────────────────────────────────────
 
 export default function MobileBottomNav() {
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations('store.nav');
+  const is_Admin = useMemo(() => isAdmin(), []);
+  const is_auth = useMemo(() => isAuthenticated(), []);
 
   const isRtl = locale === 'ar';
 
   const navItems = useMemo<NavItem[]>(
     () => [
       // 💡 ملاحظة: إذا كانت صفحتك الرئيسية مسارها الفعلي هو /home، قم بتغيير href إلى /home لمنع إعادة التحميل
-      { key: 'home', href: '/', icon: Home },
-      { key: 'store', href: '/products', icon: Store },
-      { key: 'quote', href: '/request-quote', icon: MessageSquareQuote, isCTA: true },
-      { key: 'cart', href: '/cart', icon: ShoppingCart },
-      { key: 'account', href: '/account', icon: User },
+      { key: 'home', href: '/', icon: Icons.Home },
+      { key: 'store', href: '/products', icon: Icons.Store },
+      { key: 'quote', href: '/request-quote', icon: Icons.MessageSquareQuote, isCTA: true },
+      { key: 'dashboard-or-cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? Icons.Dashboard : Icons.ShoppingCart },
+      { key: 'account-or-login', href: is_auth ? '/account' : '/auth/login', icon: Icons.User },
     ],
     []
   );
@@ -176,8 +169,8 @@ export default function MobileBottomNav() {
       home: t('home'),
       store: t('products'),
       quote: 'عرض سعر',
-      cart: t('cart'),
-      account: t('account') || t('profile'),
+      cart:is_Admin ? t('dashboard') : t('cart'), 
+      account:is_auth ? t('account') : t('login'),
     }),
     [t]
   );
@@ -196,7 +189,8 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes navEntry {
           0% { transform: translateY(120px) scale(0.95); opacity: 0; }
           100% { transform: translateY(0) scale(1); opacity: 1; }
@@ -208,7 +202,7 @@ export default function MobileBottomNav() {
 
       <div
         className={cn(
-          'fixed inset-x-0 bottom-6 z-[100]',
+          'fixed inset-x-0 bottom-6 z-100',
           'flex justify-center px-4 md:hidden',
           'pointer-events-none'
         )}
@@ -218,12 +212,10 @@ export default function MobileBottomNav() {
             'animate-nav-entry pointer-events-auto relative',
             'flex h-[76px] w-full max-w-[420px]',
             'items-center justify-between px-2',
-            'bg-white/70 dark:bg-black/60',
-            'backdrop-blur-[24px] backdrop-saturate-[1.8]',
-            'border border-white/40 dark:border-white/10',
-            'rounded-[2.5rem]',
-            'shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1),0_0_0_1px_rgba(255,255,255,0.2)_inset]',
-            'dark:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)_inset]',
+            'bg-transparent',
+            'backdrop-blur-sm bg-background/40',
+            'rounded-full',
+            'shadow-2xl shadow-muted-foreground/30',
             'overflow-visible'
           )}
         >
@@ -236,20 +228,20 @@ export default function MobileBottomNav() {
 
           <div
             className={cn(
-              'absolute top-2 bottom-2 start-0 z-0 pointer-events-none',
+              'absolute top-2 bottom-2 inset-s-1.5 z-0 pointer-events-none',
               'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
               'will-change-transform',
               hideBubble ? 'opacity-0 scale-75' : 'opacity-100 scale-100'
             )}
             style={{
               width: '20%',
-              transform: `translateX(${isRtl ? -(safeActiveIndex * 100) : safeActiveIndex * 100}%)`,
+              transform: `translateX(${isRtl ? -(safeActiveIndex * 96.5) : safeActiveIndex * 96.5}%)`,
             }}
           >
             <div
               className={cn(
                 'relative h-full mx-1.5 rounded-2xl',
-                'bg-gradient-to-b from-primary/15 to-primary/5 dark:from-primary/20 dark:to-primary/5',
+                'bg-linear-to-b from-primary/15 to-primary/5 dark:from-primary/20 dark:to-primary/5',
                 'border border-primary/20',
                 'shadow-[0_4px_16px_rgba(var(--primary-rgb),0.1)]'
               )}

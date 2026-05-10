@@ -86,11 +86,11 @@ export default async function StoreLayout({ children }: StoreLayoutProps) {
   const categories = await getCategories();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
+    <div className="min-h-screen  flex flex-col bg-background font-sans antialiased">
       {/* Top Navigation — Mobile & Desktop handled internally */}
       <StoreNavbarLoader categories={categories} />
 
-      <main className="flex-1 pb-[calc(56px+env(safe-area-inset-bottom,0))] md:pb-0">
+      <main className="flex-1  pb-[calc(56px+env(safe-area-inset-bottom,0))] md:pb-0">
         {children}
       </main>
 

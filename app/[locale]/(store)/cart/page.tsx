@@ -33,7 +33,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background selection:bg-primary/30 pb-20">
+    <div className="min-h-screen pt-40  bg-background selection:bg-primary/30 pb-20">
       {/* Header */}
       <section className="py-12 bg-secondary/5 border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4">

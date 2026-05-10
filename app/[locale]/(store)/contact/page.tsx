@@ -44,7 +44,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <div className="bg-secondary/5 py-16 lg:py-24">
+      <div className="bg-secondary/5 py-16 pt-40  lg:py-24">
         <div className="max-w-4xl mx-auto px-4 text-center">
             <h1 className="text-4xl lg:text-6xl font-black text-foreground mb-6 leading-tight">
                 {t('title')}
