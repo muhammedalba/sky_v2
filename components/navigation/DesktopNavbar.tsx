@@ -12,7 +12,9 @@ import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
 import { Icons } from '@/shared/ui/Icons';
 import { isAdmin } from '@/lib/auth';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
+import { env } from '@/lib/env';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,7 +24,7 @@ interface DesktopNavbarProps {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
+const APP_NAME = env.APP_NAME;
 
 // ─── Cart Icon with Badge ─────────────────────────────────────────────────────
 
@@ -74,6 +76,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
     state.items.reduce((total, item) => total + item.quantity, 0)
   );
   const locale = useLocale();
+  const settings = useSettings();
 
   // تحسين مراقب التمرير لمنع التكرار
   useEffect(() => {
@@ -111,14 +114,14 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             className="flex items-center  shrink-0 group"
           >
             <ImageWithFallback
-              src="/assets/images/auth-logo.png"
-              alt={`${APP_NAME} Logo`}
+              src={settings.logo || "/assets/images/auth-logo.png"}
+              alt={`${settings.siteName?.[locale as 'ar' | 'en'] || APP_NAME} Logo`}
               width={40}
               height={40}
               className="object-contain mb-3"
             />
             <span className="text-md font-extrabold tracking-tight title-gradient">
-              {APP_NAME}
+              {settings.siteName?.[locale as 'ar' | 'en'] || APP_NAME}
             </span>
           </Link>
 

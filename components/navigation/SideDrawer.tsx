@@ -30,7 +30,6 @@ function DrawerCategoryItem({
 }) {
   const [expanded, setExpanded] = useState(false);
   const hasSubs = category.subCategories && category.subCategories.length > 0;
-
   return (
     <div>
       <div className="flex items-center gap-1">
@@ -41,9 +40,11 @@ function DrawerCategoryItem({
           className="flex-1 flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent/50 transition-colors group"
         >
           {category.image && (
-            <img
+            <Image
               src={category.image}
               alt=""
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-lg object-cover border border-border/30"
               loading="lazy"
             />
@@ -116,7 +117,6 @@ export default function SideDrawer({
   const locale = useLocale();
   const t = useTranslations('store.nav');
   const isRtl = locale === 'ar';
-  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
 
   // Close on Escape
   const handleKeyDown = useCallback(
@@ -176,7 +176,7 @@ export default function SideDrawer({
         {/* Header */}
         <div className="p-5 border-b border-border/50 flex items-center justify-between bg-accent/10">
 
-          <SidebarHeader locale={locale} />
+          <SidebarHeader />
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
@@ -232,7 +232,7 @@ export default function SideDrawer({
         </div>
 
         {/* Footer */}
-         <UserAccountMenu locale={locale} />
+        <UserAccountMenu locale={locale} />
       </div>
     </div>
   );

@@ -21,6 +21,9 @@
             "quote": "Get Quote"
       },
       "footer": {
-            "rights": "All rights reserved."
+            "rights": "All rights reserved.",
+            "quickLinks": "Quick Links",
+            "support": "Support & Help",
+            "shopInfo": "Shop Info"
       }
 }

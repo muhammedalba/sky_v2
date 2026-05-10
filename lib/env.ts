@@ -139,6 +139,9 @@ export const env = {
       CLEAR: process.env.NEXT_PUBLIC_ENDPOINT_CART_CLEAR || '/cart/clear',
       REMOVE: process.env.NEXT_PUBLIC_ENDPOINT_CART_REMOVE || '/cart/remove',
     },
+    SETTINGS: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SETTINGS || '/settings',
+    },
   },
   HIDDEN_EMAILS: (process.env.NEXT_PUBLIC_HIDDEN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean),
 } as const;

@@ -88,7 +88,7 @@ export function useUpdateProduct() {
     onSuccess: async (_, variables) => {
       await queryClient.invalidateQueries({ queryKey: ['products'] });
       await queryClient.invalidateQueries({ queryKey: ['products', variables.id] });
-      
+
     },
     onError: (error: Error) => {
       console.error("Backend Error:", error);
@@ -107,7 +107,7 @@ export function useDeleteProduct() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
-  
+
   });
 }
 

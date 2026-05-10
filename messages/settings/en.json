@@ -1,33 +1,43 @@
 {
   "title": "Store Settings",
-  "description": "Manage your store details, payments, and notifications.",
-  "saveBtn": "Save All Settings",
+  "description": "Manage core store configurations, payments, shipping, and advanced options.",
+  "saveBtn": "Save Changes",
   "savingBtn": "Saving...",
+  "loading": "Loading Settings...",
   "tabs": {
     "general": "General Info",
     "region": "Region & Currency",
-    "payments": "Payment Gateways",
-    "notifications": "Notifications"
+    "payments": "Payments & Taxes",
+    "shipping": "Shipping Settings",
+    "notifications": "Notifications",
+    "advanced": "Advanced Options",
+    "seo": "SEO",
+    "social": "Social Media",
+    "contact": "Contact Details"
   },
   "general": {
-    "title": "General Store Info",
-    "desc": "Update your brand name, logo, and contact details.",
+    "title": "Store Identity",
+    "desc": "Update basic store information and branding.",
+    "upload": "Upload Image",
     "logoTitle": "Store Logo",
-    "logoDesc": "Recommended size: 512x512px. Max 2MB.",
+    "logoDesc": "Appears on invoices, emails, and the frontend.",
     "logoBtn": "Change Logo",
-    "upload": "Upload",
+    "faviconTitle": "Favicon",
+    "faviconDesc": "The icon that appears in the browser tab (32x32px).",
     "storeName": "Store Name",
-    "contactEmail": "Contact Email",
+    "contactEmail": "Official Email",
     "supportPhone": "Support Phone",
     "storeDesc": "Store Description"
   },
   "region": {
-    "title": "Region & Currency",
-    "desc": "Configure your physical location and base currency.",
+    "title": "Region & Language",
+    "desc": "Set your default currency and timezone.",
     "country": "Country",
     "timezone": "Timezone",
-    "currency": "Default Currency",
-    "currencyDesc": "Prices will be calculated based on this default currency.",
+    "currency": "Currency Settings",
+    "currencyCode": "Currency Code (e.g., SAR)",
+    "currencySymbol": "Currency Symbol (e.g., ر.س)",
+    "currencyDesc": "This currency will be used for all financial calculations.",
     "countries": {
       "sa": "Saudi Arabia",
       "ae": "United Arab Emirates",
@@ -35,34 +45,85 @@
       "us": "United States"
     },
     "timezones": {
-      "ast": "Arabia Standard Time (AST)",
-      "gst": "Gulf Standard Time (GST)",
-      "utc": "UTC"
+      "ast": "Riyadh Time (GMT+3)",
+      "gst": "Dubai Time (GMT+4)",
+      "utc": "Universal Time (UTC)"
     },
     "currencies": {
-      "sar": "SAR - Saudi Riyal",
-      "aed": "AED - UAE Dirham",
-      "usd": "USD - US Dollar"
+      "sar": "Saudi Riyal",
+      "aed": "UAE Dirham",
+      "usd": "US Dollar"
     }
+  },
+  "seo": {
+    "title": "Search Engine Optimization",
+    "desc": "Optimize your store's visibility in search results.",
+    "metaTitle": "Meta Title",
+    "metaDescription": "Meta Description",
+    "analyticsTitle": "Google Analytics",
+    "analyticsDesc": "Track visitors and sales using your tracking ID."
+  },
+  "social": {
+    "title": "Social Media Links",
+    "desc": "Link your store to your social media accounts."
+  },
+  "contact": {
+    "title": "Official Contact Details",
+    "desc": "Information that will be displayed to customers on the contact page.",
+    "address": "Physical Address"
   },
   "payments": {
     "title": "Payment Gateways",
-    "desc": "Enable or disable checkout payment methods.",
-    "stripe": "Stripe",
-    "stripeDesc": "Accept credit cards securely.",
+    "desc": "Enable or disable payment methods available to customers.",
+    "stripe": "Credit Card (Stripe)",
+    "stripeDesc": "Accept Visa and MasterCard.",
     "paypal": "PayPal",
-    "paypalDesc": "Fast and secure global payments.",
+    "paypalDesc": "Payments via global PayPal account.",
+    "bankTransfer": "Bank Transfer",
+    "bankTransferDesc": "Display bank account details to the customer.",
     "cod": "Cash on Delivery",
-    "codDesc": "Customers pay upon receiving goods."
+    "codDesc": "Manually collect payment upon delivery."
+  },
+  "shipping": {
+    "title": "Shipping Settings",
+    "desc": "Configure shipping costs and thresholds.",
+    "threshold": "Free Shipping Threshold",
+    "providers": "Integrated Shipping Providers"
+  },
+  "taxes": {
+    "title": "Taxes & Fees",
+    "desc": "Manage VAT and fee calculations.",
+    "vatRate": "Tax Rate (%)",
+    "includeInPrice": "Prices Include Tax",
+    "includeInPriceDesc": "If enabled, entered product prices will be treated as tax-inclusive."
   },
   "notifications": {
-    "title": "Notifications",
-    "desc": "Manage how the system communicates with you.",
-    "emailNewOrder": "New Order Email",
-    "emailNewOrderDesc": "Receive an email notification immediately when a customer places an order.",
-    "smsLowStock": "Low Stock SMS",
-    "smsLowStockDesc": "Get text messages when product inventory drops below the threshold.",
-    "dailyReport": "Daily Summary Report",
-    "dailyReportDesc": "A daily email at 8:00 AM with yesterday's total sales and metrics."
+    "title": "Notification Settings",
+    "desc": "Email and SMS alerts.",
+    "comingSoon": "Coming Soon",
+    "comingSoonDesc": "Notification settings are being integrated with the global communication system."
+  },
+  "advanced": {
+    "title": "Advanced System Options",
+    "desc": "Performance settings, maintenance mode, and debugging.",
+    "maintenance": "Maintenance Mode",
+    "maintenanceDesc": "Temporarily stop the store for updates.",
+    "minOrderAmount": "Minimum Order Amount",
+    "debugMode": "Debug Mode",
+    "features": "Enabled Store Features",
+    "clearCache": "Clear Cache",
+    "clearCacheBtn": "Clear Now"
+  },
+  "success": {
+    "saveTitle": "Saved",
+    "saveMessage": "Store settings updated successfully.",
+    "cacheTitle": "Cache Cleared",
+    "cacheMessage": "System synchronized data updated successfully."
+  },
+  "errors": {
+    "fetchTitle": "Load Error",
+    "fetchMessage": "Failed to fetch settings from server.",
+    "saveTitle": "Save Error",
+    "cacheTitle": "Clear Error"
   }
 }

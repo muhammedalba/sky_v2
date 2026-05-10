@@ -76,6 +76,19 @@ async function getCategories(): Promise<CategoryItem[]> {
   }
 }
 
+async function getStoreSettings() {
+  try {
+    const response = await fetch(`${env.API_URL}${env.ENDPOINTS.SETTINGS.BASE}`, {
+      next: { revalidate: 60, tags: ['settings'] }
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Failed to fetch settings:', error);
+    return null;
+  }
+}
+
 // ─── Layout ───────────────────────────────────────────────────────────────────
 
 interface StoreLayoutProps {

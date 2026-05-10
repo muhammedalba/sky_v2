@@ -7,11 +7,12 @@ import SidebarHeader from './sidebar/SidebarHeader';
 import SidebarNav from './sidebar/SidebarNav';
 import SidebarFooter from './sidebar/SidebarFooter';
 import { env } from '@/lib/env';
+
 interface SidebarProps {
   mode?: 'desktop' | 'mobile';
   className?: string;
   onNavigate?: () => void;
-  locale?: string; // Optional if you want to pass it explicitly, but we can get it from params usually
+  locale?: string;
 }
 
 export default async function Sidebar({ mode = 'desktop', className, onNavigate, locale }: SidebarProps) {
@@ -42,7 +43,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
 
   return (
     <SidebarClientWrapper mode={mode} className={className}>
-      <SidebarHeader locale={l} onNavigate={onNavigate} Collapsed={true} />
+      <SidebarHeader onNavigate={onNavigate} Collapsed={true} />
       <SidebarNav navigation={navigation} onNavigate={onNavigate} /> 
       <SidebarFooter/>
     </SidebarClientWrapper>

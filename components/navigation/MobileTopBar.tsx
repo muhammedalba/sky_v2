@@ -9,23 +9,23 @@ import { Icons } from '@/shared/ui/Icons';
 import SearchBar from './SearchBar';
 import Link from 'next/link';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-
+import { useSettings } from '@/app/providers/SettingsProvider';
+import { useLocale } from 'next-intl';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface MobileTopBarProps {
   categories: CategoryItem[];
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 function MobileTopBar({ categories }: MobileTopBarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const settings = useSettings();
+  const locale = useLocale();
 
+  const siteName = settings.siteName?.[locale as 'ar' | 'en'] || 'Sky Galaxy';
   useEffect(() => {
     const handleScroll = () => {
       // ستقوم React بتجاهل التحديث (Bailout) تلقائياً إذا لم تتغير القيمة الفعلية
@@ -76,13 +76,13 @@ function MobileTopBar({ categories }: MobileTopBarProps) {
               className="flex items-center gap-2 group active:scale-95 transition-transform"
             >
               <ImageWithFallback
-                src="/assets/images/auth-logo.png"
-                alt={`${APP_NAME} Logo`}
+                src={settings.logo || "/assets/images/auth-logo.png"}
+                alt={`${siteName} Logo`}
                 width={36}
                 height={36}
-                className="object-contain"
-              />
-            </Link>
+              className="object-contain"
+            />
+          </Link>
           </div>
 
         </div>
@@ -99,7 +99,7 @@ function MobileTopBar({ categories }: MobileTopBarProps) {
       </header>
 
       {/* Side Drawer */}
-      <SideDrawer
+      <SideDrawer 
         isOpen={drawerOpen}
         onClose={closeDrawer}
         categories={categories}
