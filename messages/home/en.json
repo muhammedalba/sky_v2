@@ -22,6 +22,7 @@
       "delivery": "Fast Project Delivery",
       "warranty": "Quality Assurance"
     },
+    "cta_download_catalog": "Company Profile (PDF)",
     "featured_card": {
       "badge": "Special Offer",
       "title": "4mm Bitumen Insulation Rolls",
@@ -98,6 +99,23 @@
     "badge": "Our Portfolio",
     "title": "Successfully Supplied Projects",
     "view_all": "View All Projects"
+  },
+  "about_section": {
+    "badge": "About Us",
+    "title": "Sky Galaxy Trading Company",
+    "description": "Sky Galaxy Trading Company was established as one of the leading companies in the field of trade, with the aim of providing comprehensive and effective solutions to our customers in various sectors. We are distinguished by our extensive experience, our professional team, and our firm commitment to quality and innovation in all our services and products.",
+    "vision": {
+      "title": "Our Vision",
+      "desc": "To be the leading and most widespread company in the Saudi market, through establishing an integrated network of branches covering all parts of the Kingdom, in parallel with expanding our effective digital presence."
+    },
+    "message": {
+      "title": "Our Mission",
+      "desc": "Achieving strategic goals based on completing our work with the highest standards of efficiency and quality, and providing integrated insulation solutions that meet the needs of our customers in the industrial and residential sectors."
+    },
+    "values": {
+      "title": "Our Values",
+      "desc": "Quality first, continuous innovation, and the customer is our ultimate goal. We take pride in our claim-free record thanks to our firm commitment to these principles."
+    }
   },
   "meta": {
     "title": "Sky Galaxy - Best Insulation & Construction Materials in KSA",

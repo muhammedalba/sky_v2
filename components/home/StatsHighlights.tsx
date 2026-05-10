@@ -1,40 +1,34 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Icons } from '@/shared/ui/Icons';
 import { ScrollReveal } from '@/shared/ui/ScrollReveal';
 import { cn } from '@/lib/utils';
 import Badge from '@/shared/ui/Badge';
 
 export default function StoreFeatures() {
-   const locale = useLocale();
+   const t = useTranslations('home');
 
    const features = [
       {
          value: '+10',
-         title: locale === 'ar' ? 'فروعنا المتعددة' : 'Multiple Branches',
-         description: locale === 'ar'
-            ? 'أكثر من 10 فروع منتشرة لضمان سرعة وصول طلباتك وتوفير الدعم لك أينما كنت.'
-            : 'Over 10 branches nationwide ensuring fast delivery and support wherever you are.',
-         icon: Icons.MapPin,
+         title: t('about_section.vision.title'),
+         description: t('about_section.vision.desc'),
+         icon: Icons.Eye,
          iconStyle: " text-destructive",
       },
       {
          value: '+10',
-         title: locale === 'ar' ? 'سنوات من الثقة' : 'Years of Trust',
-         description: locale === 'ar'
-            ? 'خبرة تتجاوز العقد في تقديم أفضل المنتجات وأجودها لتلبية تطلعات عملائنا.'
-            : 'Over a decade of experience providing top-quality products to meet your expectations.',
-         icon: Icons.Shield,
+         title: t('about_section.message.title'),
+         description: t('about_section.message.desc'),
+         icon: Icons.MessageSquareQuote,
          iconStyle: " text-success",
       },
       {
          value: '24/7',
-         title: locale === 'ar' ? 'دعم فني متواصل' : 'Customer Support',
-         description: locale === 'ar'
-            ? 'فريق خدمة العملاء متواجد على مدار الساعة للرد على استفساراتكم وتلبية احتياجاتكم.'
-            : 'Our customer service team is available around the clock to answer your inquiries.',
-         icon: Icons.Phone,
+         title: t('about_section.values.title'),
+         description: t('about_section.values.desc'),
+         icon: Icons.Target,
          iconStyle: " text-warning",
       },
    ];
@@ -44,12 +38,13 @@ export default function StoreFeatures() {
          {/* تأثير إضاءة خفيف في الخلفية للمسة احترافية */}
          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
          {/* why choose us */}
-         <div className="relative pt-12 z-10 flex flex-col items-center justify-center">
+         <div className="relative pt-12 z-10 flex flex-col items-center mb-10 justify-center">
             <Badge variant={"default"} className="flex items-center justify-center gap-2  ">
-               <Icons.Star className="w-4 h-4 text-warning" />
-               لماذا تثق بنا
+               <Icons.AiSpark className="w-4 h-4 text-warning" />
+               {t('about_section.badge')}
             </Badge>
-            <h1 className="text-3xl font-black text-center mb-10 title-gradient  p-4">لماذا تختار Sky Galaxy</h1>
+            <h1 className="text-3xl font-black text-center  title-gradient  p-4">{t('about_section.title')}</h1>
+            <p className="text-center max-w-[70%] text-muted-foreground ">{t('about_section.description')}</p>
          </div>
          <div className=" mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">

@@ -111,7 +111,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             className="flex items-center  shrink-0 group"
           >
             <ImageWithFallback
-              src="/images/auth-logo.png"
+              src="/assets/images/auth-logo.png"
               alt={`${APP_NAME} Logo`}
               width={40}
               height={40}

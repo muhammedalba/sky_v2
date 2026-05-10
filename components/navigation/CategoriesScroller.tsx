@@ -55,7 +55,7 @@ const ScrollArrow = memo(function ScrollArrow({
       className={cn(
         'absolute top-1/2 -translate-y-1/2 z-10',
         'w-8 h-8 rounded-full',
-        'bg-background/90 backdrop-blur-sm border border-border/60',
+        'bg-background/80 backdrop-blur-sm border border-border/60',
         'shadow-md hover:shadow-lg',
         'flex items-center justify-center',
         'text-foreground/70 hover:text-foreground',

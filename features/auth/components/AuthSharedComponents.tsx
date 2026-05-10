@@ -10,7 +10,7 @@ export function AuthMobileLogo({ subtitle, className = "" }: { subtitle: string,
     <div className={` text-center mb-1 flex flex-col items-center py-4 ${className}`}>
       <div className="rounded-2xl">
         <Image
-          src="/images/auth-logo.png"
+          src="/assets/images/auth-logo.png"
           alt={`${appName} Logo`}
           width={200}
           height={150}

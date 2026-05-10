@@ -76,7 +76,7 @@ function MobileTopBar({ categories }: MobileTopBarProps) {
               className="flex items-center gap-2 group active:scale-95 transition-transform"
             >
               <ImageWithFallback
-                src="/images/auth-logo.png"
+                src="/assets/images/auth-logo.png"
                 alt={`${APP_NAME} Logo`}
                 width={36}
                 height={36}

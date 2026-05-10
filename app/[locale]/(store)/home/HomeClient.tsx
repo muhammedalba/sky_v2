@@ -167,10 +167,10 @@ export default function HomeClient({ locale }: { locale: string }) {
          `}</style>
 
          {/* 1. HERO SECTION (Conversion Optimized) */}
-         <section className=" relative min-h-[100vh] flex items-center  pb-20  bg-background text-foreground">
+         <section className=" relative `min-h-screenflex items-center  pb-20  bg-background text-foreground">
             {/* Video Background */}
             <video autoPlay loop muted playsInline className="absolute inset-0 z-0 w-full h-full object-cover  ">
-               <source src="/video/banner-video.mp4" type="video/mp4" />
+               <source src="/assets/video/banner-video.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 z-1 bg-linear-to-b from-background/70 via-primary/10 to-background/60" />
 
@@ -191,28 +191,29 @@ export default function HomeClient({ locale }: { locale: string }) {
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-lg">
                            {t('brand.name')}
                            <br />
-                           <span className="title-gradient mt-2 block pb-2">
+                           <span className="title-gradient max-w-2xl m-auto mt-2 block pb-2">
                               {t('brand.tagline')}
                            </span>
                         </h1>
-                        <p className="max-w-xl text-lg  md:text-xl text-foreground/50 font-medium leading-relaxed mt-6 mx-auto ">
+                        <p className="max-w-xl text-lg  md:text-xl text-foreground/50 font-medium leading-relaxed mt-2 mx-auto ">
                            {t('hero.description')}
                         </p>
                      </div>
 
-                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4  animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
                         <Link href="/products" className="w-full sm:w-auto">
-                           <Button className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 border-none font-black text-lg gap-3 transition-transform hover:scale-105">
+                           <Button className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-primary/80 hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 border-none font-black text-lg gap-3 transition-transform hover:scale-105">
                               {t('hero.cta_shop')}
                               <Icons.ShoppingCart className="w-6 h-6 rtl:ml-2" />
                            </Button>
                         </Link>
-                        <Link href="/products" className="w-full sm:w-auto">
+                        <Link href="/assets/sky-galaxy-company-profile.pdf" target="_blank" className="w-full sm:w-auto">
                            <Button variant="outline"
                               className="w-full sm:w-auto h-16 px-10  text-white transition-all hover:scale-105 hover:text-white hover:bg-white/10 font-black text-lg  gap-2  duration-500"
                            >
-                              {t('hero.cta_categories')}
-                              <Icons.Package className="w-5 h-5" />
+                              {t('hero.cta_download_catalog')}
+
+                              <Icons.Download className="w-5 h-5" />
                            </Button>
                         </Link>
                      </div>
@@ -233,14 +234,15 @@ export default function HomeClient({ locale }: { locale: string }) {
                   </div>
                </div>
             </div>
+
          </section>
 
          {/* Trusted by 
          <TrustedBy />*/}
 
          {/* 2.5 STATS HIGHLIGHTS */}
-         <StatsHighlights />
 
+         <StatsHighlights />
 
          {/* 3. SHOP BY CATEGORY (Bento Grid) */}
          <section className="py-24   bg-secondary/30 relative">

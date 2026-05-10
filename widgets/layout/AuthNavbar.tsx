@@ -86,7 +86,7 @@ export default function AuthNavbar() {
                         {/* Logo */}
                         <Link href="/home" className="flex items-center gap-3 group relative z-110">
                             <Image
-                                src="/images/auth-logo.png"
+                                src="/assets/images/auth-logo.png"
                                 alt={`${appName} Logo`}
                                 width={50}
                                 height={50}

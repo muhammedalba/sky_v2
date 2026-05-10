@@ -20,7 +20,7 @@ export default function SidebarHeader({ locale, Collapsed = false, onNavigate, }
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white font-black shadow-xl shadow-primary/20 group-hover:scale-110 transition-transform duration-500">
           <ImageWithFallback
-            src="/images/auth-logo.png"
+            src="/assets/images/auth-logo.png"
             alt={`${appName} Logo`}
             width={40}
             height={40}
