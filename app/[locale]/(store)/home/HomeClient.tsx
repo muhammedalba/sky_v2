@@ -2,6 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import TrustedBy from '@/components/home/TrustedBy';
+import StatsHighlights from '@/components/home/StatsHighlights';
 import { Button } from '@/shared/ui/Button';
 import { Icons } from '@/shared/ui/Icons';
 import { Card } from '@/shared/ui/Card';
@@ -11,13 +13,15 @@ import { useCategories } from '@/features/categories/hooks/useCategories';
 import { Product, Category } from '@/types';
 
 import { getLocalizedValue, formatCurrency } from '@/lib/utils';
+import Badge from '@/shared/ui/Badge';
+
 
 // --- Premium Industrial Helper Components ---
 
 /**
  * ScrollReveal for high-performance viewport animations
  */
-const ScrollReveal = ({ children, className = '', delay = 0, direction = 'up' }: { children: React.ReactNode, className?: string, delay?: number, direction?: 'up'|'down'|'left'|'right'|'none' }) => {
+const ScrollReveal = ({ children, className = '', delay = 0, direction = 'up' }: { children: React.ReactNode, className?: string, delay?: number, direction?: 'up' | 'down' | 'left' | 'right' | 'none' }) => {
    const [isVisible, setIsVisible] = useState(false);
    const ref = useRef<HTMLDivElement>(null);
 
@@ -28,7 +32,7 @@ const ScrollReveal = ({ children, className = '', delay = 0, direction = 'up' }:
             observer.unobserve(entry.target);
          }
       }, { threshold: 0.1, rootMargin: '50px' });
-      
+
       if (ref.current) observer.observe(ref.current);
       return () => observer.disconnect();
    }, []);
@@ -42,8 +46,8 @@ const ScrollReveal = ({ children, className = '', delay = 0, direction = 'up' }:
    };
 
    return (
-      <div 
-         ref={ref} 
+      <div
+         ref={ref}
          className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0 translate-x-0' : `opacity-0 ${getTranslate()}`} ${className}`}
          style={{ transitionDelay: `${delay}ms` }}
       >
@@ -67,14 +71,14 @@ const GlowCard = ({ children, className = '' }: { children: React.ReactNode, cla
    };
 
    return (
-      <div 
+      <div
          ref={ref}
          onMouseMove={handleMouseMove}
          onMouseEnter={() => setOpacity(1)}
          onMouseLeave={() => setOpacity(0)}
          className={`relative overflow-hidden ${className}`}
       >
-         <div 
+         <div
             className="pointer-events-none absolute -inset-px z-10 transition-opacity duration-300"
             style={{
                opacity,
@@ -129,9 +133,9 @@ const CountUp = ({ end, duration = 2000 }: { end: number, duration?: number }) =
  */
 const SectionDivider = ({ inverted = false }: { inverted?: boolean }) => (
    <div className="relative h-24 w-full bg-background overflow-hidden -mt-px">
-      <div 
-         className="absolute inset-0 bg-secondary" 
-         style={{ clipPath: inverted ? 'polygon(0 0, 100% 100%, 100% 0, 0 0)' : 'polygon(0 0, 100% 0, 0 100%, 0 0)' }} 
+      <div
+         className="absolute inset-0 bg-secondary"
+         style={{ clipPath: inverted ? 'polygon(0 0, 100% 100%, 100% 0, 0 0)' : 'polygon(0 0, 100% 0, 0 100%, 0 0)' }}
       />
    </div>
 );
@@ -147,7 +151,7 @@ export default function HomeClient({ locale }: { locale: string }) {
    const products = productsData?.data || [];
 
    return (
-      <div className="flex flex-col  selection:bg-primary/30 font-sans relative bg-background text-foreground overflow-x-hidden">
+      <div className="flex flex-col   relative bg-background text-foreground overflow-x-hidden">
          <style>{`
             @keyframes marquee {
                0% { transform: translateX(0%); }
@@ -161,41 +165,42 @@ export default function HomeClient({ locale }: { locale: string }) {
             .hide-scrollbar::-webkit-scrollbar { display: none; }
             .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
          `}</style>
-         
+
          {/* 1. HERO SECTION (Conversion Optimized) */}
-         <section className="dark relative min-h-[90vh] flex items-center  pb-20 overflow-hidden bg-background text-foreground">
+         <section className=" relative min-h-[100vh] flex items-center  pb-20  bg-background text-foreground">
             {/* Video Background */}
             <video autoPlay loop muted playsInline className="absolute inset-0 z-0 w-full h-full object-cover  ">
                <source src="/video/banner-video.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 z-1 bg-linear-to-b from-background/40 via-background/60 to-background" />
-            
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-48">
-               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                  
+            <div className="absolute inset-0 z-1 bg-linear-to-b from-background/70 via-primary/10 to-background/60" />
+
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-48 lg:mt-36">
+               <div className="grid grid-cols-1 gap-12 items-center">
+
                   {/* Left: Branding & CTAs */}
-                  <div className="lg:col-span-7 space-y-8 text-center lg:text-start">
-                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-700 shadow-[0_0_15px_rgba(255,255,255,0.05)] mx-auto lg:mx-0">
+                  <div className="space-y-8 text-center ">
+                     <Badge variant="outline" className="tracking-widest  inline-flex items-center gap-2">
                         <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/75"></span>
+                           <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
                         </span>
                         <span className="text-white/80 text-xs font-black tracking-widest uppercase">{t('hero.badge_text')}</span>
-                     </div>
-                     
+                     </Badge>
+
                      <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-foreground/50 leading-[1.1] tracking-tighter drop-shadow-lg">
-                           {t('brand.name')}<br />
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-lg">
+                           {t('brand.name')}
+                           <br />
                            <span className="title-gradient mt-2 block pb-2">
                               {t('brand.tagline')}
                            </span>
                         </h1>
-                        <p className="max-w-xl text-lg md:text-xl text-white/80 font-medium leading-relaxed mt-6 mx-auto lg:mx-0">
+                        <p className="max-w-xl text-lg  md:text-xl text-foreground/50 font-medium leading-relaxed mt-6 mx-auto ">
                            {t('hero.description')}
                         </p>
                      </div>
 
-                     <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
                         <Link href="/products" className="w-full sm:w-auto">
                            <Button className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 border-none font-black text-lg gap-3 transition-transform hover:scale-105">
                               {t('hero.cta_shop')}
@@ -203,24 +208,26 @@ export default function HomeClient({ locale }: { locale: string }) {
                            </Button>
                         </Link>
                         <Link href="/products" className="w-full sm:w-auto">
-                           <Button variant="outline" className="w-full sm:w-auto h-16 px-10 rounded-2xl border-white/20 bg-white/5 text-white hover:bg-white/10 font-black text-lg backdrop-blur-sm gap-2 transition-colors">
+                           <Button variant="outline"
+                              className="w-full sm:w-auto h-16 px-10  text-white transition-all hover:scale-105 hover:text-white hover:bg-white/10 font-black text-lg  gap-2  duration-500"
+                           >
                               {t('hero.cta_categories')}
                               <Icons.Package className="w-5 h-5" />
                            </Button>
                         </Link>
                      </div>
-                     
+
                      {/* Trust Signals */}
-                     <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6 pt-8 animate-in fade-in duration-1000 delay-500 border-t border-white/10 mt-8">
+                     <div className="flex flex-wrap justify-center  items-center gap-6  mt-8">
                         {[
                            { text: t('hero.trust_badges.certified'), icon: Icons.Check },
                            { text: t('hero.trust_badges.delivery'), icon: Icons.Box },
                            { text: t('hero.trust_badges.warranty'), icon: Icons.Shield },
                         ].map((badge, idx) => (
-                           <div key={idx} className="flex items-center gap-2 text-white/70">
+                           <Badge key={idx} variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full  border backdrop-blur-md ">
                               <badge.icon className="w-5 h-5 text-warning" />
                               <span className="text-sm font-black tracking-wide">{badge.text}</span>
-                           </div>
+                           </Badge>
                         ))}
                      </div>
                   </div>
@@ -228,30 +235,15 @@ export default function HomeClient({ locale }: { locale: string }) {
             </div>
          </section>
 
-         {/* 2. TRUSTED BY SECTION */}
-         <section className="py-10 bg-background border-b border-border/50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-               <div className="flex flex-col md:flex-row items-center gap-8">
-                  <p className="text-muted-foreground text-sm font-black uppercase tracking-[0.2em] shrink-0 text-center md:text-start">{t('trust.label')}</p>
-                  <div className="w-full relative flex overflow-hidden mask-image-fade">
-                     <div className="flex whitespace-nowrap animate-marquee items-center gap-16 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                        {[1, 2].map((group) => (
-                           <div key={group} className="flex gap-16 shrink-0 items-center">
-                              <span className="text-3xl font-black text-foreground opacity-60 hover:opacity-100 transition-opacity">ARAMCO</span>
-                              <span className="text-3xl font-black text-foreground opacity-60 hover:opacity-100 transition-opacity">SABIC</span>
-                              <span className="text-3xl font-black text-foreground opacity-60 hover:opacity-100 transition-opacity">NEOM</span>
-                              <span className="text-3xl font-black text-foreground opacity-60 hover:opacity-100 transition-opacity">ROSHN</span>
-                              <span className="text-3xl font-black text-foreground opacity-60 hover:opacity-100 transition-opacity">RED SEA</span>
-                           </div>
-                        ))}
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </section>
+         {/* Trusted by 
+         <TrustedBy />*/}
+
+         {/* 2.5 STATS HIGHLIGHTS */}
+         <StatsHighlights />
+
 
          {/* 3. SHOP BY CATEGORY (Bento Grid) */}
-         <section className="py-24 bg-secondary/30 relative">
+         <section className="py-24   bg-secondary/30 relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                <ScrollReveal>
                   <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-16">
@@ -361,7 +353,7 @@ export default function HomeClient({ locale }: { locale: string }) {
                                  </Link>
                               </div>
                            </div>
-                           
+
                            <div className="p-6 flex flex-col grow">
                               <div className="text-xs font-black text-muted-foreground mb-2">
                                  {typeof item.category === 'object' && item.category && 'name' in item.category ? getLocalizedValue((item.category as any).name, locale) : ''}
@@ -369,11 +361,11 @@ export default function HomeClient({ locale }: { locale: string }) {
                               <h3 className="text-lg font-black text-foreground mb-4 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                                  {getLocalizedValue(item.title, locale)}
                               </h3>
-                              
+
                               <div className="mt-auto flex items-end justify-between pt-4 border-t border-border/50">
                                  <div className="flex flex-col gap-1">
                                     <div className="flex text-warning">
-                                       {[1,2,3,4,5].map(s => <Icons.Star key={s} className="w-3 h-3 fill-current" />)}
+                                       {[1, 2, 3, 4, 5].map(s => <Icons.Star key={s} className="w-3 h-3 fill-current" />)}
                                     </div>
                                     <span className="text-xs text-muted-foreground font-medium">{t('best_sellers.reviews_label')}</span>
                                  </div>
@@ -385,7 +377,7 @@ export default function HomeClient({ locale }: { locale: string }) {
                         </Card>
                      </ScrollReveal>
                   )) : (
-                     [1,2,3,4].map((i: number) => (
+                     [1, 2, 3, 4].map((i: number) => (
                         <div key={i} className="aspect-square bg-secondary animate-pulse rounded-3xl" />
                      ))
                   )}
@@ -401,7 +393,7 @@ export default function HomeClient({ locale }: { locale: string }) {
                      <div className="absolute inset-0 bg-linear-to-r from-primary/20 to-transparent" />
                      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
                      <Icons.Box className="absolute -left-20 -top-20 w-[400px] h-[400px] text-background/5 -rotate-12 pointer-events-none" />
-                     
+
                      <div className="relative p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-start">
                         <div className="space-y-6 max-w-2xl">
                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/10 border border-background/20 font-black text-sm backdrop-blur-md mx-auto md:mx-0">
@@ -516,7 +508,7 @@ export default function HomeClient({ locale }: { locale: string }) {
                         <Card className="p-8 bg-secondary/50 rounded-3xl border border-border/50 shadow-sm relative h-full flex flex-col hover:shadow-xl transition-shadow">
                            <Icons.Activity className="absolute top-6 left-6 w-10 h-10 text-muted-foreground/10 rotate-180" />
                            <div className="flex gap-1 text-warning mb-6">
-                              {[1,2,3,4,5].map(s => <Icons.Star key={s} className="w-4 h-4 fill-current" />)}
+                              {[1, 2, 3, 4, 5].map(s => <Icons.Star key={s} className="w-4 h-4 fill-current" />)}
                            </div>
                            <p className="text-foreground/80 font-medium leading-relaxed mb-8 italic grow">
                               "{testimonial.text}"
@@ -580,5 +572,3 @@ export default function HomeClient({ locale }: { locale: string }) {
       </div>
    );
 }
-
-

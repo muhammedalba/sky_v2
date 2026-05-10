@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/api/query-keys';
-import { setUser, removeAuthToken, setTokens, getRefreshToken } from '@/lib/auth';
+import { setUser, removeAuthToken, setTokens, getRefreshToken, getAuthToken } from '@/lib/auth';
 import { User, ApiResponse, ApiError } from '@/types';
 import { LoginResponseData } from '@/features/auth/types';
 import { authApi } from '@/features/auth/api';
@@ -42,12 +42,15 @@ export function useLogin() {
 }
 
 export function useMe() {
+  const token = typeof window !== 'undefined' ? getAuthToken() : null;
+
   return useQuery({
     queryKey: queryKeys.auth.me(),
     queryFn: async () => {
       const response = (await authApi.me()) as unknown as ApiResponse<User>;
       return response.data;
     },
+    enabled: !!token,
     retry: false,
   });
 }

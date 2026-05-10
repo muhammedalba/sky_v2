@@ -11,6 +11,7 @@ import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
 import { Icons } from '@/shared/ui/Icons';
 import { isAdmin } from '@/lib/auth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -25,14 +26,11 @@ const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
 
 // ─── Cart Icon with Badge ─────────────────────────────────────────────────────
 
-const CartButton = memo(({ is_Admin }: { is_Admin: boolean }) => {
-  const cartItemCount = useCartStore((state) =>
-    state.items.reduce((total, item) => total + item.quantity, 0)
-  );
+const CartButton = memo(({ is_Admin, cartItemCount }: { is_Admin: boolean, cartItemCount: number }) => {
   const t = useTranslations('store.nav');
 
   const label = is_Admin
-    ? (t.has('dashboard') ? t('dashboard') : 'Dashboard')
+    ? (t.has('admin') ? t('admin') : 'Admin Panel')
     : (t.has('cart') ? t('cart') : 'Cart');
 
   return (
@@ -70,7 +68,11 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   const t = useTranslations('store.nav');
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const is_Admin = useMemo(() => isAdmin(), []);
+  const { user } = useAuth();
+  const is_Admin = user?.role === 'admin' || user?.role === 'manager';
+  const cartItemCount = useCartStore((state) =>
+    state.items.reduce((total, item) => total + item.quantity, 0)
+  );
   const locale = useLocale();
 
   // تحسين مراقب التمرير لمنع التكرار
@@ -130,7 +132,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             <TopbarActions />
 
             {/* Cart */}
-            <CartButton is_Admin={is_Admin} />
+            <CartButton is_Admin={is_Admin} cartItemCount={cartItemCount} />
 
             {/* User */}
             <UserAccountMenu iconOnly={true} dir="top" className="m-0" locale={locale} />

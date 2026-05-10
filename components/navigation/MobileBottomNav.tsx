@@ -7,7 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link, usePathname } from '@/navigation';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
-import { isAdmin, isAuthenticated } from '@/lib/auth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 // ─────────────────────────────────────────────────────────
 // Types
@@ -147,8 +147,8 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations('store.nav');
-  const is_Admin = useMemo(() => isAdmin(), []);
-  const is_auth = useMemo(() => isAuthenticated(), []);
+  const { user, isAuthenticated: is_auth } = useAuth();
+  const is_Admin = user?.role === 'admin' || user?.role === 'manager';
 
   const isRtl = locale === 'ar';
 
@@ -159,9 +159,9 @@ export default function MobileBottomNav() {
       { key: 'store', href: '/products', icon: Icons.Store },
       { key: 'quote', href: '/request-quote', icon: Icons.MessageSquareQuote, isCTA: true },
       { key: 'dashboard-or-cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? Icons.Dashboard : Icons.ShoppingCart },
-      { key: 'account-or-login', href: is_auth ? '/account' : '/auth/login', icon: Icons.User },
+      { key: 'account-or-login', href: is_auth ? '/account' : '/login', icon: Icons.User },
     ],
-    []
+    [is_Admin, is_auth]
   );
 
   const labels = useMemo(
@@ -169,10 +169,10 @@ export default function MobileBottomNav() {
       home: t('home'),
       store: t('products'),
       quote: 'عرض سعر',
-      cart:is_Admin ? t('dashboard') : t('cart'), 
-      account:is_auth ? t('account') : t('login'),
+      cart: is_Admin ? t('admin') : t('cart'),
+      account: is_auth ? t('account') : t('login'),
     }),
-    [t]
+    [t, is_Admin, is_auth]
   );
 
   // تحديث ذكي لتحديد الصفحة النشطة وتجاوز مشكلة الرئيسية

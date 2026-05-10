@@ -3,14 +3,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/hooks/useToast';
 import { cartApi } from '@/features/cart/api';
+import { getAuthToken } from '@/lib/auth';
 
 export function useCart() {
+  const token = typeof window !== 'undefined' ? getAuthToken() : null;
+
   return useQuery({
     queryKey: ['cart'],
     queryFn: async () => {
       const response = await cartApi.getCart();
       return response.data?.data ?? null;
     },
+    enabled: !!token,
     // Don't refetch too aggressively
     staleTime: 1000 * 60 * 5, 
   });
