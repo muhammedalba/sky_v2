@@ -166,7 +166,7 @@ export default function SuppliersPage() {
       render: (supplier: Supplier) => (
         <Switch
           checked={supplier.isActive}
-          onChange={() => handleToggleStatus(supplier)}
+          onCheckedChange={() => handleToggleStatus(supplier)}
           disabled={updateSupplierPending || isLoading || deleteSupplierPending}
         />
       )

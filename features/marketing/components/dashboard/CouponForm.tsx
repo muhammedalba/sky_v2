@@ -351,7 +351,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
           <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/40">
             <Switch
               checked={isActive}
-              onChange={(e) => form.setValue('active', e.target.checked, { shouldDirty: true })}
+              onCheckedChange={(checked) => form.setValue('active', checked, { shouldDirty: true })}
             />
             <div className="space-y-1">
               <p className="text-sm font-semibold text-foreground">

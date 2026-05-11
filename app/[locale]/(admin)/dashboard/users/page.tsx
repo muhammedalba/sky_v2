@@ -230,7 +230,7 @@ export default function UsersPage() {
         <div className="flex items-center gap-2">
           <Switch
             checked={user.isActive !== false}
-            onChange={(e) => handleStatusChange(user, e.target.checked)}
+            onCheckedChange={(checked) => handleStatusChange(user, checked)}
             disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
           />
           <span className={cn(

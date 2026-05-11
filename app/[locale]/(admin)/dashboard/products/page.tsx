@@ -164,14 +164,14 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         <div className="flex flex-col gap-2">
           <Switch
             checked={product.isFeatured}
-            onChange={(e) => updateMutation({ id: product._id, data: { isFeatured: e.target.checked } })}
+            onCheckedChange={(checked) => updateMutation({ id: product._id, data: { isFeatured: checked } })}
             disabled={updateProductPending}
             label={getTrans({ ar: "مميز", en: "Featured" })}
             className="scale-75 origin-left rtl:origin-right"
           />
           <Switch
             checked={product.isActive}
-            onChange={(e) => updateMutation({ id: product._id, data: { isActive: e.target.checked } })}
+            onCheckedChange={(checked) => updateMutation({ id: product._id, data: { isActive: checked } })}
             disabled={updateProductPending}
             label={getTrans({ ar: "نشط", en: "Active" })}
             className="scale-75 origin-left rtl:origin-right"

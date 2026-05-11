@@ -162,7 +162,7 @@ export default function PromoBannersPage() {
         <div className="flex items-center gap-3">
           <Switch
             checked={item.isActive}
-            onChange={(e) => handleStatusChange(item, e.target.checked)}
+            onCheckedChange={(checked) => handleStatusChange(item, checked)}
           />
           <span className={cn(
             "text-[10px] font-black uppercase tracking-widest transition-colors",

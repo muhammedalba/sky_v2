@@ -125,7 +125,7 @@ export default function CarouselPage() {
         <div className="flex items-center gap-2">
           <Switch
             checked={item.isActive !== false}
-            onChange={(e) => handleStatusChange(item, e.target.checked)}
+            onCheckedChange={(checked) => handleStatusChange(item, checked)}
           />
           <Badge 
             variant={item.isActive !== false ? 'secondary' : 'destructive'} 

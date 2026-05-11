@@ -180,7 +180,7 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
             <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/40">
               <Switch
                 checked={isActive}
-                onChange={(e) => setValue('isActive', e.target.checked)}
+                onCheckedChange={(checked) => setValue('isActive', checked)}
               />
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-foreground">

@@ -116,7 +116,7 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
             <Switch
               id="isActive"
               checked={field.value}
-              onChange={(e) => field.onChange(e.target.checked)}
+              onCheckedChange={(checked) => field.onChange(checked)}
             />
           )}
         />

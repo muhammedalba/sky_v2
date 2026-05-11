@@ -173,7 +173,7 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
         <div className="flex items-center gap-2">
           <Switch
             checked={coupon.active}
-            onChange={(e) => handleStatusChange(coupon, e.target.checked)}
+            onCheckedChange={(checked) => handleStatusChange(coupon, checked)}
           />
           <span className={cn(
             "text-xs font-bold uppercase tracking-wider",
