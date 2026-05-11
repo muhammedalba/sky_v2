@@ -21,6 +21,7 @@ export default function SettingsSidebar({ activeSection, onSectionChange }: Sett
     { id: 'contact', label: t('sidebar.contact'), icon: Icons.MessageCircle },
     { id: 'payments', label: t('sidebar.payments'), icon: Icons.Orders },
     { id: 'shipping', label: t('sidebar.shipping'), icon: Icons.Truck },
+    { id: 'features', label: t('sidebar.features'), icon: Icons.Layout },
     { id: 'advanced', label: t('sidebar.advanced'), icon: Icons.Settings },
   ], [t]);
 

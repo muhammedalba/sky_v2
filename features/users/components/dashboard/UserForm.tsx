@@ -255,7 +255,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 <Switch
                   checked={isActive}
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  onChange={(e) => setValue('isActive', e.target.checked, { shouldDirty: true })}
+                  onCheckedChange={(checked) => setValue('isActive', checked, { shouldDirty: true })}
                 />
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-foreground">

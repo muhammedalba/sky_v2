@@ -21,6 +21,7 @@ const ContactSection = dynamic(() => import('./sections/ContactSection'), { load
 const PaymentsSection = dynamic(() => import('./sections/PaymentsSection'), { loading: () => <SectionSkeleton /> });
 const ShippingSection = dynamic(() => import('./sections/ShippingSection'), { loading: () => <SectionSkeleton /> });
 const AdvancedSection = dynamic(() => import('./sections/AdvancedSection'), { loading: () => <SectionSkeleton /> });
+const FeaturesSection = dynamic(() => import('./sections/FeaturesSection'), { loading: () => <SectionSkeleton /> });
 
 function SectionSkeleton() {
   return <div className="h-96 w-full bg-muted/20 animate-pulse rounded-3xl border border-border/50" />;
@@ -173,6 +174,7 @@ export default function SettingsForm() {
       case 'contact': return ContactSection;
       case 'payments': return PaymentsSection;
       case 'shipping': return ShippingSection;
+      case 'features': return FeaturesSection;
       case 'advanced': return AdvancedSection;
       default: return GeneralSection;
     }

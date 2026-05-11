@@ -12,6 +12,7 @@
     "contact": "Contact Details",
     "payments": "Payments",
     "shipping": "Shipping",
+    "features": "Additional Features",
     "advanced": "Advanced"
   },
   "messages": {
@@ -63,6 +64,18 @@
     "vatRate": "VAT Rate (%)",
     "taxesIncluded": "Prices Include Tax",
     "taxesIncludedDesc": "Treat prices as tax-inclusive."
+  },
+  "features": {
+    "title": "Store Features",
+    "desc": "Enable or disable core features and functionalities.",
+    "reviews": "Product Reviews",
+    "reviewsDesc": "Allow customers to write reviews on products.",
+    "coupons": "Coupon System",
+    "couponsDesc": "Enable the use of discount codes and coupons.",
+    "guestCheckout": "Guest Checkout",
+    "guestCheckoutDesc": "Allow customers to checkout without an account.",
+    "wishlist": "Wishlist",
+    "wishlistDesc": "Allow customers to save products to their wishlist."
   },
   "advanced": {
     "title": "Advanced Options",

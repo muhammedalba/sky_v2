@@ -1,11 +1,19 @@
 {
   "title": "My Account",
   "welcome": "Welcome back, {name}",
+  "lastLogin": "Last login:",
+  "personalInfo": "Personal Information",
+  "personalInfoDescription": "Update your basic personal details",
+  "changePassword": "Change Password",
+  "changePasswordDescription": "Update your password to secure your account",
+  "passwordSecurityNote": "Make sure to use a strong password containing letters, numbers, and symbols for maximum security.",
   "tabs": {
     "profile": "Profile",
     "orders": "My Orders",
     "addresses": "Addresses",
-    "settings": "Settings"
+    "settings": "Settings",
+    "general": "General",
+    "security": "Security"
   },
   "sections": {
     "profile_summary": "Profile Summary",
@@ -22,5 +30,28 @@
     "view_all_orders": "View All Orders",
     "add_address": "Add New Address",
     "logout": "Logout"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "avatar": {
+    "title": "Profile Picture",
+    "description": "Change your profile picture"
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password"
+  },
+  "buttons": {
+    "saveChanges": "Save Changes",
+    "updatePassword": "Update Password"
+  },
+  "messages": {
+    "profileUpdated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully"
   }
 }

@@ -118,7 +118,12 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       formData.append('name', data.name);
       formData.append('email', data.email);
       if (data.phone) formData.append('phone', data.phone);
-      if (imageFile) formData.append('avatar', imageFile);
+      // if (imageFile) formData.append('avatar', imageFile);
+      if (imageFile instanceof File) {
+        formData.append('avatar', imageFile);
+      } else if (imageFile === null) {
+        formData.append('avatar', 'null'); // Handled by ParseBodyJsonInterceptor (if active) or Transform
+      }
       return authApi.updateMe(formData);
     },
     onSuccess: (response) => {
@@ -126,9 +131,9 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       if (response.data) {
         setUser(response.data);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
-      
+
       addToast({ title: 'Success', message: t('messages.profileUpdated'), type: 'success' });
     },
     onError: (error: any) => {
@@ -415,7 +420,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     label={t('fields.newPassword')}
                     icon={Icons.Shield}
                     error={passwordForm.formState.errors.password?.message}
-                    
+
                   />
                   {/* Confirm Password */}
                   <PasswordInput
