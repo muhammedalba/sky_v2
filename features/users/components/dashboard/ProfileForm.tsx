@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Image from 'next/image';
+
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useTranslations, useLocale } from 'next-intl';
 

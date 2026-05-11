@@ -55,7 +55,11 @@ export interface StoreSettings {
   minOrderAmount: number;
   vatRate: number;
   taxesIncluded: boolean;
-  maintenance: MaintenanceMode;
+  maintenanceMode: boolean;
+  maintenanceMessage: LocalizedString;
+  allowRegistration: boolean;
+  autoBackup: boolean;
+  googleMapsApiKey: string;
   features: FeatureFlags;
   gateways: Gateways;
   debugMode: boolean;

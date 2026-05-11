@@ -1,13 +1,14 @@
 import { cn } from '@/lib/utils';
 import React, { forwardRef } from 'react';
 
-interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> {
   label?: string;
   description?: string;
+  onCheckedChange?: (checked: boolean) => void;
 }
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
-  ({ className, label, description, id, ...props }, ref) => {
+  ({ className, label, description, id, onCheckedChange, ...props }, ref) => {
     // توليد ID فريد إذا لم يوجد لربط الليبل بالمدخل
     const switchId = id || React.useId();
 
@@ -47,6 +48,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             type="checkbox"
             className="sr-only peer"
             ref={ref}
+            onChange={(e) => onCheckedChange?.(e.target.checked)}
             {...props}
           />
 

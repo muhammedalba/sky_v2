@@ -1,129 +1,94 @@
 {
   "title": "Store Settings",
-  "description": "Manage core store configurations, payments, shipping, and advanced options.",
+  "subtitle": "Global configuration and management",
+  "desc": "Manage core store configurations, payments, shipping, and advanced options.",
   "saveBtn": "Save Changes",
   "savingBtn": "Saving...",
   "loading": "Loading Settings...",
-  "tabs": {
+  "sidebar": {
     "general": "General Info",
-    "region": "Region & Currency",
-    "payments": "Payments & Taxes",
-    "shipping": "Shipping Settings",
-    "notifications": "Notifications",
-    "advanced": "Advanced Options",
     "seo": "SEO",
     "social": "Social Media",
-    "contact": "Contact Details"
+    "contact": "Contact Details",
+    "payments": "Payments",
+    "shipping": "Shipping",
+    "advanced": "Advanced"
+  },
+  "messages": {
+    "updateSuccess": "Settings updated successfully",
+    "updateError": "Failed to update settings"
   },
   "general": {
     "title": "Store Identity",
     "desc": "Update basic store information and branding.",
-    "upload": "Upload Image",
-    "logoTitle": "Store Logo",
-    "logoDesc": "Appears on invoices, emails, and the frontend.",
-    "logoBtn": "Change Logo",
-    "faviconTitle": "Favicon",
-    "faviconDesc": "The icon that appears in the browser tab (32x32px).",
-    "storeName": "Store Name",
-    "contactEmail": "Official Email",
-    "supportPhone": "Support Phone",
-    "storeDesc": "Store Description"
-  },
-  "region": {
-    "title": "Region & Language",
-    "desc": "Set your default currency and timezone.",
-    "country": "Country",
-    "timezone": "Timezone",
+    "info": "General Information",
+    "branding": "Branding",
     "currency": "Currency Settings",
-    "currencyCode": "Currency Code (e.g., SAR)",
-    "currencySymbol": "Currency Symbol (e.g., ر.س)",
-    "currencyDesc": "This currency will be used for all financial calculations.",
-    "countries": {
-      "sa": "Saudi Arabia",
-      "ae": "United Arab Emirates",
-      "eg": "Egypt",
-      "us": "United States"
-    },
-    "timezones": {
-      "ast": "Riyadh Time (GMT+3)",
-      "gst": "Dubai Time (GMT+4)",
-      "utc": "Universal Time (UTC)"
-    },
-    "currencies": {
-      "sar": "Saudi Riyal",
-      "aed": "UAE Dirham",
-      "usd": "US Dollar"
-    }
+    "storeName": "Store Name",
+    "storeDesc": "Store Description",
+    "logoTitle": "Store Logo",
+    "logoDesc": "Appears on invoices and frontend.",
+    "faviconTitle": "Favicon",
+    "faviconDesc": "Browser tab icon (32x32px).",
+    "currencyCode": "Currency Code (e.g. SAR)",
+    "currencySymbol": "Currency Symbol (e.g. ر.س)",
+    "exchangeRate": "Dollar Exchange Rate"
   },
   "seo": {
-    "title": "Search Engine Optimization",
-    "desc": "Optimize your store's visibility in search results.",
-    "metaTitle": "Meta Title",
-    "metaDescription": "Meta Description",
-    "analyticsTitle": "Google Analytics",
-    "analyticsDesc": "Track visitors and sales using your tracking ID."
+    "title": "SEO Settings",
+    "desc": "Optimize your store visibility in search results.",
+    "googleAnalytics": "Google Analytics ID"
   },
   "social": {
-    "title": "Social Media Links",
-    "desc": "Link your store to your social media accounts."
+    "title": "Social Media",
+    "desc": "Link your store to your social accounts."
   },
   "contact": {
-    "title": "Official Contact Details",
-    "desc": "Information that will be displayed to customers on the contact page.",
-    "address": "Physical Address"
+    "title": "Contact Info",
+    "desc": "Information displayed to customers.",
+    "address": "Physical Address",
+    "phones": "Phone Numbers"
   },
   "payments": {
     "title": "Payment Gateways",
-    "desc": "Enable or disable payment methods available to customers.",
-    "stripe": "Credit Card (Stripe)",
-    "stripeDesc": "Accept Visa and MasterCard.",
-    "paypal": "PayPal",
-    "paypalDesc": "Payments via global PayPal account.",
+    "desc": "Manage available payment methods.",
     "bankTransfer": "Bank Transfer",
-    "bankTransferDesc": "Display bank account details to the customer.",
-    "cod": "Cash on Delivery",
-    "codDesc": "Manually collect payment upon delivery."
+    "cod": "Cash on Delivery"
   },
   "shipping": {
-    "title": "Shipping Settings",
-    "desc": "Configure shipping costs and thresholds.",
-    "threshold": "Free Shipping Threshold",
-    "providers": "Integrated Shipping Providers"
-  },
-  "taxes": {
-    "title": "Taxes & Fees",
-    "desc": "Manage VAT and fee calculations.",
-    "vatRate": "Tax Rate (%)",
-    "includeInPrice": "Prices Include Tax",
-    "includeInPriceDesc": "If enabled, entered product prices will be treated as tax-inclusive."
-  },
-  "notifications": {
-    "title": "Notification Settings",
-    "desc": "Email and SMS alerts.",
-    "comingSoon": "Coming Soon",
-    "comingSoonDesc": "Notification settings are being integrated with the global communication system."
+    "title": "Shipping & Taxes",
+    "desc": "Configure costs and tax settings.",
+    "freeThreshold": "Free Shipping Threshold",
+    "taxes": "Tax Settings",
+    "vatRate": "VAT Rate (%)",
+    "taxesIncluded": "Prices Include Tax",
+    "taxesIncludedDesc": "Treat prices as tax-inclusive."
   },
   "advanced": {
-    "title": "Advanced System Options",
-    "desc": "Performance settings, maintenance mode, and debugging.",
+    "title": "Advanced Options",
+    "desc": "Maintenance mode and system settings.",
     "maintenance": "Maintenance Mode",
-    "maintenanceDesc": "Temporarily stop the store for updates.",
-    "minOrderAmount": "Minimum Order Amount",
-    "debugMode": "Debug Mode",
-    "features": "Enabled Store Features",
-    "clearCache": "Clear Cache",
-    "clearCacheBtn": "Clear Now"
+    "maintenanceDesc": "Temporarily disable the storefront.",
+    "maintenanceMsg": "Maintenance Message",
+    "registration": "Allow Registration",
+    "registrationDesc": "Allow new customer signups.",
+    "debug": "Debug Mode",
+    "debugDesc": "Show detailed system errors.",
+    "apiKeys": "API Keys",
+    "system": "System Management",
+    "backup": "Auto Backup",
+    "backupDesc": "Enable automatic daily backups.",
+    "systemMaintenance": "System Maintenance",
+    "clearCache": "Clear System Cache",
+    "clearCacheDesc": "Rebuild internal cache for images, categories, and settings.",
+    "clearButton": "Clear Now"
   },
   "success": {
-    "saveTitle": "Saved",
-    "saveMessage": "Store settings updated successfully.",
     "cacheTitle": "Cache Cleared",
-    "cacheMessage": "System synchronized data updated successfully."
+    "cacheMessage": "System cache updated successfully"
   },
   "errors": {
-    "fetchTitle": "Load Error",
-    "fetchMessage": "Failed to fetch settings from server.",
-    "saveTitle": "Save Error",
-    "cacheTitle": "Clear Error"
+    "cacheTitle": "Error"
   }
 }
+

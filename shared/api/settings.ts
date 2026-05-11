@@ -23,12 +23,10 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
       console.error(`[SettingsService] Failed to fetch settings: ${response.statusText}`);
       return { 
         ...DEFAULT_SETTINGS, 
-        maintenance: { 
-          enabled: true, 
-          message: { 
-            ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.', 
-            en: 'The site is currently under maintenance. Please try again later.' 
-          } 
+        maintenanceMode: true,
+        maintenanceMessage: { 
+          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.', 
+          en: 'The site is currently under maintenance. Please try again later.' 
         } 
       };
     }
@@ -39,12 +37,10 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
     console.error('[SettingsService] Connection error:', error);
     return { 
       ...DEFAULT_SETTINGS, 
-      maintenance: { 
-        enabled: true, 
-        message: { 
-          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.', 
-          en: 'The site is currently under maintenance. Please try again later.' 
-        } 
+      maintenanceMode: true,
+      maintenanceMessage: { 
+        ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.', 
+        en: 'The site is currently under maintenance. Please try again later.' 
       } 
     };
   }
@@ -83,7 +79,11 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   minOrderAmount: 0,
   vatRate: 15,
   taxesIncluded: true,
-  maintenance: { enabled: false, message: { ar: 'الموقع قيد الصيانة حالياً', en: 'Site under maintenance' } },
+  maintenanceMode: false,
+  maintenanceMessage: { ar: 'الموقع قيد الصيانة حالياً', en: 'Site under maintenance' },
+  allowRegistration: true,
+  autoBackup: false,
+  googleMapsApiKey: '',
   features: {
     reviews: true,
     coupons: true,

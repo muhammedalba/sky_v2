@@ -11,7 +11,7 @@ export default function Maintenance() {
   const locale = useLocale();
   const settings = useSettings();
 
-  const customMessage = settings.maintenance?.message?.[locale as 'ar' | 'en'] || t('description');
+  const customMessage = settings.maintenanceMessage?.[locale as 'ar' | 'en'] || t('description');
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-white flex items-center justify-center p-4 overflow-hidden relative">
