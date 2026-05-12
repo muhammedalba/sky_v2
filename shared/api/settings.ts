@@ -1,18 +1,7 @@
 import { env } from '@/lib/env';
 import { StoreSettings } from '../types/settings';
 
-/**
- * Converts a relative /uploads/... path to a full backend URL.
- * The backend (NestJS on port 4000) serves static files at its origin,
- * so Next.js (port 3000) must use absolute URLs for favicon/logo.
- */
-function toAbsoluteMediaUrl(path: string | undefined | null): string {
-  if (!path) return '';
-  if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  // Strip /api/v1 suffix to get the backend origin: http://localhost:4000
-  const backendOrigin = env.API_URL.replace(/\/api\/v\d+\/?$/, '');
-  return `${backendOrigin}${path}`;
-}
+
 
 /**
  * Enterprise Grade Settings Service
@@ -23,9 +12,9 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
 
   try {
     const response = await fetch(endpoint, {
-      next: { 
-        revalidate: 3600, 
-        tags: ['settings', 'public-settings'] 
+      next: {
+        revalidate: 3600,
+        tags: ['settings', 'public-settings']
       },
       headers: {
         'Content-Type': 'application/json',
@@ -34,34 +23,38 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
 
     if (!response.ok) {
       console.error(`[SettingsService] Failed to fetch settings: ${response.statusText}`);
-      return { 
-        ...DEFAULT_SETTINGS, 
+      return {
+        ...DEFAULT_SETTINGS,
         maintenanceMode: true,
-        maintenanceMessage: { 
-          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.', 
-          en: 'The site is currently under maintenance. Please try again later.' 
-        } 
+        maintenanceMessage: {
+          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
+          en: 'The site is currently under maintenance. Please try again later.'
+        }
       };
     }
 
-    const data = await response.json();
-    const merged = { ...DEFAULT_SETTINGS, ...data };
+    const responseData = await response.json();
+    // The actual settings are nested inside responseData.data
+    const actualSettings = responseData.data || {};
+    const merged = { ...DEFAULT_SETTINGS, ...actualSettings };
+    
+    console.log("data merged", merged);
     // Normalize media paths → absolute backend URLs so both Next.js
     // metadata (favicon) and <img> tags resolve correctly.
     return {
       ...merged,
-      logo:    toAbsoluteMediaUrl(merged.logo),
-      favicon: toAbsoluteMediaUrl(merged.favicon),
+      logo: merged.logo,
+      favicon: merged.favicon,
     };
   } catch (error) {
     console.error('[SettingsService] Connection error:', error);
-    return { 
-      ...DEFAULT_SETTINGS, 
-      maintenanceMode: true,
-      maintenanceMessage: { 
-        ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.', 
-        en: 'The site is currently under maintenance. Please try again later.' 
-      } 
+    return {
+      ...DEFAULT_SETTINGS,
+      // maintenanceMode: true,
+      // maintenanceMessage: {
+      //   ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
+      //   en: 'The site is currently under maintenance. Please try again later.'
+      // }
     };
   }
 }
@@ -74,7 +67,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   siteName: { ar: 'سكاي جالاكسي', en: 'Sky Galaxy' },
   siteDescription: { ar: 'متجر إلكتروني احترافي', en: 'Professional E-commerce Store' },
   logo: '/assets/images/auth-logo.png',
-  favicon: '/favicon.ico',
+  favicon: '/assets/images/favicon.ico',
   metaTitle: { ar: 'سكاي جالاكسي', en: 'Sky Galaxy' },
   metaDescription: { ar: 'متجر إلكتروني احترافي', en: 'Professional E-commerce Store' },
   googleAnalyticsId: '',

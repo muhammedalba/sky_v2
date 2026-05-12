@@ -25,7 +25,7 @@ export default function ImageWithFallback({
       </div>
     );
   }
-
+console.log(src);
   return (
     <Image
       src={src}

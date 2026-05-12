@@ -72,11 +72,12 @@ export default async function LocaleLayout({
 
   // Use fallback settings if API fails
   const finalSettings = settings || DEFAULT_SETTINGS;
+  
 
   const user = getServerUser(cookieStore);
   const isAdmin = user?.role === 'admin' || user?.role === 'manager';
   const isMaintenance = finalSettings.maintenanceMode === true;
-
+console.log("settings",finalSettings?.logo)
   // Maintenance Guard (Server-Side)
   if (isMaintenance && !isAdmin) {
     return (

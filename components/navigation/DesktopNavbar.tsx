@@ -77,14 +77,14 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   );
   const locale = useLocale();
   const settings = useSettings();
-
+  console.log(settings.logo);
   // تحسين مراقب التمرير لمنع التكرار
   useEffect(() => {
     const handleScroll = () => {
       // React سيتجاهل التحديث (Bailout) تلقائياً إذا لم تتغير القيمة
       setScrolled(window.scrollY > 20);
     };
-    
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []); // مصفوفة فارغة لضمان التسجيل مرة واحدة فقط

@@ -20,6 +20,7 @@ const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET;
  */
 const ALLOWED_TAGS = new Set([
   'settings',
+  'public-settings',
   'products',
   'categories',
   'homepage',
