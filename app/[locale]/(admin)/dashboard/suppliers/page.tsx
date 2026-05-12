@@ -70,8 +70,8 @@ export default function SuppliersPage() {
       formData.append('isActive', String(!supplier.isActive));
       await updateSupplierAsync({ id: supplier._id, data: formData });
       toastSuccess(tMessages('updateSuccess'));
-    } catch (error) {
-      toastError(tMessages('updateError') || 'Error updating status');
+    } catch (error: any) {
+      toastError(error?.message || tMessages('updateError') || 'Error updating status');
     }
   };
 

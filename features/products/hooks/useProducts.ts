@@ -1,12 +1,9 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { Product, ApiResponse, ProductVariant } from '@/types';
+import { Product, ApiResponse, ProductWithVariants } from '@/types';
 
-export interface ProductWithAllLangs {
-  product: Product;
-  variants: ProductVariant[];
-}
+
 
 export interface UseProductsParams {
   page?: number;
@@ -40,7 +37,7 @@ export function useProducts(params?: UseProductsParams, options?: { enabled?: bo
   });
 }
 
-export function useProduct(id: string, options: { all_langs: true }): UseQueryResult<ProductWithAllLangs, Error>;
+export function useProduct(id: string, options: { all_langs: true }): UseQueryResult<ProductWithVariants, Error>;
 export function useProduct(id: string, options?: { all_langs?: false }): UseQueryResult<Product, Error>;
 export function useProduct(id: string, options?: { all_langs?: boolean }): UseQueryResult<any, Error> {
   const all_langs = options?.all_langs ?? false;
@@ -79,16 +76,23 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
 
-
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<Product> | FormData }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Product> | FormData }): Promise<ProductWithVariants> => {
       const response = await productsApi.update(id, data);
-      return response.data;
+      return response.data as unknown as ProductWithVariants;
     },
-    onSuccess: async (_, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ['products'] });
-      await queryClient.invalidateQueries({ queryKey: ['products', variables.id] });
+    onSuccess: async (data, variables) => {
+      // 1. تحديث قائمة المنتجات (الكاش المكون من عنصرين)
+      await queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length === 2,
+      });
 
+      // 2. 🔴 الحل السحري: مسح كاش أي منتج مفرد (الكاش المكون من 3 عناصر أو أكثر)
+      // هذا سيمسح الـ Slug القديم، والـ Slug الجديد، وأي شيء يخص صفحة التعديل بصمت!
+      await queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length >= 3,
+        refetchType: 'none', // صمت تام: امسح البيانات ولكن لا ترسل أي طلب GET الآن
+      });
     },
     onError: (error: Error) => {
       console.error("Backend Error:", error);

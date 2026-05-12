@@ -63,3 +63,7 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
 }
+export interface ProductWithVariants {
+  product: Product;
+  variants: ProductVariant[];
+}

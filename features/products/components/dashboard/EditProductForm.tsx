@@ -373,7 +373,8 @@ export default function EditProductForm({ locale, initialData, initialVariants =
    * - تُجهز `FormData` لإرسال البيانات والملفات معاً.
    * - تفصل المتغيرات في عمليات إنشاء، تحديث، وحذف.
    */
-  const onSubmit = async (data: EditProductInput) => {
+  const onSubmit = async ( data: EditProductInput) => {
+
     const formData = new FormData();
     formData.append('title', JSON.stringify(data.title));
     formData.append('description', JSON.stringify(data.description));
@@ -409,9 +410,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     try {
       await updateMutation.mutateAsync({ id: initialData._id, data: formData });
       toast.success(tMessages('updateSuccess') || 'Product updated successfully');
-      router.push(`/${locale}/dashboard/products`);
-    } catch (error) {
-      toast.error(tMessages('updateError') || 'Error while updating product');
+      console.log("Navigating to:", `/${locale}/dashboard/products`);
+      router.push(`/dashboard/products`);
+    } catch (error: any) {
+      toast.error(error?.message || tMessages('updateError') || 'Error while updating product');
       console.error(error);
     }
   };
