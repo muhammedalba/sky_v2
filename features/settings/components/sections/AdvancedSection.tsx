@@ -67,7 +67,8 @@ export default function AdvancedSection() {
                     <p className="text-[10px] text-muted-foreground">{toggle.desc}</p>
                   </div>
                 </div>
-                <Switch
+                <Switch 
+                  disabled={toggle.id === 'maintenanceMode'}
                   checked={!!toggle.value}
                   onCheckedChange={(checked) => setValue(toggle.id as any, checked, { shouldDirty: true })}
                 />

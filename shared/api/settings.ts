@@ -2,6 +2,19 @@ import { env } from '@/lib/env';
 import { StoreSettings } from '../types/settings';
 
 /**
+ * Converts a relative /uploads/... path to a full backend URL.
+ * The backend (NestJS on port 4000) serves static files at its origin,
+ * so Next.js (port 3000) must use absolute URLs for favicon/logo.
+ */
+function toAbsoluteMediaUrl(path: string | undefined | null): string {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  // Strip /api/v1 suffix to get the backend origin: http://localhost:4000
+  const backendOrigin = env.API_URL.replace(/\/api\/v\d+\/?$/, '');
+  return `${backendOrigin}${path}`;
+}
+
+/**
  * Enterprise Grade Settings Service
  * Handles server-side fetching with Next.js Cache API
  */
@@ -32,7 +45,14 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
     }
 
     const data = await response.json();
-    return { ...DEFAULT_SETTINGS, ...data };
+    const merged = { ...DEFAULT_SETTINGS, ...data };
+    // Normalize media paths → absolute backend URLs so both Next.js
+    // metadata (favicon) and <img> tags resolve correctly.
+    return {
+      ...merged,
+      logo:    toAbsoluteMediaUrl(merged.logo),
+      favicon: toAbsoluteMediaUrl(merged.favicon),
+    };
   } catch (error) {
     console.error('[SettingsService] Connection error:', error);
     return { 

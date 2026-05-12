@@ -8,6 +8,10 @@ interface GenerateMetadataProps {
   canonicalPath?: string;
   ogImage?: string;
   noIndex?: boolean;
+  /** Override site name from DB settings (falls back to 'Sky Galaxy') */
+  siteName?: string;
+  /** Override OG logo from DB settings.logo */
+  siteLogoUrl?: string;
 }
 
 export async function generatePageMetadata({
@@ -16,17 +20,23 @@ export async function generatePageMetadata({
   canonicalPath,
   ogImage,
   noIndex = false,
+  siteName,
+  siteLogoUrl,
 }: GenerateMetadataProps): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace });
   const baseUrl = env.APP_URL;
   const path = canonicalPath || '';
 
+  // Prefer DB-driven values; fall back to hardcoded defaults
+  const resolvedSiteName = siteName || 'Sky Galaxy';
+  const resolvedOgImage  = ogImage || siteLogoUrl || `${baseUrl}/og-image.jpg`;
+
   return {
     title: {
-      template: '%s | Sky Galaxy',
-      default: t('meta.title'), // Expects 'meta.title' in json
+      template: `%s | ${resolvedSiteName}`,
+      default: t('meta.title'),
     },
-    description: t('meta.description'), // Expects 'meta.description' in json
+    description: t('meta.description'),
     alternates: {
       canonical: `${baseUrl}/${locale}${path}`,
       languages: {
@@ -38,10 +48,10 @@ export async function generatePageMetadata({
       title: t('meta.title'),
       description: t('meta.description'),
       url: `${baseUrl}/${locale}${path}`,
-      siteName: 'Sky Galaxy',
+      siteName: resolvedSiteName,
       images: [
         {
-          url: ogImage || `${baseUrl}/og-image.jpg`,
+          url: resolvedOgImage,
           width: 1200,
           height: 630,
         },
@@ -55,3 +65,4 @@ export async function generatePageMetadata({
     },
   };
 }
+

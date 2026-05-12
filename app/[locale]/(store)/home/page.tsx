@@ -1,5 +1,6 @@
 import { use } from 'react';
 import { generatePageMetadata } from '@/lib/seo';
+import { getStoreSettings } from '@/shared/api/settings';
 import HomeClient from './HomeClient';
 
 interface Props {
@@ -8,10 +9,14 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
+  const settings = await getStoreSettings();
+
   return generatePageMetadata({
     locale,
     namespace: 'home',
-    canonicalPath: '', // Home is root
+    canonicalPath: '',
+    siteName:    settings?.siteName?.[locale as 'ar' | 'en'],
+    siteLogoUrl: settings?.logo,
   });
 }
 

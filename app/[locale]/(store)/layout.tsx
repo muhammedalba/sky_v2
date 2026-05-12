@@ -76,18 +76,9 @@ async function getCategories(): Promise<CategoryItem[]> {
   }
 }
 
-async function getStoreSettings() {
-  try {
-    const response = await fetch(`${env.API_URL}${env.ENDPOINTS.SETTINGS.BASE}`, {
-      next: { revalidate: 60, tags: ['settings'] }
-    });
-    if (!response.ok) return null;
-    return response.json();
-  } catch (error) {
-    console.error('Failed to fetch settings:', error);
-    return null;
-  }
-}
+// Settings are fetched once in [locale]/layout.tsx via the shared
+// getStoreSettings() (shared/api/settings.ts) with ISR cache tag 'settings'.
+// They reach all client components through SettingsProvider — no extra fetch needed here.
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
 
