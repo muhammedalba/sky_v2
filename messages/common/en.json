@@ -1,6 +1,7 @@
 {
       "buttons": {
             "save": "Save",
+            "saving": "Saving...",
             "cancel": "Cancel",
             "delete": "Delete",
             "edit": "Edit",
@@ -192,5 +193,39 @@
     "title": "Upload Image",
     "preview": "Upload preview",
     "remove": "Remove image"
+  },
+  "taxes": {
+    "title": "Tax Management",
+    "description": "Define country-specific tax rules or a global default tax",
+    "createTax": "Add Tax",
+    "editTax": "Edit Tax",
+    "modalDescription": "Set the tax type and the country it applies to (leave blank to apply to all).",
+    "globalFallback": "Global Default (All Countries)",
+    "included": "Included in Price",
+    "excluded": "Added to Price",
+    "active": "Active",
+    "inactive": "Inactive",
+    "all": "All",
+    "searchPlaceholder": "Search taxes...",
+    "updateSuccess": "Tax updated successfully",
+    "updateError": "Error updating tax data",
+    "deleteConfirm": "Are you sure you want to delete this tax?",
+    "deleteSuccess": "Tax deleted successfully",
+    "deleteError": "An error occurred while deleting",
+    "empty": {
+      "title": "No Taxes Added",
+      "description": "Add a new tax rule to get started"
+    },
+    "fields": {
+      "name": "Tax Name",
+      "percentage": "Percentage (%)",
+      "country": "Country",
+      "taxNumber": "Tax Number",
+      "description": "Description",
+      "isIncludedInPrice": "Tax Included in Price",
+      "isIncludedInPriceDesc": "If enabled, product prices already include this tax",
+      "isActive": "Enable Tax",
+      "actions": "Actions"
+    }
   }
 }
