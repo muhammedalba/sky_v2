@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/shared/ui/Button';
 import { useToast } from '@/shared/hooks/useToast';
@@ -8,157 +8,261 @@ import { Icons } from '@/shared/ui/Icons';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/shared/ui/Badge';
 import { ShippingRate } from '@/features/shipping/types';
-import { useDeleteShippingRate, useShippingRates } from '@/features/shipping/hooks/useShippingRates';
+import { useDeleteShippingRate, useShippingRates, useUpdateShippingRate } from '@/features/shipping/hooks/useShippingRates';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import Modal from '@/shared/ui/Modal';
 import ShippingRateForm from '@/features/shipping/components/dashboard/ShippingRateForm';
+import { useQueryState } from '@/shared/hooks/useQueryState';
+import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
+import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
+import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog';
+import { Switch } from '@/shared/ui/Switch';
+
+type ViewTab = 'all' | 'active' | 'inactive';
+
+const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
+  all: {},
+  active: { isActive: 'true' },
+  inactive: { isActive: 'false' },
+};
 
 export default function ShippingRatesPage() {
-  const t = useTranslations('shipping');
-  const tCommon = useTranslations('buttons');
-  const { success, error } = useToast();
+  const t = useTranslations('shippingRates');
+  const tCommon = useTranslations('common');
+  const tButtons = useTranslations('buttons');
+  const { success: toastSuccess, error: toastError } = useToast();
 
-  const [page, setPage] = useState(1);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRate, setEditingRate] = useState<ShippingRate | null>(null);
 
-  const { data, isLoading } = useShippingRates({ page, limit: 10 });
-  const { mutate: deleteRate, isPending: isDeleting } = useDeleteShippingRate();
+  const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
+  const page = Number(getQueryParam('page', '1'));
+  const search = getQueryParam('search', '');
+  const viewTab = (getQueryParam('tab', 'all') as ViewTab);
 
-  const handleEdit = (rate: ShippingRate) => {
+  const queryParams = useMemo(() => ({
+    page,
+    limit: 10,
+    keywords: search,
+    ...TAB_FILTER_PARAMS[viewTab]
+  }), [page, search, viewTab]);
+
+  const { data, isLoading, refetch } = useShippingRates(queryParams);
+  const { mutateAsync: deleteRateAsync, isPending: deleteRatePending } = useDeleteShippingRate();
+  const { mutateAsync: updateRateAsync, isPending: updateRatePending } = useUpdateShippingRate();
+
+  const {
+    openDialog,
+    closeDialog,
+    handleConfirm,
+    isOpen: isConfirmOpen,
+    isLoading: isConfirmLoading,
+    title: confirmTitle,
+    message: confirmMessage
+  } = useConfirmDialog();
+
+  const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
+  const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
+  const handleSearch = useCallback((value: string) => setQueryParams({ search: value, page: 1 }), [setQueryParams]);
+
+  const handleEdit = useCallback((rate: ShippingRate) => {
     setEditingRate(rate);
     setIsFormOpen(true);
-  };
+  }, []);
 
-  const handleDelete = (rate: ShippingRate) => {
-    if (confirm('هل أنت متأكد من حذف هذه التسعيرة؟')) {
-      deleteRate(rate._id, {
-        onSuccess: () => success('تم الحذف بنجاح'),
-        onError: (err: any) => error(err.message || 'حدث خطأ'),
-      });
+  const handleToggleStatus = useCallback(async (rate: ShippingRate) => {
+    try {
+      await updateRateAsync({ id: rate._id, payload: { isActive: !rate.isActive } });
+      toastSuccess(tCommon('messages.success'));
+      refetch();
+    } catch (err: any) {
+      toastError(tCommon('errors.serverError'));
     }
-  };
+  }, [updateRateAsync, toastSuccess, toastError, tCommon, refetch]);
 
-  const handleSuccess = () => {
+  const handleDelete = useCallback((rate: ShippingRate) => {
+    openDialog({
+      title: tCommon('messages.deleteConfirm'),
+      message: `${tCommon('messages.deleteConfirm')} (${(rate.provider as any)?.name?.ar || (rate.provider as any)?.name})`,
+      onConfirm: async () => {
+        try {
+          await deleteRateAsync(rate._id);
+          toastSuccess(tCommon('messages.success'));
+          refetch();
+        } catch (err: any) {
+          toastError(tCommon('errors.serverError'));
+        }
+      },
+    });
+  }, [openDialog, deleteRateAsync, toastSuccess, toastError, refetch, tCommon]);
+
+  const handleSuccess = useCallback(() => {
     setIsFormOpen(false);
     setEditingRate(null);
-  };
+    refetch();
+  }, [refetch]);
 
-  const columns = [
+  const tabs = useMemo(() => [
+    { key: 'all' as ViewTab, label: tCommon('tabs.all'), activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
+    { key: 'active' as ViewTab, label: tCommon('tabs.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
+    { key: 'inactive' as ViewTab, label: tCommon('tabs.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
+  ], [tCommon]);
+
+  const columns = useMemo(() => [
     {
-      header: 'شركة الشحن',
+      header: t('fields.provider'),
       render: (item: ShippingRate) => {
         const provider = item.provider as any;
-        const name = typeof provider?.name === 'string' ? provider.name : (provider?.name?.ar || provider?.name?.en || 'غير معروف');
+        const name = typeof provider?.name === 'string' ? provider.name : (provider?.name?.ar || provider?.name?.en || 'N/A');
         return (
           <div className="flex items-center gap-3">
-            <div className="font-semibold">{name}</div>
+            <div className="font-bold text-foreground">{name}</div>
           </div>
         );
       },
     },
     {
-      header: 'النطاق الجغرافي',
+      header: t('fields.country'),
       render: (item: ShippingRate) => {
-        const country = (item.country as any)?.name?.ar || (item.country as any)?.name || 'جميع الدول';
+        const country = (item.country as any)?.name?.ar || (item.country as any)?.name || t('globalFallback');
         const region = (item.region as any)?.name?.ar || (item.region as any)?.name;
         const city = (item.city as any)?.name?.ar || (item.city as any)?.name;
         
         return (
           <div className="flex flex-col gap-0.5">
             <span className="font-medium text-primary text-sm">{country}</span>
-            {region && <span className="text-xs text-muted-foreground">← {region}</span>}
-            {city && <span className="text-xs text-muted-foreground"> ← {city}</span>}
+            {region && <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Icons.ChevronRight className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
+            </span>}
+            {city && <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Icons.ChevronRight className="w-2.5 h-2.5 rtl:rotate-180" /> {city}
+            </span>}
           </div>
         );
       },
     },
     {
-      header: 'التسعيرة',
+      header: t('fields.basePrice'),
       render: (item: ShippingRate) => (
-        <div className="flex flex-col text-sm border-r pr-4">
-          <span className="font-bold text-primary">{formatCurrency(item.basePrice)}</span>
-          <span className="text-[10px] text-muted-foreground">لأول {item.baseWeight} كجم</span>
-          <span className="text-[10px] text-green-600">+{formatCurrency(item.additionalKgPrice)} / كجم إضافي</span>
+        <div className="flex flex-col gap-1">
+          <span className="font-bold text-primary bg-primary/5 px-2 py-1 rounded-lg w-fit">
+            {formatCurrency(item.basePrice)}
+          </span>
+          <span className="text-[10px] text-muted-foreground px-1">
+            {t('fields.baseWeight')}: {item.baseWeight} kg
+          </span>
         </div>
       ),
     },
     {
-      header: 'مدة التوصيل',
+      header: t('fields.additionalKgPrice'),
       render: (item: ShippingRate) => (
-        <div className="flex items-center gap-1 text-sm font-medium">
-          <Icons.Clock className="w-3.5 h-3.5 text-muted-foreground" />
-          {item.estimatedDays || 'غير محدد'}
+        <span className="font-semibold text-green-600 bg-green-500/5 px-2 py-1 rounded-lg">
+          +{formatCurrency(item.additionalKgPrice)}
+        </span>
+      ),
+    },
+    {
+      header: t('fields.estimatedDays'),
+      render: (item: ShippingRate) => (
+        <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+          <Icons.Clock className="w-4 h-4" />
+          {item.estimatedDays || '-'}
         </div>
       ),
     },
     {
-      header: 'الميزات والحالة',
+      header: t('fields.isActive'),
       render: (item: ShippingRate) => (
-        <div className="flex gap-1.5 flex-wrap">
-          {item.supportsCOD && <Badge variant="outline" className="text-[10px] border-primary/20 bg-primary/5">COD</Badge>}
-          <Badge variant={item.isActive ? 'default' : 'secondary'} className="text-[10px]">
-            {item.isActive ? 'مفعل' : 'معطل'}
-          </Badge>
-        </div>
+        <Switch
+          checked={item.isActive}
+          onCheckedChange={() => handleToggleStatus(item)}
+          disabled={updateRatePending || isLoading}
+        />
       ),
     },
     {
-      header: 'إجراءات',
+      header: t('fields.actions'),
+      className: "pe-6 text-center",
       render: (item: ShippingRate) => (
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
-            تعديل
+        <div className="flex justify-center gap-2.5">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-10 w-10 rounded-lg hover:bg-primary/10 text-primary transition-colors"
+            onClick={() => handleEdit(item)}
+            disabled={isLoading || updateRatePending}
+          >
+            <Icons.Edit className="w-4 h-4" />
           </Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(item)} disabled={isDeleting}>
-            حذف
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-10 w-10 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
+            onClick={() => handleDelete(item)}
+            disabled={isLoading || deleteRatePending}
+          >
+            <Icons.Trash className="w-4 h-4" />
           </Button>
         </div>
-      )
-    }
-  ];
+      ),
+    },
+  ], [t, handleEdit, handleDelete, handleToggleStatus, updateRatePending, isLoading, deleteRatePending, tCommon]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-          <p className="text-muted-foreground mt-2">
-            {t('description')}
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            setEditingRate(null);
-            setIsFormOpen(true);
-          }}
-          className="rounded-xl shadow-lg shadow-primary/20"
-        >
-          <Icons.Plus className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-          {t('createRate')}
-        </Button>
-      </div>
-
-      <EntityDataTable
-        data={data?.data || []}
-        columns={columns}
-        isLoading={isLoading}
-        pagination={{
-          currentPage: page,
-          limit: 10,
-          numberOfPages: data?.totalPages || 1,
-          nextPage: page < (data?.totalPages || 1) ? page + 1 : undefined,
-          prevPage: page > 1 ? page - 1 : undefined,
-        }}
-        onPageChange={setPage}
-        emptyState={{
-          title: t('empty.title'),
-          description: t('empty.description'),
-          createLabel: t('createRate'),
-          createLink: () => {
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <EntityPageHeader
+        title={t('title')}
+        subtitle={t('description')}
+        totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
+        action={{
+          label: t('createRate'),
+          icon: <Icons.Plus className="w-5 h-5" />,
+          onClick: () => {
             setEditingRate(null);
             setIsFormOpen(true);
           }
+        }}
+      />
+
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-2 flex-wrap">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => handleTabChange(tab.key)}
+              disabled={isLoading}
+              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <EntitySearchBar
+        placeholder={t('searchPlaceholder')}
+        onSearch={handleSearch}
+        defaultValue={search}
+        debounceMs={700}
+        disabled={isLoading}
+      />
+
+      <EntityDataTable<ShippingRate>
+        data={data?.data || []}
+        isLoading={isLoading}
+        pagination={data?.meta?.pagination}
+        onPageChange={handlePageChange}
+        columns={columns}
+        emptyState={{
+          title: t('empty.title'),
+          description: t('empty.description'),
+          createLink: () => {
+            setEditingRate(null);
+            setIsFormOpen(true);
+          },
+          createLabel: t('createRate')
         }}
       />
 
@@ -173,7 +277,19 @@ export default function ShippingRatesPage() {
           onSuccess={handleSuccess}
           onCancel={() => setIsFormOpen(false)}
         />
-      </Modal> 
+      </Modal>
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={closeDialog}
+        onConfirm={handleConfirm}
+        title={confirmTitle}
+        message={confirmMessage}
+        confirmText={tButtons('confirm')}
+        cancelText={tButtons('cancel')}
+        isDangerous={true}
+        isLoading={isConfirmLoading}
+      />
     </div>
   );
 }

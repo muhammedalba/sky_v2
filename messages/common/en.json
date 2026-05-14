@@ -43,6 +43,16 @@
             "showingPage": "Showing Page {page} of {total}",
             "showingResults": "Showing {count} results"
       },
+      "tabs": {
+            "all": "All",
+            "active": "Active",
+            "inactive": "Inactive"
+      },
+      "results": {
+            "count": "{count} results",
+            "found": "{count} results found",
+            "total": "Total: {count}"
+      },
       "navigation": {
             "dashboard": "Dashboard",
             "products": "Products",
@@ -62,6 +72,7 @@
             "externalPlatforms": "Command Center",
             "shipping": "Shipping Providers",
             "shippingRates": "Shipping Rates",
+            "taxes": "Taxes",
             "locations": "Locations"
       },
       "auth": {
@@ -166,15 +177,34 @@
     }
   },
   "shipping": {
+      "title": "Shipping Providers",
+      "subtitle": "Manage shipping companies available in the store and track their status",
+      "totalResults": "{count} providers",
+      "createProvider": "Add Shipping Provider",
+      "editProvider": "Edit Company Data",
+      "modalDescription": "Enter shipping provider details so customers can select them during checkout.",
+      "searchPlaceholder": "Search by provider name or code...",
+      "emptyDescription": "No shipping providers have been added yet.",
+      "fields": {
+      "logo": "Logo",
+      "name": "Company Name",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "shippingRates": {
       "title": "Shipping Rates",
       "description": "Manage shipping costs by country, city, and weight",
+      "totalResults": "{count} rates",
       "createRate": "Add Shipping Rate",
       "editRate": "Edit Shipping Rate",
       "modalDescription": "Enter the details of the shipping rate and the applicable geographical scope.",
+      "searchPlaceholder": "Search shipping rates...",
       "empty": {
         "title": "No Shipping Rates",
         "description": "Add a new shipping rate to get started"
       },
+      "globalFallback": "Global Rate (All Countries)",
       "fields": {
       "provider": "Shipping Provider",
       "country": "Country",

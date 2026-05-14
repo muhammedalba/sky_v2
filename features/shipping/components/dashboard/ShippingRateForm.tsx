@@ -39,7 +39,7 @@ interface ShippingRateFormProps {
 }
 
 export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: ShippingRateFormProps) {
-  const t = useTranslations('shipping');
+  const t = useTranslations('shippingRates');
   const tCommon = useTranslations('buttons');
   const { success: toastSuccess, error: toastError } = useToast();
 

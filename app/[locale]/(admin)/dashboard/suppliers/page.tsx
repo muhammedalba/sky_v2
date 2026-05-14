@@ -18,84 +18,82 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useToast } from '@/shared/hooks/useToast';
 import { useRouter, useParams } from 'next/navigation';
 
-type ViewTab = 'isActive' | 'notActive';
+type ViewTab = 'all' | 'active' | 'inactive';
 
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
-  isActive: { isActive: 'true' },
-  notActive: { isActive: 'false' },
+  all: {},
+  active: { isActive: 'true' },
+  inactive: { isActive: 'false' },
 };
 
 export default function SuppliersPage() {
   const router = useRouter();
   const { locale } = useParams();
+  const t = useTranslations('suppliers');
+  const tCommon = useTranslations('common');
+  const tButtons = useTranslations('buttons');
+  const { success: toastSuccess, error: toastError } = useToast();
 
-  // get page and search from query params
+  // State management via URL
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
-  const viewTab = (getQueryParam('tab', 'isActive') as ViewTab);
+  const viewTab = (getQueryParam('tab', 'active') as ViewTab);
 
-  // create query params
+  // Query params for API
   const queryParams = useMemo(() => ({
-    page, limit: 10, keywords: search, ...TAB_FILTER_PARAMS[viewTab]
+    page,
+    limit: 10,
+    keywords: search,
+    ...TAB_FILTER_PARAMS[viewTab]
   }), [page, search, viewTab]);
 
-  // get data from api
+  // Data fetching
   const { data, isLoading, refetch } = useSuppliers(queryParams);
   const { mutateAsync: deleteSupplierAsync, isPending: deleteSupplierPending } = useDeleteSupplier();
   const { mutateAsync: updateSupplierAsync, isPending: updateSupplierPending } = useUpdateSupplier();
-;
 
-  // handle page change
+  // Dialog & Modal state
+  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
+
+  // Handlers
   const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
   const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
-
-  // translations
-  const t = useTranslations('suppliers');
-  const tMessages = useTranslations('suppliers.messages');
-  const tButtons = useTranslations('buttons');
+  const handleSearch = useCallback((value: string) => setQueryParams({ search: value, page: 1 }), [setQueryParams]);
 
   const tabs = useMemo(() => [
-    { key: 'isActive' as ViewTab, label: t('fields.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
-    { key: 'notActive' as ViewTab, label: t('fields.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
-  ], [t]);
-
-  // hooks
-  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
-  const { success: toastSuccess, error: toastError } = useToast();
+    { key: 'all' as ViewTab, label: tCommon('tabs.all'), activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
+    { key: 'active' as ViewTab, label: tCommon('tabs.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
+    { key: 'inactive' as ViewTab, label: tCommon('tabs.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
+  ], [tCommon]);
 
   const handleToggleStatus = async (supplier: Supplier) => {
     try {
       const formData = new FormData();
       formData.append('isActive', String(!supplier.isActive));
       await updateSupplierAsync({ id: supplier._id, data: formData });
-      toastSuccess(tMessages('updateSuccess'));
+      toastSuccess(tCommon('messages.success'));
+      refetch();
     } catch (error: any) {
-      toastError(error?.message || tMessages('updateError') || 'Error updating status');
+      toastError(error?.message || tCommon('errors.serverError'));
     }
   };
 
-  // handle search
-  const handleSearch = useCallback((value: string) => {
-    setQueryParams({ search: value, page: 1 });
-  }, [setQueryParams]);
-
   const handleDelete = useCallback((id: string, name: string) => {
     openDialog({
-      title: tMessages('deleteConfirm'),
-      message: tMessages('deleteConfirmWithName', { name }),
+      title: tCommon('messages.deleteConfirm'),
+      message: tCommon('messages.deleteConfirmWithName', { name }),
       onConfirm: async () => {
         try {
           await deleteSupplierAsync(id);
-          toastSuccess(tMessages('deleteSuccess'));
+          toastSuccess(tCommon('messages.success'));
           refetch();
         } catch (error) {
-          toastError(tMessages('deleteError') || 'Error while deleting');
-          console.error(error);
+          toastError(tCommon('errors.serverError'));
         }
       },
     });
-  }, [openDialog, deleteSupplierAsync, toastSuccess, toastError, refetch, tMessages]);
+  }, [openDialog, deleteSupplierAsync, toastSuccess, toastError, refetch, tCommon]);
 
   const columns = useMemo(() => [
     {
@@ -172,7 +170,7 @@ export default function SuppliersPage() {
       )
     },
     {
-      header: t('fields.actions'),
+      header: tButtons('actions'),
       className: "pe-6 text-center",
       render: (supplier: Supplier) => (
         <div className="flex justify-center gap-2.5">
@@ -198,14 +196,14 @@ export default function SuppliersPage() {
         </div>
       )
     }
-  ], [router, locale, deleteSupplierPending, isLoading, t, handleDelete]);
+  ], [router, locale, deleteSupplierPending, isLoading, t, handleDelete, tButtons, updateSupplierPending, handleToggleStatus]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
         title={t('title')}
         subtitle={t('subtitle')}
-        totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
+        totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createSupplier'),
           icon: <Icons.Plus className="w-5 h-5" />,
@@ -238,7 +236,7 @@ export default function SuppliersPage() {
       />
 
       <EntityDataTable<Supplier>
-        data={data?.data}
+        data={data?.data || []}
         isLoading={isLoading}
         pagination={data?.meta?.pagination}
         onPageChange={handlePageChange}

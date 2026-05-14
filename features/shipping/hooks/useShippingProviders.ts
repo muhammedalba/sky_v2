@@ -3,12 +3,18 @@ import { apiClient as api } from '@/lib/api/client';
 import { ApiResponse } from '@/types';
 import { ShippingProvider, CreateShippingProviderDto, UpdateShippingProviderDto } from '../types';
 
+export const shippingProviderKeys = {
+  all: ['shipping-providers'] as const,
+  lists: () => [...shippingProviderKeys.all, 'list'] as const,
+  list: (params: any) => [...shippingProviderKeys.lists(), params] as const,
+};
+
 export function useShippingProviders(params?: Record<string, unknown>) {
   return useQuery({
-    queryKey: ['shipping-providers', params],
+    queryKey: shippingProviderKeys.list(params),
     queryFn: async () => {
       const response = await api.get<any, ApiResponse<ShippingProvider[]>>('/shipping/providers', { params });
-      return response.data;
+      return response;
     },
   });
 }

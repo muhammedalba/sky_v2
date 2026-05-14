@@ -18,16 +18,17 @@ import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { Switch } from '@/shared/ui/Switch';
 import { useParams } from 'next/navigation';
 
-type ViewTab = 'all' | 'isActive' | 'notActive';
+type ViewTab = 'all' | 'active' | 'inactive';
 
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, any>> = {
   all: {},
-  isActive: { isActive: true },
-  notActive: { isActive: false },
+  active: { isActive: true },
+  inactive: { isActive: false },
 };
 
 export default function TaxesPage() {
   const t = useTranslations('taxes');
+  const tCommon = useTranslations('common');
   const tButtons = useTranslations('buttons');
   const { locale } = useParams();
   const { success: toastSuccess, error: toastError } = useToast();
@@ -103,10 +104,10 @@ export default function TaxesPage() {
   }, [refetch]);
 
   const tabs = useMemo(() => [
-    { key: 'all' as ViewTab, label: t('all') || 'الكل', activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
-    { key: 'isActive' as ViewTab, label: t('active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
-    { key: 'notActive' as ViewTab, label: t('inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
-  ], [t]);
+    { key: 'all' as ViewTab, label: tCommon('tabs.all'), activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
+    { key: 'active' as ViewTab, label: tCommon('tabs.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
+    { key: 'inactive' as ViewTab, label: tCommon('tabs.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
+  ], [tCommon]);
 
   const columns = useMemo(() => [
     {
@@ -195,7 +196,7 @@ export default function TaxesPage() {
       <EntityPageHeader
         title={t('title')}
         subtitle={t('description')}
-        totalResults={data?.meta?.pagination?.totalResults}
+        totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createTax'),
           icon: <Icons.Plus className="w-5 h-5" />,
