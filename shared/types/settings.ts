@@ -51,6 +51,7 @@ export interface StoreSettings {
   contactInfo: contactInfo;
   currencyCode: string;
   currencySymbol: string;
+  exchangeRate: number;
   freeShippingThreshold: number;
   minOrderAmount: number;
   vatRate: number;

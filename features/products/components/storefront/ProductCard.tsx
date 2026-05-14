@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/shared/ui/Card';
 import { Badge } from '@/shared/ui/Badge';
 import { Button } from '@/shared/ui/Button';
-import { formatCurrency } from '@/lib/utils';
+import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Product } from '@/types';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
@@ -17,6 +17,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, locale }: ProductCardProps) {
   const getTrans = useTrans();
+  const formatCurrency = useFormatCurrency();
   const minPrice = product.priceRange?.min || 0;
   const maxPrice = product.priceRange?.max || 0;
   const hasRange = minPrice !== maxPrice;

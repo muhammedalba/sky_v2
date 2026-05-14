@@ -68,6 +68,7 @@ async function loadLocaleMessages(locale: string) {
       errors: common.errors,
       navigation: common.navigation,
       messages: common.messages,
+      shipping: common.shipping,
       dashboard,
       products,
       categories,

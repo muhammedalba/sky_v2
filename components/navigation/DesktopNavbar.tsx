@@ -77,7 +77,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   );
   const locale = useLocale();
   const settings = useSettings();
-  console.log(settings.logo);
+
   // تحسين مراقب التمرير لمنع التكرار
   useEffect(() => {
     const handleScroll = () => {

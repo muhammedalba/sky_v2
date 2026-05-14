@@ -77,7 +77,7 @@ export default async function LocaleLayout({
   const user = getServerUser(cookieStore);
   const isAdmin = user?.role === 'admin' || user?.role === 'manager';
   const isMaintenance = finalSettings.maintenanceMode === true;
-console.log("settings",finalSettings?.logo)
+// console.log("settings",finalSettings?.logo)
   // Maintenance Guard (Server-Side)
   if (isMaintenance && !isAdmin) {
     return (

@@ -6,7 +6,9 @@ import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
 import { Icons } from '@/shared/ui/Icons';
 import { useCart, useRemoveFromCart, useClearCart } from '@/features/cart/hooks/useCart';
-import { getLocalizedValue, formatCurrency } from '@/lib/utils';
+import { getLocalizedValue } from '@/lib/utils';
+import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
+import { useSettings } from '@/app/providers/SettingsProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/shared/ui/ScrollReveal';
 
@@ -14,15 +16,21 @@ export default function CartPage() {
   const t = useTranslations('cart');
   const commonT = useTranslations('common');
   const locale = useLocale();
+  const formatCurrency = useFormatCurrency();
   
   const { data: cart, isLoading } = useCart();
   const { mutate: removeItem, isPending: isRemoving } = useRemoveFromCart();
   const { mutate: clearCart } = useClearCart();
 
+  const settings = useSettings();
+  
   const cartItems = cart?.items || [];
   const totalAmount = cart?.totalPrice || 0;
   const subtotal = cartItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
-  const tax = subtotal * 0.15; // Assuming 15% VAT
+  
+  // Calculate dynamic VAT
+  const vatRate = settings.vatRate || 15;
+  const tax = settings.taxesIncluded ? 0 : subtotal * (vatRate / 100);
 
   if (isLoading) {
     return (
@@ -123,7 +131,7 @@ export default function CartPage() {
                                   <span className="text-xs text-muted-foreground font-medium px-2 border-l border-border/50 rtl:border-l-0 rtl:border-r">{t('item.quantity')}</span>
                                </div>
                                <div className="text-lg font-black text-foreground">
-                                  {formatCurrency(item.price, locale)}
+                                  {formatCurrency(item.price)}
                                </div>
                             </div>
                           </div>
@@ -156,11 +164,11 @@ export default function CartPage() {
                        <div className="space-y-4 font-medium">
                           <div className="flex items-center justify-between text-muted-foreground">
                              <span>{t('summary.subtotal')}</span>
-                             <span className="text-foreground font-black">{formatCurrency(subtotal, locale)}</span>
+                             <span className="text-foreground font-black">{formatCurrency(subtotal)}</span>
                           </div>
                           <div className="flex items-center justify-between text-muted-foreground">
                              <span>{t('summary.tax')}</span>
-                             <span className="text-foreground font-black">{formatCurrency(tax, locale)}</span>
+                             <span className="text-foreground font-black">{formatCurrency(tax)}</span>
                           </div>
                           <div className="flex items-center justify-between text-muted-foreground">
                              <span>{t('summary.shipping')}</span>
@@ -169,7 +177,7 @@ export default function CartPage() {
                           <div className="h-px bg-border/50 my-2" />
                           <div className="flex items-center justify-between text-xl font-black">
                              <span>{t('summary.total')}</span>
-                             <span className="text-primary">{formatCurrency(totalAmount, locale)}</span>
+                             <span className="text-primary">{formatCurrency(totalAmount)}</span>
                           </div>
                        </div>
 

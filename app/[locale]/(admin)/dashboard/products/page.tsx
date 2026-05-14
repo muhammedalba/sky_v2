@@ -10,7 +10,8 @@ import { Switch } from '@/shared/ui/Switch';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
-import { formatCurrency, truncate } from '@/lib/utils';
+import { truncate } from '@/lib/utils';
+import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Product } from '@/types';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
@@ -49,6 +50,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
   const getTrans = useTrans();
+  const formatCurrency = useFormatCurrency();
 
   // get data
   const { data, isLoading, refetch } = useProducts({
@@ -204,8 +206,8 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         return (
           <span className="font-bold text-sm text-foreground">
             {minPrice === maxPrice
-              ? formatCurrency(minPrice, locale)
-              : `${formatCurrency(minPrice, locale)} - ${formatCurrency(maxPrice, locale)}`}
+              ? formatCurrency(minPrice)
+              : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`}
           </span>
         );
       }
@@ -368,7 +370,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                             </span>
                           ))}
                         </td>
-                        <td className="px-4 py-2 font-semibold">{formatCurrency(variant.price, locale)}</td>
+                        <td className="px-4 py-2 font-semibold">{formatCurrency(variant.price)}</td>
                         <td className="px-4 py-2">
                           <span className={variant.stock > 0 ? "text-success" : "text-destructive"}>
                             {variant.stock}

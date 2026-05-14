@@ -9,25 +9,33 @@ export function cn(...inputs: ClassValue[]) {
 // يمكنك مستقبلاً استبدال هذا الثابت بالقيمة القادمة من الـ API أو الـ State
 const FALLBACK_EXCHANGE_RATE = 3.75; 
 
-export function formatCurrency(
-  amountInUSD: number, 
-  locale: string = env.DEFAULT_LOCALE ?? 'ar' ,
-  currentExchangeRate: number = FALLBACK_EXCHANGE_RATE
+export function formatCurrency( 
+  amountInBaseCurrency: number, 
+  locale: string = env.DEFAULT_LOCALE ?? 'ar',
+  exchangeRate?: number,
+  currencyCode?: string
 ): string {
   // 1. تحديد ما إذا كانت اللغة عربية
   const isArabic = locale.startsWith('ar');
   
-  // 2. حساب المبلغ: إذا عربي نضرب في سعر الصرف، وإذا إنجليزي يبقى بالدولار
-  const finalAmount = isArabic ? (amountInUSD * currentExchangeRate) : amountInUSD;
+  // 2. إذا اللغة عربية: السعر الأساسي (الريال). 
+  // إذا إنجليزية: نقسم السعر الأساسي على سعر الصرف (مثال: 37.5 / 3.75 = 10 دولار)
+  let finalAmount = amountInBaseCurrency;
+  if (!isArabic && exchangeRate && exchangeRate > 0) {
+    // نفترض أن المستخدم أدخل 3.75 في لوحة التحكم، لذا نقسم
+    finalAmount = amountInBaseCurrency / exchangeRate;
+  }
+    
+  // 3. تحديد كود العملة: عربي يأخذ العملة الأساسية، إنجليزي يأخذ USD
+  const code = isArabic ? (currencyCode || 'SAR') : 'USD';
   
-  // 3. تحديد كود العملة والتنسيق المحلي
-  const currencyCode = isArabic ? 'SAR' : 'USD';
+  // 4. تحديد التنسيق المحلي
   const formatLocale = isArabic ? 'ar-SA' : 'en-US';
 
-  // 4. إرجاع المبلغ المنسق
+  // 5. إرجاع المبلغ المنسق
   return new Intl.NumberFormat(formatLocale, {
     style: 'currency',
-    currency: currencyCode,
+    currency: code,
     currencyDisplay: 'symbol',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2, // لضمان عدم ظهور أكثر من رقمين عشريين

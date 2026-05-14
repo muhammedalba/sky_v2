@@ -5,6 +5,7 @@
             "delete": "Delete",
             "edit": "Edit",
             "create": "Create",
+            "add": "Add",
             "search": "Search",
             "filter": "Filter",
             "export": "Export",
@@ -57,7 +58,10 @@
             "carousel": "Carousel",
             "promoBanners": "Promo Banners",
             "productAnalytics": "Product Analytics",
-            "externalPlatforms": "Command Center"
+            "externalPlatforms": "Command Center",
+            "shipping": "Shipping Providers",
+            "shippingRates": "Shipping Rates",
+            "locations": "Locations"
       },
       "auth": {
     "login": "Sign In",
@@ -158,6 +162,30 @@
       "totalRevenue": "Total Project Value",
       "new": "New Solution",
       "activeOrders": "Ongoing Supplies"
+    }
+  },
+  "shipping": {
+      "title": "Shipping Rates",
+      "description": "Manage shipping costs by country, city, and weight",
+      "createRate": "Add Shipping Rate",
+      "editRate": "Edit Shipping Rate",
+      "modalDescription": "Enter the details of the shipping rate and the applicable geographical scope.",
+      "empty": {
+        "title": "No Shipping Rates",
+        "description": "Add a new shipping rate to get started"
+      },
+      "fields": {
+      "provider": "Shipping Provider",
+      "country": "Country",
+      "region": "Region",
+      "city": "City",
+      "basePrice": "Base Price",
+      "baseWeight": "Base Weight (kg)",
+      "additionalKgPrice": "Additional KG Price",
+      "estimatedDays": "Estimated Delivery Time",
+      "supportsCOD": "Cash on Delivery",
+      "isActive": "Status",
+      "actions": "Actions"
     }
   },
   "upload": {

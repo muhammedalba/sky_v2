@@ -15,6 +15,7 @@ import { useToast } from '@/shared/hooks/useToast';
 
 // Axis 1: Lazy Loading للأقسام (باستثناء الأول)
 import GeneralSection from './sections/GeneralSection';
+import { useRouter } from 'next/navigation';
 const SEOSection = dynamic(() => import('./sections/SEOSection'), { loading: () => <SectionSkeleton /> });
 const SocialSection = dynamic(() => import('./sections/SocialSection'), { loading: () => <SectionSkeleton /> });
 const ContactSection = dynamic(() => import('./sections/ContactSection'), { loading: () => <SectionSkeleton /> });
@@ -88,6 +89,7 @@ export default function SettingsForm() {
   const { data: settings, isLoading } = useSettings();
   const updateMutation = useUpdateSettings();
   const { success, error: toastError } = useToast();
+  const router = useRouter();
 
   const methods = useForm<SettingsInput>({
     resolver: zodResolver(settingsSchema) as any,
@@ -158,6 +160,10 @@ export default function SettingsForm() {
 
       await updateMutation.mutateAsync(formData as any);
       success(t('messages.updateSuccess'));
+      
+      // إجبار المتصفح على إعادة التحميل بالكامل لمسح كاش (Client Router Cache) 
+      // وضمان ظهور الشعار والإعدادات الجديدة في جميع صفحات المتجر
+      window.location.reload();
     } catch (err: any) {
       console.log(err);
       toastError(err?.message || t('messages.updateError'));

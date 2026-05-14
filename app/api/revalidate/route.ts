@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     if (!authHeader?.startsWith('Bearer ') || authHeader.split(' ')[1] !== REVALIDATE_SECRET) {
       logger.error('Unauthorized revalidation attempt blocked', { requestId, clientIp });
       return NextResponse.json(
-        { error: 'Unauthorized', message: 'Invalid or missing Bearer token' },
+        { error: 'Unauthorized', message: 'Invalid or missing Bearer REVALIDATE SECRET' },
         { status: 401 }
       );
     }
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     // 2. DATA EXTRACTION
     const { searchParams } = new URL(request.url);
     const tagInput = searchParams.get('tag');
-
+    console.log("tagInput", tagInput)
     if (!tagInput) {
       return NextResponse.json(
         { error: 'Bad Request', message: 'Missing "tag" parameter' },
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     // Support multiple tags separated by comma
     const tagsToProcess = tagInput.split(',').map(t => t.trim()).filter(Boolean);
-
+    console.log("tagsToProcess", tagsToProcess)
     // 3. WHITELIST VALIDATION
     const invalidTags = tagsToProcess.filter(tag => !ALLOWED_TAGS.has(tag));
     if (invalidTags.length > 0) {
@@ -101,10 +101,10 @@ export async function POST(request: NextRequest) {
       revalidateTag(tag, 'max');
     });
 
-    logger.info('Cache revalidation successful', { 
-      requestId, 
-      tags: tagsToProcess, 
-      clientIp 
+    logger.info('Cache revalidation successful', {
+      requestId,
+      tags: tagsToProcess,
+      clientIp
     });
 
     return NextResponse.json({
@@ -117,10 +117,10 @@ export async function POST(request: NextRequest) {
   } catch (err: any) {
     // 5. SECURE ERROR HANDLING
     // We log the internal error for maintainers but return a generic response to the client.
-    logger.error('Internal Revalidation Error', { 
-      requestId, 
-      error: err.message, 
-      stack: err.stack 
+    logger.error('Internal Revalidation Error', {
+      requestId,
+      error: err.message,
+      stack: err.stack
     });
 
     return NextResponse.json(

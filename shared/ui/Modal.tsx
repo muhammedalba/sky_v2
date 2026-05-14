@@ -48,46 +48,47 @@ export default function Modal({ isOpen, onClose, title, description, children, f
       />
 
       {/* Modal Container */}
-      <div 
-        className={cn(
-          'relative bg-background border border-border shadow-2xl rounded-4xl w-full  animate-in zoom-in-95 fade-in duration-300', 
-          sizes[size]
-        )}
-      >
-        {/* Header */}
-        <div className="px-8 pt-8 pb-4 mb-3 flex items-start justify-between  bg-muted/50">
-          <div className='border-b pb-5'>
-            {title && (
-              <h3 className="text-2xl font-black tracking-tight title-gradient">
-                {title}
-              </h3>
-            )}
-            {description && (
-              <p className="text-muted-foreground text-sm font-medium mt-1">
-                {description}
-              </p>
-            )}
-          </div>
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={onClose}
-            className='absolute -top-4 inset-e-0 rounded-full'
-          >
-            <Icons.X className="w-5 h-5 " /> {/* Close icon fallback */}
-          </Button>
-        </div>
+      <div className="h-full relative flex items-center justify-center">
+        <div
+          className={cn(
+            ' bg-background overflow-y-auto   overflow-x-hidden h-[95%] border border-border shadow-xl rounded-4xl w-full  animate-in zoom-in-95 fade-in duration-300',
+            sizes[size]
+          )}
+        >
+          {/* Header */}
+          <div className="px-8 pt-8 pb-4 mb-3 flex items-start justify-between  bg-muted/50">
+            <div className='border-b pb-5'>
+              {title && (
+                <h3 className="text-2xl font-black tracking-tight title-gradient">
+                  {title}
+                </h3>
+              )}
+              {description && (
+                <p className="text-muted-foreground text-sm font-medium mt-1">
+                  {description}
+                </p>
+              )}
+            </div>
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={onClose}
+              className='absolute -top-1 inset-e-0 rounded-full'
+            >
+              <Icons.X className="w-5 h-5 " /> {/* Close icon fallback */}
+            </Button>
+          </div> 
 
-        {/* Body */}
-        <div className="px-8 pb-8">{children}</div>
+          {/* Body */}
+          <div className="px-8 pb-8">{children}</div>
 
-        {/* Footer */}
-        {footer && (
-          <div className="px-8 py-6 bg-secondary/20 border-t border-border flex justify-end gap-3">
-            {footer}
-          </div>
-        )}
-      </div>
+          {/* Footer */}
+          {footer && (
+            <div className="px-8 py-6 bg-secondary/20 border-t border-border flex justify-end gap-3">
+              {footer}
+            </div>
+          )}
+        </div></div>
     </div>
   );
 }

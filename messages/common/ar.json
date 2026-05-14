@@ -5,6 +5,7 @@
             "delete": "حذف",
             "edit": "تعديل",
             "create": "إنشاء",
+            "add": "إضافة",
             "search": "بحث",
             "filter": "تصفية",
             "export": "تصدير",
@@ -57,7 +58,10 @@
             "carousel": "شريط الصور",
             "promoBanners": "البانرات الترويجية",
             "productAnalytics": "تحليلات المنتجات",
-            "externalPlatforms": "مركز القيادة"
+            "externalPlatforms": "مركز القيادة",
+            "shipping": "شركات الشحن",
+            "shippingRates": "أسعار الشحن",
+            "locations": "المواقع الجغرافية"
       },
       "auth": {
     "login": "تسجيل الدخول",
@@ -159,6 +163,30 @@
       "totalRevenue": "إجمالي الاستثمارات",
       "new": "منتج جديد",
       "activeOrders": "التوريدات الجارية"
+    }
+  },
+  "shipping": {
+      "title": "تسعيرات الشحن",
+      "description": "إدارة تكاليف الشحن حسب الدول والمدن والأوزان",
+      "createRate": "إضافة تسعيرة شحن",
+      "editRate": "تعديل تسعيرة شحن",
+      "modalDescription": "أدخل تفاصيل تسعيرة الشحن والنطاق الجغرافي المطبق.",
+      "empty": {
+        "title": "لا توجد تسعيرات",
+        "description": "قم بإضافة تسعيرة جديدة للبدء"
+      },
+      "fields": {
+      "provider": "شركة الشحن",
+      "country": "الدولة",
+      "region": "المنطقة",
+      "city": "المدينة",
+      "basePrice": "السعر الأساسي",
+      "baseWeight": "الوزن الأساسي (كجم)",
+      "additionalKgPrice": "سعر الكيلو الإضافي",
+      "estimatedDays": "مدة التوصيل المتوقعة",
+      "supportsCOD": "الدفع عند الاستلام",
+      "isActive": "الحالة",
+      "actions": "إجراءات"
     }
   },
   "upload": {

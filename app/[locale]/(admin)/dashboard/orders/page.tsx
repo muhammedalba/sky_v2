@@ -7,7 +7,8 @@ import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
-import { formatCurrency, formatDate, getStatusColor, cn } from '@/lib/utils';
+import { formatDate, getStatusColor, cn } from '@/lib/utils';
+import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Order } from '@/types';
 import Link from 'next/link';
 
@@ -20,6 +21,7 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
   
   const page = Number(getQueryParam('page', '1'));
   const t = useTranslations('orders');
+  const formatCurrency = useFormatCurrency();
 
   const { data, isLoading } = useOrders({ page, limit: 10 });
   const setPage = (val: number) => setQueryParam('page', val);

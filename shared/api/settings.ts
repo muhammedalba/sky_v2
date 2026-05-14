@@ -38,7 +38,7 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
     const actualSettings = responseData.data || {};
     const merged = { ...DEFAULT_SETTINGS, ...actualSettings };
     
-    console.log("data merged", merged);
+    // console.log("data merged", merged);
     // Normalize media paths → absolute backend URLs so both Next.js
     // metadata (favicon) and <img> tags resolve correctly.
     return {
@@ -88,6 +88,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   },
   currencyCode: 'SAR',
   currencySymbol: 'ر.س',
+  exchangeRate: 0,
   freeShippingThreshold: 0,
   minOrderAmount: 0,
   vatRate: 15,
