@@ -19,10 +19,10 @@ export function Tooltip({ content, children, className, position = 'top' }: Tool
   };
 
   const arrowClasses = {
-    top: "top-full left-1/2 -translate-x-1/2 border-t-slate-900",
-    bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-slate-900",
-    left: "left-full top-1/2 -translate-y-1/2 border-l-slate-900",
-    right: "right-full top-1/2 -translate-y-1/2 border-r-slate-900",
+    top: "top-full left-1/2 -translate-x-1/2 border-t-accent",
+    bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-accent",
+    left: "left-full top-1/2 -translate-y-1/2 border-l-accent",
+    right: "right-full top-1/2 -translate-y-1/2 border-r-accent",
   };
 
   return (
@@ -36,7 +36,7 @@ export function Tooltip({ content, children, className, position = 'top' }: Tool
       {children}
       {isVisible && content && (
         <div className={cn(
-          "absolute px-2.5 py-1.5 text-[11px] leading-none font-semibold text-white bg-slate-900 rounded-lg shadow-xl whitespace-nowrap z-100 pointer-events-none transition-all animate-in fade-in zoom-in-95 duration-200",
+          "absolute px-2.5 py-1.5 text-[11px] leading-none font-semibold text-foreground/80 bg-accent rounded-lg shadow-xl whitespace-nowrap z-100 pointer-events-none transition-all animate-in fade-in zoom-in-95 duration-200",
           positionClasses[position],
           className
         )}>

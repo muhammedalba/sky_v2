@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/shared/ui/Button';
 import { useToast } from '@/shared/hooks/useToast';
 import { Icons } from '@/shared/ui/Icons';
-import { formatCurrency } from '@/lib/utils';
+import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Badge } from '@/shared/ui/Badge';
 import { ShippingRate } from '@/features/shipping/types';
 import { useDeleteShippingRate, useShippingRates, useUpdateShippingRate } from '@/features/shipping/hooks/useShippingRates';
@@ -19,6 +19,7 @@ import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { Switch } from '@/shared/ui/Switch';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
+import { Tooltip } from '@/shared/ui/Tooltip';
 
 type ViewTab = 'all' | 'active' | 'inactive';
 
@@ -32,6 +33,8 @@ export default function ShippingRatesPage() {
   const t = useTranslations('shippingRates');
   const tCommon = useTranslations('common');
   const tButtons = useTranslations('buttons');
+  const formatCurrency = useFormatCurrency();
+
   const { success: toastSuccess, error: toastError } = useToast();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -157,9 +160,9 @@ export default function ShippingRatesPage() {
       header: t('fields.basePrice'),
       render: (item: ShippingRate) => (
         <div className="flex flex-col gap-1">
-          <span className="font-bold text-primary bg-primary/5 px-2 py-1 rounded-lg w-fit">
-            {formatCurrency(item.basePrice)}
-          </span>
+          <Badge variant="default" className="font-bold  px-2 py-1 rounded-lg w-fit">
+            {formatCurrency(Number(item?.basePrice || 0))}
+          </Badge>
           <span className="text-[10px] text-muted-foreground px-1">
             {t('fields.baseWeight')}: {item.baseWeight} kg
           </span>
@@ -169,16 +172,16 @@ export default function ShippingRatesPage() {
     {
       header: t('fields.additionalKgPrice'),
       render: (item: ShippingRate) => (
-        <span className="font-semibold text-green-600 bg-green-500/5 px-2 py-1 rounded-lg">
-          +{formatCurrency(item.additionalKgPrice)}
-        </span>
+        <Badge variant={"success"} className="font-semibold px-2 py-1 rounded-lg">
+          +{formatCurrency(Number(item?.additionalKgPrice || 0))}
+        </Badge >
       ),
     },
     {
       header: t('fields.estimatedDays'),
       render: (item: ShippingRate) => (
         <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-          <Icons.Clock className="w-4 h-4" />
+          <Icons.Clock className="w-4 h-4 text-warning" />
           {item.estimatedDays || '-'}
         </div>
       ),
@@ -198,28 +201,32 @@ export default function ShippingRatesPage() {
       className: "pe-6 text-center",
       render: (item: ShippingRate) => (
         <div className="flex justify-center gap-2.5">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-10 w-10 rounded-lg hover:bg-primary/10 text-primary transition-colors"
-            onClick={() => handleEdit(item)}
-            disabled={isLoading || updateRatePending}
-          >
-            <Icons.Edit className="w-4 h-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-10 w-10 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
-            onClick={() => handleDelete(item)}
-            disabled={isLoading || deleteRatePending}
-          >
-            <Icons.Trash className="w-4 h-4" />
-          </Button>
+          <Tooltip content={tButtons('edit')}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-lg hover:bg-primary/10 text-primary transition-colors"
+              onClick={() => handleEdit(item)}
+              disabled={isLoading || updateRatePending}
+            >
+              <Icons.Edit className="w-4 h-4" />
+            </Button>
+          </Tooltip>
+          <Tooltip content={tButtons('delete')}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
+              onClick={() => handleDelete(item)}
+              disabled={isLoading || deleteRatePending}
+            >
+              <Icons.Trash className="w-4 h-4" />
+            </Button>
+          </Tooltip>
         </div>
       ),
     },
-  ], [t, handleEdit, handleDelete, handleToggleStatus, updateRatePending, isLoading, deleteRatePending, tCommon]);
+  ], [t, handleEdit, handleDelete, handleToggleStatus, updateRatePending, isLoading, deleteRatePending, tCommon, formatCurrency]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
