@@ -5,11 +5,13 @@ import { apiClient } from '@/lib/api/client';
 
 // ================= Countries =================
 
-export const useCountries = () => {
+export const useCountries = (isActive?: boolean) => {
   return useQuery<Country[]>({
-    queryKey: ['countries'],
+    queryKey: ['countries', isActive],
     queryFn: async () => {
-      const response = await apiClient.get('/locations/countries');
+      const response = await apiClient.get('/locations/countries', {
+        params: { isActive }
+      });
       return response.data?.data || response.data || [];
     },
   });
@@ -43,12 +45,14 @@ export const useUpdateCountry = () => {
 
 // ================= Regions =================
 
-export const useRegions = (countryId?: string) => {
+export const useRegions = (countryId?: string, isActive?: boolean) => {
   return useQuery<Region[]>({
-    queryKey: ['regions', countryId],
+    queryKey: ['regions', countryId, isActive],
     queryFn: async () => {
       if (!countryId) return [];
-      const response = await apiClient.get(`/locations/regions/${countryId}`);
+      const response = await apiClient.get(`/locations/regions/${countryId}`, {
+        params: { isActive }
+      });
       return response.data?.data || response.data || [];
     },
     enabled: !!countryId,
@@ -83,12 +87,14 @@ export const useUpdateRegion = () => {
 
 // ================= Cities =================
 
-export const useCities = (regionId?: string) => {
+export const useCities = (regionId?: string, isActive?: boolean) => {
   return useQuery<City[]>({
-    queryKey: ['cities', regionId],
+    queryKey: ['cities', regionId, isActive],
     queryFn: async () => {
       if (!regionId) return [];
-      const response = await apiClient.get(`/locations/cities/${regionId}`);
+      const response = await apiClient.get(`/locations/cities/${regionId}`, {
+        params: { isActive }
+      });
       return response.data?.data || response.data || [];
     },
     enabled: !!regionId,

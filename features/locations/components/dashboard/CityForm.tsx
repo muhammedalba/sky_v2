@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
@@ -13,20 +13,6 @@ import { useToast } from '@/shared/hooks/useToast';
 import { City } from '../../types';
 import { useCreateCity, useUpdateCity } from '../../hooks/useLocations';
 
-const formSchema = z.object({
-  name: z.object({
-    ar: z.string().min(1, 'الاسم بالعربية مطلوب'),
-    en: z.string().min(1, 'الاسم بالإنجليزية مطلوب'),
-  }),
-  postalCode: z.string().optional(),
-  latitude: z.coerce.number().optional(),
-  longitude: z.coerce.number().optional(),
-  isDeliveryAvailable: z.boolean(),
-  isActive: z.boolean(),
-});
-
-type CityFormData = z.infer<typeof formSchema>;
-
 interface CityFormProps {
   countryId: string;
   regionId: string;
@@ -36,8 +22,26 @@ interface CityFormProps {
 }
 
 export default function CityForm({ countryId, regionId, editingCity, onSuccess, onCancel }: CityFormProps) {
-  const tCommon = useTranslations('buttons');
+  const t = useTranslations('locations');
+  const tCommon = useTranslations('common');
+  const tButtons = useTranslations('buttons');
   const { success: toastSuccess, error: toastError } = useToast();
+
+  // 1. تغليف المخطط بـ useMemo
+  const formSchema = useMemo(() => z.object({
+    name: z.object({
+      ar: z.string().min(1, t('validation.nameArRequired')),
+      en: z.string().min(1, t('validation.nameEnRequired')),
+    }),
+    postalCode: z.string().optional(),
+    latitude: z.coerce.number().optional(),
+    longitude: z.coerce.number().optional(),
+    isDeliveryAvailable: z.boolean(),
+    isActive: z.boolean(),
+  }), [t]);
+
+ type CityFormInput = z.input<typeof formSchema>;
+  type CityFormOutput = z.output<typeof formSchema>;
 
   const { mutateAsync: createCity, isPending: isCreating } = useCreateCity();
   const { mutateAsync: updateCity, isPending: isUpdating } = useUpdateCity();
@@ -46,32 +50,24 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    control, // تم استخدام control بدلاً من watch و setValue
     formState: { errors },
-  } = useForm<CityFormData>({
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: editingCity ? {
+  } =useForm<CityFormInput, any, CityFormOutput>({
+    resolver: zodResolver(formSchema), // تمت إزالة as any
+    defaultValues: {
       name: {
-        ar: editingCity.name?.ar || '',
-        en: editingCity.name?.en || '',
+        ar: editingCity?.name?.ar || '',
+        en: editingCity?.name?.en || '',
       },
-      postalCode: editingCity.postalCode || '',
-      latitude: editingCity.latitude || 0,
-      longitude: editingCity.longitude || 0,
-      isDeliveryAvailable: editingCity.isDeliveryAvailable ?? true,
-      isActive: editingCity.isActive ?? true,
-    } : {
-      name: { ar: '', en: '' },
-      postalCode: '',
-      latitude: 0,
-      longitude: 0,
-      isDeliveryAvailable: true,
-      isActive: true,
+      postalCode: editingCity?.postalCode || '',
+      latitude: editingCity?.latitude || 0,
+      longitude: editingCity?.longitude || 0,
+      isDeliveryAvailable: editingCity?.isDeliveryAvailable ?? true,
+      isActive: editingCity?.isActive ?? true,
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CityFormOutput) => {
     try {
       const payload = {
         ...data,
@@ -80,15 +76,17 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
       };
 
       if (editingCity) {
-        await updateCity({ id: editingCity._id, data: payload as any });
-        toastSuccess('تم التحديث بنجاح');
+        await updateCity({ id: editingCity._id, data: payload }); // تمت إزالة as any
+        toastSuccess(tCommon('messages.updateSuccess'));
       } else {
-        await createCity(payload as any);
-        toastSuccess('تمت الإضافة بنجاح');
+        await createCity(payload); // تمت إزالة as any
+        toastSuccess(tCommon('messages.success'));
       }
       onSuccess?.();
-    } catch (error: any) {
-      toastError(error.message || 'حدث خطأ غير متوقع');
+    } catch (error) {
+      // 2. التعامل الآمن مع الأخطاء
+      const errorMessage = error instanceof Error ? error.message : tCommon('errors.networkError');
+      toastError(errorMessage);
     }
   };
 
@@ -96,7 +94,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
-          label="اسم المدينة (بالعربية)"
+          label={t('form.nameAr')}
           icon={Icons.MapPin}
           {...register('name.ar')}
           error={errors.name?.ar?.message}
@@ -104,7 +102,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
           dir="rtl"
         />
         <Input
-          label="City Name (English)"
+          label={t('form.nameEn')}
           icon={Icons.MapPin}
           {...register('name.en')}
           error={errors.name?.en?.message}
@@ -115,13 +113,13 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
-          label="الرمز البريدي"
+          label={t('form.postalCode')}
           {...register('postalCode')}
           error={errors.postalCode?.message}
           disabled={isPending}
         />
         <Input
-          label="خط العرض (Latitude)"
+          label={t('form.latitude')}
           type="number"
           step="any"
           {...register('latitude')}
@@ -129,7 +127,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
           disabled={isPending}
         />
         <Input
-          label="خط الطول (Longitude)"
+          label={t('form.longitude')}
           type="number"
           step="any"
           {...register('longitude')}
@@ -140,29 +138,43 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
 
       <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
         <div className="space-y-0.5">
-          <span className="font-semibold text-base">تفعيل التوصيل</span>
+          <span className="font-semibold text-base">{t('form.deliveryAvailable')}</span>
           <p className="text-sm text-muted-foreground">
-            هل التوصيل متاح لهذه المدينة؟
+            {t('form.deliveryAvailableDesc')}
           </p>
         </div>
-        <Switch
-          checked={watch('isDeliveryAvailable')}
-          onCheckedChange={(val) => setValue('isDeliveryAvailable', val)}
-          disabled={isPending}
+        {/* 3. استخدام Controller بدلاً من watch لزر التوصيل */}
+        <Controller
+          name="isDeliveryAvailable"
+          control={control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              disabled={isPending}
+            />
+          )}
         />
       </div>
 
       <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
         <div className="space-y-0.5">
-          <span className="font-semibold text-base">تفعيل المدينة</span>
+          <span className="font-semibold text-base">{t('form.activateCity')}</span>
           <p className="text-sm text-muted-foreground">
-            هل تريد إتاحة هذه المدينة للعملاء؟
+            {t('form.activateCityDesc')}
           </p>
         </div>
-        <Switch
-          checked={watch('isActive')}
-          onCheckedChange={(val) => setValue('isActive', val)}
-          disabled={isPending}
+        {/* 4. استخدام Controller بدلاً من watch لزر التفعيل */}
+        <Controller
+          name="isActive"
+          control={control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              disabled={isPending}
+            />
+          )}
         />
       </div>
 
@@ -173,7 +185,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
           isLoading={isPending}
           disabled={isPending}
         >
-          {editingCity ? tCommon('save') : tCommon('add')}
+          {editingCity ? tButtons('save') : tButtons('add')}
         </Button>
         <Button
           type="button"
@@ -182,7 +194,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
           onClick={onCancel}
           disabled={isPending}
         >
-          {tCommon('cancel')}
+          {tButtons('cancel')}
         </Button>
       </div>
     </form>

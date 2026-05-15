@@ -1,0 +1,122 @@
+{
+  "title": "إدارة المواقع الجغرافية",
+  "description": "إدارة الدول والمناطق والمدن ونطاقات الخدمة",
+  "subtitle": "إدارة الدول والمناطق والمدن ونطاقات الخدمة",
+  "searchPlaceholder": "البحث هنا...",
+  "totalResults": "إجمالي النتائج: {count}",
+  "tabs": {
+    "countries": "الدول",
+    "regions": "المناطق",
+    "cities": "المدن"
+  },
+  "fields": {
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "country": "الدولة",
+    "region": "المنطقة",
+    "city": "المدينة",
+    "name": "الاسم",
+    "code": "الرمز",
+    "currency": "العملة",
+    "postalCode": "الرمز البريدي",
+    "delivery": "التوصيل"
+  },
+  "placeholders": {
+    "selectCountry": "اختر الدولة",
+    "selectCountryToViewRegions": "يرجى اختيار دولة لعرض مناطقها",
+    "selectRegion": "اختر المنطقة",
+    "selectRegionToViewCities": "يرجى اختيار منطقة لعرض مدنها"
+  },
+  "createCountry": "إضافة دولة",
+  "editCountry": "تعديل دولة",
+  "createRegion": "إضافة منطقة",
+  "editRegion": "تعديل منطقة",
+  "createCity": "إضافة مدينة",
+  "editCity": "تعديل مدينة",
+  "emptyState": {
+    "title": "لا توجد بيانات",
+    "description": "لم يتم العثور على أي بيانات، يرجى إضافة عناصر جديدة"
+  },
+  "form": {
+    "nameAr": "الاسم (بالعربية)",
+    "nameEn": "الاسم (بالإنجليزية)",
+    "code": "رمز الدولة",
+    "countryCode": "رمز الدولة (ISO 2)",
+    "phoneCode": "رمز الهاتف",
+    "flagIcon": "أيقونة العلم",
+    "currency": "العملة",
+    "postalCode": "الرمز البريدي",
+    "activateCountry": "تفعيل الدولة",
+    "activateCountryDesc": "تفعيل أو تعطيل هذه الدولة في النظام",
+    "activateRegion": "تفعيل المنطقة",
+    "activateRegionDesc": "تفعيل أو تعطيل هذه المنطقة",
+    "activateCity": "تفعيل المدينة",
+    "activateCityDesc": "تفعيل أو تعطيل هذه المدينة",
+    "isDeliveryAvailable": "التوصيل متاح",
+    "isDeliveryAvailableDesc": "هل خدمة التوصيل متاحة في هذه المدينة؟",
+    "deliveryAvailable": "التوصيل متاح",
+    "deliveryAvailableDesc": "هل خدمة التوصيل متاحة في هذه المدينة؟",
+    "latitude": "خط العرض",
+    "longitude": "خط الطول"
+  },
+  "validation": {
+    "nameArRequired": "الاسم بالعربية مطلوب",
+    "nameEnRequired": "الاسم بالإنجليزية مطلوب",
+    "countryCodeRequired": "رمز الدولة مطلوب",
+    "phoneCodeRequired": "رمز الهاتف مطلوب",
+    "currencyRequired": "العملة مطلوبة",
+    "regionRequired": "المنطقة مطلوبة",
+    "countryRequired": "الدولة مطلوبة"
+  },
+  "countries": {
+    "title": "الدول",
+    "add": "إضافة دولة",
+    "edit": "تعديل دولة",
+    "searchPlaceholder": "البحث عن دولة...",
+    "empty": {
+      "title": "لا توجد دول",
+      "description": "ابدأ بإضافة أول دولة للنظام"
+    },
+    "fields": {
+      "nameAr": "الاسم (بالعربية)",
+      "nameEn": "الاسم (بالإنجليزية)",
+      "code": "رمز الدولة (ISO 2)",
+      "phoneCode": "مفتاح الاتصال",
+      "flag": "العلم",
+      "currency": "العملة",
+      "isActive": "نشطة"
+    }
+  },
+  "regions": {
+    "title": "المناطق / المحافظات",
+    "add": "إضافة منطقة",
+    "edit": "تعديل منطقة",
+    "searchPlaceholder": "البحث عن منطقة...",
+    "empty": {
+      "title": "لا توجد مناطق",
+      "description": "يرجى إضافة مناطق لهذه الدولة"
+    },
+    "fields": {
+      "nameAr": "اسم المنطقة (بالعربية)",
+      "nameEn": "اسم المنطقة (بالإنجليزية)",
+      "country": "الدولة",
+      "isActive": "نشطة"
+    }
+  },
+  "cities": {
+    "title": "المدن",
+    "add": "إضافة مدينة",
+    "edit": "تعديل مدينة",
+    "searchPlaceholder": "البحث عن مدينة...",
+    "empty": {
+      "title": "لا توجد مدن",
+      "description": "يرجى إضافة مدن لهذه المنطقة"
+    },
+    "fields": {
+      "nameAr": "اسم المدينة (بالعربية)",
+      "nameEn": "اسم المدينة (بالإنجليزية)",
+      "region": "المنطقة",
+      "isActive": "نشطة"
+    }
+  }
+}

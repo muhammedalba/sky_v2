@@ -1,0 +1,122 @@
+{
+  "title": "Geographic Locations",
+  "description": "Manage countries, regions, cities, and service zones",
+  "subtitle": "Manage countries, regions, cities, and service zones",
+  "searchPlaceholder": "Search here...",
+  "totalResults": "Total Results: {count}",
+  "tabs": {
+    "countries": "Countries",
+    "regions": "Regions",
+    "cities": "Cities"
+  },
+  "fields": {
+    "status": "Status",
+    "actions": "Actions",
+    "country": "Country",
+    "region": "Region",
+    "city": "City",
+    "name": "Name",
+    "code": "Code",
+    "currency": "Currency",
+    "postalCode": "Postal Code",
+    "delivery": "Delivery"
+  },
+  "placeholders": {
+    "selectCountry": "Select Country",
+    "selectCountryToViewRegions": "Please select a country to view its regions",
+    "selectRegion": "Select Region",
+    "selectRegionToViewCities": "Please select a region to view its cities"
+  },
+  "createCountry": "Add Country",
+  "editCountry": "Edit Country",
+  "createRegion": "Add Region",
+  "editRegion": "Edit Region",
+  "createCity": "Add City",
+  "editCity": "Edit City",
+  "emptyState": {
+    "title": "No data found",
+    "description": "No data has been found, please add new items."
+  },
+  "form": {
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "code": "Country Code",
+    "countryCode": "Country Code (ISO 2)",
+    "phoneCode": "Phone Code",
+    "flagIcon": "Flag Icon",
+    "currency": "Currency",
+    "postalCode": "Postal Code",
+    "activateCountry": "Activate Country",
+    "activateCountryDesc": "Enable or disable this country across the system",
+    "activateRegion": "Activate Region",
+    "activateRegionDesc": "Enable or disable this region",
+    "activateCity": "Activate City",
+    "activateCityDesc": "Enable or disable this city",
+    "isDeliveryAvailable": "Delivery Available",
+    "isDeliveryAvailableDesc": "Is delivery service available in this city?",
+    "deliveryAvailable": "Delivery Available",
+    "deliveryAvailableDesc": "Is delivery service available in this city?",
+    "latitude": "Latitude",
+    "longitude": "Longitude"
+  },
+  "validation": {
+    "nameArRequired": "Arabic name is required",
+    "nameEnRequired": "English name is required",
+    "countryCodeRequired": "Country code is required",
+    "phoneCodeRequired": "Phone code is required",
+    "currencyRequired": "Currency is required",
+    "regionRequired": "Region is required",
+    "countryRequired": "Country is required"
+  },
+  "countries": {
+    "title": "Countries",
+    "add": "Add Country",
+    "edit": "Edit Country",
+    "searchPlaceholder": "Search countries...",
+    "empty": {
+      "title": "No Countries Found",
+      "description": "Start by adding the first country to the system"
+    },
+    "fields": {
+      "nameAr": "Name (Arabic)",
+      "nameEn": "Name (English)",
+      "code": "Country Code (ISO 2)",
+      "phoneCode": "Phone Code",
+      "flag": "Flag Icon",
+      "currency": "Currency",
+      "isActive": "Active"
+    }
+  },
+  "regions": {
+    "title": "Regions / Provinces",
+    "add": "Add Region",
+    "edit": "Edit Region",
+    "searchPlaceholder": "Search regions...",
+    "empty": {
+      "title": "No Regions Found",
+      "description": "Please add regions for this country"
+    },
+    "fields": {
+      "nameAr": "Region Name (Arabic)",
+      "nameEn": "Region Name (English)",
+      "country": "Country",
+      "isActive": "Active"
+    }
+  },
+  "cities": {
+    "title": "Cities",
+    "add": "Add City",
+    "edit": "Edit City",
+    "searchPlaceholder": "Search cities...",
+    "empty": {
+      "title": "No Cities Found",
+      "description": "Please add cities for this region"
+    },
+    "fields": {
+      "nameAr": "City Name (Arabic)",
+      "nameEn": "City Name (English)",
+      "region": "Region",
+      "isActive": "Active"
+    }
+  }
+}

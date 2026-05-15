@@ -30,7 +30,8 @@
             "notFound": "المورد غير موجود",
             "unauthorized": "أنت غير مخول للقيام بهذا الإجراء",
             "passwordMismatch": "انتظر، كلمات المرور غير متطابقة. يرجى التحقق مرة أخرى.",
-            "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك."
+            "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+            "updateFailed": "فشل التحديث، يرجى المحاولة مرة أخرى"
       },
       "messages": {
             "success": "تمت العملية بنجاح",
@@ -41,7 +42,10 @@
             "loading": "جاري التحميل...",
             "noData": "لا توجد بيانات متاحة",
             "showingPage": "عرض الصفحة {page} من {total}",
-            "showingResults": "عرض {count} نتيجة"
+            "showingResults": "عرض {count} نتيجة",
+            "available": "متاح",
+            "unavailable": "غير متاح",
+            "updateSuccess": "تم التحديث بنجاح"
       },
       "tabs": {
             "all": "الكل",

@@ -77,7 +77,7 @@ export default function TaxesPage() {
       toastSuccess(t('updateSuccess') || 'Status updated');
       refetch();
     } catch (err: any) {
-      toastError(t('updateError') || 'Error updating status');
+      toastError( err.response?.data?.message  || t('updateError') || 'Error updating status');
     }
   }, [updateTaxAsync, toastSuccess, toastError, t, refetch]);
 
@@ -91,7 +91,7 @@ export default function TaxesPage() {
           toastSuccess(t('deleteSuccess'));
           refetch();
         } catch (err: any) {
-          toastError(t('deleteError'));
+          toastError(err.message || t('deleteError'));
         }
       },
     });

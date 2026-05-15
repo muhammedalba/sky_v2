@@ -30,7 +30,8 @@
             "notFound": "Resource not found",
             "unauthorized": "You are not authorized to perform this action",
             "passwordMismatch": "Wait, the passwords don't match. Please check again.",
-            "networkError": "Network error. Please check your connection."
+            "networkError": "Network error. Please check your connection.",
+            "updateFailed": "Update failed, please try again"
       },
       "messages": {
             "success": "Operation completed successfully",
@@ -41,7 +42,10 @@
             "loading": "Loading...",
             "noData": "No data available",
             "showingPage": "Showing Page {page} of {total}",
-            "showingResults": "Showing {count} results"
+            "showingResults": "Showing {count} results",
+            "available": "Available",
+            "unavailable": "Unavailable",
+            "updateSuccess": "Updated successfully"
       },
       "tabs": {
             "all": "All",

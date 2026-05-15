@@ -18,6 +18,7 @@ import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { Switch } from '@/shared/ui/Switch';
+import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
 type ViewTab = 'all' | 'active' | 'inactive';
 
@@ -73,11 +74,11 @@ export default function ShippingRatesPage() {
 
   const handleToggleStatus = useCallback(async (rate: ShippingRate) => {
     try {
-      await updateRateAsync({ id: rate._id, payload: { isActive: !rate.isActive } });
+      await updateRateAsync({ id: rate._id, payload: { isActive: !rate.isActive, city: rate.city?._id } });
       toastSuccess(tCommon('messages.success'));
       refetch();
     } catch (err: any) {
-      toastError(tCommon('errors.serverError'));
+      toastError(err.response.data.message || tCommon('errors.serverError'));
     }
   }, [updateRateAsync, toastSuccess, toastError, tCommon, refetch]);
 
@@ -112,11 +113,21 @@ export default function ShippingRatesPage() {
   const columns = useMemo(() => [
     {
       header: t('fields.provider'),
-      render: (item: ShippingRate) => {
+      render: (item: ShippingRate, index: number) => {
         const provider = item.provider as any;
         const name = typeof provider?.name === 'string' ? provider.name : (provider?.name?.ar || provider?.name?.en || 'N/A');
         return (
           <div className="flex items-center gap-3">
+            <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
+              <ImageWithFallback
+                src={provider.logo || ''}
+                alt={name}
+                fill
+                sizes="48px"
+                loading={index < 5 ? "eager" : "lazy"}
+                className="object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
             <div className="font-bold text-foreground">{name}</div>
           </div>
         );
@@ -128,11 +139,11 @@ export default function ShippingRatesPage() {
         const country = (item.country as any)?.name?.ar || (item.country as any)?.name || t('globalFallback');
         const region = (item.region as any)?.name?.ar || (item.region as any)?.name;
         const city = (item.city as any)?.name?.ar || (item.city as any)?.name;
-        
+
         return (
           <div className="flex flex-col gap-0.5">
             <span className="font-medium text-primary text-sm">{country}</span>
-            {region && <span className="text-xs text-muted-foreground flex items-center gap-1">
+            {region && <span className="text-xs text -foreground flex items-center gap-1">
               <Icons.ChevronRight className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
             </span>}
             {city && <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -229,14 +240,14 @@ export default function ShippingRatesPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-2 flex-wrap">
           {tabs.map((tab) => (
-            <button
+            <Button variant="ghost"
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               disabled={isLoading}
-              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
+              className={`${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
             >
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

@@ -47,7 +47,7 @@ export default function ShippingPage() {
   // Query params for API
   const queryParams = useMemo(() => ({
     page,
-    limit: 10,
+    limit: 15,
     keywords: search,
     ...TAB_FILTER_PARAMS[viewTab]
   }), [page, search, viewTab]);
@@ -100,8 +100,8 @@ export default function ShippingPage() {
           await deleteProviderAsync(id);
           toastSuccess(tMessages('success'));
           refetch();
-        } catch (error) {
-          toastError(tMessages('error') || 'حدث خطأ أثناء الحذف');
+        } catch (error: any) {
+          toastError(error?.message || tMessages('error') || 'حدث خطأ أثناء الحذف');
         }
       },
     });

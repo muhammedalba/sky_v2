@@ -1,6 +1,7 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
@@ -12,19 +13,6 @@ import { useToast } from '@/shared/hooks/useToast';
 import { Country } from '../../types';
 import { useCreateCountry, useUpdateCountry } from '../../hooks/useLocations';
 
-const formSchema = z.object({
-  name: z.object({
-    ar: z.string().min(1, 'الاسم بالعربية مطلوب'),
-    en: z.string().min(1, 'الاسم بالإنجليزية مطلوب'),
-  }),
-  code: z.string().min(2, 'كود الدولة مطلوب').max(5),
-  phoneCode: z.string().min(1, 'كود الهاتف مطلوب'),
-  currency: z.string().min(1, 'العملة مطلوبة'),
-  isActive: z.boolean(),
-});
-
-type CountryFormData = z.infer<typeof formSchema>;
-
 interface CountryFormProps {
   editingCountry?: Country | null;
   onSuccess?: () => void;
@@ -32,8 +20,24 @@ interface CountryFormProps {
 }
 
 export default function CountryForm({ editingCountry, onSuccess, onCancel }: CountryFormProps) {
-  const tCommon = useTranslations('buttons');
+  const t = useTranslations('locations');
+  const tCommon = useTranslations('common');
+  const tButtons = useTranslations('buttons');
   const { success: toastSuccess, error: toastError } = useToast();
+
+  // 1. تغليف المخطط بـ useMemo لمنع إعادة إنشائه مع كل Render
+  const formSchema = useMemo(() => z.object({
+    name: z.object({
+      ar: z.string().min(1, t('validation.nameArRequired')),
+      en: z.string().min(1, t('validation.nameEnRequired')),
+    }),
+    code: z.string().min(2, t('validation.countryCodeRequired')).max(5),
+    phoneCode: z.string().min(1, t('validation.phoneCodeRequired')),
+    currency: z.string().min(1, t('validation.currencyRequired')),
+    isActive: z.boolean(),
+  }), [t]);
+
+  type CountryFormData = z.infer<typeof formSchema>;
 
   const { mutateAsync: createCountry, isPending: isCreating } = useCreateCountry();
   const { mutateAsync: updateCountry, isPending: isUpdating } = useUpdateCountry();
@@ -42,41 +46,38 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    control, // تم إضافة control لاستخدامه مع الـ Switch
     formState: { errors },
   } = useForm<CountryFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: editingCountry ? {
+    // 2. تنظيف واختصار القيم الافتراضية
+    defaultValues: {
       name: {
-        ar: editingCountry.name?.ar || '',
-        en: editingCountry.name?.en || '',
+        ar: editingCountry?.name?.ar || '',
+        en: editingCountry?.name?.en || '',
       },
-      code: editingCountry.code || '',
-      phoneCode: editingCountry.phoneCode || '',
-      currency: editingCountry.currency || 'SAR',
-      isActive: editingCountry.isActive ?? true,
-    } : {
-      name: { ar: '', en: '' },
-      code: '',
-      phoneCode: '',
-      currency: 'SAR',
-      isActive: true,
+      code: editingCountry?.code || '',
+      phoneCode: editingCountry?.phoneCode || '',
+      currency: editingCountry?.currency || 'SAR',
+      isActive: editingCountry?.isActive ?? true,
     },
   });
 
   const onSubmit = async (data: CountryFormData) => {
     try {
+      // 3. التخلص من (as any) للحفاظ على صرامة الأنواع
       if (editingCountry) {
-        await updateCountry({ id: editingCountry._id, data: data as any });
-        toastSuccess('تم تحديث الدولة بنجاح');
+        await updateCountry({ id: editingCountry._id, data });
+        toastSuccess(tCommon('messages.updateSuccess'));
       } else {
-        await createCountry(data as any);
-        toastSuccess('تمت إضافة الدولة بنجاح');
+        await createCountry(data);
+        toastSuccess(tCommon('messages.success'));
       }
       onSuccess?.();
-    } catch (error: any) {
-      toastError(error.message || 'حدث خطأ غير متوقع');
+    } catch (error) {
+      // 4. كتابة آمنة لمعالجة الأخطاء بدلاً من error: any
+      const errorMessage = error instanceof Error ? error.message : tCommon('errors.networkError');
+      toastError(errorMessage);
     }
   };
 
@@ -84,7 +85,7 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
-          label="اسم الدولة (بالعربية)"
+          label={t('form.nameAr')}
           icon={Icons.Globe}
           {...register('name.ar')}
           error={errors.name?.ar?.message}
@@ -92,7 +93,7 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
           dir="rtl"
         />
         <Input
-          label="Country Name (English)"
+          label={t('form.nameEn')}
           icon={Icons.Globe}
           {...register('name.en')}
           error={errors.name?.en?.message}
@@ -103,22 +104,22 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
-          label="كود الدولة (ISO)"
-          placeholder="مثلاً: SA"
+          label={t('form.countryCode')}
+          placeholder="ISO: SA"
           {...register('code')}
           error={errors.code?.message}
           disabled={isPending}
         />
         <Input
-          label="كود الهاتف"
-          placeholder="مثلاً: +966"
+          label={t('form.phoneCode')}
+          placeholder="+966"
           {...register('phoneCode')}
           error={errors.phoneCode?.message}
           disabled={isPending}
         />
         <Input
-          label="العملة"
-          placeholder="مثلاً: SAR"
+          label={t('form.currency')}
+          placeholder="SAR"
           {...register('currency')}
           error={errors.currency?.message}
           disabled={isPending}
@@ -127,15 +128,22 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
 
       <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
         <div className="space-y-0.5">
-          <span className="font-semibold text-base">تفعيل الدولة</span>
+          <span className="font-semibold text-base">{t('form.activateCountry')}</span>
           <p className="text-sm text-muted-foreground">
-            إتاحة الدولة في خيارات الشحن والعناوين
+            {t('form.activateCountryDesc')}
           </p>
         </div>
-        <Switch
-          checked={watch('isActive')}
-          onCheckedChange={(val) => setValue('isActive', val)}
-          disabled={isPending}
+        {/* 5. استخدام Controller لربط Switch بحالة الفورم دون التسبب بـ Re-render كامل */}
+        <Controller
+          name="isActive"
+          control={control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              disabled={isPending}
+            />
+          )}
         />
       </div>
 
@@ -146,7 +154,7 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
           isLoading={isPending}
           disabled={isPending}
         >
-          {editingCountry ? tCommon('save') : tCommon('add')}
+          {editingCountry ? tButtons('save') : tButtons('add')}
         </Button>
         <Button
           type="button"
@@ -155,7 +163,7 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
           onClick={onCancel}
           disabled={isPending}
         >
-          {tCommon('cancel')}
+          {tButtons('cancel')}
         </Button>
       </div>
     </form>
