@@ -19,7 +19,6 @@ import { useToast } from '@/shared/hooks/useToast';
 import { Tooltip } from '@/shared/ui/Tooltip';
 import { Switch } from '@/shared/ui/Switch';
 import { useQueryState } from '@/shared/hooks/useQueryState';
-import { useParams } from 'next/navigation';
 
 type ViewTab = 'all' | 'active' | 'inactive';
 
@@ -30,7 +29,7 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
 };
 
 export default function ShippingPage() {
-  const { locale } = useParams();
+
   const t = useTranslations('shipping');
   const tCommon = useTranslations('common');
   const tMessages = useTranslations('messages');

@@ -17,11 +17,11 @@ import { Supplier } from '@/types';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useToast } from '@/shared/hooks/useToast';
 import { useRouter, useParams } from 'next/navigation';
+import { truncate } from '@/lib/utils';
 
-type ViewTab = 'all' | 'active' | 'inactive';
+type ViewTab =  'active' | 'inactive';
 
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
-  all: {},
   active: { isActive: 'true' },
   inactive: { isActive: 'false' },
 };
@@ -62,7 +62,6 @@ export default function SuppliersPage() {
   const handleSearch = useCallback((value: string) => setQueryParams({ search: value, page: 1 }), [setQueryParams]);
 
   const tabs = useMemo(() => [
-    { key: 'all' as ViewTab, label: tCommon('tabs.all'), activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
     { key: 'active' as ViewTab, label: tCommon('tabs.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
     { key: 'inactive' as ViewTab, label: tCommon('tabs.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
   ], [tCommon]);
@@ -114,11 +113,14 @@ export default function SuppliersPage() {
       header: t('fields.name'),
       render: (supplier: Supplier) => (
         <div className="flex flex-col gap-0.5">
-          <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
-            {supplier.name}
+          <span className="font-bold title-gradient  group-hover:text-primary transition-colors">
+            {supplier.contactName}
+          </span>
+          <span className="text-xs text-foreground/80 group-hover:text-primary transition-colors">
+            {truncate(supplier.name, 15)}
           </span>
           <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
-            ID: {supplier._id.substring(0, 8)}...
+            ID: {truncate(supplier._id, 8)}...
           </span>
         </div>
       )
@@ -219,7 +221,7 @@ export default function SuppliersPage() {
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               disabled={deleteSupplierPending || isLoading || updateSupplierPending}
-              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
+              className={`cursor-pointer px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
             >
               {tab.label}
             </button>
