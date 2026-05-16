@@ -15,14 +15,14 @@ export default function SettingsSidebar({ activeSection, onSectionChange }: Sett
 
   // Axis 2.2: Memoizing navigation items to prevent recreation on every render
   const navItems = useMemo(() => [
-    { id: 'general', label: t('sidebar.general'), icon: Icons.Dashboard },
-    { id: 'seo', label: t('sidebar.seo'), icon: Icons.Search },
-    { id: 'social', label: t('sidebar.social'), icon: Icons.Sun },
-    { id: 'contact', label: t('sidebar.contact'), icon: Icons.MessageCircle },
-    { id: 'payments', label: t('sidebar.payments'), icon: Icons.Orders },
-    { id: 'shipping', label: t('sidebar.shipping'), icon: Icons.Truck },
-    { id: 'features', label: t('sidebar.features'), icon: Icons.Layout },
-    { id: 'advanced', label: t('sidebar.advanced'), icon: Icons.Settings },
+    { id: 'general', label: t('sidebar.general'), icon: Icons.Dashboard, iconClass: "text-primary" },
+    { id: 'seo', label: t('sidebar.seo'), icon: Icons.Search, iconClass: "text-destructive" },
+    { id: 'social', label: t('sidebar.social'), icon: Icons.Sun, iconClass: "text-primary" },
+    { id: 'contact', label: t('sidebar.contact'), icon: Icons.MessageCircle, iconClass: "text-warning/70" },
+    { id: 'payments', label: t('sidebar.payments'), icon: Icons.Orders, iconClass: "text-success" },
+    { id: 'shipping', label: t('sidebar.shipping'), icon: Icons.Truck, iconClass: "text-primary" },
+    { id: 'features', label: t('sidebar.features'), icon: Icons.Layout, iconClass: "text-warning" },
+    { id: 'advanced', label: t('sidebar.advanced'), icon: Icons.Settings, iconClass: "text-foreground/70" },
   ], [t]);
 
   return (
@@ -41,7 +41,7 @@ export default function SettingsSidebar({ activeSection, onSectionChange }: Sett
         >
           <item.icon className={cn(
             "w-5 h-5",
-            activeSection === item.id ? "text-primary-foreground" : "text-muted-foreground"
+            activeSection === item.id ? "text-primary-foreground" :item.iconClass
           )} />
           {item.label}
         </button>

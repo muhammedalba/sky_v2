@@ -8,10 +8,6 @@ const baseCrud = createCrudApi<User>(ENDPOINTS.BASE);
 
 export const usersApi = {
   ...baseCrud,
-  create: (data: Record<string, unknown> | FormData) =>
-    apiClient.post<ApiResponse<User>>(ENDPOINTS.CREATE, data),
-  update: (id: string, data: Record<string, unknown> | FormData) =>
-    apiClient.patch<ApiResponse<User>>(`${ENDPOINTS.BASE}/${id}`, data),
   updateRole: (id: string, role: string) =>
     apiClient.patch<ApiResponse<User>>(`${ENDPOINTS.BASE}/${id}`, { role }),
   getStats: () => apiClient.get(ENDPOINTS.STATS),

@@ -186,14 +186,7 @@ export default function SettingsForm() {
     }
   }, [activeSection]);
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <Icons.RefreshCw className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-muted-foreground animate-pulse">{t('loading')}</p>
-      </div>
-    );
-  }
+ 
 
   return (
     <FormProvider {...methods}>

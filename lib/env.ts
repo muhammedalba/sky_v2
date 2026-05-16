@@ -108,7 +108,7 @@ export const env = {
     },
     USERS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_USERS || '/users',
-      CREATE: process.env.NEXT_PUBLIC_ENDPOINT_USERS_CREATE || '/users/create-user',
+      CREATE: process.env.NEXT_PUBLIC_ENDPOINT_USERS_CREATE || '/users',
       STATS: process.env.NEXT_PUBLIC_ENDPOINT_USERS_STATS || '/users/statistics',
     },
     BRANDS: {

@@ -40,7 +40,10 @@
     "updateSuccess": "تم تحديث الكوبون بنجاح",
     "deleteSuccess": "تم حذف الكوبون بنجاح",
     "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الكوبون؟",
-    "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف الكوبون {name}؟"
+    "deleteConfirmWithName": "هل أنت متأكد أنك تريد حذف الكوبون {name}؟",
+    "couponCreated": "تم إنشاء الكوبون بنجاح",
+    "couponUpdated": "تم تحديث الكوبون بنجاح",
+    "errorOccurred": "حدث خطأ ما، يرجى المحاولة مرة أخرى"
   },
   "emptyState": {
     "title": "لم يتم العثور على كوبونات",

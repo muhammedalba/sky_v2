@@ -175,8 +175,9 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                   label={t('fields.discount')}
                   icon={Icons.AiSpark}
                   error={form.formState.errors.discount?.message}
+                  className="px-7.5"
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">
+                <div className="absolute inset-s-4   top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">
                   {form.watch('type') === 'percentage' ? '%' : '$'}
                 </div>
               </div>

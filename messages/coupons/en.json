@@ -40,7 +40,10 @@
     "updateSuccess": "Coupon updated successfully",
     "deleteSuccess": "Coupon deleted successfully",
     "deleteConfirm": "Are you sure you want to delete this coupon?",
-    "deleteConfirmWithName": "Are you sure you want to delete the coupon {name}?"
+    "deleteConfirmWithName": "Are you sure you want to delete the coupon {name}?",
+    "couponCreated": "Coupon created successfully",
+    "couponUpdated": "Coupon updated successfully",
+    "errorOccurred": "An error occurred, please try again"
   },
   "emptyState": {
     "title": "No coupons found",

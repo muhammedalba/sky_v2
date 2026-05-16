@@ -12,7 +12,8 @@ export interface CrudApi<T> {
 
 export function createCrudApi<T>(baseEndpoint: string, hasStats = false): CrudApi<T> {
   const getHeaders = (data: any) => {
-    return data instanceof FormData
+    const isFormData = data instanceof FormData || (data && typeof data === 'object' && 'append' in data);
+    return isFormData
       ? { 'Content-Type': 'multipart/form-data' }
       : { 'Content-Type': 'application/json' };
   };

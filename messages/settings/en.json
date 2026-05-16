@@ -62,6 +62,7 @@
     "freeThreshold": "Free Shipping Threshold",
     "taxes": "Tax Settings",
     "vatRate": "VAT Rate (%)",
+    "vatWarning": "Note: These settings will be ignored if specific tax rules are defined in the Taxes section.",
     "taxesIncluded": "Prices Include Tax",
     "taxesIncludedDesc": "Treat prices as tax-inclusive."
   },

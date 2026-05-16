@@ -1,5 +1,6 @@
 {
   "title": "My Account",
+  "headerDescription": "Manage your account and preferences",
   "welcome": "Welcome back, {name}",
   "lastLogin": "Last login:",
   "personalInfo": "Personal Information",

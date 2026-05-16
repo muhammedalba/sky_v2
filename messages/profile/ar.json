@@ -1,5 +1,7 @@
 {
   "title": "حسابي",
+    "headerDescription": "إدارة حسابك وتفضيلاتك",
+
   "welcome": "أهلاً بك، {name}",
   "lastLogin": "آخر ظهور:",
   "personalInfo": "المعلومات الشخصية",

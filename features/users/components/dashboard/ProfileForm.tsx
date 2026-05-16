@@ -179,6 +179,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
         {/* Gradient banner */}
         <div className="h-28 bg-linear-to-br from-primary/25 via-primary/10 to-background relative">
+
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.15),transparent_70%)]" />
         </div>
 

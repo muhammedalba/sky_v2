@@ -7,6 +7,7 @@ import { Input } from '@/shared/ui/Input';
 import { Switch } from '@/shared/ui/Switch';
 import { Icons } from '@/shared/ui/Icons';
 import { SettingsInput } from '../../settings.schema';
+import ErrorMessage from '@/shared/ui/ErrorMessage';
 
 export default function ShippingSection() {
   const t = useTranslations('settings');
@@ -24,6 +25,8 @@ export default function ShippingSection() {
         <CardDescription>{t('shipping.desc')}</CardDescription>
       </CardHeader>
       <CardContent className="p-6 space-y-8">
+        <ErrorMessage message={t('shipping.vatWarning')} showIcon className=' items-start gap-3 p-4 md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning' />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             {...register('freeShippingThreshold', { valueAsNumber: true })}
@@ -42,6 +45,7 @@ export default function ShippingSection() {
             className="rounded-xl h-11"
           />
         </div>
+
 
         <div className="pt-6 border-t border-border/50">
           <div className="flex items-center justify-between p-4 border border-border/50 rounded-2xl bg-muted/5">

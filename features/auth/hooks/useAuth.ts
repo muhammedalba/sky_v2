@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { queryKeys } from '@/lib/api/query-keys';
 import { setUser, removeAuthToken, setTokens, getRefreshToken, getAuthToken } from '@/lib/auth';
 import { User, ApiResponse, ApiError } from '@/types';
@@ -42,7 +43,11 @@ export function useLogin() {
 }
 
 export function useMe() {
-  const token = typeof window !== 'undefined' ? getAuthToken() : null;
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getAuthToken());
+  }, []);
 
   return useQuery({
     queryKey: queryKeys.auth.me(),
