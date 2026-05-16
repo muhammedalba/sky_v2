@@ -8,6 +8,7 @@ import { Link, usePathname } from '@/navigation';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { isAdmin } from '@/lib/auth';
 
 // ─────────────────────────────────────────────────────────
 // Types
@@ -148,7 +149,7 @@ export default function MobileBottomNav() {
   const locale = useLocale();
   const t = useTranslations('store.nav');
   const { user, isAuthenticated: is_auth } = useAuth();
-  const is_Admin = user?.role === 'admin' || user?.role === 'manager';
+  const is_Admin = isAdmin();
 
   const isRtl = locale === 'ar';
 

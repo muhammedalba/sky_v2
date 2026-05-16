@@ -142,6 +142,9 @@ export const env = {
     SETTINGS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_SETTINGS || '/settings',
     },
+    ROLES: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_ROLES || '/roles',
+    },
   },
   HIDDEN_EMAILS: (process.env.NEXT_PUBLIC_HIDDEN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean),
 } as const;

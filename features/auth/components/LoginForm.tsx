@@ -23,7 +23,14 @@ export default function LoginForm({ locale }: { locale: string }) {
   const onSubmit = async (data: any) => {
     await loginMutation.mutateAsync(data);
     toast.success(t('loginSuccess'));
-    router.push(`/${locale}/dashboard`);
+    
+    // Dynamically check permission after successful login and user storage
+    const { hasPermission } = await import('@/lib/auth');
+    if (hasPermission('access_dashboard')) {
+      router.push(`/${locale}/dashboard`);
+    } else {
+      router.push(`/${locale}/home`);
+    }
   };
 
   const successMessage =

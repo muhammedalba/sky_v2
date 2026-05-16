@@ -44,12 +44,13 @@ export function useLogin() {
 
 export function useMe() {
   const [token, setToken] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setToken(getAuthToken());
   }, []);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: queryKeys.auth.me(),
     queryFn: async () => {
       const response = (await authApi.me()) as unknown as ApiResponse<User>;
@@ -58,6 +59,15 @@ export function useMe() {
     enabled: !!token,
     retry: false,
   });
+
+  // Keep localStorage in sync with the latest server data for permission checks
+  useEffect(() => {
+    if (query.data) {
+      setUser(query.data);
+    }
+  }, [query.data]);
+
+  return query;
 }
 
 export function useRegister() {

@@ -1,9 +1,18 @@
+export interface Role {
+  _id: string;
+  name: string;
+  description: string;
+  permissions: string[];
+  level: number;
+  isSystemDefined: boolean;
+}
+
 export interface User {
   _id: string;
   id?: string;
   name: string;
   email: string;
-  role: 'admin' | 'user' | 'manager';
+  role: Role | string;
   avatar?: string;
   phone?: string;
   provider?: string;

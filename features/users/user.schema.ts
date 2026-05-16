@@ -23,7 +23,7 @@ export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 const baseUserFields = {
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Invalid email address'),
-  role: z.enum(['admin', 'user', 'manager']),
+  role: z.string().min(1, 'Role is required'),
   isActive: z.boolean(),
   phone: z.string().optional(),
   avatar: optionalImageSchema,

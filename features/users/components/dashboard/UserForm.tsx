@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useCreateUser, useUpdateUser } from '@/features/users/hooks/useUsers';
+import { useCreateUser, useUpdateUser, useRoles } from '@/features/users/hooks/useUsers';
 import { useState } from 'react';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { User } from '@/types';
@@ -33,6 +33,10 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
   const updateMutation = useUpdateUser();
   const toast = useToast();
   const router = useRouter();
+  const { data: rolesData, isLoading: rolesLoading } = useRoles();
+
+  const roles = rolesData || [];
+  console.log(editingUser);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(editingUser?.avatar || null);
@@ -44,7 +48,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
     defaultValues: {
       name: editingUser?.name || '',
       email: editingUser?.email || '',
-      role: editingUser?.role || 'user',
+      role: typeof editingUser?.role === 'object' ? (editingUser.role as any)?._id : (editingUser?.role || ''),
       isActive: editingUser?.isActive ?? true,
       phone: editingUser?.phone || '',
       avatar: editingUser?.avatar || null,
@@ -164,13 +168,11 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                     label={t('fields.role')}
                     icon={Icons.Shield}
                     {...register('role')}
-                    options={[
-                      { value: 'user', label: t('roles.user') },
-                      { value: 'admin', label: t('roles.admin') },
-                      { value: 'manager', label: t('roles.manager') },
-                    ]}
-                    // value={watch('role')}
-                    disabled={createMutation.isPending || updateMutation.isPending}
+                    options={Array.isArray(roles) ? roles.map((role: any) => ({
+                      value: role._id,
+                      label: t.has(`roles.${role.name}`) ? t(`roles.${role.name}`) : role.name,
+                    })) : []}
+                    disabled={createMutation.isPending || updateMutation.isPending || rolesLoading}
                     error={errors.role?.message}
                   />
                 </div>

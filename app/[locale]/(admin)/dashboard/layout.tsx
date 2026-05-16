@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getServerUser, getAuthToken } from '@/lib/auth';
+import { getServerUser, getAuthToken, checkUserPermission } from '@/lib/auth';
 import DashboardLayout from '@/widgets/layout/DashboardLayout';
 
 import { AsyncBoundary } from '@/shared/ui/boundaries/AsyncBoundary';
@@ -23,8 +23,10 @@ export default async function DashboardLayoutWrapper({
     redirect(`/${locale}/login`);
   }
 
-  const isAdmin = user.role === 'admin' || user.role === 'manager';
-  if (!isAdmin) {
+  // Permission-based check
+  const isAllowed = checkUserPermission(user, 'access_dashboard');
+
+  if (!isAllowed) {
     redirect(`/${locale}/home`);
   }
 

@@ -10,7 +10,7 @@ import ToastProvider from '@/shared/ui/toast/ToastProvider';
 import SettingsProvider from '@/app/providers/SettingsProvider';
 import '../globals.css';
 import { cookies } from 'next/headers';
-import { getServerUser } from '@/lib/auth';
+import { getServerUser, checkUserPermission } from '@/lib/auth';
 import Maintenance from '@/components/Maintenance';
 import { getStoreSettings, DEFAULT_SETTINGS } from '@/shared/api/settings';
 
@@ -75,11 +75,13 @@ export default async function LocaleLayout({
   
 
   const user = getServerUser(cookieStore);
-  const isAdmin = user?.role === 'admin' || user?.role === 'manager';
+  const canBypassMaintenance = checkUserPermission(user, 'manage_settings') || checkUserPermission(user, 'access_dashboard');
+    console.log("layout",user?.role);
+    
   const isMaintenance = finalSettings.maintenanceMode === true;
 // console.log("settings",finalSettings?.logo)
   // Maintenance Guard (Server-Side)
-  if (isMaintenance && !isAdmin) {
+  if (isMaintenance && !canBypassMaintenance) {
     return (
       <LocaleProvider locale={locale} messages={messages}>
         <ThemeProvider>

@@ -116,7 +116,9 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                 <div className=" relative flex flex-col min-w-0">
                     <div className="absolute inset-e-1/3  bottom-1 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                     <span className="text-sm font-bold truncate text-foreground leading-tight">{user?.name || 'login please'}</span>
-                    <span className="text-[10px] font-medium text-muted-foreground truncate uppercase tracking-wider">{user?.role || 'offline'}</span>
+                    <span className="text-[10px] font-medium text-muted-foreground truncate uppercase tracking-wider">
+                        {typeof user?.role === 'object' ? user.role.name : (user?.role || 'offline')}
+                    </span>
                 </div>
                 {isLoggedIn && <LogoutButton iconOnly={true} />}
             </div>}

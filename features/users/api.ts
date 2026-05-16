@@ -8,7 +8,8 @@ const baseCrud = createCrudApi<User>(ENDPOINTS.BASE);
 
 export const usersApi = {
   ...baseCrud,
-  updateRole: (id: string, role: string) =>
-    apiClient.patch<ApiResponse<User>>(`${ENDPOINTS.BASE}/${id}`, { role }),
+  updateRole: (id: string, roleId: string) =>
+    apiClient.patch<ApiResponse<User>>(`${ENDPOINTS.BASE}/${id}`, { role: roleId }),
   getStats: () => apiClient.get(ENDPOINTS.STATS),
+  getRoles: () => apiClient.get<any[]>(env.ENDPOINTS.ROLES.BASE),
 };

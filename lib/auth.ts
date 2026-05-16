@@ -90,7 +90,43 @@ export const isAuthenticated = (): boolean => {
 
 export const isAdmin = (): boolean => {
   const user = getUser();
-  return user?.role === 'admin' || user?.role === 'manager';
+  if (!user || !user.role) return false;
+  
+  // Handle both string and object role structures
+  if (typeof user.role === 'object' && user.role !== null) {
+    return (user.role as any).level >= 50;
+  }
+  
+  // If it's a string, it could be a legacy role name ('admin') or an unpopulated ObjectId
+  const roleStr = String(user.role).toLowerCase();
+  return roleStr === 'admin' || roleStr === 'manager' || roleStr === 'superadmin';
+};
+
+export const checkUserPermission = (user: User | null, permission: string): boolean => {
+  if (!user || !user.role) return false;
+
+  // SuperAdmins (level 100) always have all permissions
+  if (typeof user.role === 'object' && (user.role as any).level === 100) {
+    return true;
+  }
+
+  // Check permissions array if role is an object
+  if (typeof user.role === 'object' && Array.isArray((user.role as any).permissions)) {
+    return (user.role as any).permissions.includes(permission);
+  }
+
+  // Fallback for legacy admin role string (full access)
+  if (typeof user.role === 'string') {
+    const roleStr = user.role.toLowerCase();
+    return roleStr === 'admin' || roleStr === 'superadmin';
+  }
+
+  return false;
+};
+
+export const hasPermission = (permission: string): boolean => {
+  const user = getUser();
+  return checkUserPermission(user, permission);
 };
 
 export const logout = (): void => {

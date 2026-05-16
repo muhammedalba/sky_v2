@@ -77,7 +77,8 @@
             "shipping": "Shipping Providers",
             "shippingRates": "Shipping Rates",
             "taxes": "Taxes",
-            "locations": "Locations"
+            "locations": "Locations",
+            "roles": "Roles & Permissions"
       },
       "auth": {
     "login": "Sign In",
@@ -112,6 +113,7 @@
     "signupLink": "Join Our Network",
     "signupSuccess": "Welcome to the SkyGalaxy construction ecosystem!",
     "loginSuccess": "Welcome back  you logged in successfully",
+    "loginError": "Incorrect email or password. Please try again.",
     "serverError":"something went wrong please try again",
     "resetSuccess": "Password reset successfully. You can now login with your new password.",
     "signupTitle": "Project Solutions Membership",

@@ -71,7 +71,8 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
-  const is_Admin = user?.role === 'admin' || user?.role === 'manager';
+  const is_Admin = isAdmin();
+    
   const cartItemCount = useCartStore((state) =>
     state.items.reduce((total, item) => total + item.quantity, 0)
   );

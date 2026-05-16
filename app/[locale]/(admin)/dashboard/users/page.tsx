@@ -102,15 +102,10 @@ export default function UsersPage() {
   }, [updateMutation, toast, t, refetch]);
 
   // role badge
-  const getRoleBadgeVariant = useCallback((role: string): "default" | "secondary" | "destructive" | "outline" => {
-    switch (role) {
-      case 'admin':
-        return 'destructive';
-      case 'manager':
-        return 'default';
-      default:
-        return 'secondary';
-    }
+  const getRoleBadgeVariant = useCallback((level: number): "default" | "secondary" | "destructive" | "outline" => {
+    if (level >= 90) return 'destructive'; // SuperAdmin
+    if (level >= 50) return 'default';     // Admin/Manager
+    return 'secondary';                    // Regular User
   }, []);
 
   const columns = useMemo(() => {
@@ -172,11 +167,15 @@ export default function UsersPage() {
     },
     {
       header: t('fields.role'),
-      render: (user: User) => (
-        <Badge variant={getRoleBadgeVariant(user.role)} className="rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest border-none">
-          {t(`roles.${user.role}`)}
-        </Badge>
-      )
+      render: (user: User) => {
+        const roleName = typeof user.role === 'object' ? user.role.name : user.role;
+        const roleLevel = typeof user.role === 'object' ? user.role.level : 0;
+        return (
+          <Badge variant={getRoleBadgeVariant(roleLevel)} className="rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest border-none">
+            {t.has(`roles.${roleName}`) ? t(`roles.${roleName}`) : roleName}
+          </Badge>
+        );
+      }
     },
     {
       header: t('fields.lastLogin'),
@@ -245,36 +244,45 @@ export default function UsersPage() {
     {
       header: t('fields.actions'),
       className: "text-right pr-6",
-      render: (user: User) => (
-        <div className={cn(`flex items-center justify-end gap-2  transition-opacity ${user.role === 'admin' && !isSuperAdmin ? 'hidden' : ''}`)}>
-          <Tooltip content={t('editUser')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
-              onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
-              disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+      render: (user: User) => {
+        const targetLevel = typeof user.role === 'object' ? user.role.level : 0;
+        const currentUserLevel = (currentUser?.role as any)?.level || 0;
+        const isSuperAdmin = currentUser?.email ? env.HIDDEN_EMAILS.includes(currentUser.email) : false;
 
-            >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+        // Cannot manage users with higher or equal level unless SuperAdmin (level 100)
+        const canManage = isSuperAdmin || (currentUserLevel > targetLevel);
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(user._id, user.name)}
-              disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
-              isLoading={deleteMutation.isPending}
+        if (!canManage) return null;
 
-            >
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
-        </div>
-      )
+        return (
+          <div className="flex items-center justify-end gap-2 transition-opacity">
+            <Tooltip content={t('editUser')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
+                onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
+                disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+              >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(user._id, user.name)}
+                disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+                isLoading={deleteMutation.isPending}
+              >
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </div>
+        );
+      }
     }
   ];
   }, [t, tButtons, locale, router, handleStatusChange, handleDelete, getRoleBadgeVariant, currentUser?.email, env.HIDDEN_EMAILS, deleteMutation.isPending, isLoading, updateMutation.isPending]);

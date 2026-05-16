@@ -161,14 +161,15 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   });
 
   // ── Role badge helper ─────────────────────────────────────────────────────
+  const roleName = typeof user.role === 'object' ? user.role.name.toLowerCase() : ((user.role as any)?.toLowerCase?.() || 'user');
+  const roleLabel = typeof user.role === 'object' ? user.role.name : (user.role || 'User');
+
   const roleBadgeClass: Record<string, string> = {
+    superadmin: 'bg-primary/20 text-primary font-black shadow-sm ring-1 ring-primary/30',
     admin: 'bg-primary/10 text-primary',
     manager: 'bg-info/10 text-info',
     user: 'bg-secondary text-secondary-foreground',
   };
-  const roleLabel = user.role
-    ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
-    : 'User';
 
   // ─────────────────────────────────────────────────────────────────────────
   const isOnline = user.lastLogin && (new Date().getTime() - new Date(user.lastLogin).getTime()) < 1000 * 60 * 5;
@@ -210,7 +211,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 <span
                   className={cn(
                     'text-xs font-bold uppercase px-2.5 py-0.5 rounded-full',
-                    roleBadgeClass[user.role] ?? roleBadgeClass.user
+                    roleBadgeClass[roleName] ?? roleBadgeClass.user
                   )}
                 >
                   {roleLabel}
