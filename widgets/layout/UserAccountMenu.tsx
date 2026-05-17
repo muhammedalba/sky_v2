@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from '
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icons } from '@/shared/ui/Icons';
-import { cn } from '@/lib/utils';
+import { cn, truncate } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import LogoutButton from './topbar/LogoutButton';
 import { useMe, useLogout } from '@/features/auth/hooks/useAuth';
@@ -98,7 +98,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
             {!iconOnly && <div className="flex-1 flex justify-between items-center gap-3">
                 <div className=" relative flex flex-col min-w-0">
                     <div className="absolute inset-e-1/3  bottom-1 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                    <span className="text-sm font-bold truncate text-foreground leading-tight">{user?.name || 'login please'}</span>
+                    <span className="text-sm font-bold truncate text-foreground leading-tight">{truncate(user?.name || 'login please', 10)}</span>
                     <span className="text-[10px] font-medium text-muted-foreground truncate uppercase tracking-wider">
                         {typeof user?.role === 'object' && user.role !== null ? user.role.name : (user?.role || 'offline')}
                     </span>

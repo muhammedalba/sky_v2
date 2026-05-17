@@ -92,10 +92,10 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   }, []); // مصفوفة فارغة لضمان التسجيل مرة واحدة فقط
 
   const navLinks = useMemo(() => [
-    { label: t('home'), href: `/${locale}/home` },
-    { label: t('products'), href: `/${locale}/products` },
-    { label: t('contact'), href: `/${locale}/contact` },
-  ], [t, locale]);
+    { label: t('home'), href: `/home` },
+    { label: t('products'), href: `/products` },
+    { label: t('contact'), href: `/contact` },
+  ], [t]);
 
   return (
     <header

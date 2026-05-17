@@ -3,6 +3,7 @@
       "orderList": "Order List",
       "orderDetails": "Order Details",
       "orderNumber": "Order Number",
+      "totalOrders": "Total Orders: {count}",
       "fields": {
             "customer": "Customer",
             "total": "Total",

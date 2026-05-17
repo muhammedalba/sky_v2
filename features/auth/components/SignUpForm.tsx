@@ -9,6 +9,7 @@ import { useToast } from '@/shared/hooks/useToast';
 import { User, Mail, Lock } from 'lucide-react';
 import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
 import { SocialLoginSection } from './AuthClientComponents';
+import { useSettings } from '@/app/providers/SettingsProvider';
 import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 
@@ -16,10 +17,16 @@ export default function SignUpForm({ locale }: { locale: string }) {
   const router = useRouter();
   const t = useTranslations('auth');
   const toast = useToast();
+  const settings = useSettings();
+  const isRegistrationDisabled = !settings.allowRegistration;
 
   const registerMutation = useRegister();
 
   const onSubmit = async (data: RegisterInput) => {
+    if (isRegistrationDisabled) {
+      toast.error(t('registrationDisabled'));
+      return;
+    }
     const formDataToSubmit = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formDataToSubmit.append(key, value as string);
@@ -39,17 +46,19 @@ export default function SignUpForm({ locale }: { locale: string }) {
         schema={registerSchema}
         defaultValues={{ name: '', email: '', password: '', confirmPassword: '' }}
         onSubmit={onSubmit}
-        networkErrorMessage={t('serverError')}
+        successMessage={isRegistrationDisabled ? t('registrationDisabled') : undefined}
+        networkErrorMessage={isRegistrationDisabled ? t('registrationDisabled') :t('serverError')}
+        isRegistrationDisabled
       >
         <div className="space-y-4">
-          <SmartInput name="name" label={t('name')} icon={User} disabled={registerMutation.isPending} className="h-12" />
-          <SmartInput name="email" label={t('email')} icon={Mail} type="email" disabled={registerMutation.isPending} className="h-12" />
+          <SmartInput name="name" label={t('name')} icon={User} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
+          <SmartInput name="email" label={t('email')} icon={Mail} type="email" disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
 
           <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-4">
             <div className="">
-              <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
+              <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
             </div>
-            <SmartPasswordInput name="confirmPassword" label={t('confirmPassword')} icon={Lock} disabled={registerMutation.isPending} className="h-12" />
+            <SmartPasswordInput name="confirmPassword" label={t('confirmPassword')} icon={Lock} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
           </div>
         </div>
 
@@ -58,12 +67,13 @@ export default function SignUpForm({ locale }: { locale: string }) {
           className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
           size="lg"
           isLoading={registerMutation.isPending}
+          disabled={registerMutation.isPending || isRegistrationDisabled}
         >
           {t('signupButton')}
         </Button>
       </SmartForm>
 
-      <SocialLoginSection dividerText={t('orContinueWith')} />
+      <SocialLoginSection dividerText={t('orContinueWith')} disabled={isRegistrationDisabled} />
 
       <AuthFooter text={t('alreadyHaveAccount')} linkText={t('loginLink')} linkHref={`/${locale}/login`} />
     </div>

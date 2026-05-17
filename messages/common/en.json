@@ -112,6 +112,7 @@
     "noAccount": "New user?",
     "signupLink": "Join Our Network",
     "signupSuccess": "Welcome to the SkyGalaxy construction ecosystem!",
+    "registrationDisabled": "Registration is currently closed by system administration. Please try again later.",
     "loginSuccess": "Welcome back  you logged in successfully",
     "loginError": "Incorrect email or password. Please try again.",
     "serverError":"something went wrong please try again",

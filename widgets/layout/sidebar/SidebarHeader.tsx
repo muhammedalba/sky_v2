@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useUIStore } from '@/store/ui-store';
-import { cn } from '@/lib/utils';
+import { cn, truncate } from '@/lib/utils';
 import { env } from '@/lib/env';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useSettings } from '@/app/providers/SettingsProvider';
@@ -14,10 +14,10 @@ export default function SidebarHeader({ Collapsed = false, onNavigate, }: { Coll
   const { sidebarCollapsed } = useUIStore();
   const isCollapsed = sidebarCollapsed && Collapsed;
 
-/** 
- * SidebarHeader Component
- * Unified header for admin and store sidebars
- */
+  /** 
+   * SidebarHeader Component
+   * Unified header for admin and store sidebars
+   */
   const siteName = settings.siteName?.en || env.APP_NAME;
   return (
     <div className={cn("h-20 flex w-full items-center transition-all duration-500", isCollapsed ? "justify-center px-0" : "px-3")}>
@@ -38,7 +38,7 @@ export default function SidebarHeader({ Collapsed = false, onNavigate, }: { Coll
         {!isCollapsed && (
           <div className="flex flex-col ">
             <span className="font-black text-lg tracking-tight whitespace-nowrap title-gradient">
-              {siteName}
+              {truncate(siteName, 10)}
             </span>
             <span className="text-[10px] relative font-bold text-info uppercase tracking-[0.2em] leading-none mt-1 ">
               E-commerce

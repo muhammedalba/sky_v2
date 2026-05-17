@@ -3,7 +3,7 @@ import { User, Role } from '@/types';
 // Server-side safe helpers
 export const checkUserPermission = (user: User | null, permission: string | string[], requireAll: boolean = true): boolean => {
   if (!user || !user.role) return false;
-  console.log("user in checkuserPermission", user);
+
 
   // SuperAdmins (level 100) always have all permissions
   if (typeof user.role === 'object' && user.role !== null && 'level' in user.role && Number(user.role.level) === 100) {
@@ -17,7 +17,7 @@ export const checkUserPermission = (user: User | null, permission: string | stri
         ? permission.every((p) => userPerms.includes(p))
         : permission.some((p) => userPerms.includes(p));
     }
-    console.log("userPerms in auth", userPerms);
+
 
     return userPerms.includes(permission);
 

@@ -15,6 +15,7 @@ console.log(isProd, "isProd");
 const API_URL = isProd
   ? (isServer ? (process.env.NEXT_PUBLIC_PRO_API_URL || process.env.NEXT_PUBLIC_API_URL) : '/api/v1')
   : process.env.NEXT_PUBLIC_API_URL;
+
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 console.log(API_URL, "API_URL");
 // Critical endpoints

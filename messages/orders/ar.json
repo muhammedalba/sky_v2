@@ -3,6 +3,7 @@
       "orderList": "قائمة الطلبات",
       "orderDetails": "تفاصيل الطلب",
       "orderNumber": "رقم الطلب",
+      "totalOrders": "إجمالي الطلبات: {count}",
       "fields": {
             "customer": "العميل",
             "total": "الإجمالي",

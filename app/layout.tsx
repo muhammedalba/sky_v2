@@ -1,24 +1,55 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { env } from "@/lib/env";
 import Script from 'next/script';
 import { getFontVariables } from '@/lib/fonts';
+import { getLocale } from 'next-intl/server';
+import { getStoreSettings, DEFAULT_SETTINGS } from '@/shared/api/settings';
 
-export const metadata: Metadata = {
-  title: env.APP_NAME,
-  description: env.APP_DESCRIPTION,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = (await getLocale()) ?? 'ar';
+  const settings = (await getStoreSettings()) || DEFAULT_SETTINGS;
 
-import type { Viewport } from 'next';
+  const title = settings.metaTitle?.[locale as 'ar' | 'en'] || settings.siteName?.[locale as 'ar' | 'en'] || env.APP_NAME;
+  const description = settings.metaDescription?.[locale as 'ar' | 'en'] || settings.siteDescription?.[locale as 'ar' | 'en'] || env.APP_DESCRIPTION;
+
+  return {
+    title: {
+      template: `%s | ${title}`,
+      default: title,
+    },
+    description,
+    icons: {
+      icon: settings.favicon || '/favicon.ico',
+      shortcut: settings.favicon || '/favicon.ico',
+      apple: settings.favicon || '/apple-touch-icon.png',
+    },
+    openGraph: {
+      title,
+      description,
+      siteName: title,
+      images: settings.logo ? [{ url: settings.logo }] : [],
+      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: settings.logo ? [settings.logo] : [],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
 };
-
-
-
-import { getLocale } from 'next-intl/server';
 
 export default async function RootLayout({
   children,

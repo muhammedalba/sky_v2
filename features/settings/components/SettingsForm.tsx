@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { useForm, FormProvider, SubmitHandler, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
@@ -10,12 +10,10 @@ import { SettingsInput, settingsSchema } from '../settings.schema';
 import { useSettings, useUpdateSettings } from '../hooks/useSettings';
 import SettingsSidebar from './SettingsSidebar';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
-import { Icons } from '@/shared/ui/Icons';
 import { useToast } from '@/shared/hooks/useToast';
 
 // Axis 1: Lazy Loading للأقسام (باستثناء الأول)
 import GeneralSection from './sections/GeneralSection';
-import { useRouter } from 'next/navigation';
 const SEOSection = dynamic(() => import('./sections/SEOSection'), { loading: () => <SectionSkeleton /> });
 const SocialSection = dynamic(() => import('./sections/SocialSection'), { loading: () => <SectionSkeleton /> });
 const ContactSection = dynamic(() => import('./sections/ContactSection'), { loading: () => <SectionSkeleton /> });
@@ -89,15 +87,15 @@ export default function SettingsForm() {
   const { data: settings, isLoading } = useSettings();
   const updateMutation = useUpdateSettings();
   const { success, error: toastError } = useToast();
-  const router = useRouter();
+
 
   const methods = useForm<SettingsInput>({
-    resolver: zodResolver(settingsSchema) as any,
+    resolver: zodResolver(settingsSchema) as Resolver<SettingsInput>,
     defaultValues: SETTINGS_DEFAULTS,
   });
 
   const { handleSubmit, reset, register, formState: { isSubmitting } } = methods;
-  
+
   // Axis 4: Explicitly Register Image Fields (Always tracked regardless of active section)
   useEffect(() => {
     register('logo');
@@ -113,15 +111,12 @@ export default function SettingsForm() {
 
   // Axis 5: تثبيت مرجع onSubmit
   const onSubmit: SubmitHandler<SettingsInput> = useCallback(async (data) => {
-    console.log(data.logo,"logo");
-    console.log(data.favicon,"favicon");
-    
     try {
       const formData = new FormData();
 
       // 1. Localized & Nested Objects (JSON Stringify)
       const jsonFields: (keyof SettingsInput)[] = [
-        'siteName', 'siteDescription', 'metaTitle', 'metaDescription', 
+        'siteName', 'siteDescription', 'metaTitle', 'metaDescription',
         'socialLinks', 'contactInfo', 'gateways', 'features', 'maintenanceMessage'
       ];
       jsonFields.forEach(field => {
@@ -158,15 +153,16 @@ export default function SettingsForm() {
       }
       // Note: If data.favicon is a string, we DON'T append it (Product style), so the server won't touch it.
 
-      await updateMutation.mutateAsync(formData as any);
+      await updateMutation.mutateAsync(formData);
       success(t('messages.updateSuccess'));
-      
+
       // إجبار المتصفح على إعادة التحميل بالكامل لمسح كاش (Client Router Cache) 
       // وضمان ظهور الشعار والإعدادات الجديدة في جميع صفحات المتجر
       window.location.reload();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.log(err);
-      toastError(err?.message || t('messages.updateError'));
+      const errorMessage = err instanceof Error ? err.message : (err as { message?: string })?.message || t('messages.updateError');
+      toastError(errorMessage);
     }
   }, [updateMutation, success, toastError, t]);
 
@@ -186,7 +182,7 @@ export default function SettingsForm() {
     }
   }, [activeSection]);
 
- 
+
 
   return (
     <FormProvider {...methods}>

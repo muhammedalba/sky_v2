@@ -14,7 +14,7 @@ export default function AdvancedSection() {
   const t = useTranslations('settings');
   const toast = useToast();
   const [isClearingCache, setIsClearingCache] = useState(false);
-  
+
   const { register, setValue, control, formState: { errors } } = useFormContext<SettingsInput>();
 
   const handleClearCache = async () => {
@@ -22,8 +22,9 @@ export default function AdvancedSection() {
     try {
       await apiClient.patch('/settings/clear-cache');
       toast.success(t('success.cacheMessage') || 'System cache updated successfully', t('success.cacheTitle') || 'Cache Cleared');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to clear cache', t('errors.cacheTitle') || 'Error');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : (error as { message?: string })?.message;
+      toast.error(message || 'Failed to clear cache', t('errors.cacheTitle') || 'Error');
     } finally {
       setIsClearingCache(false);
     }
@@ -67,10 +68,10 @@ export default function AdvancedSection() {
                     <p className="text-[10px] text-muted-foreground">{toggle.desc}</p>
                   </div>
                 </div>
-                <Switch 
-                  disabled={toggle.id === 'maintenanceMode'}
+                <Switch
+                  // disabled={toggle.id === 'maintenanceMode'}
                   checked={!!toggle.value}
-                  onCheckedChange={(checked) => setValue(toggle.id as any, checked, { shouldDirty: true })}
+                  onCheckedChange={(checked) => setValue(toggle.id as keyof SettingsInput, checked, { shouldDirty: true })}
                 />
               </div>
             ))}
