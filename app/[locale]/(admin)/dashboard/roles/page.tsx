@@ -17,6 +17,8 @@ import RoleDialog from '@/features/roles/components/RoleDialog';
 import { Can } from '@/components/auth/Can';
 import { Permissions } from '@/features/roles/types';
 import { useToast } from '@/shared/hooks/useToast';
+import { AxiosError } from 'axios';
+
 export default function RolesPage() {
   const t = useTranslations('roles');
   const tButtons = useTranslations('common.buttons');
@@ -38,8 +40,9 @@ export default function RolesPage() {
           await deleteMutation.mutateAsync(id);
           toast.success(t('messages.deleted'));
           refetch();
-        } catch (error: any) {
-          toast.error(error?.response?.data?.message || t('messages.deleteFailed'));
+        } catch (error: unknown) {
+          const axiosError = error as AxiosError<{ message: string }>;
+          toast.error(axiosError?.response?.data?.message || t('messages.deleteFailed'));
         }
       },
     });
