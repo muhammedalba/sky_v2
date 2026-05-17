@@ -10,7 +10,8 @@ import ToastProvider from '@/shared/ui/toast/ToastProvider';
 import SettingsProvider from '@/app/providers/SettingsProvider';
 import '../globals.css';
 import { cookies } from 'next/headers';
-import { getServerUser, checkUserPermission } from '@/lib/auth';
+import { getServerUserFromToken, checkUserPermission } from '@/lib/auth';
+import { User } from '@/types';
 import Maintenance from '@/components/Maintenance';
 import { getStoreSettings, DEFAULT_SETTINGS } from '@/shared/api/settings';
 
@@ -59,7 +60,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Validate locale
-  if (!locales.includes(locale as any)) {
+  if (!locales.includes(locale as 'ar' | 'en')) {
     notFound();
   }
 
@@ -74,8 +75,9 @@ export default async function LocaleLayout({
   const finalSettings = settings || DEFAULT_SETTINGS;
   
 
-  const user = getServerUser(cookieStore);
-  const canBypassMaintenance = checkUserPermission(user, 'manage_settings') || checkUserPermission(user, 'access_dashboard');
+  const token = cookieStore.get('access_token')?.value;
+  const user = token ? getServerUserFromToken(token) : null;
+  const canBypassMaintenance = checkUserPermission(user as unknown as User, 'manage_settings') || checkUserPermission(user as unknown as User, 'access_dashboard');
     console.log("layout",user?.role);
     
   const isMaintenance = finalSettings.maintenanceMode === true;

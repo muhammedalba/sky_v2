@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useCallback } from 'react';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
-import { getUser } from '@/lib/auth';
+import { useMe } from '@/features/auth/hooks/useAuth';
 
 
 export default function UsersPage() {
@@ -31,7 +31,7 @@ export default function UsersPage() {
   const tMessages = useTranslations('users.messages');
   const router = useRouter();
   const toast = useToast();
-  const currentUser = getUser();
+  const { data: currentUser } = useMe();
 
   const page = Number(getQueryParam('page', '1'));
   const search = getQueryParam('search', '');
@@ -43,6 +43,7 @@ export default function UsersPage() {
     keywords: search,
     isActive: activeTab === 'active' ? undefined : false
   });
+console.log(data);
 
 
   const deleteMutation = useDeleteUser();
@@ -102,190 +103,194 @@ export default function UsersPage() {
   }, [updateMutation, toast, t, refetch]);
 
   // role badge
-  const getRoleBadgeVariant = useCallback((level: number): "default" | "secondary" | "destructive" | "outline" => {
+  const getRoleBadgeVariant = useCallback((level: number): "default" | "secondary" | "destructive" | "warning" => {
     if (level >= 90) return 'destructive'; // SuperAdmin
-    if (level >= 50) return 'default';     // Admin/Manager
-    return 'secondary';                    // Regular User
+    if (level >= 50) return 'warning';     // Admin
+    if (level >= 30) return 'default';     // Manager
+    return 'secondary';                     // Regular User
   }, []);
 
   const columns = useMemo(() => {
-    const isSuperAdmin = currentUser?.email ? env.HIDDEN_EMAILS.includes(currentUser.email) : false;
     return [
-    {
-      header: t('fields.logo'),
-      className: "w-[100px] pl-6",
-      render: (user: User) => (
-        <div className="h-14 w-14 rounded-2xl bg-muted/60 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
-          <ImageWithFallback
-            src={user.avatar || ''}
-            alt={user.name}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
-          />
-        </div>
-      )
-    },
-    {
-      header: t('fields.name'),
-      className: "pl-6",
-      render: (user: User) => (
-        <div className="flex items-center gap-3 py-1">
-          <div className="flex flex-col gap-0.5">
-            <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
-              {user.name}
-            </span>
-            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
-              ID: {user._id.substring(0, 8)}...
-            </span>
-            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
-              <span className="text-xs font-bold text-primary/50 uppercase tracking-tight">{user.createdAt ? formatDate(user.createdAt) : ''}</span>
-            </span>
+      {
+        header: t('fields.logo'),
+        className: "w-[100px] pl-6",
+        render: (user: User) => (
+          <div className="h-14 w-14 rounded-2xl bg-muted/60 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
+            <ImageWithFallback
+              src={user.avatar || ''}
+              alt={user.name}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
+            />
           </div>
-        </div>
-      )
-    },
-    {
-      header: t('fields.email'),
-      render: (user: User) => (
-        <div className="flex items-center gap-2">
-          {user.phone && (
-            <Tooltip content={user.phone}>
-              <a href={`tel:${user.phone}`} className="text-success hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
-                <Icons.Phone className="w-4 h-4" />
-              </a>
-            </Tooltip>
-          )}
-          {user.email && (
-            <Tooltip content={user.email}>
-              <a href={`mailto:${user.email}`} className="text-warning/80 hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
-                <Icons.Mail className="w-4 h-4" />
-              </a>
-            </Tooltip>
-          )}
-        </div>
-      )
-    },
-    {
-      header: t('fields.role'),
-      render: (user: User) => {
-        const roleName = typeof user.role === 'object' ? user.role.name : user.role;
-        const roleLevel = typeof user.role === 'object' ? user.role.level : 0;
-        return (
-          <Badge variant={getRoleBadgeVariant(roleLevel)} className="rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest border-none">
-            {t.has(`roles.${roleName}`) ? t(`roles.${roleName}`) : roleName}
-          </Badge>
-        );
-      }
-    },
-    {
-      header: t('fields.lastLogin'),
-      render: (user: User) => {
-        const isOnline = user.lastLogin && (new Date().getTime() - new Date(user.lastLogin).getTime()) < 1000 * 60 * 5; // 5 mins
-        return (
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1.5">
-              {isOnline && (
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
-                </span>
-              )}
-              <span className={cn(
-                "text-sm md:font-semibold tracking-tight",
-                isOnline ? "text-success/70" : "text-muted-foreground/80"
-              )}>
-                {user.lastLogin ? formatRelativeTime(user.lastLogin, locale) : '-'}
+        )
+      },
+      {
+        header: t('fields.name'),
+        className: "pl-6",
+        render: (user: User) => (
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                {user.name}
+              </span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
+                ID: {user._id.substring(0, 8)}...
+              </span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
+                <span className="text-xs font-bold text-primary/50 uppercase tracking-tight">{user.createdAt ? formatDate(user.createdAt) : ''}</span>
               </span>
             </div>
-            {!isOnline && user.lastLogin && (
-              <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
-                {formatDateTime(user.lastLogin, locale)}
-              </span>
+          </div>
+        )
+      },
+      {
+        header: t('fields.email'),
+        render: (user: User) => (
+          <div className="flex items-center gap-2">
+            {user.phone && (
+              <Tooltip content={user.phone}>
+                <a href={`tel:${user.phone}`} className="text-success hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
+                  <Icons.Phone className="w-4 h-4" />
+                </a>
+              </Tooltip>
+            )}
+            {user.email && (
+              <Tooltip content={user.email}>
+                <a href={`mailto:${user.email}`} className="text-warning/80 hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
+                  <Icons.Mail className="w-4 h-4" />
+                </a>
+              </Tooltip>
             )}
           </div>
-        );
-      }
-    },
-    {
-      header: t('fields.totalOrders'),
-      className: "text-center",
-      render: (user: User) => (
-        <div className="flex flex-col items-center justify-center gap-1 group/orders">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-primary/5 border border-primary/10 group-hover/orders:bg-primary/10 group-hover/orders:border-primary/20 transition-all duration-300">
-            <Icons.Orders className="w-4 h-4 text-primary opacity-70" />
-            <span className="text-sm font-black text-primary">
-              {user.totalOrders || 0}
+        )
+      },
+      {
+        header: t('fields.role'),
+        render: (user: User) => {
+          const roleName = typeof user?.role === 'object' && user.role !== null ? user.role.name : user?.role || 'User';
+          const roleLevel = typeof user?.role === 'object' && user.role !== null ? user.role.level : 0;
+          return (
+            <Badge variant={getRoleBadgeVariant(roleLevel)} className="rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest border-none">
+              {t.has(`roles.${roleName}`) ? t(`roles.${roleName}`) : roleName}
+            </Badge>
+          );
+        }
+      },
+      {
+        header: t('fields.lastLogin'),
+        render: (user: User) => {
+          const isOnline = user.lastLogin && (new Date().getTime() - new Date(user.lastLogin).getTime()) < 1000 * 60 * 5; // 5 mins
+          return (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1.5">
+                {isOnline && (
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                  </span>
+                )}
+                <span className={cn(
+                  "text-sm md:font-semibold ",
+                  isOnline ? "text-success/70" : "text-muted-foreground/80"
+                )}>
+                  {user.lastLogin ? formatRelativeTime(user.lastLogin, locale) : '-'}
+                </span>
+              </div>
+              {!isOnline && user.lastLogin && (
+                <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
+                  {formatDateTime(user.lastLogin, locale)}
+                </span>
+              )}
+              <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
+                {t('fields.provider')}: {user.provider}
+              </span>
+            </div>
+          );
+        }
+      },
+      {
+        header: t('fields.totalOrders'),
+        className: "text-center",
+        render: (user: User) => (
+          <div className="flex flex-col items-center justify-center gap-1 group/orders">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-primary/5 border border-primary/10 group-hover/orders:bg-primary/10 group-hover/orders:border-primary/20 transition-all duration-300">
+              <Icons.Orders className="w-4 h-4 text-primary opacity-70" />
+              <span className="text-sm font-black text-primary">
+                {user.totalOrders || 0}
+              </span>
+            </div>
+            <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+              {t('entityLabel')}
             </span>
           </div>
-          <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
-            {t('entityLabel')}
-          </span>
-        </div>
-      )
-    },
-    {
-      header: t('fields.status'),
-      render: (user: User) => (
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={user.isActive !== false}
-            onCheckedChange={(checked) => handleStatusChange(user, checked)}
-            disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
-          />
-          <span className={cn(
-            "text-xs font-bold uppercase tracking-wider",
-            user.isActive !== false ? "text-success" : "text-muted-foreground"
-          )}>
-            {user.isActive !== false ? t('fields.active') : t('fields.inactive')}
-          </span>
-        </div>
-      )
-    },
-    {
-      header: t('fields.actions'),
-      className: "text-right pr-6",
-      render: (user: User) => {
-        const targetLevel = typeof user.role === 'object' ? user.role.level : 0;
-        const currentUserLevel = (currentUser?.role as any)?.level || 0;
-        const isSuperAdmin = currentUser?.email ? env.HIDDEN_EMAILS.includes(currentUser.email) : false;
-
-        // Cannot manage users with higher or equal level unless SuperAdmin (level 100)
-        const canManage = isSuperAdmin || (currentUserLevel > targetLevel);
-
-        if (!canManage) return null;
-
-        return (
-          <div className="flex items-center justify-end gap-2 transition-opacity">
-            <Tooltip content={t('editUser')}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
-                onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
-                disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
-              >
-                <Icons.Edit className="h-4 w-4" />
-              </Button>
-            </Tooltip>
-
-            <Tooltip content={tButtons('delete')}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
-                onClick={() => handleDelete(user._id, user.name)}
-                disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
-                isLoading={deleteMutation.isPending}
-              >
-                <Icons.Trash className="h-4 w-4" />
-              </Button>
-            </Tooltip>
+        )
+      },
+      {
+        header: t('fields.status'),
+        render: (user: User) => (
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={user.isActive !== false}
+              onCheckedChange={(checked) => handleStatusChange(user, checked)}
+              disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+            />
+            <span className={cn(
+              "text-xs font-bold uppercase tracking-wider",
+              user.isActive !== false ? "text-success" : "text-muted-foreground"
+            )}>
+              {user.isActive !== false ? t('fields.active') : t('fields.inactive')}
+            </span>
           </div>
-        );
+        )
+      },
+      {
+        header: t('fields.actions'),
+        className: "text-right pr-6",
+        render: (user: User) => {
+          const targetLevel = typeof user?.role === 'object' && user.role !== null ? user.role.level : 0;
+          const currentUserLevel = typeof currentUser?.role === 'object' && currentUser.role !== null && 'level' in currentUser.role
+            ? Number((currentUser.role as { level: number }).level)
+            : 0;
+
+          // Cannot manage users with higher or equal level unless SuperAdmin (level 100)
+          const canManage = currentUserLevel > targetLevel;
+
+          if (!canManage) return null; 
+
+          return (
+            <div className="flex items-center justify-end gap-2 transition-opacity">
+              <Tooltip content={t('editUser')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
+                  onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
+                  disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+                >
+                  <Icons.Edit className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+
+              <Tooltip content={tButtons('delete')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
+                  onClick={() => handleDelete(user._id, user.name)}
+                  disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+                  isLoading={deleteMutation.isPending}
+                >
+                  <Icons.Trash className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            </div>
+          );
+        }
       }
-    }
-  ];
-  }, [t, tButtons, locale, router, handleStatusChange, handleDelete, getRoleBadgeVariant, currentUser?.email, env.HIDDEN_EMAILS, deleteMutation.isPending, isLoading, updateMutation.isPending]);
+    ];
+  }, [t, tButtons, locale, router, handleStatusChange, handleDelete, getRoleBadgeVariant, currentUser, deleteMutation.isPending, isLoading, updateMutation.isPending]);
 
   const viewTabs = useMemo(() => [
     { id: 'active', label: t('fields.active'), value: 'active', icon: Icons.Check, activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
@@ -337,9 +342,9 @@ export default function UsersPage() {
       </div>
 
       <EntityDataTable<User>
-        data={data?.data?.filter((u: User) => !env.HIDDEN_EMAILS.includes(u.email)) || []}
+        data={data?.data?.filter((u: User) => (typeof u?.role === 'object' && u.role !== null ? u.role.level || 0 : 0) < (typeof currentUser?.role === 'object' && currentUser.role !== null ? (currentUser.role as { level: number }).level || 0 : 0)) || []}
         isLoading={isLoading}
-        pagination={data?.meta?.pagination}
+        pagination={data?.meta?.pagination} 
         onPageChange={handlePageChange}
         columns={columns}
         emptyState={{

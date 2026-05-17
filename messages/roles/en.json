@@ -1,0 +1,25 @@
+{
+  "title": "Roles & Permissions Management",
+  "subtitle": "Control access levels and permissions available for each role in the system",
+  "totalResults": "{count} available roles",
+  "createRole": "Add New Role",
+  "permissionCount": "{count} permissions",
+  "fields": {
+    "name": "Name",
+    "level": "Level",
+    "users": "Users",
+    "permissions": "Permissions",
+    "createdAt": "Created At",
+    "actions": "Actions"
+  },
+  "messages": {
+    "deleteTitle": "Delete Role",
+    "deleteConfirm": "Are you sure you want to delete the role \"{name}\"? This may affect associated users.",
+    "deleteSuccess": "Role deleted successfully",
+    "deleteError": "An error occurred while deleting the role"
+  },
+  "emptyState": {
+    "title": "No Roles Found",
+    "description": "Start by adding the first role to the system to organize permissions"
+  }
+}

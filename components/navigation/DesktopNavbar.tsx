@@ -10,7 +10,7 @@ import SearchBar from './SearchBar';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
 import { Icons } from '@/shared/ui/Icons';
-import { isAdmin } from '@/lib/auth';
+import { checkUserPermission } from '@/lib/auth';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
@@ -71,8 +71,9 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
-  const is_Admin = isAdmin();
-    
+  // Admin check is derived from the server-verified user object — no localStorage needed
+  const is_Admin = checkUserPermission(user ?? null, 'access_dashboard');
+
   const cartItemCount = useCartStore((state) =>
     state.items.reduce((total, item) => total + item.quantity, 0)
   );

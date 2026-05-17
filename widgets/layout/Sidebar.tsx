@@ -1,6 +1,4 @@
 import { getTranslations } from 'next-intl/server';
-import { cookies } from 'next/headers';
-import { getServerUser } from '@/lib/auth';
 import { Icons } from '@/shared/ui/Icons';
 import SidebarClientWrapper from './sidebar/SidebarClientWrapper';
 import SidebarHeader from './sidebar/SidebarHeader';
@@ -17,8 +15,6 @@ interface SidebarProps {
 
 export default async function Sidebar({ mode = 'desktop', className, onNavigate, locale }: SidebarProps) {
   const t = await getTranslations('navigation');
-  const cookieStore = await cookies();
-  const user = getServerUser(cookieStore);
   
   // Note: locale is usually passed from the layout
   const l = locale || env.DEFAULT_LOCALE ;

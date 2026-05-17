@@ -17,7 +17,6 @@ export default function ImageWithFallback({
   ...props
 }: ImageWithFallbackProps) {
   const [error, setError] = useState(false);
-  console.log(src);
   if (error || !src) {
     return (
       <div className={cn("flex items-center justify-center bg-secondary/50", className)}>

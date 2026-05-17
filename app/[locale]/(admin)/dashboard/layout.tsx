@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getServerUser, getAuthToken, checkUserPermission } from '@/lib/auth';
+import { getServerUserFromToken, checkUserPermission } from '@/lib/auth';
+import { User } from '@/types';
 import DashboardLayout from '@/widgets/layout/DashboardLayout';
 
 import { AsyncBoundary } from '@/shared/ui/boundaries/AsyncBoundary';
@@ -14,17 +15,19 @@ export default async function DashboardLayoutWrapper({
 }) {
   const { locale } = await params;
   const cookieStore = await cookies();
-  
-  // Server-side check
-  const user = getServerUser(cookieStore);
-  const token = cookieStore.get('auth_token')?.value;
+
+  // Server-side check using JWT from HttpOnly cookie
+  const token = cookieStore.get('access_token')?.value;
+  const user = token ? getServerUserFromToken(token) : null;
 
   if (!token || !user) {
     redirect(`/${locale}/login`);
   }
+  console.log(user, "user.role");
 
   // Permission-based check
-  const isAllowed = checkUserPermission(user, 'access_dashboard');
+  // Note: JWT payload has user.level which checkUserPermission uses.
+  const isAllowed = checkUserPermission(user as unknown as User, 'access_dashboard');
 
   if (!isAllowed) {
     redirect(`/${locale}/home`);

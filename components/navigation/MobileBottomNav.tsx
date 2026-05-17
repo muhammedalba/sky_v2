@@ -8,7 +8,7 @@ import { Link, usePathname } from '@/navigation';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { isAdmin } from '@/lib/auth';
+import { checkUserPermission } from '@/lib/auth';
 
 // ─────────────────────────────────────────────────────────
 // Types
@@ -17,7 +17,7 @@ import { isAdmin } from '@/lib/auth';
 interface NavItem {
   key: string;
   href: string;
-  icon: any;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   isCTA?: boolean;
 }
 
@@ -149,9 +149,10 @@ export default function MobileBottomNav() {
   const locale = useLocale();
   const t = useTranslations('store.nav');
   const { user, isAuthenticated: is_auth } = useAuth();
-  const is_Admin = isAdmin();
+  const is_Admin = checkUserPermission(user ?? null, 'access_dashboard') ||
+    (typeof user?.role === 'object' && user.role !== null && 'level' in user.role && Number((user.role as { level: number }).level) >= 50);
 
-  const isRtl = locale === 'ar';
+  const isRtl = locale === 'ar'; 
 
   const navItems = useMemo<NavItem[]>(
     () => [

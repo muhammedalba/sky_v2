@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server';
 import { Truck, Construction, ShieldCheck, Star, Package, Lock, Mail, Droplets, LucideIcon } from 'lucide-react';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { 
   BenefitItem, 

@@ -5,10 +5,9 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
-import { getUser, isAuthenticated, logout } from '@/lib/auth';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { User } from '@/types';
 import LogoutButton from './topbar/LogoutButton';
+import { useMe, useLogout } from '@/features/auth/hooks/useAuth';
 
 interface UserAccountMenuProps {
     iconOnly?: boolean;
@@ -20,30 +19,14 @@ interface UserAccountMenuProps {
 const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", locale }: UserAccountMenuProps) => {
     const t = useTranslations('store.nav');
     const [isOpen, setIsOpen] = useState(false);
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
     // 1. Memoize the class string calculation
     const bottomClass = useMemo(() => dir === "top" ? " inset-e-0 top-full" : " inset-s-0 bottom-full", [dir]);
 
-    // Initialize auth state on mount
-    useEffect(() => {
-        const checkAuth = () => {
-            const authStatus = isAuthenticated();
-            setIsLoggedIn(authStatus);
-            // 2. Only fetch user data if authenticated to save resources
-            if (authStatus) {
-                setUser(getUser());
-            } else {
-                setUser(null);
-            }
-        };
-        checkAuth();
-
-        window.addEventListener('auth-change', checkAuth);
-        return () => window.removeEventListener('auth-change', checkAuth);
-    }, []);
+    const { data: user } = useMe();
+    const { mutate: logoutUser } = useLogout();
+    const isLoggedIn = !!user;
 
     // 3. Memoize handlers to prevent unnecessary re-creations
     const toggleMenu = useCallback((e: React.MouseEvent | React.TouchEvent) => {
@@ -55,9 +38,9 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
     const stopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
     
     const handleLogout = useCallback(() => {
-        logout();
+        logoutUser();
         closeMenu();
-    }, [closeMenu]);
+    }, [closeMenu, logoutUser]);
 
     // Handle interactions: Click outside and Keyboard (Escape)
     useEffect(() => {
@@ -117,7 +100,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                     <div className="absolute inset-e-1/3  bottom-1 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                     <span className="text-sm font-bold truncate text-foreground leading-tight">{user?.name || 'login please'}</span>
                     <span className="text-[10px] font-medium text-muted-foreground truncate uppercase tracking-wider">
-                        {typeof user?.role === 'object' ? user.role.name : (user?.role || 'offline')}
+                        {typeof user?.role === 'object' && user.role !== null ? user.role.name : (user?.role || 'offline')}
                     </span>
                 </div>
                 {isLoggedIn && <LogoutButton iconOnly={true} />}

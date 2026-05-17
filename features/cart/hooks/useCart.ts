@@ -3,10 +3,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/hooks/useToast';
 import { cartApi } from '@/features/cart/api';
-import { getAuthToken } from '@/lib/auth';
+import { useMe } from '@/features/auth/hooks/useAuth';
 
 export function useCart() {
-  const token = typeof window !== 'undefined' ? getAuthToken() : null;
+  const { data: user } = useMe();
 
   return useQuery({
     queryKey: ['cart'],
@@ -14,8 +14,7 @@ export function useCart() {
       const response = await cartApi.getCart();
       return response.data?.data ?? null;
     },
-    enabled: !!token,
-    // Don't refetch too aggressively
+    enabled: !!user,
     staleTime: 1000 * 60 * 5, 
   });
 }

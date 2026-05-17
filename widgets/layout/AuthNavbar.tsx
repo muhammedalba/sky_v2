@@ -3,15 +3,11 @@
 import { Link } from '@/navigation';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { Button } from '@/shared/ui/Button';
 import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
-import { useEffect, useState, useCallback } from 'react';
-import { useUIStore } from '@/store/ui-store';
-import { getUser, isAuthenticated, logout } from '@/lib/auth';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
-import { env } from '@/lib/env';
 import SidebarHeader from './sidebar/SidebarHeader';
 import TopbarActions from './topbar/TopbarActions';
 
@@ -23,16 +19,7 @@ export default function AuthNavbar() {
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const [user, setUser] = useState<any>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [mounted, setMounted] = useState(false);
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
-    useEffect(() => {
-        setMounted(true);
-        const userData = isAuthenticated() ? getUser() : null;
-        setUser(userData);
-        setIsLoggedIn(!!userData);
-    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -42,7 +29,6 @@ export default function AuthNavbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close dropdowns on click outside or escape
     useEffect(() => {
         const handleEvents = (e: MouseEvent | KeyboardEvent) => {
             if (e instanceof KeyboardEvent && e.key === 'Escape') {
@@ -53,14 +39,14 @@ export default function AuthNavbar() {
                 setUserMenuOpen(false);
             }
         };
-
+        const clickHandler = handleEvents as EventListener;
         if (userMenuOpen || mobileMenuOpen) {
-            document.addEventListener('click', handleEvents as any);
-            document.addEventListener('keydown', handleEvents as any);
+            document.addEventListener('click', clickHandler);
+            document.addEventListener('keydown', clickHandler);
             return () => {
-                document.removeEventListener('click', handleEvents as any);
-                document.removeEventListener('keydown', handleEvents as any);
-            }
+                document.removeEventListener('click', clickHandler);
+                document.removeEventListener('keydown', clickHandler);
+            };
         }
     }, [userMenuOpen, mobileMenuOpen]);
 

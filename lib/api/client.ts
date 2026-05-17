@@ -1,5 +1,4 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { getAuthToken, getRefreshToken, setTokens, clearTokens } from '@/lib/auth';
 import { useToastStore } from '@/store/toast-store';
 import { env } from '@/lib/env';
 
@@ -23,12 +22,11 @@ interface PendingRequest {
 let isRefreshing = false;
 let failedQueue: PendingRequest[] = [];
 
-const processQueue = (error: unknown, token: string | null = null) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.config.headers.Authorization = `Bearer ${token}`;
       prom.resolve(apiClient(prom.config));
     }
   });
@@ -39,11 +37,6 @@ const processQueue = (error: unknown, token: string | null = null) => {
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    const token = getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
     if (typeof window !== 'undefined') {
       const getCookie = (name: string) => {
         const value = `; ${document.cookie}`;
@@ -110,42 +103,23 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      // الحصول على التوكن من Cookies أو LocalStorage
-      const currentToken = getRefreshToken() || getAuthToken();
-
-      if (!currentToken) {
-        isRefreshing = false;
-        handleLogout();
-        return Promise.reject(error);
-      }
-
       try {
         // طلب التجديد - السيرفر سيعالج الكوكيز تلقائياً بسبب withCredentials
         const response = await axios.get(`${API_BASE_URL}${REFRESH_ENDPOINT}`, {
           withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${currentToken}`, // احتياطاً إذا كان السيرفر يطلبه في الهيدر أيضاً
-          },
         });
 
-        // الهيكل المتوقع بناءً على رسائلك: { status, message, access_token }
         const resData = response.data;
         const newAccessToken = resData.access_token || resData.data?.access_token || resData.token || resData.accessToken;
 
-        // تحديث التوكنات (سيتم تحديث الكوكيز تلقائياً من المتصفح، ونحن نحدث الذاكرة المحلية)
         if (newAccessToken) {
-          setTokens(newAccessToken, currentToken);
-
-          apiClient.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-          processQueue(null, newAccessToken);
+          processQueue(null);
           return apiClient(originalRequest);
         } else {
           throw new Error('No access token in response');
         }
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(refreshError);
         handleLogout();
         return Promise.reject(refreshError);
       } finally {
@@ -155,12 +129,12 @@ apiClient.interceptors.response.use(
 
     // Handle standardized error response from AllExceptionsFilter
     if (error.response?.data) {
-      const data = error.response.data as any;
+      const data = error.response.data as Record<string, unknown>;
       
       // Prioritize the translated errors array from the backend
       if (Array.isArray(data.errors) && data.errors.length > 0) {
         error.message = data.errors.map((m: string) => `• ${m}`).join('\n');
-      } else if (data.message) {
+      } else if (typeof data.message === 'string') {
         error.message = data.message;
       } else {
         error.message = 'حدث خطأ يرجى المحاولة مرة أخرى.';
@@ -173,8 +147,6 @@ apiClient.interceptors.response.use(
 
 function handleLogout() {
   if (typeof window !== 'undefined') {
-    clearTokens();
-
     useToastStore.getState().addToast({
       title: 'انتهت الجلسة',
       message: 'عذراً، يجب عليك تسجيل الدخول مرة أخرى.',

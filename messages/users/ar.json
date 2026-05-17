@@ -24,7 +24,8 @@
             "password": "كلمة المرور",
             "passwordConfirm": "تأكيد كلمة المرور",
             "basicInfo": "المعلومات الأساسية",
-            "security": "الأمان والحماية"
+            "security": "الأمان والحماية",
+            "provider": "طريقة التسجيل"
       },
       "roles": {
             "admin": "مدير",

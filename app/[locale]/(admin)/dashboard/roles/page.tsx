@@ -36,8 +36,8 @@ export default function RolesPage() {
 
   const handleDelete = useCallback((id: string, name: string) => {
     openDialog({
-      title: 'حذف الدور',
-      message: `هل أنت متأكد من حذف الدور "${name}"؟ قد يؤثر هذا على المستخدمين المرتبطين به.`,
+      title: t('messages.deleteTitle'),
+      message: t('messages.deleteConfirm', { name }),
       onConfirm: async () => {
         try {
           await deleteMutation.mutateAsync(id);
@@ -45,7 +45,7 @@ export default function RolesPage() {
         } catch (error) {}
       },
     });
-  }, [openDialog, deleteMutation, refetch]);
+  }, [openDialog, deleteMutation, refetch, t]);
 
   const handleEdit = (role: Role) => {
     setSelectedRole(role);
@@ -59,7 +59,7 @@ export default function RolesPage() {
 
   const columns = useMemo(() => [
     {
-      header: 'الاسم',
+      header: t('fields.name'),
       className: "pl-6",
       render: (role: Role) => (
         <div className="flex flex-col gap-0.5">
@@ -75,7 +75,7 @@ export default function RolesPage() {
       )
     },
     {
-      header: 'المستوى',
+      header: t('fields.level'),
       render: (role: Role) => (
         <Badge variant={role.level >= 90 ? 'destructive' : role.level >= 50 ? 'default' : 'secondary'}>
           {role.level}
@@ -83,7 +83,7 @@ export default function RolesPage() {
       )
     },
     {
-      header: 'المستخدمين',
+      header: t('fields.users'),
       className: "text-center",
       render: (role: Role) => (
         <div className="flex items-center justify-center gap-2">
@@ -93,15 +93,15 @@ export default function RolesPage() {
       )
     },
     {
-      header: 'الصلاحيات',
+      header: t('fields.permissions'),
       render: (role: Role) => (
         <span className="text-sm text-muted-foreground">
-          {role.permissions?.length || 0} صلاحية
+          {t('permissionCount', { count: role.permissions?.length || 0 })}
         </span>
       )
     },
     {
-      header: 'تاريخ الإنشاء',
+      header: t('fields.createdAt'),
       render: (role: Role) => (
         <span className="text-xs text-muted-foreground">
           {formatDate(role.createdAt)}
@@ -109,12 +109,12 @@ export default function RolesPage() {
       )
     },
     {
-      header: 'الإجراءات',
+      header: t('fields.actions'),
       className: "text-right pr-6",
       render: (role: Role) => (
         <div className="flex items-center justify-end gap-2">
           <Can permission={Permissions.UPDATE_ROLE}>
-            <Tooltip content="تعديل">
+            <Tooltip content={tButtons('edit')}>
               <Button
                 variant="outline"
                 size="icon"
@@ -128,7 +128,7 @@ export default function RolesPage() {
 
           {role.level < 100 && (
             <Can permission={Permissions.DELETE_ROLE}>
-              <Tooltip content="حذف">
+              <Tooltip content={tButtons('delete')}>
                 <Button
                   variant="outline"
                   size="icon"
@@ -143,16 +143,16 @@ export default function RolesPage() {
         </div>
       )
     }
-  ], [handleDelete]);
+  ], [handleDelete, t, tButtons]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
-        title="إدارة الأدوار والصلاحيات"
-        subtitle="تحكم في مستويات الوصول والصلاحيات المتاحة لكل دور في النظام"
-        totalResults={`${roles?.length || 0} دور متاح`}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        totalResults={t('totalResults', { count: roles?.length || 0 })}
         action={{
-          label: 'إضافة دور جديد',
+          label: t('createRole'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: handleCreate,
         }}
@@ -163,8 +163,8 @@ export default function RolesPage() {
         isLoading={isLoading}
         columns={columns}
         emptyState={{
-          title: 'لا يوجد أدوار',
-          description: 'ابدأ بإضافة أول دور للنظام لتنظيم الصلاحيات',
+          title: t('emptyState.title'),
+          description: t('emptyState.description'),
           icon: <Icons.Shield className="h-10 w-10 text-muted-foreground/40" />,
         }}
       />
@@ -185,8 +185,8 @@ export default function RolesPage() {
         onConfirm={handleConfirm}
         title={confirmTitle}
         message={confirmMessage}
-        confirmText="حذف"
-        cancelText="إلغاء"
+        confirmText={tButtons('delete')}
+        cancelText={tButtons('cancel')}
         isLoading={isConfirmLoading}
       />
     </div>

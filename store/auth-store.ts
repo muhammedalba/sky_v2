@@ -1,31 +1,13 @@
-'use client';
-
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { User } from '@/types';
-
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  login: (user: User, token: string) => void;
-  logout: () => void;
-  initialize: () => void;
-}
-
-export const useAuth = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      login: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
-      initialize: () => {
-         // Optional: hydration logic if needed beyond persist
-      }
-    }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
+/**
+ * @deprecated This file is intentionally empty.
+ *
+ * The legacy Zustand auth store that persisted the JWT token and user object
+ * in localStorage has been removed as part of the security migration to
+ * HttpOnly cookie-based authentication.
+ *
+ * Authentication state is now managed exclusively by:
+ *   - Server: HttpOnly cookies (access_token, refresh_token)
+ *   - Client: React Query `useMe()` hook → fetches /auth/me on each mount
+ *
+ * Do NOT re-introduce localStorage token storage here.
+ */

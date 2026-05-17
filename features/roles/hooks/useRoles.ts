@@ -4,13 +4,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { rolesApi } from '../api';
 import { useToast } from '@/shared/hooks/useToast';
 import { Role } from '@/features/users/types';
+import { AxiosError } from 'axios';
 
 export function useRoles() {
   return useQuery({
     queryKey: ['roles'],
     queryFn: async () => {
       const response = await rolesApi.getAll();
-      return response.data.data;
+      console.log('from useRoles ',response.data);
+      return response?.data;
     },
   });
 }
@@ -20,7 +22,8 @@ export function usePermissionsList() {
     queryKey: ['permissions-list'],
     queryFn: async () => {
       const response = await rolesApi.getPermissionsList();
-      return response.data.data;
+      console.log('from usePermissionsList ',response);
+      return response.data;
     },
   });
 }
@@ -35,8 +38,9 @@ export function useCreateRole() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast.success('تم إنشاء الدور بنجاح');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'فشل إنشاء الدور');
+    onError: (error: Error) => {
+      const axiosError = error as AxiosError<{message: string}>;
+      toast.error(axiosError.response?.data?.message || 'فشل إنشاء الدور');
     },
   });
 }
@@ -52,8 +56,9 @@ export function useUpdateRole() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast.success('تم تحديث الدور بنجاح');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'فشل تحديث الدور');
+    onError: (error: Error) => {
+      const axiosError = error as AxiosError<{message: string}>;
+      toast.error(axiosError.response?.data?.message || 'فشل تحديث الدور');
     },
   });
 }
@@ -68,8 +73,9 @@ export function useDeleteRole() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast.success('تم حذف الدور بنجاح');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'فشل حذف الدور');
+    onError: (error: Error) => {
+      const axiosError = error as AxiosError<{message: string}>;
+      toast.error(axiosError.response?.data?.message || 'فشل حذف الدور');
     },
   });
 }

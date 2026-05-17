@@ -26,8 +26,6 @@ export default async function AuthPageLayout({
   shadowColor,
 }: AuthPageLayoutProps) {
   const isRTL = locale === 'ar';
-  const t = await getTranslations({ locale, namespace: 'auth' });
-
   return (
     <main className="min-h-screen  grid grid-cols-1 lg:grid-cols-2 bg-linear-to-br from-background via-background to-secondary/5">
       {/* Left Side: Enhanced Branding Section (Server Component) */}

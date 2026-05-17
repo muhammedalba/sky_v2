@@ -1,6 +1,6 @@
 'use client';
 
-import { logout } from '@/lib/auth';
+import { useLogout } from '@/features/auth/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
 import { useTranslations } from 'next-intl';
@@ -8,8 +8,10 @@ import { useTranslations } from 'next-intl';
 export default function LogoutButton({ iconOnly = false }: { iconOnly?: boolean }) {
   const t = useTranslations('navigation');
 
+  const { mutate: logoutUser } = useLogout();
+
   const handleLogout = () => {
-    logout();
+    logoutUser();
   };
 
   return (

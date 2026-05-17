@@ -3,6 +3,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { loginSchema } from '@/features/auth/auth.schema';
+import { LoginResponseData } from '@/features/auth/types';
+import { checkUserPermission } from '@/lib/auth';
 import Link from 'next/link';
 import { Button } from '@/shared/ui/Button';
 import { Lock, Mail } from 'lucide-react';
@@ -16,17 +18,19 @@ export default function LoginForm({ locale }: { locale: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('auth');
-  const toast=useToast()
+  const toast = useToast();
 
   const loginMutation = useLogin();
 
-  const onSubmit = async (data: any) => {
-    await loginMutation.mutateAsync(data);
+  const onSubmit = async (data: { email: string; password: string }) => {
+    // useLogin already normalizes the response to LoginResponseData
+    const userData: LoginResponseData = await loginMutation.mutateAsync(data);
     toast.success(t('loginSuccess'));
     
-    // Dynamically check permission after successful login and user storage
-    const { hasPermission } = await import('@/lib/auth');
-    if (hasPermission('access_dashboard')) {
+    // Determine redirect based on server-provided role/permissions (no localStorage)
+    const canAccessDashboard = checkUserPermission(userData, 'access_dashboard');
+    
+    if (canAccessDashboard) {
       router.push(`/${locale}/dashboard`);
     } else {
       router.push(`/${locale}/home`);
@@ -70,7 +74,7 @@ export default function LoginForm({ locale }: { locale: string }) {
               showStrength={false}
             />
             <div className="flex justify-end">
-              <Link href={`/${locale}/forgot-password`} className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
+              <Link href={`/${locale}/forgot-password`} className="text-xs md:font-semibold text-primary hover:text-primary/80 transition-colors">
                 {t('forgotPasswordLink')}
               </Link>
             </div>

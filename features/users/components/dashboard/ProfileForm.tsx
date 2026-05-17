@@ -24,7 +24,7 @@ import { User } from '@/types';
 import { cn, formatDateTime, formatRelativeTime } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
-import { setUser } from '@/lib/auth';
+
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -126,19 +126,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       }
       return authApi.updateMe(formData);
     },
-    onSuccess: (response) => {
-      // تحديث ملف الكوكيز والـ LocalStorage بالبيانات الجديدة مباشرة
-      if (response.data) {
-        setUser(response.data);
-      }
-
+    onSuccess: () => {
+      // Invalidate the cached user query so UI re-fetches fresh data from the server
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
-
       addToast({ title: 'Success', message: t('messages.profileUpdated'), type: 'success' });
     },
-    onError: (error: any) => {
-      addToast({ title: 'Error', message: error.response?.data?.errors || 'Failed to update profile.', type: 'error' })
-
+    onError: (error: import('axios').AxiosError<{ errors?: string }>) => {
+      addToast({ title: 'Error', message: error.response?.data?.errors || 'Failed to update profile.', type: 'error' });
     },
   });
 
@@ -161,8 +155,12 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   });
 
   // ── Role badge helper ─────────────────────────────────────────────────────
-  const roleName = typeof user.role === 'object' ? user.role.name.toLowerCase() : ((user.role as any)?.toLowerCase?.() || 'user');
-  const roleLabel = typeof user.role === 'object' ? user.role.name : (user.role || 'User');
+  const roleName = (typeof user.role === 'object' && user.role !== null) 
+    ? user.role.name.toLowerCase() 
+    : (typeof user.role === 'string' ? user.role.toLowerCase() : 'user');
+  const roleLabel = (typeof user.role === 'object' && user.role !== null) 
+    ? user.role.name 
+    : (typeof user.role === 'string' ? user.role : 'User');
 
   const roleBadgeClass: Record<string, string> = {
     superadmin: 'bg-primary/20 text-primary font-black shadow-sm ring-1 ring-primary/30',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Modal from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
@@ -23,30 +23,25 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
   const createMutation = useCreateRole();
   const updateMutation = useUpdateRole();
 
+  const [prevRole, setPrevRole] = useState(role);
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    level: 0,
-    permissions: [] as string[]
+    name: role?.name || '',
+    description: role?.description || '',
+    level: role?.level || 0,
+    permissions: role?.permissions || []
   });
 
-  useEffect(() => {
-    if (role) {
-      setFormData({
-        name: role.name,
-        description: role.description || '',
-        level: role.level,
-        permissions: role.permissions || []
-      });
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-        level: 0,
-        permissions: []
-      });
-    }
-  }, [role, isOpen]);
+  if (role !== prevRole || isOpen !== prevIsOpen) {
+    setPrevRole(role);
+    setPrevIsOpen(isOpen);
+    setFormData({
+      name: role?.name || '',
+      description: role?.description || '',
+      level: role?.level || 0,
+      permissions: role?.permissions || []
+    });
+  }
 
   const togglePermission = (key: string) => {
     setFormData(prev => ({

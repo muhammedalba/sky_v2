@@ -1,73 +1,35 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
 import { queryKeys } from '@/lib/api/query-keys';
-import { setUser, removeAuthToken, setTokens, getRefreshToken, getAuthToken } from '@/lib/auth';
-import { User, ApiResponse, ApiError } from '@/types';
 import { LoginResponseData } from '@/features/auth/types';
 import { authApi } from '@/features/auth/api';
 import { useToast } from '@/shared/hooks/useToast';
 
-/**
- * Processes a successful auth response (login or register).
- * Extracts and stores the access token and user data.
- */
-function handleAuthSuccess(response: ApiResponse<LoginResponseData>, queryClient: ReturnType<typeof useQueryClient>) {
-
-
-  const accessToken = response.data?.access_token;
-  if (accessToken) {
-    setTokens(accessToken, getRefreshToken() || '');
-  }
-
-  const userData = response.data;
-  if (userData) {
-    const { access_token: _, ...user } = userData;
-    setUser(user as User);
-  }
-  queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
-}
 
 export function useLogin() {
   const queryClient = useQueryClient();
-  const toast = useToast();
   return useMutation({
-    mutationFn: async (credentials: { email: string; password: string }) => {
-      return authApi.login(credentials);
+    mutationFn: async (credentials: { email: string; password: string }): Promise<LoginResponseData> => {
+      const response = await authApi.login(credentials);
+      return response.data;
     },
-    onSuccess: (response: ApiResponse<LoginResponseData>) => {
-      handleAuthSuccess(response, queryClient);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
     },
   });
 }
 
 export function useMe() {
-  const [token, setToken] = useState<string | null>(null);
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    setToken(getAuthToken());
-  }, []);
-
-  const query = useQuery({
+  return useQuery({
     queryKey: queryKeys.auth.me(),
     queryFn: async () => {
-      const response = (await authApi.me()) as unknown as ApiResponse<User>;
+      const response = await authApi.me();
       return response.data;
     },
-    enabled: !!token,
     retry: false,
+    staleTime: 5 * 60 * 1000,
   });
-
-  // Keep localStorage in sync with the latest server data for permission checks
-  useEffect(() => {
-    if (query.data) {
-      setUser(query.data);
-    }
-  }, [query.data]);
-
-  return query;
 }
 
 export function useRegister() {
@@ -77,8 +39,8 @@ export function useRegister() {
     mutationFn: async (data: FormData) => {
       return authApi.register(data);
     },
-    onSuccess: (response: ApiResponse<LoginResponseData>) => {
-      handleAuthSuccess(response, queryClient);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
     },
   });
 }
@@ -130,7 +92,6 @@ export function useLogout() {
       await authApi.logout();
     },
     onSettled: () => {
-      removeAuthToken();
       queryClient.clear();
       const locale = getCurrentLocale();
       window.location.href = `/${locale}/login`;

@@ -12,7 +12,6 @@ export function useSubCategories(
     queryKey: ['subCategories', params],
     queryFn: async () => {
       const response = await subCategoriesApi.getAll(params);
-      console.log("subCategories Response:", response);
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,

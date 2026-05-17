@@ -24,7 +24,8 @@
             "password": "Password",
             "passwordConfirm": "Confirm Password",
             "basicInfo": "Basic Information",
-            "security": "Security & Protection"
+            "security": "Security & Protection",
+            "provider": "Provider"
       },
       "roles": {
             "admin": "Admin",
