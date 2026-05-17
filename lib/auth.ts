@@ -17,6 +17,8 @@ export const checkUserPermission = (user: User | null, permission: string | stri
         ? permission.every((p) => userPerms.includes(p))
         : permission.some((p) => userPerms.includes(p));
     }
+    console.log("userPerms in auth", userPerms);
+
     return userPerms.includes(permission);
 
   }
