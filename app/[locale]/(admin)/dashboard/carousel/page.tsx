@@ -20,6 +20,8 @@ import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 export default function CarouselPage() {
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
@@ -141,30 +143,34 @@ export default function CarouselPage() {
       className: "ps-6 text-center",
       render: (item: CarouselType) => (
         <div className="flex justify-center gap-2 transition-all duration-300">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-              onClick={() => router.push(`/${locale}/dashboard/carousel/${item._id}/edit`)}
-              disabled={deleteCarouselPending || isLoading || updateCarouselPending}
-            >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_CAROUSEL}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                onClick={() => router.push(`/${locale}/dashboard/carousel/${item._id}/edit`)}
+                disabled={deleteCarouselPending || isLoading || updateCarouselPending}
+              >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(item._id, getTrans(item.description))}
-              isLoading={deleteCarouselPending}
-              disabled={deleteCarouselPending || isLoading || updateCarouselPending}
-            > 
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_CAROUSEL}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(item._id, getTrans(item.description))}
+                isLoading={deleteCarouselPending}
+                disabled={deleteCarouselPending || isLoading || updateCarouselPending}
+              > 
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
@@ -185,7 +191,8 @@ export default function CarouselPage() {
           label: t('addSlide') || 'Add Slide',
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => router.push(`/${locale}/dashboard/carousel/create`),
-          disabled: deleteCarouselPending || isLoading || updateCarouselPending
+          disabled: deleteCarouselPending || isLoading || updateCarouselPending,
+          permission: Permissions.CREATE_CAROUSEL
         }}
       />
 

@@ -3,6 +3,7 @@
   "subtitle": "Control access levels and permissions available for each role in the system",
   "totalResults": "{count} available roles",
   "createRole": "Add New Role",
+  "editRole": "Edit Role",
   "permissionCount": "{count} permissions",
   "fields": {
     "name": "Name",
@@ -16,10 +17,26 @@
     "deleteTitle": "Delete Role",
     "deleteConfirm": "Are you sure you want to delete the role \"{name}\"? This may affect associated users.",
     "deleteSuccess": "Role deleted successfully",
-    "deleteError": "An error occurred while deleting the role"
+    "deleteError": "An error occurred while deleting the role",
+    "deleted": "Role deleted successfully",
+    "deleteFailed": "An error occurred while deleting the role"
   },
   "emptyState": {
     "title": "No Roles Found",
     "description": "Start by adding the first role to the system to organize permissions"
+  },
+  "dialog": {
+    "nameLabel": "Role Name",
+    "namePlaceholder": "e.g. Sales Manager",
+    "levelLabel": "Level (0-100)",
+    "descLabel": "Description",
+    "descPlaceholder": "Describe the responsibilities of this role...",
+    "availablePerms": "Available Permissions",
+    "selectedPerms": "Selected ( {count} ) permissions",
+    "loadingPerms": "Loading permissions...",
+    "deselectAll": "Deselect All",
+    "selectAll": "Select All",
+    "success": "Role saved successfully",
+    "error": "An error occurred while saving the role"
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useRoles, useDeleteRole } from '@/features/roles/hooks/useRoles';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Icons } from '@/shared/ui/Icons';
@@ -9,23 +9,18 @@ import { Button } from '@/shared/ui/Button';
 import { Tooltip } from '@/shared/ui/Tooltip';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
-import { useToast } from '@/shared/hooks/useToast';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getRoleBadgeVariant } from '@/lib/utils';
 import { Role } from '@/features/roles/types';
-import { useRouter } from 'next/navigation';
 import { useMemo, useCallback, useState } from 'react';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import RoleDialog from '@/features/roles/components/RoleDialog';
 import { Can } from '@/components/auth/Can';
 import { Permissions } from '@/features/roles/types';
-
+import { useToast } from '@/shared/hooks/useToast';
 export default function RolesPage() {
-  const locale = useLocale();
   const t = useTranslations('roles');
   const tButtons = useTranslations('common.buttons');
-  const router = useRouter();
   const toast = useToast();
-
   const { data: roles, isLoading, refetch } = useRoles();
   const deleteMutation = useDeleteRole();
 
@@ -41,21 +36,24 @@ export default function RolesPage() {
       onConfirm: async () => {
         try {
           await deleteMutation.mutateAsync(id);
+          toast.success(t('messages.deleted'));
           refetch();
-        } catch (error) {}
+        } catch (error: any) {
+          toast.error(error?.response?.data?.message || t('messages.deleteFailed'));
+        }
       },
     });
-  }, [openDialog, deleteMutation, refetch, t]);
+  }, [openDialog, deleteMutation, refetch, t, toast]);
 
-  const handleEdit = (role: Role) => {
+  const handleEdit = useCallback((role: Role) => {
     setSelectedRole(role);
     setIsRoleDialogOpen(true);
-  };
+  }, []);
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     setSelectedRole(null);
     setIsRoleDialogOpen(true);
-  };
+  }, []);
 
   const columns = useMemo(() => [
     {
@@ -77,7 +75,7 @@ export default function RolesPage() {
     {
       header: t('fields.level'),
       render: (role: Role) => (
-        <Badge variant={role.level >= 90 ? 'destructive' : role.level >= 50 ? 'default' : 'secondary'}>
+        <Badge variant={getRoleBadgeVariant(role.level)}>
           {role.level}
         </Badge>
       )
@@ -87,7 +85,7 @@ export default function RolesPage() {
       className: "text-center",
       render: (role: Role) => (
         <div className="flex items-center justify-center gap-2">
-          <Icons.Users className="w-4 h-4 text-muted-foreground/60" />
+          <Icons.Users className="w-4 h-4 text-info/60" />
           <span className="font-bold">{role.userCount || 0}</span>
         </div>
       )
@@ -118,10 +116,10 @@ export default function RolesPage() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-xl"
+                className="h-8 w-8 bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
                 onClick={() => handleEdit(role)}
               >
-                <Icons.Edit className="h-4 w-4" />
+                <Icons.Edit className="h-4 w-4 text-primary" />
               </Button>
             </Tooltip>
           </Can>
@@ -135,7 +133,7 @@ export default function RolesPage() {
                   className="h-8 w-8 rounded-xl hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleDelete(role._id, role.name)}
                 >
-                  <Icons.Trash className="h-4 w-4" />
+                  <Icons.Trash className="h-4 w-4 text-destructive" />
                 </Button>
               </Tooltip>
             </Can>
@@ -143,7 +141,7 @@ export default function RolesPage() {
         </div>
       )
     }
-  ], [handleDelete, t, tButtons]);
+  ], [handleDelete, handleEdit, t, tButtons]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -155,6 +153,7 @@ export default function RolesPage() {
           label: t('createRole'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: handleCreate,
+          permission: Permissions.CREATE_ROLE,
         }}
       />
 

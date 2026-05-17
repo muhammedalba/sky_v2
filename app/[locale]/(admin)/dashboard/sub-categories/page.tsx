@@ -18,6 +18,8 @@ import SubCategoryForm from '@/features/categories/components/dashboard/SubCateg
 import { SubCategory } from '@/types';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 export default function SubCategoriesPage() {
   // get query params
@@ -39,7 +41,16 @@ export default function SubCategoriesPage() {
   // hooks
   const toast = useToast();
   const getTrans = useTrans();
-  const confirmDialog = useConfirmDialog();
+  const {
+    openDialog,
+    closeDialog,
+    handleConfirm,
+    isOpen: isConfirmOpen,
+    isLoading: isConfirmLoading,
+    title: confirmTitle,
+    message: confirmMessage,
+    isDangerous: confirmIsDangerous
+  } = useConfirmDialog();
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubCategory, setEditingSubCategory] = useState<SubCategory | null>(null);
@@ -67,7 +78,7 @@ export default function SubCategoriesPage() {
   }, []);
 
   const handleDelete = useCallback(async (id: string, name: string) => {
-    confirmDialog.openDialog({
+    openDialog({
       title: tCommon('deleteConfirm'),
       message: tCommon('deleteConfirmWithName', { name }),
       onConfirm: async () => {
@@ -75,13 +86,13 @@ export default function SubCategoriesPage() {
           await deleteSubCategory(id);
           toast.success(tCommon('success'));
           refetch();
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('Delete operation failed:', error);
           toast.error(tCommon('deleteError') || "Error while deleting");
         }
       },
     });
-  }, [confirmDialog, deleteSubCategory, refetch, t, toast]);
+  }, [openDialog, deleteSubCategory, refetch, tCommon, toast]);
 
   const columns = useMemo(() => [
     {
@@ -111,34 +122,38 @@ export default function SubCategoriesPage() {
       className: "ps-6 text-center",
       render: (sub: SubCategory) => (
         <div className="flex justify-center gap-2 transition-all duration-300">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-              onClick={() => handleOpenModal(sub)}
-              disabled={deleteSubCategoryPending || isLoading}
-            >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_CATEGORY}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                onClick={() => handleOpenModal(sub)}
+                disabled={deleteSubCategoryPending || isLoading}
+              >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(sub._id, getTrans(sub.name))}
-              isLoading={deleteSubCategoryPending}
-              disabled={deleteSubCategoryPending || isLoading}
-            >
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_CATEGORY}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(sub._id, getTrans(sub.name))}
+                isLoading={deleteSubCategoryPending}
+                disabled={deleteSubCategoryPending || isLoading}
+              >
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
-  ], [getTrans, handleDelete, handleOpenModal, isLoading, deleteSubCategoryPending]);
+  ], [getTrans, handleDelete, handleOpenModal, isLoading, deleteSubCategoryPending, tButtons]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -151,7 +166,8 @@ export default function SubCategoriesPage() {
           label: t('createSubCategory'),
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
-          disabled: deleteSubCategoryPending || isLoading 
+          disabled: deleteSubCategoryPending || isLoading,
+          permission: Permissions.CREATE_SUB_CATEGORY
         }}
       />
 
@@ -196,15 +212,15 @@ export default function SubCategoriesPage() {
       </Modal>
 
       <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        onClose={confirmDialog.closeDialog}
-        onConfirm={confirmDialog.handleConfirm}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
+        isOpen={isConfirmOpen}
+        onClose={closeDialog}
+        onConfirm={handleConfirm}
+        title={confirmTitle}
+        message={confirmMessage}
         confirmText={tButtons('confirm')}
         cancelText={tButtons('cancel')}
-        isDangerous={confirmDialog.isDangerous}
-        isLoading={confirmDialog.isLoading}
+        isDangerous={confirmIsDangerous}
+        isLoading={isConfirmLoading}
       />
     </div>
   );

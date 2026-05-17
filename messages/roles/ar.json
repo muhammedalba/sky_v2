@@ -3,6 +3,7 @@
   "subtitle": "تحكم في مستويات الوصول والصلاحيات المتاحة لكل دور في النظام",
   "totalResults": "{count} دور متاح",
   "createRole": "إضافة دور جديد",
+  "editRole": "تعديل الدور",
   "permissionCount": "{count} صلاحية",
   "fields": {
     "name": "الاسم",
@@ -16,10 +17,26 @@
     "deleteTitle": "حذف الدور",
     "deleteConfirm": "هل أنت متأكد من حذف الدور \"{name}\"؟ قد يؤثر هذا على المستخدمين المرتبطين به.",
     "deleteSuccess": "تم حذف الدور بنجاح",
-    "deleteError": "حدث خطأ أثناء حذف الدور"
+    "deleteError": "حدث خطأ أثناء حذف الدور",
+    "deleted": "تم حذف الدور بنجاح",
+    "deleteFailed": "حدث خطأ أثناء حذف الدور"
   },
   "emptyState": {
     "title": "لا يوجد أدوار",
     "description": "ابدأ بإضافة أول دور للنظام لتنظيم الصلاحيات"
+  },
+  "dialog": {
+    "nameLabel": "اسم الدور",
+    "namePlaceholder": "مثل: مدير مبيعات",
+    "levelLabel": "المستوى (0-100)",
+    "descLabel": "الوصف",
+    "descPlaceholder": "وصف مهام هذا الدور...",
+    "availablePerms": "الصلاحيات المتاحة",
+    "selectedPerms": "تم اختيار ( {count} ) صلاحية",
+    "loadingPerms": "جاري تحميل الصلاحيات...",
+    "deselectAll": "إلغاء الكل",
+    "selectAll": "تحديد الكل",
+    "success": "تم حفظ الدور بنجاح",
+    "error": "حدث خطأ أثناء حفظ الدور"
   }
 }

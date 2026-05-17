@@ -22,7 +22,7 @@ interface CategoryFormProps {
 export default function CategoryForm({ editingCategory, onSuccess, onCancel }: CategoryFormProps) {
   const t = useTranslations('categories');
   const tCommon = useTranslations('buttons');
-  const tErrors = useTranslations('errors');
+
   const toast = useToast();
 
 
@@ -70,9 +70,10 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
       }
       onSuccess();
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error(error);
-      toast.error(error.message || t('messages.error'), data.name.en);
+      toast.error(err.message || t('messages.error'), data.name.en);
     }
   };
 

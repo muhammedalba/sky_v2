@@ -8,13 +8,18 @@ import { Skeleton } from '@/shared/ui/Skeleton';
 import { Icons } from '@/shared/ui/Icons';
 import { formatCurrency } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { Product } from '@/types';
 
 import { useTrans } from '@/shared/hooks/useTrans';
 import { useToast } from '@/shared/hooks/useToast';
 
+interface CartItem {
+    _id: string;
+    quantity: number;
+    [key: string]: unknown;
+}
+
 export default function ProductDetailsPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
-    const { locale, slug } = use(params);
+    const { slug } = use(params);
     const getTrans = useTrans();
     const toast = useToast();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -48,7 +53,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ local
                 </div>
                 <h2 className="text-3xl font-black mb-2">Product not found</h2>
                 <p className="text-muted-foreground mb-8 max-w-md">
-                    We couldn't find the product you're looking for. It might have been moved or deleted.
+                    We couldn&apos;t find the product you&apos;re looking for. It might have been moved or deleted.
                 </p>
                 <Button size="lg" className="rounded-full px-8" onClick={() => window.history.back()}>
                     Go Back
@@ -60,8 +65,8 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ local
     const handleAddToCart = () => {
         setAdding(true);
         try {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const existingItemIndex = cart.findIndex((item: any) => item._id === product._id);
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
+            const existingItemIndex = cart.findIndex((item: CartItem) => item._id === product._id);
 
             if (existingItemIndex > -1) {
                 cart[existingItemIndex].quantity += quantity;
@@ -113,7 +118,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ local
                         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
                             <button
                                 onClick={() => setSelectedImage(product.imageCover || '')}
-                                className={`relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${!selectedImage || selectedImage === product.imageCover ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                className={`relative w-24 h-24 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${!selectedImage || selectedImage === product.imageCover ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-70 hover:opacity-100'}`}
                             >
                                 <ImageWithFallback src={product.imageCover || ''} alt="Main" fill className="object-cover" />
                             </button>
@@ -121,7 +126,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ local
                                 <button
                                     key={i}
                                     onClick={() => setSelectedImage(img)}
-                                    className={`relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                    className={`relative w-24 h-24 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-70 hover:opacity-100'}`}
                                 >
                                     <ImageWithFallback src={img} alt={`View ${i}`} fill className="object-cover" />
                                 </button>

@@ -5,6 +5,7 @@ import { Button } from '@/shared/ui/Button';
 import { cn } from '@/lib/utils';
 import Badge from '../Badge';
 import { Icons } from '../Icons';
+import Can from '@/components/auth/Can';
 
 interface EntityPageHeaderProps {
   title: ReactNode;
@@ -15,7 +16,8 @@ interface EntityPageHeaderProps {
     onClick: () => void;
     className?: string;
     disabled?: boolean;
-    };
+    permission?: string | string[];
+  };
   className?: string;
   totalResults?: string;
 }
@@ -27,8 +29,22 @@ export default function EntityPageHeader({
   className,
   totalResults,
 }: EntityPageHeaderProps) {
+  const renderActionButton = () => (
+    <Button variant="default"
+      onClick={action!.onClick}
+      disabled={action!.disabled}
+      className={cn(
+        "h-11 px-6 font-bold flex flex-1 sm:flex-0 items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95",
+        action!.className
+      )}
+    >
+      {action!.icon}
+      {action!.label}
+    </Button>
+  );
+
   return (
-    <div className={cn("flex flex-col md:flex-row md:items-end justify-between gap-6", className)}>
+    <div className={cn("flex  items-center flex-wrap justify-between gap-6", className)}>
       <div className="space-y-1">
         <h1 className="text-4xl font-extrabold tracking-tight title-gradient">
           {title}
@@ -42,21 +58,17 @@ export default function EntityPageHeader({
           {totalResults && <Badge variant="success" className="gap-1.5 flex items-center w-fit ">
             <Icons.Products className="w-4 h-4 group-hover/badge:rotate-18 transition-transform duration-500" />
             {totalResults}
-          </Badge>}  
-        </div> 
+          </Badge>}
+        </div>
       </div>
       {action && (
-        <Button
-          onClick={action.onClick}
-          disabled={action.disabled}
-          className={cn(
-            "h-11 px-6 font-bold flex items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95",
-            action.className
-          )}
-        >
-          {action.icon}
-          {action.label}
-        </Button>
+        action.permission ? (
+          <Can permission={action.permission}>
+            {renderActionButton()}
+          </Can>
+        ) : (
+          renderActionButton()
+        )
       )}
     </div>
   );

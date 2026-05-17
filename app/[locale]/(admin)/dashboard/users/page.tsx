@@ -21,6 +21,8 @@ import { useMemo, useCallback } from 'react';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { useMe } from '@/features/auth/hooks/useAuth';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 // --- Helper Functions ---
 const getRoleLevel = (role: unknown): number => {
@@ -263,30 +265,34 @@ export default function UsersPage() {
 
         return (
           <div className="flex items-center justify-end gap-2 transition-opacity">
-            <Tooltip content={t('editUser')}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
-                onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
-                disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
-              >
-                <Icons.Edit className="h-4 w-4" />
-              </Button>
-            </Tooltip>
+            <Can permission={Permissions.UPDATE_USER}>
+              <Tooltip content={t('editUser')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
+                  onClick={() => router.push(`/${locale}/dashboard/users/${user._id}/edit`)}
+                  disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+                >
+                  <Icons.Edit className="h-4 w-4 text-primary" />
+                </Button>
+              </Tooltip>
+            </Can>
 
-            <Tooltip content={tButtons('delete')}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
-                onClick={() => handleDelete(user._id, user.name)}
-                disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
-                isLoading={deleteMutation.isPending}
-              >
-                <Icons.Trash className="h-4 w-4" />
-              </Button>
-            </Tooltip>
+            <Can permission={Permissions.DELETE_USER}>
+              <Tooltip content={tButtons('delete')}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
+                  onClick={() => handleDelete(user._id, user.name)}
+                  disabled={deleteMutation.isPending || isLoading || updateMutation.isPending}
+                  isLoading={deleteMutation.isPending}
+                >
+                  <Icons.Trash className="h-4 w-4 text-destructive" />
+                </Button>
+              </Tooltip>
+            </Can>
           </div>
         );
       }
@@ -319,7 +325,8 @@ export default function UsersPage() {
           label: t('createUser'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/users/create`),
-          disabled: isAnyMutationPending
+          disabled: isAnyMutationPending,
+          permission: Permissions.CREATE_USER
         }}
       />
 

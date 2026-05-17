@@ -17,6 +17,8 @@ import { Brand } from '@/types';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useToast } from '@/shared/hooks/useToast';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 export default function BrandsPage() {
   // get page and search from query params
@@ -77,12 +79,13 @@ export default function BrandsPage() {
           await deleteBrandAsync(id);;
           toastSuccess(tMessages('success'));
           refetch();
-        } catch (error) {
-          toastError(tMessages('error') || 'حدث خطأ أثناء الحذف');
+        } catch (error: unknown) {
+          const msg = error instanceof Error ? error.message : tMessages('error') || 'حدث خطأ أثناء الحذف';
+          toastError(msg);
         }
       },
     });
-  }, [openDialog, deleteBrandAsync, toastSuccess, toastError, refetch]);
+  }, [openDialog, deleteBrandAsync, toastSuccess, toastError, refetch, tMessages]);
 
   const columns = useMemo(() => [
     {
@@ -117,33 +120,37 @@ export default function BrandsPage() {
       className: "pe-6 text-center",
       render: (brand: Brand) => (
         <div className="flex justify-center gap-2 transition-all duration-300">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-              onClick={() => handleOpenModal(brand)}
-              disabled={deleteBrandPending || isLoading || isConfirmLoading}                   >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_BRAND}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                onClick={() => handleOpenModal(brand)}
+                disabled={deleteBrandPending || isLoading || isConfirmLoading}                   >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(brand._id, getTrans(brand.name))}
-              isLoading={deleteBrandPending}
-              disabled={deleteBrandPending || isLoading || isConfirmLoading}
-            >
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_BRAND}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(brand._id, getTrans(brand.name))}
+                isLoading={deleteBrandPending}
+                disabled={deleteBrandPending || isLoading || isConfirmLoading}
+              >
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
-  ], [getTrans, handleOpenModal, handleDelete, deleteBrandPending, isLoading]);
+  ], [getTrans, handleOpenModal, handleDelete, deleteBrandPending, isLoading, t, tButtons, isConfirmLoading]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -154,7 +161,8 @@ export default function BrandsPage() {
         action={{
           label: t('createBrand'),
           icon: <Icons.Plus className="w-5 h-5" />,
-          onClick: () => handleOpenModal()
+          onClick: () => handleOpenModal(),
+          permission: Permissions.CREATE_BRAND
         }}
       />
 

@@ -24,6 +24,8 @@ import { ProductFiltersBar } from '@/features/products/components/dashboard/Prod
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import Link from 'next/link';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 type ViewTab = 'isActive' | 'deleted' | 'featured' | 'lowStock' | 'notActive' | 'sort' | 'unlimited_stock';
 
@@ -81,7 +83,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   // handle tab change
   const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
   // handle soft delete
-  const handleSoftDelete = (id: string, title: string) => {
+  const handleSoftDelete = useCallback((id: string, title: string) => {
     confirmDialog.openDialog({
       title: t('messages.softDeleteTitle'),
       message: t('messages.softDeleteConfirm', { title }),
@@ -91,9 +93,9 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         refetch();
       },
     });
-  };
+  }, [confirmDialog, t, deleteMutation, refetch]);
   // handle hard delete
-  const handleHardDelete = (id: string, title: string) => {
+  const handleHardDelete = useCallback((id: string, title: string) => {
     confirmDialog.openDialog({
       title: t('form.hardDelete'),
       message: `${t('messages.hardDeleteConfirm')}\n\n"${title}"`,
@@ -103,15 +105,12 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         refetch();
       },
     });
-  };
+  }, [confirmDialog, t, hardDeleteMutation, refetch]);
   // handle restore
-  const handleRestore = async (id: string) => {
-
+  const handleRestore = useCallback(async (id: string) => {
     await restoreMutation(id);
-
     refetch();
-
-  };
+  }, [restoreMutation, refetch]);
   const columns = useMemo(() => [
     {
       header: t('fields.product', { defaultValue: 'Product' }),
@@ -248,64 +247,72 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           {viewTab === 'deleted' ? (
 
             <div className="flex justify-center gap-2 transition-all duration-300">
-              <Tooltip content={t('form.restoreProduct')}>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-                  onClick={() => handleRestore(product._id)}
-                  isLoading={restoreProductPending}
-                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
-                >
-                  <Icons.Restore className="h-4 w-4" />
-                </Button>
-              </Tooltip>
+              <Can permission={Permissions.UPDATE_PRODUCT}>
+                <Tooltip content={t('form.restoreProduct')}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                    onClick={() => handleRestore(product._id)}
+                    isLoading={restoreProductPending}
+                    disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                  >
+                    <Icons.Restore className="h-4 w-4" />
+                  </Button>
+                </Tooltip>
+              </Can>
  
-              <Tooltip content={t('form.hardDelete')}>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-                  onClick={() => handleHardDelete(product._id, getTrans(product.title))}
-                  isLoading={hardDeleteProductPending}
-                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
-                >
-                  <Icons.Trash className="h-4 w-4" />
-                </Button>
-              </Tooltip>
+              <Can permission={Permissions.DELETE_PRODUCT}>
+                <Tooltip content={t('form.hardDelete')}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                    onClick={() => handleHardDelete(product._id, getTrans(product.title))}
+                    isLoading={hardDeleteProductPending}
+                    disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                  >
+                    <Icons.Trash className="h-4 w-4" />
+                  </Button>
+                </Tooltip>
+              </Can>
             </div>
           ) : (
             <div className="flex justify-center gap-2 transition-all duration-300">
-              <Tooltip content={t('form.editProduct')}>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-                  onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
-                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
-                >
-                  <Icons.Edit className="h-4 w-4" />
-                </Button>
-              </Tooltip>
+              <Can permission={Permissions.UPDATE_PRODUCT}>
+                <Tooltip content={t('form.editProduct')}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                    onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
+                    disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                  >
+                    <Icons.Edit className="h-4 w-4" />
+                  </Button>
+                </Tooltip>
+              </Can>
 
-              <Tooltip content={t('form.softDelete')}>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-                  onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
-                  isLoading={deleteProductPending}
-                  disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
-                >
-                  <Icons.Trash className="h-4 w-4" />
-                </Button>
-              </Tooltip>
+              <Can permission={Permissions.DELETE_PRODUCT}>
+                <Tooltip content={t('form.softDelete')}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                    onClick={() => handleSoftDelete(product._id, getTrans(product.title))}
+                    isLoading={deleteProductPending}
+                    disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
+                  >
+                    <Icons.Trash className="h-4 w-4" />
+                  </Button>
+                </Tooltip>
+              </Can>
             </div>
           )}
         </div>
       )
     }
-  ], [t, locale, router, getTrans, updateMutation, viewTab, handleRestore, handleHardDelete, handleSoftDelete]);
+  ], [t, locale, router, getTrans, updateMutation, viewTab, handleRestore, handleHardDelete, handleSoftDelete, deleteProductPending, formatCurrency, hardDeleteProductPending, isLoading, restoreProductPending, updateProductPending]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -315,7 +322,8 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         action={{
           label: t('createProduct'),
           icon: <Icons.Plus className="w-5 h-5" />,
-          onClick: () => router.push(`/${locale}/dashboard/products/create`)
+          onClick: () => router.push(`/${locale}/dashboard/products/create`),
+          permission: Permissions.CREATE_PRODUCT
         }}
         totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
       />

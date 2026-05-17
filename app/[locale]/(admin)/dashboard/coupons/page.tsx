@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useQueryState } from '@/shared/hooks/useQueryState';
@@ -8,7 +8,6 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useCoupons, useDeleteCoupon, useUpdateCoupon } from '@/features/marketing/hooks/useCoupons';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Badge } from '@/shared/ui/Badge';
 import { Icons } from '@/shared/ui/Icons';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
@@ -20,6 +19,8 @@ import { Coupon } from '@/types';
 import { Switch } from '@/shared/ui/Switch';
 import { useToast } from '@/shared/hooks/useToast';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 
 type ViewTab = 'active' | 'notActive';
@@ -30,7 +31,7 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
 };
 
 
-export default function CouponsPage({ params }: { params: Promise<{ locale: string }> }) {
+export default function CouponsPage() {
   const { getQueryParam, setQueryParams } = useQueryState();
   const locale = useLocale();
   const t = useTranslations('coupons');
@@ -189,33 +190,37 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
       className: "ps-6 text-center",
       render: (coupon: Coupon) => (
         <div className="flex justify-center gap-2 transition-all duration-300">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-              onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
-              disabled={updateCouponPending || isLoading || deleteCouponPending}                   >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_COUPON}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
+                disabled={updateCouponPending || isLoading || deleteCouponPending}                   >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(coupon._id, coupon.name)}
-              isLoading={deleteCouponPending}
-              disabled={deleteCouponPending || isLoading || updateCouponPending}
-            >
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_COUPON}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(coupon._id, coupon.name)}
+                isLoading={deleteCouponPending}
+                disabled={deleteCouponPending || isLoading || updateCouponPending}
+              >
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
-  ], [t, tButtons, locale, router, handleDelete, deleteCouponPending, updateCouponPending]);
+  ], [t, tButtons, locale, router, handleDelete, deleteCouponPending, updateCouponPending, handleStatusChange, isLoading]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -227,7 +232,8 @@ export default function CouponsPage({ params }: { params: Promise<{ locale: stri
           label: t('createCoupon'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/coupons/create`),
-          disabled: updateCouponPending || isLoading || deleteCouponPending
+          disabled: updateCouponPending || isLoading || deleteCouponPending,
+          permission: Permissions.CREATE_COUPON
         }}
       />
 

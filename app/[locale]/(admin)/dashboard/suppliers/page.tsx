@@ -18,6 +18,7 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useToast } from '@/shared/hooks/useToast';
 import { useRouter, useParams } from 'next/navigation';
 import { truncate } from '@/lib/utils';
+import { Permissions } from '@/features/roles/types';
 
 type ViewTab =  'active' | 'inactive';
 
@@ -66,17 +67,18 @@ export default function SuppliersPage() {
     { key: 'inactive' as ViewTab, label: tCommon('tabs.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
   ], [tCommon]);
 
-  const handleToggleStatus = async (supplier: Supplier) => {
+  const handleToggleStatus = useCallback(async (supplier: Supplier) => {
     try {
       const formData = new FormData();
       formData.append('isActive', String(!supplier.isActive));
       await updateSupplierAsync({ id: supplier._id, data: formData });
       toastSuccess(tCommon('messages.success'));
       refetch();
-    } catch (error: any) {
-      toastError(error?.message || tCommon('errors.serverError'));
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : tCommon('errors.serverError');
+      toastError(msg);
     }
-  };
+  }, [updateSupplierAsync, toastSuccess, tCommon, refetch, toastError]);
 
   const handleDelete = useCallback((id: string, name: string) => {
     openDialog({
@@ -87,7 +89,7 @@ export default function SuppliersPage() {
           await deleteSupplierAsync(id);
           toastSuccess(tCommon('messages.success'));
           refetch();
-        } catch (error) {
+        } catch {
           toastError(tCommon('errors.serverError'));
         }
       },
@@ -210,7 +212,8 @@ export default function SuppliersPage() {
           label: t('createSupplier'),
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => router.push(`/${locale}/dashboard/suppliers/create`),
-          disabled: deleteSupplierPending || isLoading || updateSupplierPending
+          disabled: deleteSupplierPending || isLoading || updateSupplierPending,
+          permission: Permissions.CREATE_SUPPLIER
         }}
       />
 

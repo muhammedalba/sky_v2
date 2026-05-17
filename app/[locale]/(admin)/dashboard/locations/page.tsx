@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 
 import { Icons } from '@/shared/ui/Icons';
@@ -28,13 +28,15 @@ import Modal from '@/shared/ui/Modal';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useToast } from '@/shared/hooks/useToast';
 import { cn } from '@/lib/utils';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 type EntityTabType = 'countries' | 'regions' | 'cities';
 type StatusTabType = 'all' | 'active' | 'inactive';
 type LocationEntity = Country | Region | City;
 
 //  (Empty States)
-const EmptySelectionView = ({ icon: Icon, text }: { icon: any, text: string }) => (
+const EmptySelectionView = ({ icon: Icon, text }: { icon: React.ComponentType<{ className?: string }>, text: string }) => (
   <div className="p-20 text-center border-2 border-dashed border-border/40 rounded-3xl bg-muted/20 flex flex-col items-center justify-center gap-4 group hover:bg-muted/30 transition-all duration-500">
     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
       <Icon className="w-8 h-8 text-primary/60" />
@@ -113,14 +115,14 @@ export default function LocationsDashboardPage() {
     setIsFormOpen(false);
   }, []);
   // Memoized Columns
-  const renderNameColumn = (item: LocationEntity) => (
+  const renderNameColumn = useCallback((item: LocationEntity) => (
     <div className="flex flex-col">
       <span className="font-bold text-foreground">{item.name?.[locale as 'ar' | 'en'] || item.name?.ar}</span>
       <span className="text-xs text-muted-foreground">{item.name?.[locale === 'ar' ? 'en' : 'ar']}</span>
     </div>
-  );
+  ), [locale]);
 
-  const renderStatusColumn = (type: EntityTabType, item: LocationEntity) => (
+  const renderStatusColumn = useCallback((type: EntityTabType, item: LocationEntity) => (
     <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
       <Switch
         checked={item.isActive}
@@ -131,20 +133,22 @@ export default function LocationsDashboardPage() {
         {item.isActive ? tCommon('tabs.active') : tCommon('tabs.inactive')}
       </Badge>
     </div>
-  );
+  ), [handleStatusToggle, isAnyMutationPending, tCommon]);
 
-  const renderActionColumn = (editAction: () => void, tooltipText: string) => (
-    <Tooltip content={tooltipText}>
-      <Button
-        variant="outline"
-        size="icon"
-        className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40"
-        onClick={editAction}
-      >
-        <Icons.Edit className="w-4 h-4" />
-      </Button>
-    </Tooltip>
-  );
+  const renderActionColumn = useCallback((editAction: () => void, tooltipText: string) => (
+    <Can permission={Permissions.UPDATE_LOCATION}>
+      <Tooltip content={tooltipText}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40"
+          onClick={editAction}
+        >
+          <Icons.Edit className="w-4 h-4" />
+        </Button>
+      </Tooltip>
+    </Can>
+  ), []);
 
   const countryColumns = useMemo(() => [
     { header: t('fields.country'), render: renderNameColumn },
@@ -152,13 +156,13 @@ export default function LocationsDashboardPage() {
     { header: t('fields.currency'), render: (item: Country) => item.currency },
     { header: t('fields.status'), render: (item: Country) => renderStatusColumn('countries', item) },
     { header: t('fields.actions'), render: (item: Country) => renderActionColumn(() => { setEditingCountry(item); setIsFormOpen(true); }, t('editCountry')) }
-  ], [t, tCommon, locale, isAnyMutationPending, handleStatusToggle]);
+  ], [t, renderNameColumn, renderStatusColumn, renderActionColumn]);
 
   const regionColumns = useMemo(() => [
     { header: t('fields.region'), render: renderNameColumn },
     { header: t('fields.status'), render: (item: Region) => renderStatusColumn('regions', item) },
     { header: t('fields.actions'), render: (item: Region) => renderActionColumn(() => { setEditingRegion(item); setIsFormOpen(true); }, t('editRegion')) }
-  ], [t, tCommon, locale, isAnyMutationPending, handleStatusToggle]);
+  ], [t, renderNameColumn, renderStatusColumn, renderActionColumn]);
 
   const cityColumns = useMemo(() => [
     { header: t('fields.city'), render: renderNameColumn },
@@ -173,7 +177,7 @@ export default function LocationsDashboardPage() {
     },
     { header: t('fields.status'), render: (item: City) => renderStatusColumn('cities', item) },
     { header: t('fields.actions'), render: (item: City) => renderActionColumn(() => { setEditingCity(item); setIsFormOpen(true); }, t('editCity')) }
-  ], [t, tCommon, locale, isAnyMutationPending, handleStatusToggle]);
+  ], [t, tCommon, renderNameColumn, renderStatusColumn, renderActionColumn]);
 
   const handleAddNew = useCallback(() => {
     setEditingCountry(null);
@@ -223,7 +227,8 @@ export default function LocationsDashboardPage() {
           label: activeTab === 'countries' ? t('createCountry') : activeTab === 'regions' ? t('createRegion') : t('createCity'),
           icon: <Icons.Plus className="w-4 h-4" />,
           onClick: handleAddNew,
-          disabled: isAnyLoading
+          disabled: isAnyLoading,
+          permission: Permissions.CREATE_LOCATION
         }}
       />
 

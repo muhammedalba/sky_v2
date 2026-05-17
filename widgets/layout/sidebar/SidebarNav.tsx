@@ -85,44 +85,46 @@ export default function SidebarNav({ navigation, onNavigate }: SidebarNavProps) 
         const itemColorClass = `text-${item.color ?? 'success'} `;
 
         return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            title={isCollapsed ? item.name : undefined}
-            className={cn(
-              'group flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 relative border border-transparent',
-              active
-                ? 'bg-primary text-white shadow-lg shadow-primary/25 font-bold border'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
-              isCollapsed ? 'justify-center mx-1 px-0' : 'mx-2'
-            )}
-          >
-            <div className={cn(
-              "flex items-center justify-center transition-all duration-300",
-              active ? "text-white" : itemColorClass
-            )}>
-              <Icon className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-110 " />
-            </div>
-
-            {!isCollapsed && (
-              <span className="text-sm tracking-wide">
-                {item.name}
-              </span>
-            )}
-
-            {/* Active state indicator dot - using logical inset property for RTL/LTR compatibility */}
-            {active && !isCollapsed && (
-              <div className="absolute inset-e-3 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-            )}
-
-            {!active && !isCollapsed && (
+        
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              title={isCollapsed ? item.name : undefined}
+              className={cn(
+                'group flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 relative border border-transparent',
+                active
+                  ? 'bg-primary text-white shadow-lg shadow-primary/25 font-bold border'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
+                isCollapsed ? 'justify-center mx-1 px-0' : 'mx-2'
+              )}
+            >
               <div className={cn(
-                "absolute inset-e-3 w-1 h-1 rounded-full opacity-0 group-hover:opacity-40 transition-opacity",
-                itemColorClass.replace('text', 'bg')
-              )} />
-            )}
-          </Link>
+                "flex items-center justify-center transition-all duration-300",
+                active ? "text-white" : itemColorClass
+              )}>
+                <Icon className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-110 " />
+              </div>
+
+              {!isCollapsed && (
+                <span className="text-sm tracking-wide">
+                  {item.name}
+                </span>
+              )}
+
+              {/* Active state indicator dot - using logical inset property for RTL/LTR compatibility */}
+              {active && !isCollapsed && (
+                <div className="absolute inset-e-3 w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+              )}
+
+              {!active && !isCollapsed && (
+                <div className={cn(
+                  "absolute inset-e-3 w-1 h-1 rounded-full opacity-0 group-hover:opacity-40 transition-opacity",
+                  itemColorClass.replace('text', 'bg')
+                )} />
+              )}
+            </Link>
+       
         );
       })}
     </nav>

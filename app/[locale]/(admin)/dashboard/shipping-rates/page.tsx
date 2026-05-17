@@ -20,6 +20,21 @@ import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { Switch } from '@/shared/ui/Switch';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+
+interface LocalizedName {
+  ar?: string;
+  en?: string;
+}
+
+interface ProviderObj {
+  name?: string | LocalizedName;
+  logo?: string;
+}
+
+interface LocationObj {
+  name?: string | LocalizedName;
+}
 
 type ViewTab = 'all' | 'active' | 'inactive';
 
@@ -80,21 +95,32 @@ export default function ShippingRatesPage() {
       await updateRateAsync({ id: rate._id, payload: { isActive: !rate.isActive, city: rate.city?._id } });
       toastSuccess(tCommon('messages.success'));
       refetch();
-    } catch (err: any) {
-      toastError(err.response.data.message || tCommon('errors.serverError'));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? (err as { response?: { data?: { message?: string } } }).response?.data?.message || err.message : tCommon('errors.serverError');
+      toastError(msg);
     }
   }, [updateRateAsync, toastSuccess, toastError, tCommon, refetch]);
 
   const handleDelete = useCallback((rate: ShippingRate) => {
+    const providerObj = rate.provider as unknown as ProviderObj | null;
+    let providerName = '';
+    if (providerObj?.name) {
+      if (typeof providerObj.name === 'object') {
+        providerName = providerObj.name.ar || providerObj.name.en || '';
+      } else {
+        providerName = providerObj.name;
+      }
+    }
+
     openDialog({
       title: tCommon('messages.deleteConfirm'),
-      message: `${tCommon('messages.deleteConfirm')} (${(rate.provider as any)?.name?.ar || (rate.provider as any)?.name})`,
+      message: `${tCommon('messages.deleteConfirm')} (${providerName})`,
       onConfirm: async () => {
         try {
           await deleteRateAsync(rate._id);
           toastSuccess(tCommon('messages.success'));
           refetch();
-        } catch (err: any) {
+        } catch {
           toastError(tCommon('errors.serverError'));
         }
       },
@@ -117,13 +143,20 @@ export default function ShippingRatesPage() {
     {
       header: t('fields.provider'),
       render: (item: ShippingRate, index: number) => {
-        const provider = item.provider as any;
-        const name = typeof provider?.name === 'string' ? provider.name : (provider?.name?.ar || provider?.name?.en || 'N/A');
+        const provider = item.provider as unknown as ProviderObj | null;
+        let name = 'N/A';
+        if (provider?.name) {
+          if (typeof provider.name === 'object') {
+            name = provider.name.ar || provider.name.en || 'N/A';
+          } else {
+            name = provider.name;
+          }
+        }
         return (
           <div className="flex items-center gap-3">
             <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
               <ImageWithFallback
-                src={provider.logo || ''}
+                src={provider?.logo || ''}
                 alt={name}
                 fill
                 sizes="48px"
@@ -139,14 +172,40 @@ export default function ShippingRatesPage() {
     {
       header: t('fields.country'),
       render: (item: ShippingRate) => {
-        const country = (item.country as any)?.name?.ar || (item.country as any)?.name || t('globalFallback');
-        const region = (item.region as any)?.name?.ar || (item.region as any)?.name;
-        const city = (item.city as any)?.name?.ar || (item.city as any)?.name;
+        const countryObj = item.country as unknown as LocationObj | null;
+        let country = t('globalFallback');
+        if (countryObj?.name) {
+          if (typeof countryObj.name === 'object') {
+            country = countryObj.name.ar || countryObj.name.en || t('globalFallback');
+          } else {
+            country = countryObj.name;
+          }
+        }
+
+        const regionObj = item.region as unknown as LocationObj | null;
+        let region: string | null = null;
+        if (regionObj?.name) {
+          if (typeof regionObj.name === 'object') {
+            region = regionObj.name.ar || regionObj.name.en || null;
+          } else {
+            region = regionObj.name;
+          }
+        }
+
+        const cityObj = item.city as unknown as LocationObj | null;
+        let city: string | null = null;
+        if (cityObj?.name) {
+          if (typeof cityObj.name === 'object') {
+            city = cityObj.name.ar || cityObj.name.en || null;
+          } else {
+            city = cityObj.name;
+          }
+        }
 
         return (
           <div className="flex flex-col gap-0.5">
             <span className="font-medium text-primary text-sm">{country}</span>
-            {region && <span className="text-xs text -foreground flex items-center gap-1">
+            {region && <span className="text-xs text-foreground flex items-center gap-1">
               <Icons.ChevronRight className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
             </span>}
             {city && <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -174,7 +233,7 @@ export default function ShippingRatesPage() {
       render: (item: ShippingRate) => (
         <Badge variant={"success"} className="font-semibold px-2 py-1 rounded-lg">
           +{formatCurrency(Number(item?.additionalKgPrice || 0))}
-        </Badge >
+        </Badge>
       ),
     },
     {
@@ -226,7 +285,7 @@ export default function ShippingRatesPage() {
         </div>
       ),
     },
-  ], [t, handleEdit, handleDelete, handleToggleStatus, updateRatePending, isLoading, deleteRatePending, tCommon, formatCurrency]);
+  ], [t, tButtons, handleEdit, handleDelete, handleToggleStatus, updateRatePending, isLoading, deleteRatePending, formatCurrency]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -240,7 +299,8 @@ export default function ShippingRatesPage() {
           onClick: () => {
             setEditingRate(null);
             setIsFormOpen(true);
-          }
+          },
+          permission: Permissions.CREATE_SHIPPING
         }}
       />
 

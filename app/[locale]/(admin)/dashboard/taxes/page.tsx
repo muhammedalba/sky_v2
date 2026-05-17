@@ -16,11 +16,11 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
 import { Switch } from '@/shared/ui/Switch';
-import { useParams } from 'next/navigation';
+import { Permissions } from '@/features/roles/types';
 
 type ViewTab = 'all' | 'active' | 'inactive';
 
-const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, any>> = {
+const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, unknown>> = {
   all: {},
   active: { isActive: true },
   inactive: { isActive: false },
@@ -30,7 +30,6 @@ export default function TaxesPage() {
   const t = useTranslations('taxes');
   const tCommon = useTranslations('common');
   const tButtons = useTranslations('buttons');
-  const { locale } = useParams();
   const { success: toastSuccess, error: toastError } = useToast();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -76,8 +75,9 @@ export default function TaxesPage() {
       await updateTaxAsync({ id: tax._id, data: { isActive: !tax.isActive } });
       toastSuccess(t('updateSuccess') || 'Status updated');
       refetch();
-    } catch (err: any) {
-      toastError( err.response?.data?.message  || t('updateError') || 'Error updating status');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? (err as { response?: { data?: { message?: string } } }).response?.data?.message || err.message : t('updateError') || 'Error updating status';
+      toastError(msg);
     }
   }, [updateTaxAsync, toastSuccess, toastError, t, refetch]);
 
@@ -90,8 +90,9 @@ export default function TaxesPage() {
           await deleteTaxAsync(tax._id);
           toastSuccess(t('deleteSuccess'));
           refetch();
-        } catch (err: any) {
-          toastError(err.message || t('deleteError'));
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : t('deleteError');
+          toastError(msg);
         }
       },
     });
@@ -139,9 +140,9 @@ export default function TaxesPage() {
             <Badge variant="secondary" className="font-medium">{t('globalFallback')}</Badge>
           );
         }
-        const country = item.country as any;
+        const country = item.country as { name?: { ar?: string; en?: string } | string };
         return (
-          <span className="font-medium text-muted-foreground">{country.name?.ar || country.name || '-'}</span>
+          <span className="font-medium text-muted-foreground">{typeof country.name === 'object' ? country.name?.ar || country.name?.en : country.name || '-'}</span>
         );
       },
     },
@@ -203,7 +204,8 @@ export default function TaxesPage() {
           onClick: () => {
             setEditingTax(null);
             setIsFormOpen(true);
-          }
+          },
+          permission: Permissions.CREATE_TAX
         }}
       />
 

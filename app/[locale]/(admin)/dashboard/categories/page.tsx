@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo, useCallback, use } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCategories, useDeleteCategory } from '@/features/categories/hooks/useCategories';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
@@ -18,6 +18,8 @@ import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 export default function CategoriesPage() {
   // get page and search from query params
@@ -68,12 +70,13 @@ export default function CategoriesPage() {
           await deleteCategoryAsync(id);
           toastSuccess(tMessages('success'));
           refetch();
-        } catch (error) {
-          toastError(tMessages('error') || 'حدث خطأ أثناء الحذف');
+        } catch (error: unknown) {
+          const msg = error instanceof Error ? error.message : tMessages('error') || 'حدث خطأ أثناء الحذف';
+          toastError(msg);
         }
       },
     });
-  }, [openDialog, deleteCategoryAsync, toastSuccess, toastError, refetch]);
+  }, [openDialog, deleteCategoryAsync, toastSuccess, toastError, refetch, tMessages]);
   // columns configuration for data table
   const columns = useMemo(() => [
     {
@@ -119,33 +122,37 @@ export default function CategoriesPage() {
       className: "pe-6 text-center",
       render: (category: Category) => (
         <div className="flex justify-center gap-2 transition-all duration-300">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-              onClick={() => handleOpenModal(category)}
-              disabled={deleteCategoryPending || isLoading}                   >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_CATEGORY}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                onClick={() => handleOpenModal(category)}
+                disabled={deleteCategoryPending || isLoading}                   >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(category._id, getTrans(category.name))}
-              disabled={deleteCategoryPending || isLoading}
-              isLoading={deleteCategoryPending}
-            >
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_CATEGORY}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(category._id, getTrans(category.name))}
+                disabled={deleteCategoryPending || isLoading}
+                isLoading={deleteCategoryPending}
+              >
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
-  ], [getTrans, handleOpenModal, handleDelete, deleteCategoryPending, isLoading]);
+  ], [getTrans, handleOpenModal, handleDelete, deleteCategoryPending, isLoading, t, tButtons]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -157,7 +164,8 @@ export default function CategoriesPage() {
           label: t('createCategory'),
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
-          disabled: deleteCategoryPending || isLoading
+          disabled: deleteCategoryPending || isLoading,
+          permission: Permissions.CREATE_CATEGORY
         }}
         className='mb-8'
       />

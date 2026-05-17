@@ -19,6 +19,8 @@ import { useToast } from '@/shared/hooks/useToast';
 import { Tooltip } from '@/shared/ui/Tooltip';
 import { Switch } from '@/shared/ui/Switch';
 import { useQueryState } from '@/shared/hooks/useQueryState';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 type ViewTab = 'all' | 'active' | 'inactive';
 
@@ -77,7 +79,7 @@ export default function ShippingPage() {
     setEditingProvider(null);
   }, []);
 
-  const handleToggleStatus = async (provider: ShippingProvider) => {
+  const handleToggleStatus = useCallback(async (provider: ShippingProvider) => {
     try {
       await updateProviderAsync({
         id: provider._id,
@@ -85,10 +87,11 @@ export default function ShippingPage() {
       });
       toastSuccess(tMessages('success'));
       refetch();
-    } catch (error: any) {
-      toastError(error?.message || tMessages('error'));
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : tMessages('error');
+      toastError(msg);
     }
-  };
+  }, [updateProviderAsync, toastSuccess, tMessages, refetch, toastError]);
 
   const handleDelete = useCallback((id: string, name: string) => {
     openDialog({
@@ -99,8 +102,9 @@ export default function ShippingPage() {
           await deleteProviderAsync(id);
           toastSuccess(tMessages('success'));
           refetch();
-        } catch (error: any) {
-          toastError(error?.message || tMessages('error') || 'حدث خطأ أثناء الحذف');
+        } catch (error: unknown) {
+          const msg = error instanceof Error ? error.message : tMessages('error') || 'حدث خطأ أثناء الحذف';
+          toastError(msg);
         }
       },
     });
@@ -155,34 +159,38 @@ export default function ShippingPage() {
       className: "pe-6 text-center",
       render: (provider: ShippingProvider) => (
         <div className="flex justify-center gap-2.5">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-11 w-11 rounded-xl hover:bg-primary/10 text-primary transition-colors"
-              onClick={() => handleOpenModal(provider)}
-              disabled={deleteProviderPending || isLoading || updateProviderPending}
-            >
-              <Icons.Edit className="h-4.5 w-4.5" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_SHIPPING}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11 rounded-xl hover:bg-primary/10 text-primary transition-colors"
+                onClick={() => handleOpenModal(provider)}
+                disabled={deleteProviderPending || isLoading || updateProviderPending}
+              >
+                <Icons.Edit className="h-4.5 w-4.5" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-11 w-11 rounded-xl hover:bg-destructive/10 text-destructive transition-colors"
-              onClick={() => handleDelete(provider._id, getTrans(provider.name))}
-              isLoading={deleteProviderPending}
-              disabled={deleteProviderPending || isLoading || updateProviderPending}
-            >
-              <Icons.Trash className="h-4.5 w-4.5" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_SHIPPING}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11 rounded-xl hover:bg-destructive/10 text-destructive transition-colors"
+                onClick={() => handleDelete(provider._id, getTrans(provider.name))}
+                isLoading={deleteProviderPending}
+                disabled={deleteProviderPending || isLoading || updateProviderPending}
+              >
+                <Icons.Trash className="h-4.5 w-4.5" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
-  ], [getTrans, handleOpenModal, handleDelete, deleteProviderPending, isLoading, updateProviderPending, t, tButtons]);
+  ], [getTrans, handleOpenModal, handleDelete, deleteProviderPending, isLoading, updateProviderPending, t, tButtons, handleToggleStatus]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -194,7 +202,8 @@ export default function ShippingPage() {
           label: t('createProvider') || 'إضافة شركة شحن',
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
-          disabled: deleteProviderPending || isLoading || updateProviderPending
+          disabled: deleteProviderPending || isLoading || updateProviderPending,
+          permission: Permissions.CREATE_SHIPPING
         }}
       />
 

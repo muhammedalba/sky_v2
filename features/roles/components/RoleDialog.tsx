@@ -10,6 +10,9 @@ import { usePermissionsList, useCreateRole, useUpdateRole } from '../hooks/useRo
 import { Role, PermissionGroup } from '../types';
 import { Icons } from '@/shared/ui/Icons';
 import { Badge } from '@/shared/ui/Badge';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import { useToast } from '@/shared/hooks/useToast';
 
 interface RoleDialogProps {
   role: Role | null;
@@ -19,9 +22,12 @@ interface RoleDialogProps {
 }
 
 export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDialogProps) {
+  const t = useTranslations('roles');
+  const tButtons = useTranslations('common.buttons');
   const { data: permissionGroups, isLoading: isLoadingPerms } = usePermissionsList();
   const createMutation = useCreateRole();
   const updateMutation = useUpdateRole();
+  const toast = useToast();
 
   const [prevRole, setPrevRole] = useState(role);
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
@@ -54,21 +60,24 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
 
   const toggleGroup = (group: PermissionGroup) => {
     const allKeys = group.permissions.map(p => p.key);
-    const hasAll = allKeys.every(k => formData.permissions.includes(k));
 
-    if (hasAll) {
-      // Remove all
-      setFormData(prev => ({
-        ...prev,
-        permissions: prev.permissions.filter(k => !allKeys.includes(k))
-      }));
-    } else {
-      // Add all missing
-      setFormData(prev => ({
-        ...prev,
-        permissions: Array.from(new Set([...prev.permissions, ...allKeys]))
-      }));
-    }
+    setFormData(prev => {
+      const hasAll = allKeys.every(k => prev.permissions.includes(k));
+
+      if (hasAll) {
+        // Remove all permissions in this group
+        return {
+          ...prev,
+          permissions: prev.permissions.filter(k => !allKeys.includes(k))
+        };
+      } else {
+        // Add all missing permissions in this group
+        return {
+          ...prev,
+          permissions: Array.from(new Set([...prev.permissions, ...allKeys]))
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,11 +85,17 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
     try {
       if (role) {
         await updateMutation.mutateAsync({ id: role._id, data: formData });
+        toast.success(t('dialog.success'));
       } else {
         await createMutation.mutateAsync(formData);
+        toast.success(t('dialog.success'));
       }
       onSuccess();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to save role:", error);
+      toast.error(t('dialog.error'));
+
+    }
   };
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
@@ -89,94 +104,108 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={role ? 'تعديل الدور' : 'إضافة دور جديد'}
+      title={role ? t('editRole') : t('createRole')}
+      description={role ? t('editRole') : t('createRole')}
       size="xl"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="اسم الدور"
-            placeholder="مثل: مدير مبيعات"
+            label={t('dialog.nameLabel')}
+            placeholder={t('dialog.namePlaceholder')}
             value={formData.name}
-            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
             required
+            disabled={isSubmitting}
+            icon={Icons.Shield}
           />
           <Input
-            label="المستوى (0-100)"
+            label={t('dialog.levelLabel')}
             type="number"
             min="0"
             max="100"
             value={String(formData.level)}
-            onChange={e => setFormData({ ...formData, level: Number(e.target.value) })}
+            onChange={e => setFormData(prev => ({ ...prev, level: Number(e.target.value) }))}
             required
           />
           <div className="md:col-span-2">
             <Textarea
-              label="الوصف"
-              placeholder="وصف مهام هذا الدور..."
+              label={t('dialog.descLabel')}
+              placeholder={t('dialog.descPlaceholder')}
               value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
               rows={2}
+              disabled={isSubmitting}
+              icon={Icons.Edit}
             />
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between border-b border-border/40 pb-2">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <Icons.Shield className="w-5 h-5 text-primary" />
-              الصلاحيات المتاحة
+            <h3 className="title-gradient font-bold flex items-center gap-2">
+              <Icons.Shield className="w-5 h-5 text-destructive" />
+              {t('dialog.availablePerms')}
             </h3>
-            <Badge variant="outline">
-              تم اختيار {formData.permissions.length} صلاحية
+            <Badge variant="success">
+              {t('dialog.selectedPerms', { count: formData.permissions.length })}
             </Badge>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {isLoadingPerms ? (
               <div className="col-span-2 text-center py-10 text-muted-foreground">
-                جاري تحميل الصلاحيات...
+                {t('dialog.loadingPerms')}
               </div>
             ) : (
-              permissionGroups?.map((group: PermissionGroup) => (
-                <div key={group.group} className="space-y-3 p-4 rounded-2xl bg-muted/30 border border-border/40">
-                  <div className="flex items-center justify-between border-b border-border/20 pb-2 mb-2">
-                    <span className="font-bold text-sm text-primary uppercase tracking-wider">
-                      {group.group}
-                    </span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 text-[10px] px-2 hover:bg-primary/10"
-                      onClick={() => toggleGroup(group)}
-                    >
-                      {group.permissions.every(p => formData.permissions.includes(p.key)) ? 'إلغاء الكل' : 'تحديد الكل'}
-                    </Button>
+              permissionGroups?.map((group: PermissionGroup) => {
+                const isAllSelected = group.permissions.every(p => formData.permissions.includes(p.key));
+
+                return (
+                  <div key={group.group} className="space-y-3 rounded-2xl bg-muted/30 overflow-hidden border border-border/40">
+                    <div className="flex items-center justify-between bg-muted p-4 border-b border-border/20 pb-2 mb-2">
+                      <span className="font-bold text-sm text-primary uppercase tracking-wider">
+                        {group.group}
+                      </span>
+                      <Button
+                        type="button"
+                        variant={isAllSelected ? "outline" : "default"}
+                        size="sm"
+                        className={cn(
+                          isAllSelected
+                            ? "bg-destructive/5 hover:bg-destructive/20 text-destructive hover:text-destructive"
+                            : "bg-primary/5 text-primary hover:bg-primary/20 hover:text-primary",
+                          "h-7 text-[10px] px-2 shadow-none"
+                        )}
+                        onClick={() => toggleGroup(group)}
+                      >
+                        {isAllSelected ? t('dialog.deselectAll') : t('dialog.selectAll')}
+                      </Button>
+                    </div>
+                    <div className="space-y-4 p-3">
+                      {group.permissions.map(perm => (
+                        <Checkbox
+                          key={perm.key}
+                          label={perm.label}
+                          description={perm.description}
+                          checked={formData.permissions.includes(perm.key)}
+                          onChange={() => togglePermission(perm.key)}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    {group.permissions.map(perm => (
-                      <Checkbox
-                        key={perm.key}
-                        label={perm.label}
-                        description={perm.description}
-                        checked={formData.permissions.includes(perm.key)}
-                        onChange={() => togglePermission(perm.key)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-border/40">
           <Button type="button" variant="outline" onClick={onClose}>
-            إلغاء
+            {tButtons('cancel')}
           </Button>
           <Button type="submit" isLoading={isSubmitting}>
-            {role ? 'حفظ التغييرات' : 'إنشاء الدور'}
+            {role ? tButtons('save') : tButtons('create')}
           </Button>
         </div>
       </form>

@@ -19,6 +19,8 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { Switch } from '@/shared/ui/Switch';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/shared/ui/Tooltip';
+import { Permissions } from '@/features/roles/types';
+import Can from '@/components/auth/Can';
 
 type ViewTab = 'active' | 'notActive';
 
@@ -88,8 +90,8 @@ export default function PromoBannersPage() {
       });
       toastSuccess(t('messages.updateSuccess'));
       refetch();
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || t('messages.error');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : t('messages.error');
       toastError(errorMessage);
     }
   }, [updateBannerAsync, toastSuccess, toastError, t, refetch]);
@@ -103,8 +105,9 @@ export default function PromoBannersPage() {
           await deletePromoBannerAsync(id);
           toastSuccess(tMessages('success'));
           refetch();
-        } catch (error) {
-          toastError(tMessages('error') || 'حدث خطأ أثناء الحذف');
+        } catch (error: unknown) {
+          const msg = error instanceof Error ? error.message : tMessages('error') || 'حدث خطأ أثناء الحذف';
+          toastError(msg);
         }
       },
     });
@@ -178,33 +181,37 @@ export default function PromoBannersPage() {
       className: "pe-6 text-center",
       render: (item: PromoBanner) => (
         <div className="flex justify-center gap-2 transition-all duration-300">
-          <Tooltip content={tButtons('edit')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
-              onClick={() => handleOpenModal(item)}
-              disabled={deletePromoBannerPending || isLoading || updateBannerPending}                   >
-              <Icons.Edit className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.UPDATE_PROMO_BANNER}>
+            <Tooltip content={tButtons('edit')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
+                onClick={() => handleOpenModal(item)}
+                disabled={deletePromoBannerPending || isLoading || updateBannerPending}                   >
+                <Icons.Edit className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
 
-          <Tooltip content={tButtons('delete')}>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-              onClick={() => handleDelete(item._id, getTrans(item.text))}
-              disabled={deletePromoBannerPending || isLoading || updateBannerPending}
-              isLoading={deletePromoBannerPending}
-            >
-              <Icons.Trash className="h-4 w-4" />
-            </Button>
-          </Tooltip>
+          <Can permission={Permissions.DELETE_PROMO_BANNER}>
+            <Tooltip content={tButtons('delete')}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
+                onClick={() => handleDelete(item._id, getTrans(item.text))}
+                disabled={deletePromoBannerPending || isLoading || updateBannerPending}
+                isLoading={deletePromoBannerPending}
+              >
+                <Icons.Trash className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+          </Can>
         </div>
       )
     }
-  ], [getTrans, handleOpenModal, handleDelete, handleStatusChange, deletePromoBannerPending, isLoading, t]);
+  ], [getTrans, handleOpenModal, handleDelete, handleStatusChange, deletePromoBannerPending, isLoading, t, tButtons, updateBannerPending]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -216,7 +223,8 @@ export default function PromoBannersPage() {
           label: t('addBanner') || 'Add Banner',
           icon: <Icons.Plus className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
-          disabled: deletePromoBannerPending || isLoading || updateBannerPending
+          disabled: deletePromoBannerPending || isLoading || updateBannerPending,
+          permission: Permissions.CREATE_PROMO_BANNER
         }}
         className='mb-8'
       />
