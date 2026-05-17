@@ -216,7 +216,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
             <ProductBasicInfo register={register} errors={errors as any} tError={tError} watch={watch} setValue={setValue} />
 
             <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
-
+              
             <VariantTable
               variants={variants}
               onChange={setVariants}

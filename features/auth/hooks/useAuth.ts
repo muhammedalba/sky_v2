@@ -21,12 +21,18 @@ export function useLogin() {
 }
 
 export function useMe() {
+  let isLoggedInCookie = false;
+  if (typeof document !== 'undefined') {
+    isLoggedInCookie = document.cookie.includes('is_logged_in=true');
+  }
+
   return useQuery({
     queryKey: queryKeys.auth.me(),
     queryFn: async () => {
       const response = await authApi.me();
       return response.data;
     },
+    enabled: isLoggedInCookie,
     retry: false,
     staleTime: 5 * 60 * 1000,
   });

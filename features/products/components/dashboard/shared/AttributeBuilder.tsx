@@ -8,6 +8,7 @@ import { Icons } from '@/shared/ui/Icons';
 import { AllowedAttributeName, ATTRIBUTE_CONFIG, ATTRIBUTE_NAME_OPTIONS } from '@/shared/constants/product-constants';
 import { Select } from '@/shared/ui/Select';
 import { useToast } from '@/shared/hooks/useToast';
+import ErrorMessage from '@/shared/ui/ErrorMessage';
 
 // --- Types & Constants ---
 export type AttributeType = 'string' | 'number';
@@ -144,6 +145,7 @@ const AttributeRow = React.memo(({
     </div>
   );
 });
+AttributeRow.displayName = "AttributeRow";
 
 // مكون صغير للـ Tags لتقليل تكرار الكود
 interface TagGroupProps {
@@ -200,8 +202,8 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
     if (key === 'name') {
       const isDuplicate = attributes.some((attr, i) => i !== index && attr.name === val);
       if (isDuplicate) {
-        toast.error(t('duplicateAttributeError', { 
-          defaultValue: 'هذه الخاصية موجودة بالفعل، يرجى إضافة القيم الجديدة للخاصية الحالية بدلاً من إنشاء واحدة جديدة.' 
+        toast.error(t('duplicateAttributeError', {
+          defaultValue: 'هذه الخاصية موجودة بالفعل، يرجى إضافة القيم الجديدة للخاصية الحالية بدلاً من إنشاء واحدة جديدة.'
         }));
         return;
       }
@@ -258,6 +260,7 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
         <Icons.Check className="w-5 h-5 text-muted-foreground" />
         <h3 className="font-bold text-sm">{t('title')}</h3>
       </div>
+      <ErrorMessage message={t('weightWarning')} showIcon className=' items-start gap-3 p-4 md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning' />
       <div className="space-y-6">
         {attributes.map((attr, index) => (
           <AttributeRow

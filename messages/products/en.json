@@ -189,6 +189,7 @@
                   "selectUnit": "Select Unit",
                   "noUnitsAvailable": "No units available",
                   "duplicateAttributeError": "This attribute is already added. Please add new values to the existing one instead of creating a new one.",
+                  "weightWarning": "Weight must be added in order to calculate shipping costs",
                   "names": {
                         "color": "Color",
                         "weight": "Weight",

@@ -147,14 +147,17 @@ apiClient.interceptors.response.use(
 
 function handleLogout() {
   if (typeof window !== 'undefined') {
-    useToastStore.getState().addToast({
-      title: 'انتهت الجلسة',
-      message: 'عذراً، يجب عليك تسجيل الدخول مرة أخرى.',
-      type: 'error',
-    });
+    const path = window.location.pathname;
+    const isProtectedRoute = path.includes('/dashboard') || path.includes('/account');
 
-    const defaultLocale = env.DEFAULT_LOCALE;
-    if (!window.location.pathname.includes('/login')) {
+    if (isProtectedRoute) {
+      useToastStore.getState().addToast({
+        title: 'انتهت الجلسة',
+        message: 'عذراً، يجب عليك تسجيل الدخول مرة أخرى.',
+        type: 'error',
+      });
+
+      const defaultLocale = env.DEFAULT_LOCALE;
       window.location.href = `/${defaultLocale}/login`;
     }
   }

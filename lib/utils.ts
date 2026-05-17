@@ -121,3 +121,10 @@ export function getLocalizedValue<T>(value: T | { [key: string]: T } | any, loca
   }
   return value as T;
 }
+
+export function getRoleBadgeVariant(level: number): "default" | "secondary" | "destructive" | "warning" | "success" {
+  if (level >= 90) return 'success'; // SuperAdmin
+  if (level >= 50) return 'destructive'; // Admin
+  if (level >= 30) return 'warning'; // Manager
+  return 'secondary'; // Regular User
+}

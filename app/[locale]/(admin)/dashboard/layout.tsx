@@ -23,8 +23,6 @@ export default async function DashboardLayoutWrapper({
   if (!token || !user) {
     redirect(`/${locale}/login`);
   }
-  console.log(user, "user.role");
-
   // Permission-based check
   // Note: JWT payload has user.level which checkUserPermission uses.
   const isAllowed = checkUserPermission(user as unknown as User, 'access_dashboard');

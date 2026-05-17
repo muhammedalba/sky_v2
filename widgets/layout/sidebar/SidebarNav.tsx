@@ -6,6 +6,9 @@ import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 
+import { useMe } from '@/features/auth/hooks/useAuth';
+import { checkUserPermission } from '@/lib/auth';
+
 /**
  * Interface for navigation items in the sidebar.
  */
@@ -20,6 +23,8 @@ interface SidebarNavProps {
     icon: keyof typeof Icons;
     /** Optional color indicator for the icon */
     color?: string;
+    /** Optional permission required to view this item */
+    permission?: string | string[];
   }[];
   /** Callback triggered when a navigation item is clicked (used on mobile to close the menu) */
   onNavigate?: () => void;
@@ -32,9 +37,21 @@ interface SidebarNavProps {
  */
 
 export default function SidebarNav({ navigation, onNavigate }: SidebarNavProps) {
+  const { data: user } = useMe();
   const pathname = usePathname();
   const { sidebarCollapsed } = useUIStore();
   const isCollapsed = sidebarCollapsed;
+
+  /**
+   * Filter navigation items based on current user permissions.
+   */
+  const filteredNavigation = useMemo(() => {
+    return navigation.filter((item) => {
+      if (!item.permission) return true; // Available to all if no permission specified
+      // requireAll = false allows viewing the item if the user has at least one of the specified permissions
+      return checkUserPermission(user || null, item.permission, false);
+    });
+  }, [navigation, user]);
 
   /**
    * Memoized logic to determine the active navigation link based on the current URL.
@@ -42,7 +59,7 @@ export default function SidebarNav({ navigation, onNavigate }: SidebarNavProps) 
    */
   const activeHref = useMemo(() => {
     // Find all links that match the current pathname or are a parent of it
-    const matches = navigation.filter(
+    const matches = filteredNavigation.filter(
       (item) => pathname === item.href || pathname.startsWith(item.href + '/')
     );
 
@@ -53,13 +70,13 @@ export default function SidebarNav({ navigation, onNavigate }: SidebarNavProps) 
     return matches.reduce((prev, current) =>
       prev.href.length > current.href.length ? prev : current
     ).href;
-  }, [pathname, navigation]);
+  }, [pathname, filteredNavigation]);
 
 
 
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
-      {navigation.map((item) => {
+      {filteredNavigation.map((item) => {
         const Icon = Icons[item.icon];
 
         // Highlight the item if it matches the current active calculated href

@@ -9,17 +9,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary/10 text-primary shadow hover:bg-primary hover:text-primary-foreground",
+          "border-transparent bg-primary/10 text-primary  hover:bg-primary hover:text-primary-foreground",
         secondary:
-          "border-transparent bg-foreground/5  shadow hover:bg-secondary text-foreground",
+          "border-transparent bg-foreground/5   hover:bg-secondary text-foreground/70",
         destructive:
-          "border-transparent bg-destructive/10 text-destructive shadow hover:bg-destructive/80 hover:text-destructive-foreground",
+          "border-transparent bg-destructive/5 text-destructive/90  hover:bg-destructive/80 hover:text-destructive-foreground",
         danger:
-          "border-transparent bg-destructive/10 text-destructive shadow hover:bg-destructive/80 hover:text-destructive-foreground",
+          "border-transparent bg-destructive/10 text-destructive  hover:bg-destructive/80 hover:text-destructive-foreground",
         success:
-          "border-transparent shadow hover:bg-success text-[10px] bg-success/10 text-success hover:text-white",
+          "border-transparent  hover:bg-success text-[10px] bg-success/10 text-success hover:text-white",
         warning:
-          "border-transparent bg-warning/10 text-warning shadow hover:bg-warning/80 hover:text-warning-foreground",
+          "border-transparent bg-warning/10 text-warning/80  hover:bg-warning/80 hover:text-warning-foreground",
         outline: " px-4 py-2 rounded-full bg-foreground/5 border border-white/10 backdrop-blur-md",
       },
     },
