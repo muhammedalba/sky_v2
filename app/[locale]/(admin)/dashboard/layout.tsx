@@ -18,6 +18,7 @@ export default async function DashboardLayoutWrapper({
 
   // Server-side check using JWT from HttpOnly cookie
   const token = cookieStore.get('access_token')?.value;
+  console.log("token in layout", token);
   const user = token ? getServerUserFromToken(token) : null;
   console.log("user in layout", user);
   if (!token || !user) {

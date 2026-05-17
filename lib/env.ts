@@ -5,9 +5,14 @@
  */
 
 const isServer = typeof window === 'undefined';
+const isProd = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 
 // --- Required Variables Validation ---
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// In production client-side, use relative path '/api/v1' for Next.js rewrites (Proxy).
+// In server-side or development, use absolute URL.
+const API_URL = isProd
+  ? (isServer ? (process.env.NEXT_PUBLIC_PRO_API_URL || process.env.NEXT_PUBLIC_API_URL) : 'https://e-commerce-nestjs-g12u.onrender.com/api/v1')
+  : process.env.NEXT_PUBLIC_API_URL;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 // Critical endpoints
@@ -29,7 +34,7 @@ if (!API_URL || !APP_URL || !LOGIN_EP || !REGISTER_EP || !ME_EP || !LOGOUT_EP) {
     !ME_EP && 'NEXT_PUBLIC_ENDPOINT_AUTH_ME',
     !LOGOUT_EP && 'NEXT_PUBLIC_ENDPOINT_AUTH_LOGOUT',
   ].filter(Boolean);
-  
+
   throw new Error(`❌ Missing required public environment variables: ${missing.join(', ')}`);
 }
 

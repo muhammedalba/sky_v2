@@ -27,7 +27,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
     const { data: user } = useMe();
     const { mutate: logoutUser } = useLogout();
     const isLoggedIn = !!user;
-
+    console.log("user in menu", user);
     // 3. Memoize handlers to prevent unnecessary re-creations
     const toggleMenu = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
