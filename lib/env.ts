@@ -7,6 +7,8 @@
 const isServer = typeof window === 'undefined';
 const isProd = process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 
+console.log(isProd, "isProd");
+
 // --- Required Variables Validation ---
 // In production client-side, use relative path '/api/v1' for Next.js rewrites (Proxy).
 // In server-side or development, use absolute URL.
@@ -14,7 +16,7 @@ const API_URL = isProd
   ? (isServer ? (process.env.NEXT_PUBLIC_PRO_API_URL || process.env.NEXT_PUBLIC_API_URL) : '/api/v1')
   : process.env.NEXT_PUBLIC_API_URL;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
-
+console.log(API_URL, "API_URL");
 // Critical endpoints
 const LOGIN_EP = process.env.NEXT_PUBLIC_ENDPOINT_AUTH_LOGIN;
 const REGISTER_EP = process.env.NEXT_PUBLIC_ENDPOINT_AUTH_REGISTER;
