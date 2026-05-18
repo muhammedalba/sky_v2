@@ -1,0 +1,48 @@
+{
+  "title": "الإشعارات",
+  "subtitle": "لديك {count} إشعارات غير مقروءة",
+  "empty": "لا توجد إشعارات",
+  "emptyDesc": "سيتم عرض الإشعارات الجديدة هنا فور وصولها.",
+  "markAsRead": "تحديد كمقروء",
+  "markAllAsRead": "تحديد الكل كمقروء",
+  "delete": "حذف",
+  "viewAll": "عرض كل الإشعارات",
+  "unread": "غير مقروء",
+  "read": "مقروء",
+  "tabs": {
+    "all": "الكل",
+    "unread": "غير مقروء",
+    "read": "مقروء",
+    "broadcast": "إشعارات عامة",
+    "direct": "إشعارات شخصية"
+  },
+  "filterBy": "تصفية حسب:",
+  "searchPlaceholder": "ابحث في الإشعارات...",
+  "admin": {
+    "title": "سجل الإشعارات الإدارية",
+    "sendTitle": "إرسال إشعار",
+    "sendDesc": "إرسال إشعارات مباشرة لمستخدم أو إشعار عام لجميع المستخدمين.",
+    "type": "نوع الإشعار",
+    "typeDirect": "مباشر (مستخدم محدد)",
+    "typeBroadcast": "عام (جميع المستخدمين)",
+    "selectUser": "اختر المستخدم",
+    "selectUserPlaceholder": "ابحث بالاسم أو البريد...",
+    "action": "نوع الإجراء (Action)",
+    "actionPlaceholder": "مثل: ADMIN_ALERT, SYSTEM_UPDATE",
+    "message": "نص الإشعار",
+    "messagePlaceholder": "اكتب رسالة الإشعار هنا...",
+    "sendButton": "إرسال الإشعار",
+    "globalDelete": "حذف عالمي",
+    "globalDeleteConfirm": "هل أنت متأكد من حذف هذا الإشعار للجميع؟ لا يمكن التراجع عن هذا الإجراء.",
+    "list": "الإشعارات المرسلة"
+  },
+  "columns": {
+    "type": "النوع",
+    "message": "الرسالة",
+    "action": "الإجراء",
+    "recipient": "المستلم",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "actions": "إجراءات"
+  }
+}

@@ -1,8 +1,9 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl';
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
+import { queryClient } from '@/lib/api/query-client';
 
 interface LocaleProviderProps {
   children: ReactNode;
@@ -15,18 +16,6 @@ export default function LocaleProvider({ children, locale, messages }: LocalePro
     document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = locale;
   }, [locale]);
-
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000,
-            refetchOnWindowFocus: false,
-          },
-        },
-      })
-  );
 
   return (
     <QueryClientProvider  client={queryClient}>

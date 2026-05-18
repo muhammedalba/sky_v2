@@ -1,0 +1,48 @@
+{
+  "title": "Notifications",
+  "subtitle": "You have {count} unread notifications",
+  "empty": "No notifications",
+  "emptyDesc": "New notifications will appear here when they arrive.",
+  "markAsRead": "Mark as read",
+  "markAllAsRead": "Mark all as read",
+  "delete": "Delete",
+  "viewAll": "View all notifications",
+  "unread": "Unread",
+  "read": "Read",
+  "tabs": {
+    "all": "All",
+    "unread": "Unread",
+    "read": "Read",
+    "broadcast": "Broadcast",
+    "direct": "Direct"
+  },
+  "filterBy": "Filter by:",
+  "searchPlaceholder": "Search notifications...",
+  "admin": {
+    "title": "Admin Notification History",
+    "sendTitle": "Send Notification",
+    "sendDesc": "Send direct notifications to a specific user or a broadcast to all users.",
+    "type": "Notification Type",
+    "typeDirect": "Direct (Specific User)",
+    "typeBroadcast": "Broadcast (All Users)",
+    "selectUser": "Select User",
+    "selectUserPlaceholder": "Search by name or email...",
+    "action": "Action Type",
+    "actionPlaceholder": "e.g., ADMIN_ALERT, SYSTEM_UPDATE",
+    "message": "Notification Message",
+    "messagePlaceholder": "Write the notification message here...",
+    "sendButton": "Send Notification",
+    "globalDelete": "Global Delete",
+    "globalDeleteConfirm": "Are you sure you want to delete this notification for everyone? This action cannot be undone.",
+    "list": "Sent Notifications"
+  },
+  "columns": {
+    "type": "Type",
+    "message": "Message",
+    "action": "Action",
+    "recipient": "Recipient",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions"
+  }
+}

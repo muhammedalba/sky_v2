@@ -7,6 +7,8 @@ import { useParams } from 'next/navigation';
 import { Icons } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
 
+import NotificationBell from '@/features/notifications/components/NotificationBell';
+
 const TopbarActions = ({ showThemeSwitcher = true, showLocaleSwitcher = true, showBar = true }: { showThemeSwitcher?: boolean, showLocaleSwitcher?: boolean, showBar?: boolean }) => {
   // 1. استخراج القيم بشكل محدد لتحسين الأداء
   const theme = useUIStore((state) => state.theme);
@@ -57,6 +59,9 @@ const TopbarActions = ({ showThemeSwitcher = true, showLocaleSwitcher = true, sh
       </div>}
 
       {showBar && <div className="h-4 w-px bg-border/60" />}
+      
+      <NotificationBell />
+
       {showThemeSwitcher && <button
         type="button"
         onClick={toggleTheme}

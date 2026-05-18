@@ -153,6 +153,12 @@ export const env = {
     ROLES: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_ROLES || '/roles',
     },
+    NOTIFICATIONS: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS || '/notifications',
+      ADMIN_SEND: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_SEND || '/notifications/admin/send',
+      ADMIN_DELETE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_DELETE || '/notifications/admin',
+      STREAM: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_STREAM || '/notifications/stream',
+    },
   },
   HIDDEN_EMAILS: (process.env.NEXT_PUBLIC_HIDDEN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean),
 } as const;

@@ -20,6 +20,7 @@
             "retry": "Try Again",
             "clearAll": "Clear All",
             "applyFilters": "Apply Filters",
+            "markRead": "Mark as read",
             "actions": "Actions"
       },
       "errors": {
@@ -78,7 +79,8 @@
             "shippingRates": "Shipping Rates",
             "taxes": "Taxes",
             "locations": "Locations",
-            "roles": "Roles & Permissions"
+            "roles": "Roles & Permissions",
+            "notifications": "Notifications"
       },
       "auth": {
     "login": "Sign In",

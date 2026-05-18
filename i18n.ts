@@ -7,11 +7,11 @@ export type Locale = (typeof locales)[number];
 async function loadLocaleMessages(locale: string) {
   try {
     // Explicit switch for Turbopack stability
-    let common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles;
+    let common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles, notifications;
     
     if (locale === 'ar') {
       [
-        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles
+        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles, notifications
       ] = await Promise.all([
         import(`./messages/common/ar.json`).then(m => m.default),
         import(`./messages/dashboard/ar.json`).then(m => m.default),
@@ -34,11 +34,12 @@ async function loadLocaleMessages(locale: string) {
         import(`./messages/cart/ar.json`).then(m => m.default),
         import(`./messages/maintenance/ar.json`).then(m => m.default),
         import(`./messages/locations/ar.json`).then(m => m.default),
-        import(`./messages/roles/ar.json`).then(m => m.default)
+        import(`./messages/roles/ar.json`).then(m => m.default),
+        import(`./messages/notifications/ar.json`).then(m => m.default)
       ]);
     } else {
       [
-        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles
+        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles, notifications
       ] = await Promise.all([
         import(`./messages/common/en.json`).then(m => m.default),
         import(`./messages/dashboard/en.json`).then(m => m.default),
@@ -61,7 +62,8 @@ async function loadLocaleMessages(locale: string) {
         import(`./messages/cart/en.json`).then(m => m.default),
         import(`./messages/maintenance/en.json`).then(m => m.default),
         import(`./messages/locations/en.json`).then(m => m.default),
-        import(`./messages/roles/en.json`).then(m => m.default)
+        import(`./messages/roles/en.json`).then(m => m.default),
+        import(`./messages/notifications/en.json`).then(m => m.default)
       ]);
     }
 
@@ -96,6 +98,7 @@ async function loadLocaleMessages(locale: string) {
       maintenance,
       locations,
       roles,
+      notifications,
     };
   } catch (error) {
     console.error(`[i18n] Error loading translation files for ${locale}:`, error);
