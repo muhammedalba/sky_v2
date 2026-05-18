@@ -84,7 +84,7 @@ export default function SettingsForm() {
   const t = useTranslations('settings');
   const commonT = useTranslations('common');
   const [activeSection, setActiveSection] = useState('general');
-  const { data: settings, isLoading } = useSettings();
+  const { data: settings } = useSettings();
   const updateMutation = useUpdateSettings();
   const { success, error: toastError } = useToast();
 

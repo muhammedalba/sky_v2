@@ -1,14 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useForm, FormProvider, FieldValues, DefaultValues } from 'react-hook-form';
+import { useForm, FormProvider, FieldValues, DefaultValues, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ZodType } from 'zod';
 import ErrorMessage from '@/shared/ui/ErrorMessage';
 import SuccessMessage from '@/shared/ui/SuccessMessage';
 
 interface SmartFormProps<T extends FieldValues> {
-  schema: ZodType<T>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: ZodType<T, any>;
   defaultValues: DefaultValues<T>;
   onSubmit: (data: T) => Promise<void> | void;
   isLoading?: boolean;
@@ -30,7 +31,7 @@ export function SmartForm<T extends FieldValues>({
   isRegistrationDisabled = false,
 }: SmartFormProps<T>) {
   const methods = useForm<T>({
-    resolver: zodResolver(schema as any) as any,
+    resolver: zodResolver(schema) as unknown as Resolver<T>,
     defaultValues,
   });
 
@@ -38,11 +39,12 @@ export function SmartForm<T extends FieldValues>({
     try {
       methods.clearErrors('root.serverError');
       await onSubmit(data);
-    } catch (error: any) {
-      const errorMessage = error?.message.trim() === "Network Error" ? networkErrorMessage : error?.message;
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : (error as { message?: string })?.message || '';
+      const errorMessage = msg.trim() === "Network Error" ? networkErrorMessage : msg;
       methods.setError('root.serverError', {
         type: 'server',
-        message: errorMessage,
+        message: errorMessage || 'حدث خطأ غير متوقع',
       });
     }
   };

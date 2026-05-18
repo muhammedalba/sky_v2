@@ -32,7 +32,7 @@ const ALLOWED_TAGS = new Set([
  * STRUCTURED LOGGER
  */
 const logger = {
-  info: (message: string, context?: any) => {
+  info: (message: string, context?: Record<string, unknown>) => {
     console.log(JSON.stringify({
       level: 'INFO',
       timestamp: new Date().toISOString(),
@@ -40,7 +40,7 @@ const logger = {
       ...context,
     }));
   },
-  error: (message: string, context?: any) => {
+  error: (message: string, context?: Record<string, unknown>) => {
     console.error(JSON.stringify({
       level: 'ERROR',
       timestamp: new Date().toISOString(),
@@ -114,13 +114,16 @@ export async function POST(request: NextRequest) {
       requestId
     }, { status: 200 });
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     // 5. SECURE ERROR HANDLING
     // We log the internal error for maintainers but return a generic response to the client.
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+
     logger.error('Internal Revalidation Error', {
       requestId,
-      error: err.message,
-      stack: err.stack
+      error: errorMessage,
+      stack: errorStack
     });
 
     return NextResponse.json(
