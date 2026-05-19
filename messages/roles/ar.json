@@ -1,7 +1,7 @@
 {
   "title": "إدارة الأدوار والصلاحيات",
   "subtitle": "تحكم في مستويات الوصول والصلاحيات المتاحة لكل دور في النظام",
-  "totalResults": "{count} دور متاح",
+  "totalResults": "تم العثور على {count} دور",
   "createRole": "إضافة دور جديد",
   "editRole": "تعديل الدور",
   "permissionCount": "{count} صلاحية",

@@ -49,7 +49,7 @@
       "productsSection": {
             "topProducts": "أفضل 10 منتجات مبيعاً",
             "topProductsDesc": "مرتبة حسب إجمالي الوحدات المباعة",
-            "productsCount": "{count} منتجات",
+            "productsCount": "المنتجات: {count}",
             "noProducts": "لا تتوفر بيانات للمنتجات",
             "featured": "مميز",
             "unlimited": "غير محدود",
@@ -62,9 +62,9 @@
             "topCustomers": "أفضل العملاء",
             "topCustomersDesc": "الأعلى في تكرار الطلبات هذه الفترة",
             "noCustomers": "لا تتوفر بيانات للعملاء هذه الفترة",
-            "orders": "{count} طلبات",
+            "orders": "الطلبات: {count}",
             "suppliersOverview": "نظرة عامة على الموردين",
-            "totalSuppliers": "الإجمالي: {count} مورد",
+            "totalSuppliers": "الموردون: {count}",
             "noSuppliers": "لم يتم العثور على موردين"
       },
       "trendsSection": {
@@ -95,7 +95,7 @@
             "topPerformingCouponsDesc": "أعلى معدل استخدام ومساهمة في الإيرادات",
             "noUsage": "لم يتم تسجيل استخدام للكوبونات",
             "createCoupons": "قم بإنشاء كوبونات نشطة لرؤية الأداء هنا",
-            "uses": "{count} استخدام"
+            "uses": "مرات الاستخدام: {count}"
       },
       "kpiGrid": {
             "totalOrders": "إجمالي الطلبات (الفترة)",

@@ -12,10 +12,7 @@
   "tabs": {
     "all": "All",
     "unread": "Unread",
-    "read": "Read",
-    "broadcast": "Broadcast",
-    "direct": "Direct",
-    "role": "Role Notifications"
+    "read": "Read"
   },
   "filterBy": "Filter by:",
   "searchPlaceholder": "Search notifications...",
@@ -24,8 +21,8 @@
     "sendTitle": "Send Notification",
     "sendDesc": "Send direct notifications to a specific user, a role group, or a broadcast to all users.",
     "type": "Notification Type",
-    "typeDirect": "Direct (Specific User)",
-    "typeBroadcast": "Broadcast (All Users)",
+    "typeDirect": "Specific User",
+    "typeBroadcast": "Public",
     "typeRole": "Specific Role Group",
     "selectUser": "Select User",
     "selectUserPlaceholder": "Search by name or email...",
@@ -33,8 +30,10 @@
     "selectRolePlaceholder": "Select a role...",
     "action": "Action Type",
     "actionPlaceholder": "e.g., ADMIN_ALERT, SYSTEM_UPDATE",
-    "message": "Notification Message",
-    "messagePlaceholder": "Write the notification message here...",
+    "messageAr": "Notification Message (Arabic)",
+    "messageArPlaceholder": "Write the notification message in Arabic here...",
+    "messageEn": "Notification Message (English)",
+    "messageEnPlaceholder": "Write the notification message in English here...",
     "sendButton": "Send Notification",
     "globalDelete": "Global Delete",
     "globalDeleteConfirm": "Are you sure you want to delete this notification for everyone? This action cannot be undone.",
@@ -49,5 +48,12 @@
     "status": "Status",
     "date": "Date",
     "actions": "Actions"
+  },
+  "alerts": {
+    "systemAlert": "System Alert",
+    "dashboardRevoked": "Your permission to access the dashboard has been revoked. You will be redirected to the home page.",
+    "permissionsUpdate": "Permissions Update",
+    "orderUpdate": "Order Update",
+    "newNotification": "New Notification"
   }
 }

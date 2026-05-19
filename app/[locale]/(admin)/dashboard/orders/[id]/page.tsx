@@ -63,8 +63,8 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
       <div className="space-y-8 animate-pulse">
         <Skeleton className="h-12 w-1/4 rounded-xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-           <Skeleton className="lg:col-span-2 h-[500px] rounded-[2rem]" />
-           <Skeleton className="h-[400px] rounded-[2rem]" />
+           <Skeleton className="lg:col-span-2 h-[500px] rounded-4xl" />
+           <Skeleton className="h-[400px] rounded-4xl" />
         </div>
       </div>
     );
@@ -144,7 +144,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                          <TableRow key={i} className="border-b last:border-0">
                            <TableCell>
                              <div className="flex items-center gap-4 py-2">
-                                <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden flex-shrink-0">
+                                <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden shrink-0">
                                    {/* Product Image Logic */}
                                    {item.product?.imageCover ? (
                                       <div className="relative w-full h-full">
@@ -211,7 +211,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
              </CardHeader>
              <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-indigo-500 text-white flex items-center justify-center font-black shadow-lg shadow-primary/20">
+                   <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-primary to-indigo-500 text-white flex items-center justify-center font-black shadow-lg shadow-primary/20">
                       {order.user?.name?.charAt(0) || 'U'}
                    </div>
                    <div>

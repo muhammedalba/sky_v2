@@ -1,7 +1,7 @@
 {
       "title": "الموردون",
       "subtitle": "إدارة الموردين والبائعين الخاصين بك",
-      "totalResults": "تم العثور على {count} موردين",
+      "totalResults": "تم العثور على {count} مورد",
       "searchPlaceholder": "البحث في الموردين...",
       "createSupplier": "إضافة مورد",
       "entityLabel": "مورد",

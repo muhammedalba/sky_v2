@@ -14,6 +14,15 @@ export interface NotificationRecipient {
 export interface NotificationRole {
   _id: string;
   name: string;
+  level?: number;
+}
+
+export interface NotificationAction {
+  value: string;
+  label: {
+    ar: string;
+    en: string;
+  };
 }
 
 export interface Notification {
@@ -43,7 +52,7 @@ export interface AdminSendNotificationDto {
   userId?: string; 
   roleId?: string;
   action?: string;
-  message: string;
+  message: string | { ar: string; en: string };
   payload?: unknown;
 }
 
@@ -92,6 +101,13 @@ export const notificationsApi = {
   adminDelete: async (id: string) => {
     const { data } = await apiClient.delete<{ message: string }>(
       `${ADMIN_DELETE}/${id}`,
+    );
+    return data;
+  },
+
+  adminGetActions: async () => {
+    const { data } = await apiClient.get<NotificationAction[]>(
+      `${ADMIN_DELETE}/actions`,
     );
     return data;
   },

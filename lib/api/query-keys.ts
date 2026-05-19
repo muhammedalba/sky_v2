@@ -25,3 +25,4 @@ export const queryKeys = {
       [...queryKeys.dashboard.all, "stats", params] as const,
   },
 } as const;
+

@@ -6,7 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// يمكنك مستقبلاً استبدال هذا الثابت بالقيمة القادمة من الـ API أو الـ State
 const FALLBACK_EXCHANGE_RATE = 3.75;
 
 export function formatCurrency(
@@ -155,5 +154,25 @@ export function getRoleBadgeVariant(
 export function formatEmail(email?: string | null): string {
   if (!email) return "";
   return email.replace(/gmail\.com$/i, "");
+}
+
+export function getActionBadgeVariant(
+  action?: string | null,
+): "default" | "secondary" | "destructive" | "danger" | "success" | "warning" | "outline" {
+  if (!action) return "outline";
+  switch (action.toUpperCase()) {
+    case "GENERAL":
+      return "secondary";
+    case "SYSTEM_UPDATE":
+      return "warning";
+    case "ADMIN_ALERT":
+      return "danger";
+    case "PROMOTION":
+      return "success";
+    case "ORDER_UPDATE":
+      return "default";
+    default:
+      return "outline";
+  }
 }
  

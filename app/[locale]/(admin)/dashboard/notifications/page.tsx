@@ -12,7 +12,12 @@ import { Button } from "@/shared/ui/Button";
 import { Tooltip } from "@/shared/ui/Tooltip";
 import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
 import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
-import { formatEmail, formatRelativeTime } from "@/lib/utils";
+import {
+  formatEmail,
+  formatRelativeTime,
+  getActionBadgeVariant,
+  getRoleBadgeVariant,
+} from "@/lib/utils";
 import {
   Notification,
   NotificationRecipient,
@@ -22,6 +27,8 @@ import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 import { Can } from "@/components/auth/Can";
 import { Permissions } from "@/features/roles/types";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/shared/hooks/useToast";
+import { AxiosError } from "axios";
 
 export default function AdminNotificationsPage() {
   const t = useTranslations("notifications");
@@ -30,7 +37,7 @@ export default function AdminNotificationsPage() {
   const tUsers = useTranslations("users");
   const router = useRouter();
   const locale = useLocale();
-
+  const toast = useToast();
   // Use the admin-specific endpoint that returns ALL system notifications (not just current user's)
   const { data: response, isLoading } = useGetAdminNotifications(1, 100);
   const deleteMutation = useAdminDeleteNotification();
@@ -51,37 +58,50 @@ export default function AdminNotificationsPage() {
         title: t("admin.globalDelete"),
         message: t("admin.globalDeleteConfirm"),
         onConfirm: async () => {
-          await deleteMutation.mutateAsync(id);
+          try {
+            const data = await deleteMutation.mutateAsync(id);
+            toast.success(data.message || "Notification deleted globally");
+          } catch (error) {
+            const err = error as AxiosError<{ message?: string }>;
+            toast.error(
+              err?.response?.data?.message || "Failed to delete notification",
+            );
+          }
         },
       });
     },
-    [openDialog, deleteMutation, t],
+    [openDialog, deleteMutation, t, toast],
   );
 
   const columns = useMemo(
     () => [
       {
         header: t("columns.type"),
-        className: "pl-6",
+        className: "pl-6 ",
         render: (item: Notification) => {
-          let variant: "default" | "outline" | "secondary" = "outline";
+          let variant: "default" | "warning" | "secondary" | "success" =
+            "default";
           let label = t("admin.typeDirect");
-          if (item.type === "BROADCAST") {
-            variant = "default";
-            label = t("admin.typeBroadcast");
-          } else if (item.type === "ROLE") {
+          if (item.type.toString().toUpperCase() === "BROADCAST") {
             variant = "secondary";
+            label = t("admin.typeBroadcast");
+          } else if (item.type.toString().toUpperCase() === "ROLE") {
+            variant = "warning";
             label = t("admin.typeRole");
           }
-          return <Badge variant={variant}>{label}</Badge>;
+          return (
+            <Badge className="bg-transparent" variant={variant}>
+              {label}
+            </Badge>
+          );
         },
       },
       {
         header: t("columns.action"),
         render: (item: Notification) => (
-          <span className="font-mono text-xs bg-muted px-2 py-1 rounded-md">
+          <Badge variant={getActionBadgeVariant(item.action)}>
             {item.action}
-          </span>
+          </Badge>
         ),
       },
       {
@@ -105,10 +125,13 @@ export default function AdminNotificationsPage() {
             if (!item.targetRole) {
               return <span className="text-sm text-muted-foreground">N/A</span>;
             }
-            if (typeof item.targetRole === "object") {
+            if (typeof item.targetRole === "object") { 
               const roleName = item.targetRole.name;
               return (
-                <Badge variant="outline">
+                <Badge
+                  className="bg-transparent"
+                  variant={getRoleBadgeVariant(item.targetRole?.level || 0)}
+                >
                   {tUsers.has(`roles.${roleName.toLowerCase()}`)
                     ? tUsers(`roles.${roleName.toLowerCase()}`)
                     : roleName}
@@ -162,7 +185,7 @@ export default function AdminNotificationsPage() {
         className: "text-right pr-6",
         render: (item: Notification) => (
           <div className="flex items-center justify-end gap-2">
-            <Can permission={Permissions.UPDATE_SETTINGS}>
+            <Can permission={Permissions.DELETE_NOTIFICATION}>
               <Tooltip content={tButtons("delete")}>
                 <Button
                   variant="outline"
@@ -193,7 +216,7 @@ export default function AdminNotificationsPage() {
           label: t("admin.sendTitle"),
           icon: <Icons.Send className="w-4 h-4" />,
           onClick: () => router.push("/dashboard/notifications/send"),
-          permission: Permissions.UPDATE_SETTINGS,
+          permission: Permissions.SEND_NOTIFICATION,
         }}
       />
 

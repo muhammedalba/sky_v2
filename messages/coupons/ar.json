@@ -2,7 +2,7 @@
   "title": "الكوبونات",
   "couponList": "قائمة الكوبونات",
   "subtitle": "إدارة قسائم الخصم والأكواد الترويجية",
-  "totalResults": "{count} كوبون موجود",
+  "totalResults": "تم العثور على {count} كوبون",
   "searchPlaceholder": "البحث عن كوبونات...",
   "createCoupon": "إضافة كوبون",
   "editCoupon": "تعديل الكوبون",

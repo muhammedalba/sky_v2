@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useToast } from "@/shared/hooks/useToast";
 import { env } from "@/lib/env";
 import { authApi } from "@/features/auth/api";
@@ -87,6 +88,8 @@ const playNotificationSound = () => {
 };
 
 export const useServerNotifications = () => {
+  const locale = useLocale();
+  const t = useTranslations("notifications.alerts");
   const toast = useToast();
   const toastRef = useRef(toast);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -114,7 +117,7 @@ export const useServerNotifications = () => {
         eventSourceRef.current.close();
       }
 
-      const url = `${env.API_URL}/notifications/stream`;
+      const url = `${env.API_URL}/notifications/stream?lang=${locale}`;
       const es = new EventSource(url, { withCredentials: true });
       eventSourceRef.current = es;
 
@@ -130,7 +133,7 @@ export const useServerNotifications = () => {
           if (data.message) {
             const currentToast = toastRef.current;
             if (data.action?.toUpperCase() === "FORCE_LOGOUT") {
-              currentToast.error(data.message, "تنبيه النظام", 6000);
+              currentToast.error(data.message, t("systemAlert"), 6000);
               // Call logout API and redirect to login page
               authApi.logout().finally(() => {
                 const defaultLocale = env.DEFAULT_LOCALE;
@@ -149,8 +152,8 @@ export const useServerNotifications = () => {
                 console.log(isInDashboard, hasDashboardAccess);
                 if (isInDashboard && !hasDashboardAccess) {
                   currentToast.error(
-                    "لقد تم سحب صلاحية دخول لوحة التحكم منك. سيتم تحويلك للصفحة الرئيسية.",
-                    "تنبيه النظام",
+                    t("dashboardRevoked"),
+                    t("systemAlert"),
                     6000,
                   );
                   setTimeout(() => {
@@ -161,7 +164,7 @@ export const useServerNotifications = () => {
                 }
               }
 
-              currentToast.info(data.message, "تحديث الصلاحيات", 5000);
+              currentToast.info(data.message, t("permissionsUpdate"), 5000);
               setTimeout(() => {
                 window.location.reload();
               }, 1500);
@@ -171,14 +174,14 @@ export const useServerNotifications = () => {
                 data.action === "ORDER_COMPLETED" ||
                 data.action === "ORDER_DELIVERED"
               ) {
-                currentToast.success(data.message, "تحديث الطلب", 5000);
+                currentToast.success(data.message, t("orderUpdate"), 5000);
               } else if (
                 data.action === "ORDER_CANCELLED" ||
                 data.action === "ORDER_CANCELED"
               ) {
-                currentToast.warning(data.message, "تحديث الطلب", 5000);
+                currentToast.warning(data.message, t("orderUpdate"), 5000);
               } else {
-                currentToast.info(data.message, "إشعار جديد", 5000);
+                currentToast.info(data.message, t("newNotification"), 5000);
               }
 
               // Play notification sound
@@ -240,7 +243,7 @@ export const useServerNotifications = () => {
         eventSourceRef.current = null;
       }
     };
-  }, [isAuthenticated]); // Reconnect when authentication status changes
+  }, [isAuthenticated, locale, t]); // Reconnect when authentication status, locale, or translation helper changes
 
   return {
     close: () => {

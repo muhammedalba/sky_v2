@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/Button";
 import { Dropdown } from "@/shared/ui/CustomDropdown";
 import { useLocale, useTranslations } from "next-intl";
 import { formatRelativeTime } from "@/lib/utils";
-import { useMarkAsRead } from "@/features/notifications/hooks/useNotifications";
+import { useGetNotifications, useMarkAsRead } from "@/features/notifications/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/navigation";
 import { useMe } from "@/features/auth/hooks/useAuth";
@@ -17,11 +17,19 @@ import { Permissions } from "@/features/roles/types";
 const NotificationBell = () => {
   const t = useTranslations("notifications");
   const router = useRouter();
+  const { data: user } = useMe();
+  const locale = useLocale();
+  const { mutate: markAsRead } = useMarkAsRead();
+
+  const isAuthenticated = !!user;
+
+  // Fetch notifications and seed Zustand store on page load / mount
+  useGetNotifications(1, 10, { enabled: isAuthenticated });
+
   const unreadCount = useNotificationStore((state) => state.unreadCount);
   const notifications = useNotificationStore((state) => state.notifications);
-  const { data: user } = useMe();
-const locale = useLocale();
-  const { mutate: markAsRead } = useMarkAsRead();
+
+  const removeNotificationStore = useNotificationStore((state) => state.removeNotification);
 
   // Admins go to admin dashboard, regular users go to their own notifications page
   const isAdmin = checkUserPermission(user ?? null, Permissions.UPDATE_SETTINGS);
@@ -30,6 +38,8 @@ const locale = useLocale();
   const handleNotificationClick = (id: string, isRead: boolean) => {
     if (!isRead) {
       markAsRead(id);
+    } else {
+      removeNotificationStore(id);
     }
     router.push(notificationsPath);
   };

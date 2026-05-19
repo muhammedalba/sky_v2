@@ -63,14 +63,13 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
-      <head>
+      <head />
+      <body className={`${getFontVariables()} antialiased`}>
         <Script
           id="theme-initializer"
           src="/theme-init.js"
           strategy="beforeInteractive"
         />
-      </head>
-      <body className={`${getFontVariables()} antialiased`}>
         {children}
       </body>
     </html>

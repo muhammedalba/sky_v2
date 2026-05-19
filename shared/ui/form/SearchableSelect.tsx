@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '../Input';
-import Spinner from '../Spinner';
-import { LucideIcon, SearchX, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { Icons } from '../Icons';
 
 export interface SearchOption {
   _id: string;
@@ -26,7 +25,7 @@ interface SearchableSelectProps {
   initialDisplayValue?: string;
   className?: string;
   disabled?: boolean;
-  icon?: any;
+  icon?: React.ComponentType<{ className?: string }>;
   iconColor?: string;
   createLink?: string;
 }
@@ -108,7 +107,7 @@ export function SearchableSelect({
         <div className="absolute z-50 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 flex justify-center items-center gap-2 text-sm text-muted-foreground">
-              <Spinner className="w-4 h-4" /> Loading...
+              <Icons.Spinner className="w-4 h-4" /> Loading...
             </div>
           ) : options && options.length > 0 ? (
             <ul className="p-1">
@@ -131,7 +130,7 @@ export function SearchableSelect({
           ) : (
             <div className="p-6 flex flex-col items-center justify-center text-center gap-3">
               <div className="bg-secondary/50 p-3 rounded-full">
-                <SearchX className="w-6 h-6 text-muted-foreground/50" />
+                <Icons.Search className="w-6 h-6 text-muted-foreground/50" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
                 {t('messages.noData')}
@@ -141,7 +140,7 @@ export function SearchableSelect({
                   href={createLink} 
                   className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl transition-colors text-sm font-bold"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Icons.Plus className="w-4 h-4" />
                   {t('buttons.create')}
                 </Link>
               )}

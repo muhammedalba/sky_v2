@@ -19,7 +19,11 @@ export const NOTIFICATION_KEYS = {
  * @param limit - The maximum number of notifications per page (defaults to 10).
  * @returns The query result object from TanStack Query containing the data, status, and loading state.
  */
-export function useGetNotifications(page: number = 1, limit: number = 10) {
+export function useGetNotifications(
+  page: number = 1,
+  limit: number = 10,
+  options?: { enabled?: boolean },
+) {
   const setNotifications = useNotificationStore(
     (state) => state.setNotifications,
   );
@@ -40,6 +44,7 @@ export function useGetNotifications(page: number = 1, limit: number = 10) {
     },
     // Don't override real-time updates too aggressively
     staleTime: 60 * 1000,
+    ...options,
   });
 }
 
@@ -52,15 +57,17 @@ export function useGetNotifications(page: number = 1, limit: number = 10) {
 export function useMarkAsRead() {
   const queryClient = useQueryClient();
   const toast = useToast();
-  const markAsReadStore = useNotificationStore((state) => state.markAsRead);
+  const removeNotificationStore = useNotificationStore(
+    (state) => state.removeNotification,
+  );
 
   return useMutation({
     mutationFn: notificationsApi.markAsRead,
-    onSuccess: (_, id) => {
-      // Update local store immediately
-      markAsReadStore(id);
+    onSuccess: async (_, id) => {
+      // Remove from Zustand store immediately so it doesn't show in the dropdown anymore
+      removeNotificationStore(id);
       // Invalidate queries to refresh lists
-      queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
+      await queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error?.response?.data?.message || "Failed to mark as read");
@@ -83,9 +90,9 @@ export function useDeleteNotification() {
 
   return useMutation({
     mutationFn: notificationsApi.delete,
-    onSuccess: (_, id) => {
+    onSuccess: async (_, id) => {
       removeNotificationStore(id);
-      queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
+      await queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
       toast.success("Notification deleted");
     },
     onError: (error: AxiosError<{ message?: string }>) => {
@@ -127,9 +134,9 @@ export function useAdminSendNotification() {
   return useMutation({
     mutationFn: (payload: AdminSendNotificationDto) =>
       notificationsApi.adminSend(payload),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(data.message || "Notification sent successfully");
-      queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
+      await queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
@@ -146,17 +153,24 @@ export function useAdminSendNotification() {
  */
 export function useAdminDeleteNotification() {
   const queryClient = useQueryClient();
-  const toast = useToast();
+
   return useMutation({
     mutationFn: notificationsApi.adminDelete,
-    onSuccess: (data) => {
-      toast.success(data.message || "Notification deleted globally");
-      queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.lists() });
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(
-        error?.response?.data?.message || "Failed to delete notification",
-      );
-    },
+  });
+}
+
+/**
+ * Custom React hook to retrieve the list of allowed notification actions from the backend.
+ *
+ * @returns The query result object from TanStack Query containing the allowed actions.
+ */
+export function useGetNotificationActions() {
+  return useQuery({
+    queryKey: [...NOTIFICATION_KEYS.all, "actions"] as const,
+    queryFn: notificationsApi.adminGetActions,
+    staleTime: 24 * 60 * 60 * 1000, // Actions list is static and can be cached for a day
   });
 }
