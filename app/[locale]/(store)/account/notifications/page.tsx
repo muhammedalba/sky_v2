@@ -123,7 +123,7 @@ export default function UserNotificationsPage() {
   return (
     <div className="min-h-screen pt-36 bg-background pb-24 selection:bg-primary/10 selection:text-primary">
       {/* Hero Header Section */}
-      <section className="py-12 bg-gradient-to-b from-secondary/10 via-secondary/5 to-transparent border-b border-border/50 relative overflow-hidden mb-8">
+      <section className="py-12 bg-linear-to-b from-secondary/10 via-secondary/5 to-transparent border-b border-border/50 relative overflow-hidden mb-8">
         {/* Decorative glowing background elements */}
         <div className="absolute top-0 ltr:right-0 rtl:left-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 ltr:left-0 rtl:right-0 w-[300px] h-[300px] bg-purple-500/5 blur-[100px] rounded-full pointer-events-none" />
@@ -256,7 +256,7 @@ export default function UserNotificationsPage() {
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-card/30 backdrop-blur-md border border-border/40 rounded-3xl shadow-sm">
               <div className="relative mb-6">
                 <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full" />
-                <div className="w-24 h-24 rounded-[2rem] bg-secondary/60 border border-border flex items-center justify-center relative z-10 shadow-inner">
+                <div className="w-24 h-24 rounded-4xl bg-secondary/60 border border-border flex items-center justify-center relative z-10 shadow-inner">
                   <Icons.Bell className="h-12 w-12 text-muted-foreground/40" />
                 </div>
               </div>
@@ -286,12 +286,12 @@ export default function UserNotificationsPage() {
                     key={notification._id}
                     className={cn(
                       "group flex flex-col sm:flex-row sm:items-start gap-5 p-6 rounded-3xl border border-border/60 bg-card/60 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/40 relative overflow-hidden",
-                      !notification.isRead && "bg-primary/[0.03] border-primary/25 shadow-sm shadow-primary/5"
+                      !notification.isRead && "bg-primary/3 border-primary/25 shadow-sm shadow-primary/5"
                     )}
                   >
                     {/* Glowing Unread Indicator Bar */}
                     {!notification.isRead && (
-                      <div className="absolute top-0 ltr:right-0 rtl:left-0 w-1.5 h-full bg-gradient-to-b from-primary to-primary/60 shadow-[0_0_12px_rgba(var(--primary),0.8)]" />
+                      <div className="absolute top-0 ltr:right-0 rtl:left-0 w-1.5 h-full bg-linear-to-b from-primary to-primary/60 shadow-[0_0_12px_rgba(var(--primary),0.8)]" />
                     )}
 
                     {/* Icon Container */}
