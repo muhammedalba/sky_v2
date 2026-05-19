@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from '@/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/ui/Icons';
@@ -13,22 +14,31 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ className, useLiveSearch = false }: SearchBarProps) {
-  const pathname = usePathname();
-  const isProductsPage = pathname.startsWith('/products');
-
-  const [query, setQuery] = useState('');
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams?.get('search') || '');
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const t = useTranslations('store.nav');
   const debouncedQuery = useDebounce(query, 400);
 
-  useEffect(() => {
-    if (useLiveSearch && debouncedQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(debouncedQuery.trim())}`);
-    }
-  }, [debouncedQuery, router, useLiveSearch]);
+  // Sync state with URL search query changes during render to avoid cascading effects
+  const currentSearch = searchParams?.get('search') || '';
+  const [prevSearch, setPrevSearch] = useState(currentSearch);
+  if (currentSearch !== prevSearch) {
+    setQuery(currentSearch);
+    setPrevSearch(currentSearch);
+  }
 
-  if (!isProductsPage) return null;
+  useEffect(() => {
+    if (useLiveSearch) {
+      if (debouncedQuery.trim()) {
+        router.push(`/products?search=${encodeURIComponent(debouncedQuery.trim())}`);
+      } else if (query === '') {
+        // If query is explicitly cleared, fetch all products
+        router.push('/products');
+      }
+    }
+  }, [debouncedQuery, query, router, useLiveSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

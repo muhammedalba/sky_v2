@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocale } from 'next-intl';
 import { Brand, ApiResponse } from '@/types';
 import { brandsApi } from '@/features/brands/api';
 
@@ -8,8 +9,9 @@ export function useBrands(
   params?: { page?: number; limit?: number; keywords?: string, all_langs?: boolean, fields?: string },
   options?: { enabled?: boolean }
 ) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['brands', params],
+    queryKey: ['brands', locale, params],
     queryFn: async () => {
       const response = (await brandsApi.getAll(params)) as unknown as ApiResponse<Brand[]>;
       return response;
@@ -19,8 +21,9 @@ export function useBrands(
 }
 
 export function useBrand(id: string, options?: { all_langs?: boolean }) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['brands', id, options?.all_langs],
+    queryKey: ['brands', id, locale, options?.all_langs],
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
       const response = (await brandsApi.getOne(id, params)) as unknown as ApiResponse<Brand>;

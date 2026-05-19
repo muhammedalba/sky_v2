@@ -1,9 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import { useLocale } from 'next-intl';
 import { Product, ApiResponse, ProductWithVariants } from '@/types';
-
-
 
 export interface UseProductsParams {
   page?: number;
@@ -27,8 +26,9 @@ export interface UseProductsParams {
 }
 
 export function useProducts(params?: UseProductsParams, options?: { enabled?: boolean }) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['products', params],
+    queryKey: ['products', locale, params],
     queryFn: async () => {
       const response = await productsApi.getAll(params);
       return response;
@@ -41,8 +41,9 @@ export function useProduct(id: string, options: { all_langs: true }): UseQueryRe
 export function useProduct(id: string, options?: { all_langs?: false }): UseQueryResult<Product, Error>;
 export function useProduct(id: string, options?: { all_langs?: boolean }): UseQueryResult<any, Error> {
   const all_langs = options?.all_langs ?? false;
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['products', id, { all_langs }],
+    queryKey: ['products', id, locale, { all_langs }],
     queryFn: async () => {
       const params = all_langs ? { all_langs: 'true' } : undefined;
       const response = await productsApi.getOne(id, params);

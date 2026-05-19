@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocale } from 'next-intl';
 import { Category, ApiResponse } from '@/types';
 import { categoriesApi } from '@/features/categories/api';
 
@@ -8,9 +9,9 @@ export function useCategories(
   params?: { page?: number; limit?: number; keywords?: string | null, all_langs?: boolean, fields?: string },
   options?: { enabled?: boolean }
 ) {
-
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['categories', params],
+    queryKey: ['categories', locale, params],
     queryFn: async () => {
       const response = (await categoriesApi.getAll(params)) as unknown as ApiResponse<Category[]>;
       return response;
@@ -21,8 +22,9 @@ export function useCategories(
 }
 
 export function useCategory(id: string, options?: { all_langs?: boolean }) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['categories', id, options?.all_langs],
+    queryKey: ['categories', id, locale, options?.all_langs],
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
       const response = (await categoriesApi.getOne(id, params)) as unknown as ApiResponse<Category>;

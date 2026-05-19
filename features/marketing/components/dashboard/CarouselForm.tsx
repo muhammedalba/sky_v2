@@ -91,9 +91,9 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
         router.push(`/${locale}/dashboard/carousel`);
         toast.success(t('messages.addSuccess'));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error(t('messages.error'));
+      toast.error(error?.message || t('messages.error'));
     }
   };
 

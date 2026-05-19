@@ -1,12 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
+import { useLocale } from 'next-intl';
 import { carouselApi } from '@/features/marketing/carousel.api';
 
 export function useCarousel(params?: { page?: number; limit?: number, keywords?: string, all_langs?: boolean, isActive?: boolean }) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['carousel', params],
+    queryKey: ['carousel', locale, params],
     queryFn: async () => {
       const response = await carouselApi.getAll(params);
       return response;
@@ -15,8 +16,9 @@ export function useCarousel(params?: { page?: number; limit?: number, keywords?:
 }
 
 export function useCarouselItem(id: string, options?: { all_langs?: boolean }) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['carousel', id, options?.all_langs],
+    queryKey: ['carousel', id, locale, options?.all_langs],
     queryFn: async () => {
       const params = options?.all_langs ? { all_langs: 'true' } : {};
       const response = await carouselApi.getOne(id, params);
