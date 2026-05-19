@@ -111,6 +111,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
     await restoreMutation(id);
     refetch();
   }, [restoreMutation, refetch]);
+  //  columns table
   const columns = useMemo(() => [
     {
       header: t('fields.product', { defaultValue: 'Product' }),

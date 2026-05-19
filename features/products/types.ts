@@ -58,6 +58,7 @@ export interface Product {
   infoProductPdf?: string;
   ratingsAverage?: number;
   ratingsQuantity?: number;
+  totalSold?: number;
   isDeleted?: boolean;
   deletedAt?: string | null;
   createdAt?: string;
