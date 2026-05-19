@@ -48,8 +48,9 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   contactInfo: {
     email: '',
     phones: [],
-    addressAr: '',
-    addressEn: '',
+    address: { ar: '', en: '' },
+    workingDays: { ar: '', en: '' },
+    workingHours: { ar: '', en: '' },
   },
   gateways: {
     stripe: false,

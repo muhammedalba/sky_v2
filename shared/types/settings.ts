@@ -28,8 +28,9 @@ export interface SocialLinks {
 export interface contactInfo {
   email: string;
   phones: string[];
-  addressAr: string;
-  addressEn: string;
+  address?: LocalizedString;
+  workingDays?: LocalizedString;
+  workingHours?: LocalizedString;
 }
 
 export interface Gateways {

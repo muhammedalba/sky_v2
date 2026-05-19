@@ -40,14 +40,50 @@ export default function ContactSection() {
             <h4 className="font-bold text-sm">{t('contact.address')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Textarea
-                {...register('contactInfo.addressAr')}
+                {...register('contactInfo.address.ar')}
                 label="العنوان (بالعربية)"
                 className="rounded-xl min-h-[80px]"
               />
               <Textarea
-                {...register('contactInfo.addressEn')}
+                {...register('contactInfo.address.en')}
                 label="Address (English)"
                 className="rounded-xl min-h-[80px]"
+              />
+            </div>
+          </div>
+
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="font-bold text-sm">{t('contact.workingDays') || 'Working Days'}</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                {...register('contactInfo.workingDays.ar')}
+                label="أيام العمل (بالعربية)"
+                className="rounded-xl h-11"
+                placeholder="مثال: من الإثنين إلى الجمعة"
+              />
+              <Input
+                {...register('contactInfo.workingDays.en')}
+                label="Working Days (English)"
+                className="rounded-xl h-11"
+                placeholder="Example: Monday - Friday"
+              />
+            </div>
+          </div>
+
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="font-bold text-sm">{t('contact.workingHours') || 'Working Hours'}</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                {...register('contactInfo.workingHours.ar')}
+                label="ساعات العمل (بالعربية)"
+                className="rounded-xl h-11"
+                placeholder="مثال: 09:00 ص - 06:00 م"
+              />
+              <Input
+                {...register('contactInfo.workingHours.en')}
+                label="Working Hours (English)"
+                className="rounded-xl h-11"
+                placeholder="Example: 09:00 AM - 06:00 PM"
               />
             </div>
           </div>

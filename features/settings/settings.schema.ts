@@ -45,8 +45,18 @@ export const settingsSchema = z.object({
   contactInfo: z.object({
     email: z.string().email('errors.invalidEmail').or(z.literal('')).default(''),
     phones: z.array(z.string()).default([]),
-    addressAr: z.string().default(''),
-    addressEn: z.string().default(''),
+    address: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
+    workingDays: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
+    workingHours: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
   }),
 
   // Gateways

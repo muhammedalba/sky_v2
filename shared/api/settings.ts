@@ -83,8 +83,9 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   contactInfo: {
     email: '',
     phones: [],
-    addressAr: '',
-    addressEn: '',
+    address: { ar: '', en: '' },
+    workingDays: { ar: '', en: '' },
+    workingHours: { ar: '', en: '' },
   },
   currencyCode: 'SAR',
   currencySymbol: 'ر.س',

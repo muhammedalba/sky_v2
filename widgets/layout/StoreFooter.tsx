@@ -102,10 +102,10 @@ export default function StoreFooter() {
                    <span className="truncate">{settings.contactInfo.email}</span>
                  </li>
                )}
-               {(settings.contactInfo?.[locale === 'ar' ? 'addressAr' : 'addressEn']) && (
+               {settings.contactInfo?.address?.[locale as 'ar' | 'en'] && (
                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
                    <Icons.MapPin className="size-4 mt-0.5 shrink-0" />
-                   <span className="leading-tight">{settings.contactInfo[locale === 'ar' ? 'addressAr' : 'addressEn']}</span>
+                   <span className="leading-tight">{settings.contactInfo.address[locale as 'ar' | 'en']}</span>
                  </li>
                )}
              </ul>

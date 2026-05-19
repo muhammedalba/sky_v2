@@ -48,7 +48,9 @@
     "title": "Contact Info",
     "desc": "Information displayed to customers.",
     "address": "Physical Address",
-    "phones": "Phone Numbers"
+    "phones": "Phone Numbers",
+    "workingDays": "Working Days",
+    "workingHours": "Working Hours"
   },
   "payments": {
     "title": "Payment Gateways",

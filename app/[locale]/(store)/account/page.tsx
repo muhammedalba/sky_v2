@@ -1,172 +1,410 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
 import { Icons } from '@/shared/ui/Icons';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { motion } from 'framer-motion';
-import { ScrollReveal } from '@/shared/ui/ScrollReveal';
 import { formatEmail } from '@/lib/utils';
+
+type ActiveTabType = 'overview' | 'profile' | 'addresses' | 'security';
 
 export default function AccountPage() {
    const t = useTranslations('profile');
    const locale = useLocale();
    const { user, logout } = useAuth();
+   const [activeTab, setActiveTab] = useState<ActiveTabType>('overview');
+   const [isSavingProfile, setIsSavingProfile] = useState(false);
+   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
+   // Mock data
    const mockOrders = [
       { id: '#SG-9842', date: '2024-05-01', total: 450, status: 'delivered' },
       { id: '#SG-9721', date: '2024-04-15', total: 1200, status: 'processing' },
    ];
 
    const stats = [
-      { label: t('stats.total_orders'), value: '12', icon: Icons.ShoppingCart, color: "bg-primary/10 text-primary" },
-      { label: t('stats.active_orders'), value: '1', icon: Icons.RefreshCw, color: "bg-info/10 text-info" },
-      { label: t('stats.saved_items'), value: '5', icon: Icons.Star, color: "bg-warning/10 text-warning" },
+      { label: t('stats.total_orders'), value: '12', icon: Icons.ShoppingCart, color: "bg-primary/10 text-primary border-primary/20" },
+      { label: t('stats.active_orders'), value: '1', icon: Icons.RefreshCw, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
+      { label: t('stats.saved_items'), value: '5', icon: Icons.Star || Icons.Home, color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
    ];
 
-   return ( 
-      <div className="min-h-screen pt-40 bg-background selection:bg-primary/30 pb-20">
-         {/* Profile Header */}
-         <section className="py-16 lg:py-24 bg-secondary/5 border-b border-border/50 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
-            <div className="max-w-7xl mx-auto px-4 relative z-10">
-               <div className="flex flex-col md:flex-row items-center gap-10">
-                  {/* Avatar */}
-                  <div className="relative group">
-                     <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-[2.5rem] bg-foreground flex items-center justify-center text-background text-5xl font-black shadow-2xl relative z-10">
-                        {user?.name?.charAt(0) || 'U'}
-                     </div>
-                     <div className="absolute inset-0 bg-primary rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
-                     <button className="absolute -bottom-2 -right-2 z-20 w-12 h-12 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-xl border-4 border-background hover:scale-110 transition-transform">
-                        <Icons.Edit className="w-5 h-5" />
-                     </button>
-                  </div>
+   const mockAddresses = [
+      {
+         id: 1,
+         name: user?.name || 'User Name',
+         type: locale === 'ar' ? 'المنزل (الافتراضي)' : 'Home (Default)',
+         details: 'King Fahd Road, Al Olaya District',
+         city: 'Riyadh, Saudi Arabia',
+         phone: '+966 50 123 4567',
+      },
+      {
+         id: 2,
+         name: user?.name || 'User Name',
+         type: locale === 'ar' ? 'العمل' : 'Office',
+         details: 'Tahlia Street, Al Sulaimaniyah District',
+         city: 'Riyadh, Saudi Arabia',
+         phone: '+966 50 765 4321',
+      }
+   ];
 
-                  {/* Welcome Text */}
-                  <div className="text-center md:text-start space-y-4">
-                     <ScrollReveal>
-                        <h1 className="text-4xl lg:text-6xl font-black text-foreground tracking-tight">
-                           {t('welcome', { name: user?.name || (locale === 'ar' ? 'ضيف' : 'Guest') })}
-                        </h1>
-                        <p className="text-lg text-muted-foreground font-medium flex items-center justify-center md:justify-start gap-2">
-                           <Icons.Mail className="w-5 h-5" />
+   // Handlers
+   const handleSaveProfile = (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSavingProfile(true);
+      setTimeout(() => setIsSavingProfile(false), 800);
+   };
+
+   const handleSavePassword = (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSavingPassword(true);
+      setTimeout(() => setIsSavingPassword(false), 800);
+   };
+
+   // Animation variants
+   const tabVariants = {
+      initial: { opacity: 0, y: 15 },
+      animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+      exit: { opacity: 0, y: -15, transition: { duration: 0.25 } }
+   };
+
+   return (
+      <div className="min-h-screen pt-36 pb-20 bg-background text-foreground transition-colors duration-200">
+         <div className="max-w-6xl mx-auto px-4">
+            
+            {/* Header summary panel */}
+            <div className="relative mb-10 overflow-hidden rounded-3xl border border-border/60 bg-card p-6 sm:p-8 shadow-sm backdrop-blur-md">
+               <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+               <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+               
+               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-start">
+                     {/* Avatar block */}
+                     <div className="relative group">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-3xl sm:text-4xl font-black shadow-inner">
+                           {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                        </div>
+                        <button className="absolute -bottom-1.5 -right-1.5 w-7 h-7 bg-primary text-primary-foreground rounded-lg flex items-center justify-center shadow-md border-2 border-card hover:scale-110 transition-transform">
+                           <Icons.Edit className="w-3.5 h-3.5" />
+                        </button>
+                     </div>
+                     
+                     {/* User basic info */}
+                     <div className="space-y-1">
+                        <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                           <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                              {user?.name || (locale === 'ar' ? 'ضيف' : 'Guest')}
+                           </h1>
+                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                              <Icons.Check className="w-3 h-3" />
+                              {locale === 'ar' ? 'حساب موثق' : 'Verified'}
+                           </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-1.5">
+                           <Icons.Mail className="w-4 h-4 shrink-0 text-muted-foreground/60" />
                            {user?.email ? formatEmail(user.email) : 'user@example.com'}
                         </p>
-                     </ScrollReveal>
+                     </div>
                   </div>
 
-                  {/* Quick Action */}
-                  <div className="md:mr-auto rtl:md:mr-0 rtl:md:ml-auto">
-                     <Button variant="outline" className="h-14 px-8 rounded-2xl border-border/50 font-black gap-3 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 transition-all" onClick={() => logout()}>
-                        <Icons.Logout className="w-5 h-5" />
+                  {/* Actions or secondary buttons */}
+                  <div className="flex items-center gap-3">
+                     <Link href={`/${locale}/account/notifications`}>
+                        <button className="h-10 px-4 rounded-xl border border-border bg-card text-foreground hover:bg-muted font-semibold text-sm transition-all flex items-center gap-2">
+                           <Icons.Bell className="w-4 h-4" />
+                           {locale === 'ar' ? 'الإشعارات' : 'Notifications'}
+                        </button>
+                     </Link>
+                     <Button variant="outline" className="h-10 px-4 rounded-xl border-border hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 font-semibold gap-2 text-sm transition-all" onClick={() => logout()}>
+                        <Icons.Logout className="w-4 h-4" />
                         {t('actions.logout')}
-                     </Button>
+                      </Button>
                   </div>
                </div>
             </div>
-         </section>
 
-         <div className="max-w-7xl mx-auto px-4 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            {/* Grid structure */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+               
+               {/* Left Navigation Sidebar */}
+               <aside className="lg:col-span-3 flex flex-col gap-1.5 bg-card text-card-foreground border border-border/60 rounded-2xl p-4 shadow-sm backdrop-blur-md">
+                  <p className="px-3 pt-1 pb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                     {locale === 'ar' ? 'القائمة' : 'Navigation'}
+                  </p>
 
-               {/* Main Content */}
-               <div className="lg:col-span-8 space-y-10">
+                  <button onClick={() => setActiveTab('overview')}
+                     className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-150 text-start ${
+                        activeTab === 'overview'
+                           ? 'bg-primary/10 text-primary border-l-4 border-primary'
+                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                     }`}>
+                     <Icons.Dashboard className="w-4.5 h-4.5 shrink-0" />
+                     <span className="flex-1 truncate">{locale === 'ar' ? 'لوحة التحكم' : 'Dashboard'}</span>
+                  </button>
 
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                     {stats.map((stat, i) => (
-                        <ScrollReveal key={i} delay={i * 100}>
-                           <Card className="p-6 md:p-8 border-border/50 rounded-4xl bg-card/50 backdrop-blur-xl flex flex-col items-center text-center space-y-3 hover:shadow-lg transition-shadow">
-                              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${stat.color}`}>
-                                 <stat.icon className="w-8 h-8" />
+                  <button onClick={() => setActiveTab('profile')}
+                     className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-150 text-start ${
+                        activeTab === 'profile'
+                           ? 'bg-primary/10 text-primary border-l-4 border-primary'
+                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                     }`}>
+                     <Icons.User className="w-4.5 h-4.5 shrink-0" />
+                     <span className="flex-1 truncate">{t('tabs.profile')}</span>
+                  </button>
+
+                  <button onClick={() => setActiveTab('addresses')}
+                     className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-150 text-start ${
+                        activeTab === 'addresses'
+                           ? 'bg-primary/10 text-primary border-l-4 border-primary'
+                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                     }`}>
+                     <Icons.Home className="w-4.5 h-4.5 shrink-0" />
+                     <span className="flex-1 truncate">{t('tabs.addresses')}</span>
+                  </button>
+
+                  <button onClick={() => setActiveTab('security')}
+                     className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-150 text-start ${
+                        activeTab === 'security'
+                           ? 'bg-primary/10 text-primary border-l-4 border-primary'
+                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                     }`}>
+                     <Icons.Shield className="w-4.5 h-4.5 shrink-0" />
+                     <span className="flex-1 truncate">{t('tabs.security')}</span>
+                  </button>
+               </aside>
+
+               {/* Right Content Panel */}
+               <main className="lg:col-span-9">
+                  <AnimatePresence mode="wait">
+                     
+                     {/* TAB 1: OVERVIEW */}
+                     {activeTab === 'overview' && (
+                        <motion.div key="overview" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="space-y-8">
+                           {/* Stats Cards */}
+                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                              {stats.map((stat, i) => (
+                                 <Card key={i} className="p-6 border-border/60 bg-card/65 backdrop-blur-md rounded-2xl flex flex-col justify-between hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+                                    <div className="flex items-center justify-between gap-3 mb-4">
+                                       <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center border ${stat.color}`}>
+                                          <stat.icon className="w-4.5 h-4.5" />
+                                       </div>
+                                    </div>
+                                    <p className="text-3xl font-black text-foreground">{stat.value}</p>
+                                 </Card>
+                              ))}
+                           </div>
+
+                           {/* Recent Orders section */}
+                           <Card className="p-6 border-border/60 bg-card shadow-sm rounded-2xl space-y-6">
+                              <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-border/40">
+                                 <div>
+                                    <h2 className="text-lg font-bold text-foreground">{t('sections.recent_orders')}</h2>
+                                    <p className="text-xs text-muted-foreground">{locale === 'ar' ? 'تتبع حالة طلباتك الأخيرة والسابقة' : 'Track your active and historical orders'}</p>
+                                 </div>
+                                 <Link href={`/${locale}/account/orders`}>
+                                    <Button variant="ghost" className="font-semibold text-primary hover:text-primary/90 text-sm gap-1">
+                                       {t('actions.view_all_orders')}
+                                       <Icons.ChevronRight className="w-4 h-4 rtl:rotate-180" />
+                                    </Button>
+                                 </Link>
                               </div>
-                              <div>
-                                 <p className="text-3xl font-black text-foreground">{stat.value}</p>
-                                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">{stat.label}</p>
+
+                              <div className="divide-y divide-border/40">
+                                 {mockOrders.map((order, i) => (
+                                    <div key={order.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                                       <div className="flex items-center gap-4">
+                                          <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground border border-border">
+                                             <Icons.Package className="w-5 h-5 text-muted-foreground/80" />
+                                          </div>
+                                          <div>
+                                             <h3 className="font-bold text-sm text-foreground">{order.id}</h3>
+                                             <p className="text-xs text-muted-foreground mt-0.5">{order.date}</p>
+                                          </div>
+                                       </div>
+                                       
+                                       <div className="flex items-center justify-between sm:justify-end gap-6 sm:text-end">
+                                          <div>
+                                             <p className="font-extrabold text-sm text-foreground">{order.total} SAR</p>
+                                             <p className="text-[10px] text-muted-foreground tracking-wider uppercase mt-0.5">{locale === 'ar' ? 'المجموع' : 'Total Price'}</p>
+                                          </div>
+                                          <div className={`px-2.5 py-1 rounded-lg font-semibold text-xs uppercase tracking-wide border ${
+                                             order.status === 'delivered'
+                                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                                : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+                                          }`}>
+                                             {order.status}
+                                          </div>
+                                          <Icons.ChevronRight className="w-5 h-5 text-muted-foreground/30 rtl:rotate-180 hidden sm:block" />
+                                       </div>
+                                    </div>
+                                 ))}
                               </div>
                            </Card>
-                        </ScrollReveal>
-                     ))}
-                  </div>
+                        </motion.div>
+                     )}
 
-                  {/* Recent Orders */}
-                  <section className="space-y-6">
-                     <div className="flex items-center justify-between px-2">
-                        <h2 className="text-2xl font-black text-foreground">{t('sections.recent_orders')}</h2>
-                        <Link href="/account/orders">
-                           <Button variant="ghost" className="font-black text-primary gap-2">
-                              {t('actions.view_all_orders')}
-                              <Icons.ChevronRight className="w-5 h-5 rtl:rotate-180" />
-                           </Button>
-                        </Link>
-                     </div>
+                     {/* TAB 2: PROFILE */}
+                     {activeTab === 'profile' && (
+                        <motion.div key="profile" variants={tabVariants} initial="initial" animate="animate" exit="exit">
+                           <Card className="p-6 border-border/60 bg-card shadow-sm rounded-2xl">
+                              <div className="pb-4 mb-6 border-b border-border/40">
+                                 <h2 className="text-lg font-bold text-foreground">{t('personalInfo')}</h2>
+                                 <p className="text-xs text-muted-foreground">{t('personalInfoDescription')}</p>
+                              </div>
 
-                     <div className="space-y-4">
-                        {mockOrders.map((order, i) => (
-                           <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                              <Card className="p-6 border-border/50 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-primary/50 transition-colors">
-                                 <div className="flex items-center gap-6">
-                                    <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-muted-foreground">
-                                       <Icons.Package className="w-7 h-7" />
+                              <form onSubmit={handleSaveProfile} className="space-y-6">
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    {/* Name Field */}
+                                    <div className="space-y-2">
+                                       <label className="text-xs font-semibold text-muted-foreground">{t('fields.name')}</label>
+                                       <input
+                                          type="text"
+                                          defaultValue={user?.name || ''}
+                                          required
+                                          className="w-full h-11 px-4 rounded-xl text-sm outline-none bg-muted/30 border border-border/80 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
+                                       />
                                     </div>
-                                    <div>
-                                       <h3 className="font-black text-lg">{order.id}</h3>
-                                       <p className="text-sm text-muted-foreground font-medium">{order.date}</p>
+
+                                    {/* Email Field */}
+                                    <div className="space-y-2">
+                                       <label className="text-xs font-semibold text-muted-foreground">{t('fields.email')}</label>
+                                       <input
+                                          type="email"
+                                          defaultValue={user?.email || ''}
+                                          required
+                                          className="w-full h-11 px-4 rounded-xl text-sm outline-none bg-muted/30 border border-border/80 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
+                                       />
+                                    </div>
+
+                                    {/* Phone Field */}
+                                    <div className="space-y-2 md:col-span-2">
+                                       <label className="text-xs font-semibold text-muted-foreground">{t('fields.phone')}</label>
+                                       <input
+                                          type="tel"
+                                          defaultValue="+966 50 123 4567"
+                                          className="w-full h-11 px-4 rounded-xl text-sm outline-none bg-muted/30 border border-border/80 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
+                                       />
                                     </div>
                                  </div>
 
-                                 <div className="flex items-center gap-10">
-                                    <div className="text-end">
-                                       <p className="text-lg font-black text-foreground">{order.total} SAR</p>
-                                       <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Total Price</p>
-                                    </div>
-                                    <div className={`px-4 py-2 rounded-full font-black text-xs uppercase tracking-widest ${order.status === 'delivered' ? 'bg-success/10 text-success' : 'bg-info/10 text-info'
-                                       }`}>
-                                       {order.status}
-                                    </div>
-                                    <Icons.ChevronRight className="w-6 h-6 text-muted-foreground/30 rtl:rotate-180" />
+                                 <div className="pt-3 flex justify-end">
+                                    <Button type="submit" disabled={isSavingProfile} className="h-11 px-6 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm transition-all flex items-center gap-2">
+                                       {isSavingProfile && <Icons.Spinner className="w-4 h-4 text-primary-foreground" />}
+                                       {t('buttons.saveChanges')}
+                                    </Button>
                                  </div>
-                              </Card>
-                           </motion.div>
-                        ))}
-                     </div>
-                  </section>
-               </div>
+                              </form>
+                           </Card>
+                        </motion.div>
+                     )}
 
-               {/* Sidebar */}
-               <div className="lg:col-span-4 space-y-8">
-                  <ScrollReveal animation="slide-up" delay={200}>
-                     <section className="space-y-6">
-                        <h2 className="text-2xl font-black text-foreground px-2">{t('sections.address_book')}</h2>
-                        <Card className="p-8 border-border/50 rounded-[2.5rem] bg-card/50 backdrop-blur-xl border-dashed border-2 flex flex-col items-center justify-center text-center py-12 group cursor-pointer hover:border-primary transition-colors">
-                           <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                              <Icons.Plus className="w-8 h-8" />
+                     {/* TAB 3: ADDRESSES */}
+                     {activeTab === 'addresses' && (
+                        <motion.div key="addresses" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="space-y-6">
+                           <div className="flex items-center justify-between gap-4 flex-wrap pb-3 border-b border-border/40">
+                              <div>
+                                 <h2 className="text-lg font-bold text-foreground">{t('sections.address_book')}</h2>
+                                 <p className="text-xs text-muted-foreground">{locale === 'ar' ? 'إدارة مواقع وعناوين التوصيل الخاصة بك' : 'Manage your primary e-commerce shipping addresses'}</p>
+                              </div>
+                              <Button className="h-9 px-4 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 text-xs gap-1.5">
+                                 <Icons.Plus className="w-4 h-4" />
+                                 {t('actions.add_address')}
+                              </Button>
                            </div>
-                           <h3 className="font-black text-lg">{t('actions.add_address')}</h3>
-                           <p className="text-sm text-muted-foreground font-medium mt-1">Set your primary delivery location</p>
-                        </Card>
-                     </section>
 
-                     {/* Account Settings */}
-                     <Card className="mt-10 p-4 border-border/50 rounded-[2.5rem] bg-secondary/20 overflow-hidden">
-                        <div className="space-y-1">
-                           {[
-                              { label: t('tabs.profile'), icon: Icons.User },
-                              { label: t('tabs.settings'), icon: Icons.Settings },
-                              { label: locale === 'ar' ? 'تغيير اللغة' : 'Change Language', icon: Icons.Languages },
-                           ].map((item, i) => (
-                              <button key={i} className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl hover:bg-background transition-all group">
-                                 <item.icon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                                 <span className="font-black text-foreground/80 group-hover:text-foreground">{item.label}</span>
-                                 <Icons.ChevronRight className="w-5 h-5 ml-auto rtl:mr-auto rtl:ml-0 text-muted-foreground/30 group-hover:text-primary rtl:rotate-180" />
-                              </button>
-                           ))}
-                        </div>
-                     </Card>
-                  </ScrollReveal>
-               </div>
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                              {mockAddresses.map((address) => (
+                                 <Card key={address.id} className="p-5 border-border/60 bg-card rounded-2xl shadow-sm hover:border-primary/30 transition-all flex flex-col justify-between">
+                                    <div className="space-y-3">
+                                       <div className="flex items-center justify-between gap-3">
+                                          <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                                             {address.type}
+                                          </span>
+                                          <div className="flex items-center gap-1">
+                                             <button className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all">
+                                                <Icons.Edit className="w-3.5 h-3.5" />
+                                             </button>
+                                             <button className="w-8 h-8 rounded-lg hover:bg-destructive/10 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all">
+                                                <Icons.Trash className="w-3.5 h-3.5" />
+                                             </button>
+                                          </div>
+                                       </div>
+
+                                       <div className="space-y-1">
+                                          <p className="text-sm font-bold text-foreground">{address.name}</p>
+                                          <p className="text-xs text-muted-foreground leading-relaxed">{address.details}</p>
+                                          <p className="text-xs text-muted-foreground">{address.city}</p>
+                                       </div>
+                                    </div>
+
+                                    <div className="pt-4 mt-4 border-t border-border/40 flex items-center gap-2 text-xs text-muted-foreground">
+                                       <Icons.Mail className="w-3.5 h-3.5 shrink-0" />
+                                       <span>{address.phone}</span>
+                                    </div>
+                                 </Card>
+                              ))}
+                           </div>
+                        </motion.div>
+                     )}
+
+                     {/* TAB 4: SECURITY */}
+                     {activeTab === 'security' && (
+                        <motion.div key="security" variants={tabVariants} initial="initial" animate="animate" exit="exit">
+                           <Card className="p-6 border-border/60 bg-card shadow-sm rounded-2xl">
+                              <div className="pb-4 mb-6 border-b border-border/40">
+                                 <h2 className="text-lg font-bold text-foreground">{t('changePassword')}</h2>
+                                 <p className="text-xs text-muted-foreground">{t('changePasswordDescription')}</p>
+                              </div>
+
+                              <form onSubmit={handleSavePassword} className="space-y-6">
+                                 <div className="space-y-4">
+                                    
+                                    {/* New Password Field */}
+                                    <div className="space-y-2">
+                                       <label className="text-xs font-semibold text-muted-foreground">{t('fields.newPassword')}</label>
+                                       <input
+                                          type="password"
+                                          required
+                                          className="w-full h-11 px-4 rounded-xl text-sm outline-none bg-muted/30 border border-border/80 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
+                                       />
+                                    </div>
+
+                                    {/* Confirm Password Field */}
+                                    <div className="space-y-2">
+                                       <label className="text-xs font-semibold text-muted-foreground">{t('fields.confirmPassword')}</label>
+                                       <input
+                                          type="password"
+                                          required
+                                          className="w-full h-11 px-4 rounded-xl text-sm outline-none bg-muted/30 border border-border/80 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
+                                       />
+                                    </div>
+                                 </div>
+
+                                 <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs leading-relaxed">
+                                    <p className="font-semibold mb-1 flex items-center gap-1.5">
+                                       <Icons.Shield className="w-4 h-4 shrink-0" />
+                                       {locale === 'ar' ? 'نصيحة أمان مهمة' : 'Security Tip'}
+                                    </p>
+                                    {t('passwordSecurityNote')}
+                                 </div>
+
+                                 <div className="pt-3 flex justify-end">
+                                    <Button type="submit" disabled={isSavingPassword} className="h-11 px-6 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm transition-all flex items-center gap-2">
+                                       {isSavingPassword && <Icons.Spinner className="w-4 h-4 text-primary-foreground" />}
+                                       {t('buttons.updatePassword')}
+                                    </Button>
+                                 </div>
+                              </form>
+                           </Card>
+                        </motion.div>
+                     )}
+
+                  </AnimatePresence>
+               </main>
 
             </div>
          </div>
