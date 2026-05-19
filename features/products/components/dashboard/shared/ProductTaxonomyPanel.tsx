@@ -1,11 +1,14 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import { LocalizedString } from '@/types';
-import { useTrans } from '@/shared/hooks/useTrans';
-import { SearchableSelect, SearchOption } from '@/shared/ui/form/SearchableSelect';
-import { SearchableMultiSelect } from '@/shared/ui/form/SearchableMultiSelect';
-import { Icons } from '@/shared/ui/Icons';
+import { useTranslations } from "next-intl";
+import { LocalizedString } from "@/types";
+import { useTrans } from "@/shared/hooks/useTrans";
+import {
+  SearchableSelect,
+  SearchOption,
+} from "@/shared/ui/form/SearchableSelect";
+import { SearchableMultiSelect } from "@/shared/ui/form/SearchableMultiSelect";
+import { Icons } from "@/shared/ui/Icons";
 
 interface ProductTaxonomyPanelProps {
   locale: string;
@@ -95,7 +98,7 @@ export function ProductTaxonomyPanel({
   onSubCategorySearch,
   onSubCategoryOpen,
 }: ProductTaxonomyPanelProps) {
-  const t = useTranslations('products.form');
+  const t = useTranslations("products.form");
   const getTrans = useTrans();
 
   return (
@@ -103,8 +106,8 @@ export function ProductTaxonomyPanel({
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
         <Icons.Categories className="w-5 h-5 text-muted-foreground" />
         <div>
-          <h3 className="font-bold text-sm">{t('taxonomy')}</h3>
-          <p className="text-xs text-muted-foreground">{t('taxonomyDesc')}</p>
+          <h3 className="font-bold text-sm">{t("taxonomy")}</h3>
+          <p className="text-xs text-muted-foreground">{t("taxonomyDesc")}</p>
         </div>
       </div>
 
@@ -113,11 +116,13 @@ export function ProductTaxonomyPanel({
         <SearchableSelect
           icon={Icons.Brands}
           iconColor="text-rose-500"
-          label={t('brand')}
-          value={watchedBrand ?? ''}
+          label={t("brand")}
+          value={watchedBrand ?? ""}
           isLoading={isBrandsFetching}
           options={(brandsData?.data as unknown as SearchOption[]) || []}
-          getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+          getDisplayValue={(opt: SearchOption) =>
+            getTrans(opt.name as LocalizedString)
+          }
           onSearch={onBrandSearch}
           onOpen={onBrandOpen}
           onSelect={onBrandChange}
@@ -129,8 +134,8 @@ export function ProductTaxonomyPanel({
         <SearchableSelect
           icon={Icons.Users}
           iconColor="text-teal-500"
-          label={t('supplier')}
-          value={watchedSupplier ?? ''}
+          label={t("supplier")}
+          value={watchedSupplier ?? ""}
           isLoading={isSuppliersFetching}
           options={(suppliersData?.data as unknown as SearchOption[]) || []}
           getDisplayValue={(opt: SearchOption) => String(opt.name)}
@@ -145,11 +150,13 @@ export function ProductTaxonomyPanel({
         <SearchableSelect
           icon={Icons.Categories}
           iconColor="text-amber-500"
-          label={t('mainCategory')}
-          value={watchedCategory || ''}
+          label={t("mainCategory")}
+          value={watchedCategory || ""}
           isLoading={isCategoriesFetching}
           options={(categoriesData?.data as unknown as SearchOption[]) || []}
-          getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+          getDisplayValue={(opt: SearchOption) =>
+            getTrans(opt.name as LocalizedString)
+          }
           onSearch={onCategorySearch}
           onOpen={onCategoryOpen}
           onSelect={onCategoryChange}
@@ -162,13 +169,17 @@ export function ProductTaxonomyPanel({
         <SearchableMultiSelect
           icon={Icons.SubCategories}
           iconColor="text-orange-500"
-          label={watchedCategory ? t('searchSubCategory') : t('selectCategoryFirst')}
+          label={
+            watchedCategory ? t("searchSubCategory") : t("selectCategoryFirst")
+          }
           disabled={!watchedCategory}
           error={tError(subCategoryError)}
           isLoading={isSubCategoriesFetching}
           options={(subCategoriesData?.data as unknown as SearchOption[]) || []}
           selectedOptions={selectedSubCategories}
-          getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
+          getDisplayValue={(opt: SearchOption) =>
+            getTrans(opt.name as LocalizedString)
+          }
           onSearch={onSubCategorySearch}
           onOpen={onSubCategoryOpen}
           onSelect={onSubCategorySelect}

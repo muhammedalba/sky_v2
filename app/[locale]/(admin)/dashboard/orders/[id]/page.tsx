@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,7 +15,7 @@ import { Badge } from '@/shared/ui/Badge';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/Table';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { formatCurrency, formatDateTime, getStatusColor, cn } from '@/lib/utils';
+import { formatCurrency, getStatusColor, cn, formatEmail, formatRelativeTime } from '@/lib/utils';
 import { Product } from '@/types';
 import { useTrans } from '@/shared/hooks/useTrans';
 
@@ -25,6 +25,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
   const tErrors = useTranslations('errors');
   const router = useRouter();
   const getTrans = useTrans();
+  const locale = useLocale();
 
   const { data: order, isLoading } = useOrder(id);
   const updateStatusMutation = useUpdateOrderStatus();
@@ -109,7 +110,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                   {order.status || 'Unknown'}
                </Badge>
              </div>
-             <p className="text-muted-foreground font-medium mt-1"> Placed on {formatDateTime(order.createdAt)}</p>
+             <p className="text-muted-foreground font-medium mt-1"> Placed {formatRelativeTime(order.createdAt, locale)}</p>
            </div>
         </div>
         <div className="flex items-center gap-3">
@@ -215,7 +216,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                    </div>
                    <div>
                       <p className="font-black text-foreground">{order.user?.name || 'Guest User'}</p>
-                      <p className="text-xs text-muted-foreground font-medium">{order.user?.email || 'No email provided'}</p>
+                      <p className="text-xs text-muted-foreground font-medium">{order.user?.email ? formatEmail(order.user.email) : 'No email provided'}</p>
                    </div>
                 </div>
                 <div className="space-y-4">

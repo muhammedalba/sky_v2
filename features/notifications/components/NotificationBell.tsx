@@ -5,8 +5,8 @@ import { useNotificationStore } from "@/store/notification-store";
 import { Icons } from "@/shared/ui/Icons";
 import { Button } from "@/shared/ui/Button";
 import { Dropdown } from "@/shared/ui/CustomDropdown";
-import { useTranslations } from "next-intl";
-import { formatDate } from "@/lib/utils";
+import { useLocale, useTranslations } from "next-intl";
+import { formatRelativeTime } from "@/lib/utils";
 import { useMarkAsRead } from "@/features/notifications/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/navigation";
@@ -20,7 +20,7 @@ const NotificationBell = () => {
   const unreadCount = useNotificationStore((state) => state.unreadCount);
   const notifications = useNotificationStore((state) => state.notifications);
   const { data: user } = useMe();
-
+const locale = useLocale();
   const { mutate: markAsRead } = useMarkAsRead();
 
   // Admins go to admin dashboard, regular users go to their own notifications page
@@ -116,7 +116,7 @@ const NotificationBell = () => {
                   {notification.message}
                 </p>
                 <span className="text-[10px] text-muted-foreground mt-2">
-                  {formatDate(notification.createdAt)}
+                  {formatRelativeTime(notification.createdAt ,locale)}
                 </span>
               </button>
             ))}

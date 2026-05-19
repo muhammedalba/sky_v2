@@ -14,19 +14,23 @@
     "unread": "غير مقروء",
     "read": "مقروء",
     "broadcast": "إشعارات عامة",
-    "direct": "إشعارات شخصية"
+    "direct": "إشعارات شخصية",
+    "role": "إشعارات الأدوار"
   },
   "filterBy": "تصفية حسب:",
   "searchPlaceholder": "ابحث في الإشعارات...",
   "admin": {
     "title": "سجل الإشعارات الإدارية",
     "sendTitle": "إرسال إشعار",
-    "sendDesc": "إرسال إشعارات مباشرة لمستخدم أو إشعار عام لجميع المستخدمين.",
+    "sendDesc": "إرسال إشعارات مباشرة لمستخدم، فئة معينة، أو إشعار عام لجميع المستخدمين.",
     "type": "نوع الإشعار",
     "typeDirect": "مباشر (مستخدم محدد)",
     "typeBroadcast": "عام (جميع المستخدمين)",
+    "typeRole": "صلاحية محددة (Role)",
     "selectUser": "اختر المستخدم",
     "selectUserPlaceholder": "ابحث بالاسم أو البريد...",
+    "selectRole": "اختر الدور المستهدف",
+    "selectRolePlaceholder": "اختر دوراً...",
     "action": "نوع الإجراء (Action)",
     "actionPlaceholder": "مثل: ADMIN_ALERT, SYSTEM_UPDATE",
     "message": "نص الإشعار",
@@ -41,6 +45,7 @@
     "message": "الرسالة",
     "action": "الإجراء",
     "recipient": "المستلم",
+    "targetRole": "الدور المستهدف",
     "status": "الحالة",
     "date": "التاريخ",
     "actions": "إجراءات"

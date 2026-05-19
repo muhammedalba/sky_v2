@@ -13,7 +13,7 @@ import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import { useToast } from '@/shared/hooks/useToast';
-import { cn, formatDate, formatDateTime, formatRelativeTime, getRoleBadgeVariant } from '@/lib/utils';
+import { cn, formatDate, formatRelativeTime, getRoleBadgeVariant } from '@/lib/utils';
 // import { env } from '@/lib/env'; // يمكن إزالتها إذا لم تكن مستخدمة
 import { User } from '@/types';
 import { useRouter } from 'next/navigation';
@@ -201,17 +201,12 @@ export default function UsersPage() {
                 </span>
               )}
               <span className={cn(
-                "text-sm md:font-semibold ",
-                isOnline ? "text-success/70" : "text-muted-foreground/80"
+                "text-xs md:font-semibold ",
+                isOnline ? "text-success/80" : "text-muted-foreground/80"
               )}>
                 {user.lastLogin ? formatRelativeTime(user.lastLogin, locale) : '-'}
               </span>
             </div>
-            {!isOnline && user.lastLogin && (
-              <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
-                {formatDateTime(user.lastLogin, locale)}
-              </span>
-            )}
             <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
               {t('fields.provider')}: {user.provider}
             </span>

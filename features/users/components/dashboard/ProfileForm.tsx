@@ -21,7 +21,7 @@ import {
 } from '@/features/users/user.schema';
 import { useToastStore } from '@/store/toast-store';
 import { User } from '@/types';
-import { cn, formatDateTime, formatRelativeTime } from '@/lib/utils';
+import { cn, formatRelativeTime } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 
@@ -261,7 +261,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     </div>
                     {!isOnline && user.lastLogin && (
                       <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
-                        {formatDateTime(user.lastLogin, locale)}
+                        {formatRelativeTime(user.lastLogin, locale)}
                       </span>
                     )}
                   </div>

@@ -8,6 +8,7 @@ import { Icons } from '@/shared/ui/Icons';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { motion } from 'framer-motion';
 import { ScrollReveal } from '@/shared/ui/ScrollReveal';
+import { formatEmail } from '@/lib/utils';
 
 export default function AccountPage() {
    const t = useTranslations('profile');
@@ -51,7 +52,7 @@ export default function AccountPage() {
                         </h1>
                         <p className="text-lg text-muted-foreground font-medium flex items-center justify-center md:justify-start gap-2">
                            <Icons.Mail className="w-5 h-5" />
-                           {user?.email || 'user@example.com'}
+                           {user?.email ? formatEmail(user.email) : 'user@example.com'}
                         </p>
                      </ScrollReveal>
                   </div>

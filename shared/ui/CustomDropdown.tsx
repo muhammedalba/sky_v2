@@ -7,12 +7,11 @@ import { Link } from '@/navigation';
 interface DropdownProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
-  align?: 'left' | 'right';
   className?: string;
   width?: string;
 }
 
-export function Dropdown({ trigger, children, align = 'right', className, width = 'w-56' }: DropdownProps) {
+export function Dropdown({ trigger, children, className, width = 'w-56' }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,7 +35,7 @@ export function Dropdown({ trigger, children, align = 'right', className, width 
         <div 
           className={cn(
             "absolute top-full mt-2 bg-popover border border-border rounded-xl shadow-lg shadow-black/5 p-1 z-50 animate-in fade-in zoom-in-95 duration-200", 
-            align === 'right' ? 'right-0' : 'left-0',
+            'inset-e-0',
             width,
             className
           )}

@@ -3,12 +3,17 @@ import { env } from "@/lib/env";
 
 
 
-export type NotificationType = "DIRECT" | "BROADCAST";
+export type NotificationType = "DIRECT" | "BROADCAST" | "ROLE";
 
 export interface NotificationRecipient {
   _id: string;
   name?: string;
   email?: string;
+}
+
+export interface NotificationRole {
+  _id: string;
+  name: string;
 }
 
 export interface Notification {
@@ -18,6 +23,7 @@ export interface Notification {
   message: string;
   payload?: unknown;
   recipient?: string | NotificationRecipient | null;
+  targetRole?: string | NotificationRole | null;
   isRead: boolean;
   readAt?: string | null;
   createdAt: string;
@@ -33,8 +39,9 @@ export interface GetNotificationsResponse {
 }
 
 export interface AdminSendNotificationDto {
-  targetType: "direct" | "broadcast";
+  targetType: "direct" | "broadcast" | "role";
   userId?: string; 
+  roleId?: string;
   action?: string;
   message: string;
   payload?: unknown;

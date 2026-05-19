@@ -3,6 +3,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { env } from "@/lib/env";
 import { authApi } from "@/features/auth/api";
 import { queryClient } from "@/lib/api/query-client";
+import { useMe } from "@/features/auth/hooks/useAuth";
 
 /**
  * Represents the structured payload received from the Server-Sent Events (SSE) stream.
@@ -33,11 +34,65 @@ interface NotificationData {
  * // Connection is automatically managed on mount/unmount.
  * ```
  */
+/**
+ * Synthesizes and plays a premium, two-tone chime sound for real-time notification alerts.
+ * Utilizes the Web Audio API to generate the sound dynamically without relying on external assets.
+ */
+const playNotificationSound = () => {
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as Window & { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    const ctx = new AudioContextClass();
+    const now = ctx.currentTime;
+
+    // Primary Chime Tone (sine wave starting at A5 and ramping up to C6)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(880, now);
+    osc1.frequency.exponentialRampToValueAtTime(1046.5, now + 0.08);
+
+    gain1.gain.setValueAtTime(0, now);
+    gain1.gain.linearRampToValueAtTime(0.15, now + 0.05);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+
+    // Harmonic Overchime (sine wave at E6 to add warmth and premium resonance)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "sine";
+    osc2.frequency.setValueAtTime(1318.51, now);
+
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.linearRampToValueAtTime(0.07, now + 0.05);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+
+    osc1.stop(now + 0.6);
+    osc2.stop(now + 0.4);
+  } catch (error) {
+    console.warn("Notification sound playback prevented or unsupported:", error);
+  }
+};
+
 export const useServerNotifications = () => {
   const toast = useToast();
   const toastRef = useRef(toast);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { data: user } = useMe();
+  const isAuthenticated = !!user;
 
   // Keep toastRef updated to prevent stale closures without re-triggering useEffect
   useEffect(() => {
@@ -45,6 +100,8 @@ export const useServerNotifications = () => {
   });
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     let isMounted = true;
     let retryCount = 0;
     const maxRetries = 5;
@@ -125,17 +182,7 @@ export const useServerNotifications = () => {
               }
 
               // Play notification sound
-              try {
-                const beep = new Audio(
-                  "data:audio/wav;base64,UklGRl4AAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YToAAACQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQ",
-                );
-                beep.volume = 0.5;
-                beep
-                  .play()
-                  .catch(() => console.warn("Sound play prevented by browser"));
-              } catch {
-                // Ignore audio play errors
-              }
+              playNotificationSound();
 
               // 1. Update Zustand store for instant bell popover update
               import("@/store/notification-store").then(
@@ -145,6 +192,8 @@ export const useServerNotifications = () => {
                     type:
                       data.action === "ADMIN_BROADCAST"
                         ? "BROADCAST"
+                        : data.action === "ADMIN_ROLE_ALERT"
+                        ? "ROLE"
                         : "DIRECT",
                     action: data.action || "INFO",
                     message: data.message,
@@ -191,7 +240,7 @@ export const useServerNotifications = () => {
         eventSourceRef.current = null;
       }
     };
-  }, []); // Empty dependency array ensures EventSource connects exactly once on mount
+  }, [isAuthenticated]); // Reconnect when authentication status changes
 
   return {
     close: () => {

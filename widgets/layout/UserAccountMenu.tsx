@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from '
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icons } from '@/shared/ui/Icons';
-import { cn, truncate } from '@/lib/utils';
+import { cn, formatEmail, truncate } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import LogoutButton from './topbar/LogoutButton';
 import { useMe, useLogout } from '@/features/auth/hooks/useAuth';
@@ -121,8 +121,8 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                         <>
                             <div className="p-3 border-b border-border/30 mb-1 bg-muted/50 ">
                                 <p className="text-sm font-bold truncate title-gradient">{user?.name}</p>
-                                <p className="text-[11px] text-muted-foreground truncate">
-                                    {user?.email}
+                                <p className="text-[11px] text-muted-foreground truncate ">
+                                    {formatEmail(user?.email || "")}
                                 </p>
                             </div>
                             <Link

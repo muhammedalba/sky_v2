@@ -14,19 +14,23 @@
     "unread": "Unread",
     "read": "Read",
     "broadcast": "Broadcast",
-    "direct": "Direct"
+    "direct": "Direct",
+    "role": "Role Notifications"
   },
   "filterBy": "Filter by:",
   "searchPlaceholder": "Search notifications...",
   "admin": {
     "title": "Admin Notification History",
     "sendTitle": "Send Notification",
-    "sendDesc": "Send direct notifications to a specific user or a broadcast to all users.",
+    "sendDesc": "Send direct notifications to a specific user, a role group, or a broadcast to all users.",
     "type": "Notification Type",
     "typeDirect": "Direct (Specific User)",
     "typeBroadcast": "Broadcast (All Users)",
+    "typeRole": "Specific Role Group",
     "selectUser": "Select User",
     "selectUserPlaceholder": "Search by name or email...",
+    "selectRole": "Select Target Role",
+    "selectRolePlaceholder": "Select a role...",
     "action": "Action Type",
     "actionPlaceholder": "e.g., ADMIN_ALERT, SYSTEM_UPDATE",
     "message": "Notification Message",
@@ -41,6 +45,7 @@
     "message": "Message",
     "action": "Action",
     "recipient": "Recipient",
+    "targetRole": "Target Role",
     "status": "Status",
     "date": "Date",
     "actions": "Actions"

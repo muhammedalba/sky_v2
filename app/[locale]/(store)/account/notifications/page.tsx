@@ -10,7 +10,7 @@ import { formatDate } from '@/lib/utils';
 import { Notification } from '@/features/notifications/api';
 import { cn } from '@/lib/utils';
 
-type TabType = 'all' | 'unread' | 'read' | 'broadcast' | 'direct';
+type TabType = 'all' | 'unread' | 'read' | 'broadcast' | 'direct' | 'role';
 
 export default function UserNotificationsPage() {
   const t = useTranslations('notifications');
@@ -50,6 +50,7 @@ export default function UserNotificationsPage() {
     if (activeTab === 'read') return n.isRead;
     if (activeTab === 'broadcast') return n.type === 'BROADCAST';
     if (activeTab === 'direct') return n.type === 'DIRECT';
+    if (activeTab === 'role') return n.type === 'ROLE';
     return true;
   });
 
@@ -60,6 +61,7 @@ export default function UserNotificationsPage() {
     read: notifications.filter(n => n.isRead).length,
     broadcast: notifications.filter(n => n.type === 'BROADCAST').length,
     direct: notifications.filter(n => n.type === 'DIRECT').length,
+    role: notifications.filter(n => n.type === 'ROLE').length,
   };
 
   // Helper for dynamic notification styling & icons
@@ -94,6 +96,15 @@ export default function UserNotificationsPage() {
         badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
       };
     }
+    if (type === 'ROLE') {
+      return {
+        icon: Icons.Shield,
+        bg: 'bg-indigo-500/10 dark:bg-indigo-500/20',
+        text: 'text-indigo-600 dark:text-indigo-400',
+        border: 'border-indigo-500/30',
+        badgeBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+      };
+    }
     if (type === 'BROADCAST' || action.includes('SYSTEM') || action.includes('ANNOUNCE')) {
       return {
         icon: Icons.AiSpark,
@@ -118,6 +129,7 @@ export default function UserNotificationsPage() {
     { key: 'read', label: t('tabs.read') },
     { key: 'broadcast', label: t('tabs.broadcast') },
     { key: 'direct', label: t('tabs.direct') },
+    { key: 'role', label: t('tabs.role') },
   ];
 
   return (
@@ -302,8 +314,12 @@ export default function UserNotificationsPage() {
 
                       {/* Mobile action header badges */}
                       <div className="flex items-center gap-2 sm:hidden">
-                        <Badge variant={notification.type === 'BROADCAST' ? 'default' : 'outline'} className="text-xs py-1 px-2.5 rounded-xl font-bold shadow-sm">
-                          {notification.type === 'BROADCAST' ? t('admin.typeBroadcast') : t('admin.typeDirect')}
+                        <Badge variant={notification.type === 'BROADCAST' ? 'default' : notification.type === 'ROLE' ? 'secondary' : 'outline'} className="text-xs py-1 px-2.5 rounded-xl font-bold shadow-sm">
+                          {notification.type === 'BROADCAST' 
+                            ? t('admin.typeBroadcast') 
+                            : notification.type === 'ROLE' 
+                            ? t('admin.typeRole') 
+                            : t('admin.typeDirect')}
                         </Badge>
                         {notification.action && (
                           <span className={cn("font-mono text-xs px-2.5 py-1 rounded-xl font-bold border", meta.badgeBg, meta.border)}>
@@ -316,8 +332,12 @@ export default function UserNotificationsPage() {
                     {/* Content */}
                     <div className="flex-1 min-w-0 space-y-2.5 pt-1 sm:pt-0">
                       <div className="hidden sm:flex items-center gap-2 flex-wrap">
-                        <Badge variant={notification.type === 'BROADCAST' ? 'default' : 'outline'} className="text-xs py-1 px-3 rounded-xl font-bold shadow-sm">
-                          {notification.type === 'BROADCAST' ? t('admin.typeBroadcast') : t('admin.typeDirect')}
+                        <Badge variant={notification.type === 'BROADCAST' ? 'default' : notification.type === 'ROLE' ? 'secondary' : 'outline'} className="text-xs py-1 px-3 rounded-xl font-bold shadow-sm">
+                          {notification.type === 'BROADCAST' 
+                            ? t('admin.typeBroadcast') 
+                            : notification.type === 'ROLE' 
+                            ? t('admin.typeRole') 
+                            : t('admin.typeDirect')}
                         </Badge>
                         {notification.action && (
                           <span className={cn("font-mono text-xs px-3 py-1 rounded-xl font-bold border shadow-sm", meta.badgeBg, meta.border)}>

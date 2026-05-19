@@ -26,8 +26,10 @@ export default function LoginForm({ locale }: { locale: string }) {
     // useLogin already normalizes the response to LoginResponseData
     const userData: LoginResponseData = await loginMutation.mutateAsync(data);
     toast.success(t('loginSuccess'));
+      console.log('userData', userData);
     // Determine redirect based on server-provided role/permissions (no localStorage)
     const canAccessDashboard = checkUserPermission(userData, 'access_dashboard');
+    console.log('canAccessDashboard', canAccessDashboard);
     if (canAccessDashboard) {
       router.push(`/${locale}/dashboard`);
     } else {

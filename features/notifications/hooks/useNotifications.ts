@@ -11,6 +11,14 @@ export const NOTIFICATION_KEYS = {
     [...NOTIFICATION_KEYS.lists(), { filters }] as const,
 };
 
+/**
+ * Custom React hook to retrieve a paginated list of notifications for the authenticated user.
+ * Seeds the Zustand notification store on retrieval of the first page to sync unread counts.
+ *
+ * @param page - The page number to fetch (defaults to 1).
+ * @param limit - The maximum number of notifications per page (defaults to 10).
+ * @returns The query result object from TanStack Query containing the data, status, and loading state.
+ */
 export function useGetNotifications(page: number = 1, limit: number = 10) {
   const setNotifications = useNotificationStore(
     (state) => state.setNotifications,
@@ -35,6 +43,12 @@ export function useGetNotifications(page: number = 1, limit: number = 10) {
   });
 }
 
+/**
+ * Custom React hook to mutate and mark a specific notification as read.
+ * Optimistically updates the Zustand notification store and invalidates relevant queries.
+ *
+ * @returns The mutation object from TanStack Query for marking notifications as read.
+ */
 export function useMarkAsRead() {
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -54,6 +68,12 @@ export function useMarkAsRead() {
   });
 }
 
+/**
+ * Custom React hook to delete a specific notification for the current user.
+ * Optimistically removes the notification from the Zustand store and invalidates lists.
+ *
+ * @returns The mutation object from TanStack Query for deleting notifications.
+ */
 export function useDeleteNotification() {
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -76,6 +96,14 @@ export function useDeleteNotification() {
   });
 }
 
+/**
+ * Custom React hook to retrieve a paginated list of all system notifications for administrators.
+ * Requires administrator permissions.
+ *
+ * @param page - The page number to fetch (defaults to 1).
+ * @param limit - The maximum number of notifications per page (defaults to 10).
+ * @returns The query result object from TanStack Query containing all notifications.
+ */
 export function useGetAdminNotifications(page: number = 1, limit: number = 10) {
   return useQuery({
     queryKey: NOTIFICATION_KEYS.list(`admin_page=${page}&limit=${limit}`),
@@ -87,6 +115,12 @@ export function useGetAdminNotifications(page: number = 1, limit: number = 10) {
   });
 }
 
+/**
+ * Custom React hook for administrators to send a new notification (direct or broadcast).
+ * Automatically invalidates active lists to reflect the newly sent notification.
+ *
+ * @returns The mutation object from TanStack Query for sending admin notifications.
+ */
 export function useAdminSendNotification() {
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -105,6 +139,11 @@ export function useAdminSendNotification() {
   });
 }
 
+/**
+ * Custom React hook for administrators to delete a notification globally across the entire system.
+ *
+ * @returns The mutation object from TanStack Query for administrative deletion.
+ */
 export function useAdminDeleteNotification() {
   const queryClient = useQueryClient();
   const toast = useToast();

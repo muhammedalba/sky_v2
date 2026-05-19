@@ -1,137 +1,198 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import { useGetAdminNotifications, useAdminDeleteNotification } from '@/features/notifications/hooks/useNotifications';
-import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Icons } from '@/shared/ui/Icons';
-import { Badge } from '@/shared/ui/Badge';
-import { Button } from '@/shared/ui/Button';
-import { Tooltip } from '@/shared/ui/Tooltip';
-import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
-import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
-import { formatDate } from '@/lib/utils';
-import { Notification } from '@/features/notifications/api';
-import { useMemo, useCallback } from 'react';
-import ConfirmDialog from '@/shared/ui/ConfirmDialog';
-import { Can } from '@/components/auth/Can';
-import { Permissions } from '@/features/roles/types';
-import { useRouter } from 'next/navigation';
-
+import { useLocale, useTranslations } from "next-intl";
+import {
+  useGetAdminNotifications,
+  useAdminDeleteNotification,
+} from "@/features/notifications/hooks/useNotifications";
+import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
+import { Icons } from "@/shared/ui/Icons";
+import { Badge } from "@/shared/ui/Badge";
+import { Button } from "@/shared/ui/Button";
+import { Tooltip } from "@/shared/ui/Tooltip";
+import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
+import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
+import { formatEmail, formatRelativeTime } from "@/lib/utils";
+import {
+  Notification,
+  NotificationRecipient,
+} from "@/features/notifications/api";
+import { useMemo, useCallback } from "react";
+import ConfirmDialog from "@/shared/ui/ConfirmDialog";
+import { Can } from "@/components/auth/Can";
+import { Permissions } from "@/features/roles/types";
+import { useRouter } from "next/navigation";
 
 export default function AdminNotificationsPage() {
-  const t = useTranslations('notifications');
-  const tButtons = useTranslations('common.buttons');
-  const tMessages = useTranslations('common.messages');
+  const t = useTranslations("notifications");
+  const tButtons = useTranslations("common.buttons");
+  const tMessages = useTranslations("common.messages");
+  const tUsers = useTranslations("users");
   const router = useRouter();
-  
+  const locale = useLocale();
+
   // Use the admin-specific endpoint that returns ALL system notifications (not just current user's)
   const { data: response, isLoading } = useGetAdminNotifications(1, 100);
   const deleteMutation = useAdminDeleteNotification();
 
-  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage } = useConfirmDialog();
+  const {
+    openDialog,
+    closeDialog,
+    handleConfirm,
+    isOpen: isConfirmOpen,
+    isLoading: isConfirmLoading,
+    title: confirmTitle,
+    message: confirmMessage,
+  } = useConfirmDialog();
 
-  const handleDelete = useCallback((id: string) => {
-    openDialog({
-      title: t('admin.globalDelete'),
-      message: t('admin.globalDeleteConfirm'),
-      onConfirm: async () => {
-        await deleteMutation.mutateAsync(id);
+  const handleDelete = useCallback(
+    (id: string) => {
+      openDialog({
+        title: t("admin.globalDelete"),
+        message: t("admin.globalDeleteConfirm"),
+        onConfirm: async () => {
+          await deleteMutation.mutateAsync(id);
+        },
+      });
+    },
+    [openDialog, deleteMutation, t],
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        header: t("columns.type"),
+        className: "pl-6",
+        render: (item: Notification) => {
+          let variant: "default" | "outline" | "secondary" = "outline";
+          let label = t("admin.typeDirect");
+          if (item.type === "BROADCAST") {
+            variant = "default";
+            label = t("admin.typeBroadcast");
+          } else if (item.type === "ROLE") {
+            variant = "secondary";
+            label = t("admin.typeRole");
+          }
+          return <Badge variant={variant}>{label}</Badge>;
+        },
       },
-    });
-  }, [openDialog, deleteMutation, t]);
-
-  const columns = useMemo(() => [
-    {
-      header: t('columns.type'),
-      className: "pl-6",
-      render: (item: Notification) => (
-        <Badge variant={item.type === 'BROADCAST' ? 'default' : 'outline'}>
-          {item.type === 'BROADCAST' ? t('admin.typeBroadcast') : t('admin.typeDirect')}
-        </Badge>
-      )
-    },
-    {
-      header: t('columns.action'),
-      render: (item: Notification) => (
-        <span className="font-mono text-xs bg-muted px-2 py-1 rounded-md">
-          {item.action}
-        </span>
-      )
-    },
-    {
-      header: t('columns.message'),
-      render: (item: Notification) => (
-        <span className="text-sm font-medium line-clamp-2" title={item.message}>
-          {item.message}
-        </span>
-      )
-    },
-    {
-      header: t('columns.recipient'),
-      render: (item: Notification) => {
-        if (item.type === 'BROADCAST') {
-          return <span className="text-sm text-muted-foreground">—</span>;
-        }
-        if (!item.recipient) {
-          return <span className="text-sm text-muted-foreground">N/A</span>;
-        }
-        if (typeof item.recipient === 'object') {
-          return (
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">
-                {item.recipient.name || item.recipient.email || item.recipient._id}
+      {
+        header: t("columns.action"),
+        render: (item: Notification) => (
+          <span className="font-mono text-xs bg-muted px-2 py-1 rounded-md">
+            {item.action}
+          </span>
+        ),
+      },
+      {
+        header: t("columns.message"),
+        render: (item: Notification) => (
+          <span
+            className="text-sm font-medium line-clamp-2"
+            title={item.message}
+          >
+            {item.message}
+          </span>
+        ),
+      },
+      {
+        header: t("columns.recipient"),
+        render: (item: Notification) => {
+          if (item.type === "BROADCAST") {
+            return <span className="text-sm text-muted-foreground">—</span>;
+          }
+          if (item.type === "ROLE") {
+            if (!item.targetRole) {
+              return <span className="text-sm text-muted-foreground">N/A</span>;
+            }
+            if (typeof item.targetRole === "object") {
+              const roleName = item.targetRole.name;
+              return (
+                <Badge variant="outline">
+                  {tUsers.has(`roles.${roleName.toLowerCase()}`)
+                    ? tUsers(`roles.${roleName.toLowerCase()}`)
+                    : roleName}
+                </Badge>
+              );
+            }
+            return (
+              <span className="text-sm text-muted-foreground">
+                {String(item.targetRole)}
               </span>
-              {item.recipient.name && item.recipient.email && (
-                <span className="text-xs text-muted-foreground">
-                  {item.recipient.email}
+            );
+          }
+          if (!item.recipient) {
+            return <span className="text-sm text-muted-foreground">N/A</span>;
+          }
+          if (typeof item.recipient === "object") {
+            const r = item.recipient as NotificationRecipient & {
+              slug?: string;
+            };
+            const displayEmail = formatEmail(r.email) || r._id;
+            return (
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">
+                  {r.name || r.slug || t("admin.unknownUser")}
                 </span>
-              )}
-            </div>
+                {displayEmail && (
+                  <span className="text-xs text-muted-foreground">
+                    {displayEmail}
+                  </span>
+                )}
+              </div>
+            );
+          }
+          return (
+            <span className="text-sm text-muted-foreground">
+              {String(item.recipient)}
+            </span>
           );
-        }
-        return <span className="text-sm text-muted-foreground">{String(item.recipient)}</span>;
-      }
-    },
-    {
-      header: t('columns.date'),
-      render: (item: Notification) => (
-        <span className="text-xs text-muted-foreground">
-          {formatDate(item.createdAt)}
-        </span>
-      )
-    },
-    {
-      header: t('columns.actions'),
-      className: "text-right pr-6",
-      render: (item: Notification) => (
-        <div className="flex items-center justify-end gap-2">
-          <Can permission={Permissions.UPDATE_SETTINGS}>
-            <Tooltip content={tButtons('delete')}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-xl hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => handleDelete(item._id)}
-              >
-                <Icons.Trash className="h-4 w-4 text-destructive" />
-              </Button>
-            </Tooltip>
-          </Can>
-        </div>
-      )
-    }
-  ], [handleDelete, t, tButtons]);
+        },
+      },
+      {
+        header: t("columns.date"),
+        render: (item: Notification) => (
+          <span className="text-xs text-muted-foreground">
+            {formatRelativeTime(item.createdAt, locale)}
+          </span>
+        ),
+      },
+      {
+        header: t("columns.actions"),
+        className: "text-right pr-6",
+        render: (item: Notification) => (
+          <div className="flex items-center justify-end gap-2">
+            <Can permission={Permissions.UPDATE_SETTINGS}>
+              <Tooltip content={tButtons("delete")}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => handleDelete(item._id)}
+                >
+                  <Icons.Trash className="h-4 w-4 text-destructive" />
+                </Button>
+              </Tooltip>
+            </Can>
+          </div>
+        ),
+      },
+    ],
+    [handleDelete, t, tButtons, tUsers, locale],
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
-        title={t('admin.title')}
-        subtitle={t('admin.list')}
-        totalResults={tMessages('showingResults', { count: response?.data.length || 0 })}
+        title={t("admin.title")}
+        subtitle={t("admin.list")}
+        totalResults={tMessages("showingResults", {
+          count: response?.data.length || 0,
+        })}
         action={{
-          label: t('admin.sendTitle'),
+          label: t("admin.sendTitle"),
           icon: <Icons.Send className="w-4 h-4" />,
-          onClick: () => router.push('/dashboard/notifications/send'),
+          onClick: () => router.push("/dashboard/notifications/send"),
           permission: Permissions.UPDATE_SETTINGS,
         }}
       />
@@ -141,8 +202,8 @@ export default function AdminNotificationsPage() {
         isLoading={isLoading}
         columns={columns}
         emptyState={{
-          title: t('empty'),
-          description: t('emptyDesc'),
+          title: t("empty"),
+          description: t("emptyDesc"),
           icon: <Icons.Bell className="h-10 w-10 text-muted-foreground/40" />,
         }}
       />
@@ -153,8 +214,8 @@ export default function AdminNotificationsPage() {
         onConfirm={handleConfirm}
         title={confirmTitle}
         message={confirmMessage}
-        confirmText={tButtons('delete')}
-        cancelText={tButtons('cancel')}
+        confirmText={tButtons("delete")}
+        cancelText={tButtons("cancel")}
         isLoading={isConfirmLoading}
       />
     </div>

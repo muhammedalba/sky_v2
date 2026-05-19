@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { useForm, Controller, useWatch } from 'react-hook-form';
@@ -9,26 +10,38 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Select } from '@/shared/ui/Select';
+import { SearchableSelect, SearchOption } from '@/shared/ui/form/SearchableSelect';
 import { Icons } from '@/shared/ui/Icons';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
 import { useAdminSendNotification } from '@/features/notifications/hooks/useNotifications';
 import { useUsers } from '@/features/users/hooks/useUsers';
+import { useRoles } from '@/features/roles/hooks/useRoles';
+import { useDebounce } from '@/shared/hooks/use-debounce';
 import { AdminSendNotificationDto } from '@/features/notifications/api';
 import { useRouter } from 'next/navigation';
+import { formatEmail } from '@/lib/utils';
 
 const notificationSchema = z.object({
-  targetType: z.enum(['direct', 'broadcast']),
+  targetType: z.enum(['direct', 'broadcast', 'role']),
   userId: z.string().optional(),
+  roleId: z.string().optional(),
   action: z.string().min(2, 'Action type must be at least 2 characters'),
   message: z.string().min(5, 'Message must be at least 5 characters'),
-}).refine(data => {
+}).superRefine((data, ctx) => {
   if (data.targetType === 'direct' && !data.userId) {
-    return false;
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'User selection is required for direct notifications',
+      path: ['userId']
+    });
   }
-  return true;
-}, {
-  message: 'User selection is required for direct notifications',
-  path: ['userId']
+  if (data.targetType === 'role' && !data.roleId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Role selection is required for role-based notifications',
+      path: ['roleId']
+    });
+  }
 });
 
 type NotificationFormValues = z.infer<typeof notificationSchema>;
@@ -36,16 +49,23 @@ type NotificationFormValues = z.infer<typeof notificationSchema>;
 export default function SendNotificationPage() {
   const t = useTranslations('notifications.admin');
   const tButtons = useTranslations('common.buttons');
+  const tUsers = useTranslations('users');
   const router = useRouter();
   
   const { mutateAsync: sendNotification, isPending } = useAdminSendNotification();
-  const { data: usersData, isLoading: usersLoading } = useUsers({ limit: 1000 });
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const { data: usersData, isLoading: usersLoading } = useUsers({ limit: 20, keywords: debouncedSearchTerm });
+  const { data: rolesData, isLoading: rolesLoading } = useRoles();
 
   const { control, handleSubmit, formState: { errors } } = useForm<NotificationFormValues>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
       targetType: 'broadcast',
       userId: '',
+      roleId: '',
       action: 'ADMIN_ALERT',
       message: '',
     }
@@ -59,7 +79,8 @@ export default function SendNotificationPage() {
         targetType: data.targetType,
         action: data.action,
         message: data.message,
-        ...(data.targetType === 'direct' && data.userId ? { userId: data.userId } : {})
+        ...(data.targetType === 'direct' && data.userId ? { userId: data.userId } : {}),
+        ...(data.targetType === 'role' && data.roleId ? { roleId: data.roleId } : {})
       };
       
       await sendNotification(payload);
@@ -69,9 +90,17 @@ export default function SendNotificationPage() {
     }
   };
 
-  const userOptions = usersData?.data?.map((user: { _id: string; name: string; email: string }) => ({
-    value: user._id,
-    label: `${user.name} (${user.email})`
+
+  const searchableUserOptions: SearchOption[] = usersData?.data?.map((user: { _id: string; name: string; email: string }) => ({
+    _id: user._id,
+    name: `${user.name} (${formatEmail(user.email)})`
+  })) || [];
+
+  const roleOptions = rolesData?.map((role: { _id: string; name: string }) => ({
+    value: role._id,
+    label: tUsers.has(`roles.${role.name.toLowerCase()}`)
+      ? tUsers(`roles.${role.name.toLowerCase()}`)
+      : role.name
   })) || [];
 
   return (
@@ -94,7 +123,8 @@ export default function SendNotificationPage() {
                   {...field}
                   options={[
                     { value: 'broadcast', label: t('typeBroadcast') },
-                    { value: 'direct', label: t('typeDirect') }
+                    { value: 'direct', label: t('typeDirect') },
+                    { value: 'role', label: t('typeRole') }
                   ]}
                   error={errors.targetType?.message}
                 />
@@ -108,13 +138,35 @@ export default function SendNotificationPage() {
               control={control}
               render={({ field }) => (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t('selectUser')}</label>
+                  <SearchableSelect
+                    value={field.value || ''}
+                    onSelect={(val) => field.onChange(val)}
+                    onSearch={(val) => setSearchTerm(val)} // Search via DB using debounced value
+                    options={searchableUserOptions}
+                    isLoading={usersLoading}
+                    error={errors.userId?.message}
+                    placeholder={t('selectUserPlaceholder')}
+                    label={t('selectUser')}
+                    getDisplayValue={(opt) => typeof opt.name === 'string' ? opt.name : opt.name?.en || ''}
+                  />
+                </div>
+              )}
+            />
+          )}
+
+          {targetType === 'role' && (
+            <Controller
+              name="roleId"
+              control={control}
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('selectRole')}</label>
                   <Select
                     {...field}
-                    options={userOptions}
-                    disabled={usersLoading}
-                    error={errors.userId?.message}
-                    label={t('selectUserPlaceholder')}
+                    options={roleOptions}
+                    disabled={rolesLoading}
+                    error={errors.roleId?.message}
+                    label={t('selectRolePlaceholder')}
                   />
                 </div>
               )}
