@@ -29,7 +29,7 @@ function DrawerCategoryItem({
   onClose: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const hasSubs = category.subCategories && category.subCategories.length > 0;
+  const hasSubs = category.SubCategories && category.SubCategories.length > 0;
   return (
     <div>
       <div className="flex items-center gap-1">
@@ -87,7 +87,7 @@ function DrawerCategoryItem({
           )}
         >
           <div className="ps-8 pe-3 pb-1 space-y-0.5">
-            {category.subCategories!.map((sub) => (
+            {category.SubCategories!.map((sub) => (
               <Link
                 key={sub._id}
                 href={`/products?subCategory=${sub._id}`}

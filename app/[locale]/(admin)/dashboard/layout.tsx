@@ -5,6 +5,7 @@ import { User } from '@/types';
 import DashboardLayout from '@/widgets/layout/DashboardLayout';
 
 import { AsyncBoundary } from '@/shared/ui/boundaries/AsyncBoundary';
+import { Permissions } from '@/features/roles/types';
 
 export default async function DashboardLayoutWrapper({
   children,
@@ -24,7 +25,7 @@ export default async function DashboardLayoutWrapper({
   }
   // Permission-based check
   // Note: JWT payload has user.level which checkUserPermission uses.
-  const isAllowed = checkUserPermission(user as unknown as User, 'access_dashboard');
+  const isAllowed = checkUserPermission(user as unknown as User, Permissions.ACCESS_DASHBOARD);
 
 
 

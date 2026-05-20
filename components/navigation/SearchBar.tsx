@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from '@/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -29,22 +29,46 @@ export default function SearchBar({ className, useLiveSearch = false }: SearchBa
     setPrevSearch(currentSearch);
   }
 
+  const isMounted = useRef(false);
+
   useEffect(() => {
-    if (useLiveSearch) {
-      if (debouncedQuery.trim()) {
-        router.push(`/products?search=${encodeURIComponent(debouncedQuery.trim())}`);
-      } else if (query === '') {
-        // If query is explicitly cleared, fetch all products
-        router.push('/products');
-      }
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
     }
-  }, [debouncedQuery, query, router, useLiveSearch]);
+
+    if (useLiveSearch) {
+      const urlSearch = searchParams?.get('search') || '';
+      
+      // If debounced query matches URL, it means the sync is already complete
+      if (debouncedQuery.trim() === urlSearch) {
+        return;
+      }
+
+      const params = new URLSearchParams(searchParams?.toString() || '');
+      if (debouncedQuery.trim()) {
+        params.set('search', debouncedQuery.trim());
+      } else {
+        params.delete('search');
+      }
+      
+      params.delete('page'); // Reset page on new search
+      
+      const newUrl = `/products${params.toString() ? `?${params.toString()}` : ''}`;
+      router.push(newUrl);
+    }
+  }, [debouncedQuery, router, searchParams, useLiveSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const params = new URLSearchParams(searchParams?.toString() || '');
     if (query.trim()) {
-      router.push(`/products?search=${encodeURIComponent(query.trim())}`);
+      params.set('search', query.trim());
+    } else {
+      params.delete('search');
     }
+    params.delete('page');
+    router.push(`/products${params.toString() ? `?${params.toString()}` : ''}`);
   };
 
   return (
@@ -75,7 +99,10 @@ export default function SearchBar({ className, useLiveSearch = false }: SearchBa
         {query && (
           <button
             type="button"
-            onClick={() => setQuery('')}
+            onClick={() => {
+              setQuery('');
+              // Focus back to input if desired, but here we just clear
+            }}
             className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <Icons.X className="size-4" />

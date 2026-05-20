@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import { useRef, useState, useEffect, useCallback, memo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from '@/navigation';
-import { useLocale } from 'next-intl';
-import { cn } from '@/lib/utils';
+import { useRef, useState, useEffect, useCallback, memo, useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "@/navigation";
+import { useLocale } from "next-intl";
+import { cn } from "@/lib/utils";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -19,13 +20,13 @@ export interface CategoryItem {
   name: string;
   slug?: string;
   image?: string;
-  subCategories?: SubCategoryItem[];
+  SubCategories?: SubCategoryItem[];
 }
 
 interface CategoriesScrollerProps {
   categories: CategoryItem[];
   className?: string;
-  variant?: 'desktop' | 'mobile';
+  variant?: "desktop" | "mobile";
 }
 
 // ─── Scroll Arrow Button ──────────────────────────────────────────────────────
@@ -36,14 +37,14 @@ const ScrollArrow = memo(function ScrollArrow({
   visible,
   isRtl, // تمت إضافة هذه الخاصية لعكس الأيقونات في اللغة العربية
 }: {
-  direction: 'start' | 'end';
+  direction: "start" | "end";
   onClick: () => void;
   visible: boolean;
   isRtl: boolean;
 }) {
   if (!visible) return null;
 
-  const isStart = direction === 'start';
+  const isStart = direction === "start";
   // في اللغة العربية (RTL): سهم البداية يجب أن يشير لليمين والنهاية لليسار.
   // في اللغة الإنجليزية (LTR): سهم البداية يشير لليسار والنهاية لليمين.
   const showLeftArrow = isRtl ? !isStart : isStart;
@@ -53,15 +54,15 @@ const ScrollArrow = memo(function ScrollArrow({
       onClick={onClick}
       aria-label={`Scroll ${direction}`}
       className={cn(
-        'absolute top-1/2 -translate-y-1/2 z-10',
-        'w-8 h-8 rounded-full',
-        'bg-background/80 backdrop-blur-sm border border-border/60',
-        'shadow-md hover:shadow-lg',
-        'flex items-center justify-center',
-        'text-foreground/70 hover:text-foreground',
-        'transition-all duration-200',
-        'hover:scale-110 active:scale-95',
-        isStart ? 'inset-s-0' : 'inset-e-0'
+        "absolute top-1/2 -translate-y-1/2 z-10",
+        "w-8 h-8 rounded-full",
+        "bg-background/80 backdrop-blur-sm border border-border/60",
+        "shadow-md hover:shadow-lg",
+        "flex items-center justify-center",
+        "text-foreground/70 hover:text-foreground",
+        "transition-all duration-200",
+        "hover:scale-110 active:scale-95",
+        isStart ? "inset-s-0" : "inset-e-0",
       )}
     >
       {showLeftArrow ? (
@@ -80,18 +81,21 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
   variant,
 }: {
   category: CategoryItem;
-  variant: 'desktop' | 'mobile';
+  variant: "desktop" | "mobile";
 }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const hasSubs = category.subCategories && category.subCategories.length > 0;
+  const hasSubs = useMemo(
+    () => !!category.SubCategories?.length,
+    [category.SubCategories],
+  );
   const locale = useLocale();
   const [position, setPosition] = useState<{
     top: number;
-    left: number | 'auto';
-    right: number | 'auto';
-  }>({ top: 0, left: 0, right: 'auto' });
+    left: number | "auto";
+    right: number | "auto";
+  }>({ top: 0, left: 0, right: "auto" });
 
   useEffect(() => {
     return () => {
@@ -100,33 +104,44 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
   }, []);
 
   const updatePosition = useCallback(() => {
-    if (triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      if (locale === 'ar') {
-        setPosition({
-          top: rect.bottom + 4,
-          left: 'auto',
-          right: window.innerWidth - rect.right,
-        });
-      } else {
-        setPosition({
-          top: rect.bottom + 4,
-          left: rect.left,
-          right: 'auto',
-        });
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const nextPosition =
+      locale === "ar"
+        ? {
+            top: rect.bottom + 4,
+            left: "auto" as const,
+            right: window.innerWidth - rect.right,
+          }
+        : {
+            top: rect.bottom + 4,
+            left: rect.left,
+            right: "auto" as const,
+          };
+
+    setPosition((prev) => {
+      if (
+        prev.top === nextPosition.top &&
+        prev.left === nextPosition.left &&
+        prev.right === nextPosition.right
+      ) {
+        return prev;
       }
-    }
+
+      return nextPosition;
+    });
   }, [locale]);
 
   const closeDropdown = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     if (!open) return;
-    window.addEventListener('scroll', closeDropdown, true);
-    window.addEventListener('resize', closeDropdown);
+    window.addEventListener("scroll", closeDropdown, true);
+    window.addEventListener("resize", closeDropdown);
     return () => {
-      window.removeEventListener('scroll', closeDropdown, true);
-      window.removeEventListener('resize', closeDropdown);
+      window.removeEventListener("scroll", closeDropdown, true);
+      window.removeEventListener("resize", closeDropdown);
     };
   }, [open, closeDropdown]);
 
@@ -139,71 +154,26 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
   }, [hasSubs, updatePosition]);
 
   const handleLeave = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     timeoutRef.current = setTimeout(closeDropdown, 100);
   }, [closeDropdown]);
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    if (!hasSubs) return;
-    e.preventDefault();
-    setOpen((prev) => {
-      if (!prev) updatePosition();
-      return !prev;
-    });
-  }, [hasSubs, updatePosition]);
-
-  const isDesktop = variant === 'desktop';
-
-  const DesktopTrigger = () => (
-    <Link
-      href={`/products?category=${category._id}`}
-      onClick={handleClick}
-      className={cn(
-        'shrink-0 flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-all',
-        open
-          ? 'text-primary bg-primary/8'
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent/40'
-      )}
-    >
-      {category.name}
-      {hasSubs && (
-        <ChevronRight
-          size={12}
-          strokeWidth={2}
-          className={cn('transition-transform duration-200', open && 'rotate-90')}
-        />
-      )}
-    </Link>
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!hasSubs) return;
+      e.preventDefault();
+      setOpen((prev) => {
+        if (!prev) updatePosition();
+        return !prev;
+      });
+    },
+    [hasSubs, updatePosition],
   );
 
-  const MobileTrigger = () => (
-    <Link
-      href={`/products?category=${category._id}`}
-      onClick={handleClick}
-      className={cn(
-        'shrink-0 flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap active:scale-95 transition-all select-none',
-        open
-          ? 'bg-primary/10 border-primary/30 text-primary'
-          : 'bg-muted/60 hover:bg-primary/10 border border-border/40 hover:border-primary/30 text-sm font-semibold text-foreground/80 hover:text-primary'
-      )}
-    >
-      {category.image && (
-        <img
-          src={category.image}
-          alt=""
-          className="w-5 h-5 rounded-full object-cover"
-          loading="lazy"
-        />
-      )}
-      <span>{category.name}</span>
-      {hasSubs && (
-        <ChevronRight
-          size={14}
-          strokeWidth={2}
-          className={cn('transition-transform duration-200', open && 'rotate-90')}
-        />
-      )}
-    </Link>
-  );
+  const isDesktop = variant === "desktop";
 
   return (
     <div
@@ -212,20 +182,76 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
       onMouseLeave={handleLeave}
       ref={triggerRef}
     >
-      {isDesktop ? <DesktopTrigger /> : <MobileTrigger />}
+      {isDesktop ? (
+        <Link
+          href={`/products?category=${category._id}`}
+          onClick={handleClick}
+          className={cn(
+            "shrink-0 flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-all",
+            open
+              ? "text-primary bg-primary/8"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
+          )}
+        >
+          {category.name}
+          {hasSubs && (
+            <ChevronRight
+              size={12}
+              strokeWidth={2}
+              className={cn(
+                "transition-transform duration-200",
+                open && "rotate-90",
+              )}
+            />
+          )}
+        </Link>
+      ) : (
+        <Link
+          href={`/products?category=${category._id}`}
+          onClick={handleClick}
+          className={cn(
+            "shrink-0 flex items-center gap-2 px-4 py-1 rounded-full whitespace-nowrap active:scale-95 transition-all select-none",
+            open
+              ? "bg-primary/10 border-primary/30 text-primary"
+              : "bg-muted/60 hover:bg-primary/10 border border-border/40 hover:border-primary/30 text-sm font-semibold text-foreground/80 hover:text-primary",
+          )}
+        >
+          {category.image && (
+            <ImageWithFallback
+              src={category.image}
+              alt={category.name}
+              width={20}
+              height={20}
+              className="w-5 h-5 rounded-full object-cover"
+              loading="lazy"
+            />
+          )}
+          <span>{category.name}</span>
+          {hasSubs && (
+            <ChevronRight
+              size={14}
+              strokeWidth={2}
+              className={cn(
+                "transition-transform duration-200",
+                open && "rotate-90",
+              )}
+            />
+          )}
+        </Link>
+      )}
 
       {open && hasSubs && (
         <div
           className={cn(
-            'fixed mt-1 min-w-[200px] max-w-[280px]',
-            'bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl',
-            'p-1.5 z-[100000]', 
-            'animate-in fade-in zoom-in-95 duration-150'
+            "fixed mt-1 min-w-[200px] max-w-[280px]",
+            "bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl",
+            "p-1.5 z-100000",
+            "animate-in fade-in zoom-in-95 duration-150 inset-s-0",
           )}
           style={{
             top: position.top,
-            left: position.left !== 'auto' ? position.left : undefined,
-            right: position.right !== 'auto' ? position.right : undefined,
+            left: position.left !== "auto" ? position.left : undefined,
+            right: position.right !== "auto" ? position.right : undefined,
           }}
           onMouseEnter={handleEnter}
           onMouseLeave={handleLeave}
@@ -236,9 +262,11 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
             className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary/8 text-sm font-bold text-primary transition-colors mb-1 border-b border-border/20 pb-2"
           >
             {category.image && (
-              <img
+              <ImageWithFallback
                 src={category.image}
-                alt=""
+                alt={category.name}
+                width={20}
+                height={20}
                 className="w-5 h-5 rounded object-cover"
                 loading="lazy"
               />
@@ -247,7 +275,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
           </Link>
 
           <div className="space-y-0.5 max-h-[60vh] overflow-y-auto scrollbar-thin">
-            {category.subCategories!.map((sub) => (
+            {category.SubCategories?.map((sub) => (
               <Link
                 key={sub._id}
                 href={`/products?subCategory=${sub._id}`}
@@ -270,11 +298,11 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
 function CategoriesScroller({
   categories,
   className,
-  variant = 'mobile',
+  variant = "mobile",
 }: CategoriesScrollerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const locale = useLocale();
-  const isRtl = locale === 'ar';
+  const isRtl = locale === "ar";
   const [canScrollStart, setCanScrollStart] = useState(false);
   const [canScrollEnd, setCanScrollEnd] = useState(false);
 
@@ -301,50 +329,64 @@ function CategoriesScroller({
   }, []);
 
   useEffect(() => {
-    updateScrollState();
     const el = scrollRef.current;
     if (!el) return;
 
-    el.addEventListener('scroll', updateScrollState, { passive: true });
-    const observer = new ResizeObserver(updateScrollState);
+    let frame: number;
+
+    // تشغيل أول فحص بعد الـ render
+    frame = requestAnimationFrame(updateScrollState);
+
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+
+      frame = requestAnimationFrame(updateScrollState);
+    });
+
     observer.observe(el);
 
     return () => {
-      el.removeEventListener('scroll', updateScrollState);
+      cancelAnimationFrame(frame);
+
+      el.removeEventListener("scroll", updateScrollState);
+
       observer.disconnect();
     };
-  }, [updateScrollState, categories]);
+  }, [updateScrollState]);
 
-  const scrollStart = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.6;
-    const scrollAmount = isRtl ? amount : -amount;
-    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  }, [isRtl]);
+  const scroll = useCallback(
+    (direction: "start" | "end") => {
+      const el = scrollRef.current;
+      if (!el) return;
 
-  const scrollEnd = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.6;
-    const scrollAmount = isRtl ? -amount : amount;
-    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  }, [isRtl]);
+      const amount = el.clientWidth * 0.6;
+
+      const sign = direction === "start" ? (isRtl ? 1 : -1) : isRtl ? -1 : 1;
+
+      el.scrollBy({
+        left: amount * sign,
+        behavior: "smooth",
+      });
+    },
+    [isRtl],
+  );
 
   if (!categories.length) return null;
 
   return (
-    <div className={cn('relative group/scroller', className)}>
+    <div className={cn("relative group/scroller", className)}>
       {/* Scroll Arrows */}
       <ScrollArrow
         direction="start"
-        onClick={scrollStart}
+        onClick={() => scroll("start")}
         visible={canScrollStart}
         isRtl={isRtl} // تمرير حالة اللغة لعكس الأيقونة
       />
       <ScrollArrow
         direction="end"
-        onClick={scrollEnd}
+        onClick={() => scroll("end")}
         visible={canScrollEnd}
         isRtl={isRtl} // تمرير حالة اللغة لعكس الأيقونة
       />
@@ -361,7 +403,7 @@ function CategoriesScroller({
       <div
         ref={scrollRef}
         className="flex items-center gap-2 overflow-x-auto scrollbar-none px-1 py-1"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {categories.map((cat) => (
           <CategoryItemWithDropdown

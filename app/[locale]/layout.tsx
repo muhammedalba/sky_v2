@@ -78,8 +78,8 @@ export default async function LocaleLayout({
   const token = cookieStore.get('access_token')?.value;
   const user = token ? getServerUserFromToken(token) : null;
   const canBypassMaintenance = checkUserPermission(user as User, [ 'manage_settings','access_dashboard']);
-    console.log("layout",user?.role);
-    
+
+  
   const isMaintenance = finalSettings.maintenanceMode === true;
 
   // Maintenance Guard (Server-Side)

@@ -164,13 +164,15 @@ export function getActionBadgeVariant(
     case "GENERAL":
       return "secondary";
     case "SYSTEM_UPDATE":
-      return "warning";
+      return "default";
     case "ADMIN_ALERT":
-      return "danger";
+      return "destructive";
     case "PROMOTION":
       return "success";
     case "ORDER_UPDATE":
       return "default";
+    case "SPECIAL_OFFER":
+      return "success";
     default:
       return "outline";
   }

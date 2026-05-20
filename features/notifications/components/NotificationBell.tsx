@@ -1,18 +1,22 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { useNotificationStore } from "@/store/notification-store";
 import { Icons } from "@/shared/ui/Icons";
 import { Button } from "@/shared/ui/Button";
 import { Dropdown } from "@/shared/ui/CustomDropdown";
 import { useLocale, useTranslations } from "next-intl";
 import { formatRelativeTime } from "@/lib/utils";
-import { useGetNotifications, useMarkAsRead } from "@/features/notifications/hooks/useNotifications";
+import {
+  useGetNotifications,
+  useMarkAsRead,
+} from "@/features/notifications/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/navigation";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { checkUserPermission } from "@/lib/auth";
 import { Permissions } from "@/features/roles/types";
+import Badge from "@/shared/ui/Badge";
 
 const NotificationBell = () => {
   const t = useTranslations("notifications");
@@ -29,24 +33,33 @@ const NotificationBell = () => {
   const unreadCount = useNotificationStore((state) => state.unreadCount);
   const notifications = useNotificationStore((state) => state.notifications);
 
-  const removeNotificationStore = useNotificationStore((state) => state.removeNotification);
+  const removeNotificationStore = useNotificationStore(
+    (state) => state.removeNotification,
+  );
 
   // Admins go to admin dashboard, regular users go to their own notifications page
-  const isAdmin = checkUserPermission(user ?? null, Permissions.UPDATE_SETTINGS);
-  const notificationsPath = isAdmin ? "/dashboard/notifications" : "/account/notifications";
+  const isAdmin = useMemo(
+    () => checkUserPermission(user ?? null, [Permissions.VIEW_NOTIFICATIONS]),
+    [user],
+  );
+  const notificationsPath = isAdmin
+    ? "/dashboard/notifications"
+    : "/notifications";
 
-  const handleNotificationClick = (id: string, isRead: boolean) => {
-    if (!isRead) {
-      markAsRead(id);
-    } else {
-      removeNotificationStore(id);
-    }
-    router.push(notificationsPath);
-  };
+  const handleNotificationClick = useCallback(
+    (id: string, isRead: boolean) => {
+      if (!isRead) {
+        markAsRead(id);
+      } else {
+        removeNotificationStore(id);
+      }
+    },
+    [markAsRead, removeNotificationStore],
+  );
 
-  const handleViewAll = () => {
+  const handleViewAll = useCallback(() => {
     router.push(notificationsPath);
-  };
+  }, [router, notificationsPath]);
 
   const triggerBtn = (
     <div
@@ -63,13 +76,20 @@ const NotificationBell = () => {
   );
 
   return (
-    <Dropdown trigger={triggerBtn} width="w-80" className="p-0 border-border/40 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 bg-card">
+    <Dropdown
+      trigger={triggerBtn}
+      width="w-80"
+      className="p-0 border-border/40 overflow-hidden"
+    >
+      <div className="flex items-center justify-between  px-4 py-3 border-b border-border/40 bg-muted/50">
         <span className="font-semibold">{t("title")}</span>
         {unreadCount > 0 && (
-          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+          <Badge
+            variant="success"
+            className="text-xs  bg-muted px-2 py-0.5 rounded-full"
+          >
             {unreadCount} {t("unread")}
-          </span>
+          </Badge>
         )}
       </div>
 
@@ -90,14 +110,11 @@ const NotificationBell = () => {
               <button
                 key={notification._id}
                 className={cn(
-                  "flex flex-col items-start p-4 text-left border-b border-border/40 transition-colors hover:bg-muted/30",
+                  "flex flex-col items-start cursor-pointer p-4 text-left border-b border-border/40 transition-colors hover:bg-muted/30",
                   !notification.isRead && "bg-primary/5",
                 )}
                 onClick={() =>
-                  handleNotificationClick(
-                    notification._id,
-                    notification.isRead,
-                  )
+                  handleNotificationClick(notification._id, notification.isRead)
                 }
               >
                 <div className="flex items-start justify-between w-full mb-1">
@@ -126,7 +143,7 @@ const NotificationBell = () => {
                   {notification.message}
                 </p>
                 <span className="text-[10px] text-muted-foreground mt-2">
-                  {formatRelativeTime(notification.createdAt ,locale)}
+                  {formatRelativeTime(notification.createdAt, locale)}
                 </span>
               </button>
             ))}
@@ -134,7 +151,7 @@ const NotificationBell = () => {
         )}
       </div>
 
-      <div className="p-2 border-t border-border/40 bg-card">
+      <div className="p-2 border-t border-border/40 bg-muted/30">
         <Button
           variant="ghost"
           className="w-full text-xs h-8 text-primary hover:text-primary/80"
