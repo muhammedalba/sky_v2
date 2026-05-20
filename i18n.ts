@@ -3,69 +3,44 @@ import { getRequestConfig } from 'next-intl/server';
 export const locales = ['en', 'ar'] as const;
 export type Locale = (typeof locales)[number];
 
+// Static map of loaders to ensure full Turbopack/Webpack compatibility and parallel performance
+const loaders: Record<string, (locale: string) => Promise<unknown>> = {
+  common: (locale) => import(`./messages/common/${locale}.json`).then(m => m.default),
+  dashboard: (locale) => import(`./messages/dashboard/${locale}.json`).then(m => m.default),
+  products: (locale) => import(`./messages/products/${locale}.json`).then(m => m.default),
+  categories: (locale) => import(`./messages/categories/${locale}.json`).then(m => m.default),
+  orders: (locale) => import(`./messages/orders/${locale}.json`).then(m => m.default),
+  users: (locale) => import(`./messages/users/${locale}.json`).then(m => m.default),
+  profile: (locale) => import(`./messages/profile/${locale}.json`).then(m => m.default),
+  home: (locale) => import(`./messages/home/${locale}.json`).then(m => m.default),
+  contact: (locale) => import(`./messages/contact/${locale}.json`).then(m => m.default),
+  store: (locale) => import(`./messages/store/${locale}.json`).then(m => m.default),
+  brands: (locale) => import(`./messages/brands/${locale}.json`).then(m => m.default),
+  carousel: (locale) => import(`./messages/carousel/${locale}.json`).then(m => m.default),
+  subCategories: (locale) => import(`./messages/subCategories/${locale}.json`).then(m => m.default),
+  promoBanners: (locale) => import(`./messages/promoBanners/${locale}.json`).then(m => m.default),
+  suppliers: (locale) => import(`./messages/suppliers/${locale}.json`).then(m => m.default),
+  coupons: (locale) => import(`./messages/coupons/${locale}.json`).then(m => m.default),
+  settings: (locale) => import(`./messages/settings/${locale}.json`).then(m => m.default),
+  quote: (locale) => import(`./messages/quote/${locale}.json`).then(m => m.default),
+  cart: (locale) => import(`./messages/cart/${locale}.json`).then(m => m.default),
+  maintenance: (locale) => import(`./messages/maintenance/${locale}.json`).then(m => m.default),
+  locations: (locale) => import(`./messages/locations/${locale}.json`).then(m => m.default),
+  roles: (locale) => import(`./messages/roles/${locale}.json`).then(m => m.default),
+  notifications: (locale) => import(`./messages/notifications/${locale}.json`).then(m => m.default),
+};
 
 async function loadLocaleMessages(locale: string) {
   try {
-    // Explicit switch for Turbopack stability
-    let common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles, notifications;
-    
-    if (locale === 'ar') {
-      [
-        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles, notifications
-      ] = await Promise.all([
-        import(`./messages/common/ar.json`).then(m => m.default),
-        import(`./messages/dashboard/ar.json`).then(m => m.default),
-        import(`./messages/products/ar.json`).then(m => m.default),
-        import(`./messages/categories/ar.json`).then(m => m.default),
-        import(`./messages/orders/ar.json`).then(m => m.default),
-        import(`./messages/users/ar.json`).then(m => m.default),
-        import(`./messages/profile/ar.json`).then(m => m.default),
-        import(`./messages/home/ar.json`).then(m => m.default),
-        import(`./messages/contact/ar.json`).then(m => m.default),
-        import(`./messages/store/ar.json`).then(m => m.default),
-        import(`./messages/brands/ar.json`).then(m => m.default),
-        import(`./messages/carousel/ar.json`).then(m => m.default),
-        import(`./messages/subCategories/ar.json`).then(m => m.default),
-        import(`./messages/promoBanners/ar.json`).then(m => m.default),
-        import(`./messages/suppliers/ar.json`).then(m => m.default),
-        import(`./messages/coupons/ar.json`).then(m => m.default),
-        import(`./messages/settings/ar.json`).then(m => m.default),
-        import(`./messages/quote/ar.json`).then(m => m.default),
-        import(`./messages/cart/ar.json`).then(m => m.default),
-        import(`./messages/maintenance/ar.json`).then(m => m.default),
-        import(`./messages/locations/ar.json`).then(m => m.default),
-        import(`./messages/roles/ar.json`).then(m => m.default),
-        import(`./messages/notifications/ar.json`).then(m => m.default)
-      ]);
-    } else {
-      [
-        common, dashboard, products, categories, orders, users, profile, home, contact, store, brands, carousel, subCategories, promoBanners, suppliers, coupons, settings, quote, cart, maintenance, locations, roles, notifications
-      ] = await Promise.all([
-        import(`./messages/common/en.json`).then(m => m.default),
-        import(`./messages/dashboard/en.json`).then(m => m.default),
-        import(`./messages/products/en.json`).then(m => m.default),
-        import(`./messages/categories/en.json`).then(m => m.default),
-        import(`./messages/orders/en.json`).then(m => m.default),
-        import(`./messages/users/en.json`).then(m => m.default),
-        import(`./messages/profile/en.json`).then(m => m.default),
-        import(`./messages/home/en.json`).then(m => m.default),
-        import(`./messages/contact/en.json`).then(m => m.default),
-        import(`./messages/store/en.json`).then(m => m.default),
-        import(`./messages/brands/en.json`).then(m => m.default),
-        import(`./messages/carousel/en.json`).then(m => m.default),
-        import(`./messages/subCategories/en.json`).then(m => m.default),
-        import(`./messages/promoBanners/en.json`).then(m => m.default),
-        import(`./messages/suppliers/en.json`).then(m => m.default),
-        import(`./messages/coupons/en.json`).then(m => m.default),
-        import(`./messages/settings/en.json`).then(m => m.default),
-        import(`./messages/quote/en.json`).then(m => m.default),
-        import(`./messages/cart/en.json`).then(m => m.default),
-        import(`./messages/maintenance/en.json`).then(m => m.default),
-        import(`./messages/locations/en.json`).then(m => m.default),
-        import(`./messages/roles/en.json`).then(m => m.default),
-        import(`./messages/notifications/en.json`).then(m => m.default)
-      ]);
-    }
+    const keys = Object.keys(loaders);
+    const results = await Promise.all(keys.map(key => loaders[key](locale)));
+
+    const messages: Record<string, unknown> = {};
+    keys.forEach((key, index) => {
+      messages[key] = results[index];
+    });
+
+    const common = (messages.common || {}) as Record<string, unknown>;
 
     return {
       common,
@@ -77,28 +52,7 @@ async function loadLocaleMessages(locale: string) {
       shipping: common.shipping,
       shippingRates: common.shippingRates,
       taxes: common.taxes,
-      dashboard,
-      products,
-      categories,
-      orders,
-      users,
-      profile,
-      home,
-      contact,
-      store,
-      brands,
-      carousel,
-      subCategories,
-      promoBanners,
-      suppliers,
-      coupons,
-      settings,
-      quote,
-      cart,
-      maintenance,
-      locations,
-      roles,
-      notifications,
+      ...messages
     };
   } catch (error) {
     console.error(`[i18n] Error loading translation files for ${locale}:`, error);
@@ -110,7 +64,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   // In next-intl v4, the parameter is requestLocale and it's a Promise
   const locale = await requestLocale;
   const currentLocale = locale || 'en';
-  
+
   const messages = await loadLocaleMessages(currentLocale);
 
   return {

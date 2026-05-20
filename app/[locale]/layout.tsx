@@ -65,11 +65,26 @@ export default async function LocaleLayout({
   }
 
   // Parallel data fetching for maximum performance
-  const [messages, settings, cookieStore] = await Promise.all([
+  const [allMessages, settings, cookieStore] = await Promise.all([
     getMessages(),
     getStoreSettings(),
     cookies()
   ]);
+
+  // Pick only root/essential namespaces to send to the root provider (reduces initial client payload)
+  const rootMessages = {
+    common: allMessages.common,
+    auth: allMessages.auth,
+    buttons: allMessages.buttons,
+    errors: allMessages.errors,
+    navigation: allMessages.navigation,
+    messages: allMessages.messages,
+    shipping: allMessages.shipping,
+    shippingRates: allMessages.shippingRates,
+    taxes: allMessages.taxes,
+    maintenance: allMessages.maintenance,
+    notifications: allMessages.notifications,
+  };
 
   // Use fallback settings if API fails
   const finalSettings = settings || DEFAULT_SETTINGS;
@@ -85,7 +100,7 @@ export default async function LocaleLayout({
   // Maintenance Guard (Server-Side)
   if (isMaintenance && !canBypassMaintenance) {
     return (
-      <LocaleProvider locale={locale} messages={messages}>
+      <LocaleProvider locale={locale} messages={rootMessages}>
         <ThemeProvider>
           <SettingsProvider settings={finalSettings}>
             <Maintenance />
@@ -96,7 +111,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <LocaleProvider locale={locale} messages={messages} >
+    <LocaleProvider locale={locale} messages={rootMessages} >
       <ThemeProvider >
         <SettingsProvider settings={finalSettings}>
           {finalSettings.googleAnalyticsId && (

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "validate-translations": "npx tsx scripts/validate-translations.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
