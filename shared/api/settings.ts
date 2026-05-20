@@ -26,10 +26,10 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
       return {
         ...DEFAULT_SETTINGS,
         maintenanceMode: true,
-        maintenanceMessage: {
-          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
-          en: 'The site is currently under maintenance. Please try again later.'
-        }
+        // maintenanceMessage: {
+        //   ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
+        //   en: 'The site is currently under maintenance. Please try again later.'
+        // }
       };
     }
 

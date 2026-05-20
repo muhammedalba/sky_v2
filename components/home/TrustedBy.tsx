@@ -1,9 +1,8 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useBrands } from '@/features/brands/hooks/useBrands';
-import { getLocalizedValue } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
 import { useTrans } from '@/shared/hooks/useTrans';
 
 export default function TrustedBy() {
@@ -11,7 +10,6 @@ export default function TrustedBy() {
   const getTrans = useTrans();
   const { data: brandsResponse, isLoading } = useBrands({ all_langs: false });
   const brands = brandsResponse?.data || [];
-  console.log(brands);
 
   if (isLoading || brands.length === 0) return null;
 
@@ -45,10 +43,13 @@ export default function TrustedBy() {
                   {brands?.map((brand) => (
                     <div key={brand._id} className="flex items-center justify-center min-w-[120px]">
                       {brand.image ? (
-                        <img
+                        <Image
                           src={brand.image}
                           alt={getTrans(brand.name)}
+                          width={150}
+                          height={48}
                           className="h-12 w-auto object-contain max-w-[150px]"
+                          loading="lazy"
                         />
                       ) : (
                         <span className="text-2xl font-black text-foreground opacity-60 hover:opacity-100 transition-opacity">

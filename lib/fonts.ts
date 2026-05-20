@@ -15,6 +15,11 @@ import { Inter, Noto_Kufi_Arabic } from 'next/font/google';
  *  ✅ Automatic font subsetting (smaller file sizes)
  *  ✅ size-adjust for zero Cumulative Layout Shift (CLS)
  *  ✅ preload only the subsets actually needed
+ *
+ * Weight strategy: 3 weights instead of 6 (~50% smaller font payload)
+ *  - 400 → body / normal text
+ *  - 600 → semibold / labels
+ *  - 800 → extrabold / headings (replaces 700 + 900)
  * =============================================================
  */
 
@@ -22,7 +27,7 @@ export const fontInter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '600', '800'],
   fallback: ['system-ui', 'Arial', 'sans-serif'],
 });
 
@@ -30,7 +35,7 @@ export const fontArabic = Noto_Kufi_Arabic({
   subsets: ['arabic'],
   display: 'swap',
   variable: '--font-arabic',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '600', '800'],
   fallback: ['Tahoma', 'Arial', 'sans-serif'],
 });
 
