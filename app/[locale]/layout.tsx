@@ -1,30 +1,40 @@
-
-import { getMessages } from 'next-intl/server';
-import { ReactNode } from 'react';
-import { locales } from '@/i18n';
-import { notFound } from 'next/navigation';
-import Script from 'next/script';
-import LocaleProvider from './LocaleProvider';
-import ThemeProvider from '@/app/providers/ThemeProvider';
-import ToastProvider from '@/shared/ui/toast/ToastProvider';
-import SettingsProvider from '@/app/providers/SettingsProvider';
-import '../globals.css';
-import { cookies } from 'next/headers';
-import { getServerUserFromToken, checkUserPermission } from '@/lib/auth';
-import { User } from '@/types';
-import Maintenance from '@/components/Maintenance';
-import { getStoreSettings, DEFAULT_SETTINGS } from '@/shared/api/settings';
+import { getMessages } from "next-intl/server";
+import { ReactNode } from "react";
+import { locales } from "@/i18n";
+import { notFound } from "next/navigation";
+import Script from "next/script";
+import LocaleProvider from "./LocaleProvider";
+import ThemeProvider from "@/app/providers/ThemeProvider";
+import ToastProvider from "@/shared/ui/toast/ToastProvider";
+import SettingsProvider from "@/app/providers/SettingsProvider";
+import "../globals.css";
+import { cookies } from "next/headers";
+import { getServerUserFromToken, checkUserPermission } from "@/lib/auth";
+import { User } from "@/types";
+import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
+import { Permissions } from "@/features/roles/types";
+import MaintenanceGuard from "@/components/MaintenanceGuard";
 
 /**
  * Enterprise SEO Engine
- * Dynamically generates metadata from store settings
+ * Dynamic Metadata Generation based on active locale and global settings
  */
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
-  const settings = await getStoreSettings() || DEFAULT_SETTINGS;
+  const settings = (await getStoreSettings()) || DEFAULT_SETTINGS;
 
-  const title = settings.metaTitle?.[locale as 'ar' | 'en'] || settings.siteName?.[locale as 'ar' | 'en'] || 'Sky Galaxy';
-  const description = settings.metaDescription?.[locale as 'ar' | 'en'] || settings.siteDescription?.[locale as 'ar' | 'en'] || '';
+  const title =
+    settings.metaTitle?.[locale as "ar" | "en"] ||
+    settings.siteName?.[locale as "ar" | "en"] ||
+    "Sky Galaxy";
+  const description =
+    settings.metaDescription?.[locale as "ar" | "en"] ||
+    settings.siteDescription?.[locale as "ar" | "en"] ||
+    "";
 
   return {
     title: {
@@ -33,42 +43,43 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     },
     description,
     icons: {
-      icon: settings.favicon || '/favicon.ico',
-      shortcut: settings.favicon || '/favicon.ico',
-      apple: settings.favicon || '/apple-touch-icon.png',
+      icon: settings.favicon || "/favicon.ico",
+      shortcut: settings.favicon || "/favicon.ico",
+      apple: settings.favicon || "/apple-touch-icon.png",
     },
     openGraph: {
       title,
       description,
+      siteName: title,
       images: settings.logo ? [settings.logo] : [],
-      type: 'website',
+      type: "website",
     },
     robots: {
       index: true,
       follow: true,
-    }
+    },
   };
 }
 
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
-  params,
+  params: paramsPromise,
 }: {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const params = await paramsPromise;
+  const { locale } = params;
 
   // Validate locale
-  if (!locales.includes(locale as 'ar' | 'en')) {
+  if (!locales.includes(locale as "ar" | "en")) {
     notFound();
   }
 
-  // Parallel data fetching for maximum performance
-  const [allMessages, settings, cookieStore] = await Promise.all([
+  const cookieStore = await cookies();
+  const [allMessages, settings] = await Promise.all([
     getMessages(),
     getStoreSettings(),
-    cookies()
   ]);
 
   // Pick only root/essential namespaces to send to the root provider (reduces initial client payload)
@@ -79,59 +90,67 @@ export default async function LocaleLayout({
     errors: allMessages.errors,
     navigation: allMessages.navigation,
     messages: allMessages.messages,
-    shipping: allMessages.shipping,
-    shippingRates: allMessages.shippingRates,
-    taxes: allMessages.taxes,
     maintenance: allMessages.maintenance,
-    notifications: allMessages.notifications,
   };
 
   // Use fallback settings if API fails
   const finalSettings = settings || DEFAULT_SETTINGS;
-  
 
-  const token = cookieStore.get('access_token')?.value;
+  const token = cookieStore.get("access_token")?.value;
   const user = token ? getServerUserFromToken(token) : null;
-  const canBypassMaintenance = checkUserPermission(user as User, [ 'manage_settings','access_dashboard']);
+  const canBypassMaintenance = checkUserPermission(user as User, [
+    Permissions.UPDATE_SETTINGS,
+    Permissions.VIEW_SETTINGS,
+    Permissions.ACCESS_DASHBOARD,
+  ]);
 
-  
   const isMaintenance = finalSettings.maintenanceMode === true;
 
-  // Maintenance Guard (Server-Side)
-  if (isMaintenance && !canBypassMaintenance) {
-    return (
-      <LocaleProvider locale={locale} messages={rootMessages}>
-        <ThemeProvider>
-          <SettingsProvider settings={finalSettings}>
-            <Maintenance />
-          </SettingsProvider>
-        </ThemeProvider>
-      </LocaleProvider>
-    );
-  }
+  // 1. Structured Data Configuration
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name:
+      finalSettings.siteName?.[locale as "ar" | "en"] || "SkyGalaxy",
+    image: finalSettings.logo || "",
+    description:
+      finalSettings.siteDescription?.[locale as "ar" | "en"] || "",
+  };
 
   return (
-    <LocaleProvider locale={locale} messages={rootMessages} >
-      <ThemeProvider >
+    <LocaleProvider locale={locale} messages={rootMessages}>
+      <ThemeProvider>
         <SettingsProvider settings={finalSettings}>
-          {finalSettings.googleAnalyticsId && (
-            <>
-              <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
-                strategy="afterInteractive"
-              />
-              <Script id="google-analytics" strategy="afterInteractive">
-                {`
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${finalSettings.googleAnalyticsId}');
-                `}
-              </Script>
-            </>
-          )}
-          <ToastProvider />
-          {children}
+          <MaintenanceGuard
+            isMaintenance={isMaintenance}
+            canBypassMaintenance={canBypassMaintenance}
+            locale={locale}
+          >
+            {finalSettings.googleAnalyticsId && (
+              <>
+                <Script
+                  src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
+                  strategy="afterInteractive"
+                />
+                <Script id="google-analytics" strategy="afterInteractive">
+                  {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${finalSettings.googleAnalyticsId}');
+                  `}
+                </Script>
+              </>
+            )}
+
+            <ToastProvider />
+            {children}
+            {/* JSON-LD Structured Data for SEO Rich Snippets */}
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+          </MaintenanceGuard>
         </SettingsProvider>
       </ThemeProvider>
     </LocaleProvider>
