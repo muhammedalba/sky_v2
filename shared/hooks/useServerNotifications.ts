@@ -48,7 +48,10 @@ export interface SystemActionContext {
  * Registry for Critical System Actions that execute side-effects (e.g., redirects, session termination).
  * These handlers intercept specific actions and bypass standard notification rendering.
  */
-const SYSTEM_ACTION_HANDLERS: Record<string, (ctx: SystemActionContext) => void> = {
+const SYSTEM_ACTION_HANDLERS: Record<
+  string,
+  (ctx: SystemActionContext) => void
+> = {
   FORCE_LOGOUT: ({ data, toast, t }) => {
     toast.error(data.message, t("systemAlert"), 6000);
     authApi.logout().finally(() => {
@@ -63,7 +66,7 @@ const SYSTEM_ACTION_HANDLERS: Record<string, (ctx: SystemActionContext) => void>
         .map((p) => p.toLowerCase())
         .includes(Permissions.ACCESS_DASHBOARD);
       const isInDashboard = window.location.pathname.includes("/dashboard");
-      
+
       if (isInDashboard && !hasDashboardAccess) {
         toast.error(t("dashboardRevoked"), t("systemAlert"), 6000);
         setTimeout(() => {
@@ -91,15 +94,16 @@ const playNotificationSound = () => {
   try {
     const AudioContextClass =
       window.AudioContext ||
-      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      
+      (window as Window & { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+
     if (!AudioContextClass) return;
 
     if (!sharedAudioContext) {
       sharedAudioContext = new AudioContextClass();
     }
-    
-    if (sharedAudioContext.state === 'suspended') {
+
+    if (sharedAudioContext.state === "suspended") {
       sharedAudioContext.resume();
     }
 
@@ -131,19 +135,32 @@ const playNotificationSound = () => {
     osc2.connect(gain2);
     gain2.connect(ctx.destination);
 
+    // تحسين 2: تنظيف الـ Audio Nodes فوراً بعد انتهاء الصوت لتحرير الذاكرة
+    osc1.onended = () => {
+      osc1.disconnect();
+      gain1.disconnect();
+    };
+    osc2.onended = () => {
+      osc2.disconnect();
+      gain2.disconnect();
+    };
+
     osc1.start(now);
     osc2.start(now);
 
     osc1.stop(now + 0.6);
     osc2.stop(now + 0.4);
   } catch (error) {
-    console.warn("Notification sound playback prevented or unsupported:", error);
+    console.warn(
+      "Notification sound playback prevented or unsupported:",
+      error,
+    );
   }
 };
 
 /**
  * Custom React hook for establishing and managing a real-time Server-Sent Events (SSE) connection.
- * 
+ *
  * Capabilities:
  * - Automatic reconnection with exponential backoff.
  * - Dynamic execution of system actions (e.g., `FORCE_LOGOUT`).
@@ -156,15 +173,15 @@ export const useServerNotifications = () => {
   const locale = useLocale();
   const t = useTranslations("notifications.alerts");
   const toast = useToast();
-  
+
   const tRef = useRef(t);
   const toastRef = useRef(toast);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   /** Debounce timer reference to prevent React Query invalidation spam. */
   const invalidateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   const { data: user } = useMe();
   const isAuthenticated = !!user;
 
@@ -177,8 +194,9 @@ export const useServerNotifications = () => {
   // Optimization 2: Memoize the connection teardown logic to ensure stable references for consumers.
   const closeConnection = useCallback(() => {
     if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
-    if (invalidateTimeoutRef.current) clearTimeout(invalidateTimeoutRef.current);
-    
+    if (invalidateTimeoutRef.current)
+      clearTimeout(invalidateTimeoutRef.current);
+
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
@@ -196,7 +214,7 @@ export const useServerNotifications = () => {
       if (!isMounted) return;
 
       // Ensure any stale connections are cleanly terminated before establishing a new one.
-      closeConnection(); 
+      closeConnection();
 
       const url = `${env.API_URL}${env.ENDPOINTS.NOTIFICATIONS.STREAM}?lang=${locale}`;
       const es = new EventSource(url, { withCredentials: true });
@@ -224,16 +242,28 @@ export const useServerNotifications = () => {
           }
 
           // --- 2. Handle Standard Notifications via Config Map ---
-          const config = ACTION_CONFIGS[action] || { type: "info", titleKey: "newNotification" };
-          currentToast[config.type](data.message, currentT(config.titleKey), 5000);
+          const config = ACTION_CONFIGS[action] || {
+            type: "info",
+            titleKey: "newNotification",
+          };
+          currentToast[config.type](
+            data.message,
+            currentT(config.titleKey),
+            5000,
+          );
 
           playNotificationSound();
 
+          const uniqueId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
           // Sync with global store for instant UI updates (e.g., bell icon badge).
           useNotificationStore.getState().addNotification({
-            _id: `temp-${Date.now()}`,
-            type: action === "ADMIN_BROADCAST" ? "BROADCAST" 
-                : action === "ADMIN_ROLE_ALERT" ? "ROLE" : "DIRECT",
+            _id: uniqueId,
+            type:
+              action === "ADMIN_BROADCAST"
+                ? "BROADCAST"
+                : action === "ADMIN_ROLE_ALERT"
+                  ? "ROLE"
+                  : "DIRECT",
             action: action,
             message: data.message,
             payload: data.payload,
@@ -250,7 +280,6 @@ export const useServerNotifications = () => {
           invalidateTimeoutRef.current = setTimeout(() => {
             queryClient.invalidateQueries({ queryKey: ["notifications"] });
           }, 300);
-
         } catch {
           // Fail silently for unparseable payloads to prevent console pollution.
         }
@@ -275,7 +304,7 @@ export const useServerNotifications = () => {
       isMounted = false;
       closeConnection();
     };
-  }, [isAuthenticated, locale, closeConnection]); 
+  }, [isAuthenticated, locale, closeConnection]);
 
   return { close: closeConnection };
 };

@@ -1,199 +1,226 @@
-'use client';
+"use client";
 
-import { Link } from '@/navigation';
-import { useSelectedLayoutSegment } from 'next/navigation';
-import { useTranslations, useLocale } from 'next-intl';
-import { Icons } from '@/shared/ui/Icons';
-import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
-import SidebarHeader from './sidebar/SidebarHeader';
-import TopbarActions from './topbar/TopbarActions';
+import { Link } from "@/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { Icons } from "@/shared/ui/Icons";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import UserAccountMenu from "@/widgets/layout/UserAccountMenu";
+import SidebarHeader from "./sidebar/SidebarHeader";
+import TopbarActions from "./topbar/TopbarActions";
 
 export default function AuthNavbar() {
-    const t = useTranslations('store.nav');
-    const segment = useSelectedLayoutSegment();
-    const locale = useLocale();
-    const [scrolled, setScrolled] = useState(false);
-    const [userMenuOpen, setUserMenuOpen] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const t = useTranslations("store.nav");
+  const segment = useSelectedLayoutSegment();
+  const locale = useLocale();
+  const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'SkyGalaxy';
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "SkyGalaxy";
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    useEffect(() => {
-        const handleEvents = (e: MouseEvent | KeyboardEvent) => {
-            if (e instanceof KeyboardEvent && e.key === 'Escape') {
-                setUserMenuOpen(false);
-                setMobileMenuOpen(false);
-            }
-            if (e instanceof MouseEvent) {
-                setUserMenuOpen(false);
-            }
-        };
-        const clickHandler = handleEvents as EventListener;
-        if (userMenuOpen || mobileMenuOpen) {
-            document.addEventListener('click', clickHandler);
-            document.addEventListener('keydown', clickHandler);
-            return () => {
-                document.removeEventListener('click', clickHandler);
-                document.removeEventListener('keydown', clickHandler);
-            };
-        }
-    }, [userMenuOpen, mobileMenuOpen]);
+  useEffect(() => {
+    const handleEvents = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent && e.key === "Escape") {
+        setUserMenuOpen(false);
+        setMobileMenuOpen(false);
+      }
+      if (e instanceof MouseEvent) {
+        setUserMenuOpen(false);
+      }
+    };
+    const clickHandler = handleEvents as EventListener;
+    if (userMenuOpen || mobileMenuOpen) {
+      document.addEventListener("click", clickHandler);
+      document.addEventListener("keydown", clickHandler);
+      return () => {
+        document.removeEventListener("click", clickHandler);
+        document.removeEventListener("keydown", clickHandler);
+      };
+    }
+  }, [userMenuOpen, mobileMenuOpen]);
 
-    const navItems = [
-        { name: t('home'), href: '/home', active: segment === 'home' || !segment, icon: Icons.Dashboard , iconClassName:'text-primary' },
-        { name: t('products'), href: '/products', active: segment === 'products', icon: Icons.Products, iconClassName:'text-success' },
-        { name: t('contact'), href: '/contact', active: segment === 'contact', icon: Icons.Phone, iconClassName:'text-warning' },
-    ];
+  const navItems = [
+    {
+      name: t("home"),
+      href: "/home",
+      active: segment === "home" || !segment,
+      icon: Icons.Dashboard,
+      iconClassName: "text-primary",
+    },
+    {
+      name: t("products"),
+      href: "/products",
+      active: segment === "products",
+      icon: Icons.Products,
+      iconClassName: "text-success",
+    },
+    {
+      name: t("contact"),
+      href: "/contact",
+      active: segment === "contact",
+      icon: Icons.Phone,
+      iconClassName: "text-warning",
+    },
+  ];
 
-
-    return (
+  return (
     <>
-    <nav
+      <nav
         className={cn(
-            'fixed top-0 w-full z-40 transition-all duration-500 ease-in-out py-2',
-            scrolled
-            ? ' bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10'
-            : ' bg-transparent'
+          "fixed top-0 w-full z-40 transition-all duration-500 ease-in-out py-2",
+          scrolled
+            ? " bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/10"
+            : " bg-transparent",
         )}
-    >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-12">
-                        {/* Logo */}
-                        <Link href="/home" className="flex items-center gap-3 group relative z-110">
-                            <Image
-                                src="/assets/images/auth-logo.png"
-                                alt={`${appName} Logo`}
-                                width={50}
-                                height={50}
-                                className="object-contain m-auto"
-                                priority
-                            />
-                        </Link>
-                        {/* Desktop Navigation */}
-                        <div className="hidden lg:flex items-center bg-muted/30 backdrop-blur-md rounded-full px-2 py-1 border border-white/5 shadow-inner">
-                            {navItems.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={cn(
-                                        'px-6 py-2 text-sm font-bold transition-all duration-300 rounded-full relative overflow-hidden',
-                                        item.active
-                                            ? 'text-white bg-primary shadow-lg shadow-primary/20'
-                                            : 'text-muted-foreground hover:text-foreground hover:bg-accent/40'
-                                    )}
-                                >
-                                    {item.name}
-                                </Link>
-                            ))}
-                        </div>
-                        {/* Actions */}
-                        <div className="flex items-center gap-2 relative z-110">
-                            <TopbarActions />
-                            {/* Mobile Menu Toggle */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setMobileMenuOpen(true);
-                                }}
-                                className="lg:hidden cursor-pointer w-11 h-11 rounded-full flex items-center justify-center bg-muted/40 border border-white/5 backdrop-blur-md hover:bg-accent transition-all shadow-sm"
-                            >
-                                <Icons.Menu className="h-5 w-5 " />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-    </nav>
-     {/* Mobile Sidebar (Drawer) */}
-     <div
-                className={cn(
-                    "fixed inset-0 z-9999 lg:hidden transition-all duration-500",
-                    mobileMenuOpen ? "visible" : "invisible pointer-events-none"
-                )}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-12">
+            {/* Logo */}
+            <Link
+              href="/home"
+              className="flex items-center gap-3 group relative z-110"
             >
-                {/* Overlay */}
-                <div
-                    className={cn(
-                        "absolute inset-0 bg-background/80 backdrop-blur-md transition-opacity duration-500",
-                        mobileMenuOpen ? "opacity-100" : "opacity-0"
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
-                />
-
-                {/* Sidebar Panel */}
-                <div
-                    className={cn(
-                        "absolute top-0 bottom-0 w-[85%] max-w-[340px] bg-background border-r border-border/50 shadow-2xl transition-transform duration-500 ease-out flex flex-col z-10001",
-                        locale === 'ar'
-                            ? (mobileMenuOpen ? "right-0 translate-x-0" : "right-0 translate-x-full")
-                            : (mobileMenuOpen ? "left-0 translate-x-0" : "left-0 -translate-x-full")
-                    )}
-                    onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+              <Image
+                src="/assets/images/auth-logo.png"
+                alt={`${appName} Logo`}
+                width={50}
+                height={50}
+                className="object-contain m-auto"
+                priority
+              />
+            </Link>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center bg-muted/30 backdrop-blur-md rounded-full px-2 py-1 border border-white/5 shadow-inner">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "px-6 py-2 text-sm font-bold transition-all duration-300 rounded-full relative overflow-hidden",
+                    item.active
+                      ? "text-white bg-primary shadow-lg shadow-primary/20"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
+                  )}
                 >
-                    <div className="p-6 border-b border-border/50 flex items-center justify-between bg-accent/20">
-                        <SidebarHeader />
-                        <button
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="w-10 cursor-pointer h-10 rounded-full flex items-center justify-center bg-destructive/5 hover:bg-destructive/20 transition-colors"
-                        >
-                            <Icons.X className="h-5 w-5 text-destructive hover:text-destructive/" />
-                        </button>
-                    </div>
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            {/* Actions */}
+            <div className="flex items-center gap-2 relative z-110">
+              <TopbarActions />
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMobileMenuOpen(true);
+                }}
+                className="lg:hidden cursor-pointer w-11 h-11 rounded-full flex items-center justify-center bg-muted/40 border border-white/5 backdrop-blur-md hover:bg-accent transition-all shadow-sm"
+              >
+                <Icons.Menu className="h-5 w-5 " />
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+      {/* Mobile Sidebar (Drawer) */}
+      <div
+        className={cn(
+          "fixed inset-0 z-9999 lg:hidden transition-all duration-500",
+          mobileMenuOpen ? "visible" : "invisible pointer-events-none",
+        )}
+      >
+        {/* Overlay */}
+        <div
+          className={cn(
+            "absolute inset-0 bg-background/80 backdrop-blur-md transition-opacity duration-500",
+            mobileMenuOpen ? "opacity-100" : "opacity-0",
+          )}
+          onClick={() => setMobileMenuOpen(false)}
+        />
 
-                    <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-                        <div className="space-y-2">
-                            <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">{t('menu')}</p>
-                            {navItems.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className={cn(
-                                        "flex items-center gap-4 px-3 py-3.5 rounded-2xl transition-all duration-300 font-bold",
-                                        item.active
-                                            ? "bg-primary text-white shadow-xl shadow-primary/20"
-                                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-                                    )}
-                                >
-                                    <item.icon className={cn(`w-5 h-5 ${item.iconClassName}`)} />
-                                    <span>{item.name}</span>
-                                </Link>
-                            ))}
-                        </div>
+        {/* Sidebar Panel */}
+        <div
+          className={cn(
+            "absolute top-0 bottom-0 w-[85%] max-w-[340px] bg-background border-r border-border/50 shadow-2xl transition-transform duration-500 ease-out flex flex-col z-10001",
+            locale === "ar"
+              ? mobileMenuOpen
+                ? "right-0 translate-x-0"
+                : "right-0 translate-x-full"
+              : mobileMenuOpen
+                ? "left-0 translate-x-0"
+                : "left-0 -translate-x-full",
+          )}
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+        >
+          <div className="p-6 border-b border-border/50 flex items-center justify-between bg-accent/20">
+            <SidebarHeader />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-10 cursor-pointer h-10 rounded-full flex items-center justify-center bg-destructive/5 hover:bg-destructive/20 transition-colors"
+            >
+              <Icons.X className="h-5 w-5 text-destructive hover:text-destructive/" />
+            </button>
+          </div>
 
-                        <div className="pt-6 border-t border-border/50 space-y-4">
-                            <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">{t('preference')}</p>
+          <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+            <div className="space-y-2">
+              <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">
+                {t("menu")}
+              </p>
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "flex items-center gap-4 px-3 py-3.5 rounded-2xl transition-all duration-300 font-bold",
+                    item.active
+                      ? "bg-primary text-white shadow-xl shadow-primary/20"
+                      : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                  )}
+                >
+                  <item.icon className={cn(`w-5 h-5 ${item.iconClassName}`)} />
+                  <span>{item.name}</span>
+                </Link>
+              ))}
+            </div>
 
-                            {/* Theme Toggle */}
-                            <div className="flex items-center justify-between px-4 py-2 rounded-xl hover:bg-accent/50 hover:text-foreground ">
-                                <span className="text-sm font-bold">{t('theme')}</span>
-                                <TopbarActions showLocaleSwitcher={false} showBar={false} />
+            <div className="pt-6 border-t border-border/50 space-y-4">
+              <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">
+                {t("preference")}
+              </p>
 
-                            </div>
+              {/* Theme Toggle */}
+              <div className="flex items-center justify-between px-4 py-2 rounded-xl hover:bg-accent/50 hover:text-foreground ">
+                <span className="text-sm font-bold">{t("theme")}</span>
+                <TopbarActions showLocaleSwitcher={false} showBar={false} />
+              </div>
 
-                            {/* Language Switcher */}
-                            <div className="flex items-center justify-between px-4  py-2 rounded-xl hover:bg-accent/50 hover:text-foreground">
-                                <span className="text-sm font-bold">{t('language')}</span>
-                                <TopbarActions showThemeSwitcher={false} showBar={false} />
-                            </div>
-                        </div>
-                    </div>
+              {/* Language Switcher */}
+              <div className="flex items-center justify-between px-4  py-2 rounded-xl hover:bg-accent/50 hover:text-foreground">
+                <span className="text-sm font-bold">{t("language")}</span>
+                <TopbarActions showThemeSwitcher={false} showBar={false} />
+              </div>
+            </div>
+          </div>
 
-                    <div className=" border-t border-border/50 bg-accent/10">
-                        <UserAccountMenu locale={locale} />
-                    </div>
-                </div>
-     </div>
-     </>
-    );
+          <div className=" border-t border-border/50 bg-accent/10">
+            <UserAccountMenu locale={locale} />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
