@@ -73,7 +73,7 @@ export function useDeletePromoBanner() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await promoBannerApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['promoBanners'] });

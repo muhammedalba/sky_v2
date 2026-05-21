@@ -68,7 +68,7 @@ export function useDeleteSubCategory() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await subCategoriesApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subCategories'] });

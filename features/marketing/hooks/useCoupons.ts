@@ -1,11 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Coupon, ApiResponse } from '@/types';
+import { Coupon } from '@/types';
 import { couponsApi } from '@/features/marketing/coupons.api';
 
 export function useCoupons(params?: Record<string, any>) {
-  console.log(params)
+
   return useQuery({
     queryKey: ['coupons', params],
     queryFn: async () => {
@@ -63,7 +63,7 @@ export function useDeleteCoupon() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await couponsApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coupons'] });

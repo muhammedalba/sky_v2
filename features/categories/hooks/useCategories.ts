@@ -68,7 +68,7 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await categoriesApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });

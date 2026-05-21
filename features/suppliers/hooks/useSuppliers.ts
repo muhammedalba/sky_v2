@@ -69,7 +69,7 @@ export function useDeleteSupplier() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await suppliersApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['suppliers']});

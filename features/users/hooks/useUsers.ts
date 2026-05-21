@@ -74,7 +74,7 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await usersApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['users'] });

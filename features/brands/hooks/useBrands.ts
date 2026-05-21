@@ -71,7 +71,7 @@ export function useDeleteBrand() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await brandsApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });

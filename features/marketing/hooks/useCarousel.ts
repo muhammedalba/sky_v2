@@ -64,7 +64,7 @@ export function useDeleteCarousel() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await carouselApi.delete(id);
-      return response.data;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['carousel'] });
