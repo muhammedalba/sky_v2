@@ -1,4 +1,4 @@
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { ReactNode } from "react";
 import { locales } from "@/i18n";
 import { notFound } from "next/navigation";
@@ -14,6 +14,7 @@ import { User } from "@/types";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { Permissions } from "@/features/roles/types";
 import MaintenanceGuard from "@/components/MaintenanceGuard";
+import PerformanceMonitor from "@/components/PerformanceMonitor";
 
 /**
  * Enterprise SEO Engine
@@ -61,6 +62,10 @@ export async function generateMetadata({
   };
 }
 
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params: paramsPromise,
@@ -75,6 +80,9 @@ export default async function RootLayout({
   if (!locales.includes(locale as "ar" | "en")) {
     notFound();
   }
+
+  // Optimize next-intl rendering & enable static deduplication
+  setRequestLocale(locale);
 
   const cookieStore = await cookies();
   const [allMessages, settings] = await Promise.all([
@@ -145,6 +153,9 @@ export default async function RootLayout({
             )}
 
             <ToastProvider />
+
+            {/* Performance Monitoring */}
+            <PerformanceMonitor />
             {children}
             {/* JSON-LD Structured Data for SEO Rich Snippets */}
             <script

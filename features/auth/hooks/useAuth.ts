@@ -34,7 +34,13 @@ export function useMe() {
     },
     enabled: isLoggedInCookie,
     retry: false,
-    staleTime: 5 * 60 * 1000,
+    // Keep data fresh for 30 minutes — locale switches re-mount components
+    // but React Query will serve from cache without a network request
+    staleTime: 30 * 60 * 1000,
+    // Keep in cache for 60 minutes even if no component is using it
+    gcTime: 60 * 60 * 1000,
+    // Prevent re-fetching when a component re-mounts (happens on locale switch)
+    refetchOnMount: false,
   });
 }
 

@@ -86,9 +86,7 @@ export function useRoles() {
   return useQuery({
     queryKey: ['roles'],
     queryFn: async () => {
-      const response = await usersApi.getRoles();
-      console.log("response use Roles",response);
-      
+      const response = await usersApi.getRoles();   
       return response.data;
     },
   });

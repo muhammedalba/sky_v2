@@ -38,7 +38,6 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
     const actualSettings = responseData.data || {};
     const merged = { ...DEFAULT_SETTINGS, ...actualSettings };
     
-    // console.log("data merged", merged);
     // Normalize media paths → absolute backend URLs so both Next.js
     // metadata (favicon) and <img> tags resolve correctly.
     return {

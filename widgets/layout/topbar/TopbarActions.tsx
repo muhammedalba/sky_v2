@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useTransition, useCallback } from "react";
+import { memo, useTransition, useCallback, useEffect } from "react";
 import { useUIStore } from "@/store/ui-store";
 import { useRouter, usePathname } from "@/navigation";
 import { useParams } from "next/navigation";
@@ -27,12 +27,18 @@ const TopbarActions = ({
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  // 2. تحصين دالة تغيير المظهر باستخدام useCallbackhem
+  // 2. تحصين دالة تغيير المظهر باستخدام useCallback
   const toggleTheme = useCallback(() => {
     setTheme(theme === "light" ? "dark" : "light");
   }, [theme, setTheme]);
 
-  // 3. تحصين دالة تغيير اللغة باستخدام useCallback
+  // 3. Prefetch the alternate locale on mount so switching is instant
+  useEffect(() => {
+    const otherLocale = locale === "ar" ? "en" : "ar";
+    router.prefetch(pathname, { locale: otherLocale as "ar" | "en" });
+  }, [locale, pathname, router]);
+
+  // 4. تحصين دالة تغيير اللغة باستخدام useCallback
   const switchLocale = useCallback(
     (newLocale: "en" | "ar") => {
       if (newLocale === locale || isPending) return; // منع التغيير إذا كان هو المختار حالياً أو قيد المعالجة

@@ -66,7 +66,6 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    // console.log('request error', error);
     return Promise.reject(error);
   },
 );
@@ -91,7 +90,6 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
-    console.log(error.response, "originalRequest error IN CLIENT ");
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (
         typeof window !== "undefined" &&
@@ -116,7 +114,6 @@ apiClient.interceptors.response.use(
         });
 
         const resData = response.data;
-        console.log(resData, "resData in CLIENT ");
         const newAccessToken =
           resData.access_token ||
           resData.data?.access_token;

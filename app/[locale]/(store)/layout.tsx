@@ -5,7 +5,7 @@ import StoreFooter from "@/widgets/layout/StoreFooter";
 import { env } from "@/lib/env";
 import type { CategoryItem } from "@/components/navigation/CategoriesScroller";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 
 // ─── Server-side Data Fetch ───────────────────────────────────────────────────
 
@@ -41,7 +41,10 @@ interface StoreLayoutProps {
   children: ReactNode;
 }
 
-export default async function StoreLayout({ children }: StoreLayoutProps) {
+export default async function StoreLayout({ children, params }: StoreLayoutProps & { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const categories = await getCategories();
   const allMessages = await getMessages();
 

@@ -161,7 +161,6 @@ export default function SettingsForm() {
       // وضمان ظهور الشعار والإعدادات الجديدة في جميع صفحات المتجر
       window.location.reload();
     } catch (err: unknown) {
-      console.log(err);
       const errorMessage = err instanceof Error ? err.message : (err as { message?: string })?.message || t('messages.updateError');
       toastError(errorMessage);
     }

@@ -40,7 +40,6 @@ export default function VariantTable({
   const t = useTranslations('products.form');
   const tError = (msg?: string) => msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined;
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
-  console.log(errors);
 
   const updateVariant = (index: number, field: keyof VariantRow, value: unknown) => {
     const updated = [...variants];

@@ -30,7 +30,18 @@ const loaders: Record<string, (locale: string) => Promise<unknown>> = {
   notifications: (locale) => import(`./messages/notifications/${locale}.json`).then(m => m.default),
 };
 
+// ─── Module-level cache: messages are loaded once per locale per server process ───
+// This is the key optimization: locale switching triggers a Server Component
+// re-render, which would re-call loadLocaleMessages on every switch.
+// By caching at module level, the 2nd+ switch for the same locale is instant (~0ms).
+const messagesCache = new Map<string, Record<string, unknown>>();
+
 async function loadLocaleMessages(locale: string) {
+  // Return from cache if already loaded for this locale
+  if (messagesCache.has(locale)) {
+    return messagesCache.get(locale)!;
+  }
+
   try {
     const keys = Object.keys(loaders);
     const results = await Promise.all(keys.map(key => loaders[key](locale)));
@@ -42,7 +53,7 @@ async function loadLocaleMessages(locale: string) {
 
     const common = (messages.common || {}) as Record<string, unknown>;
 
-    return {
+    const finalMessages = {
       common,
       auth: common.auth,
       buttons: common.buttons,
@@ -54,6 +65,10 @@ async function loadLocaleMessages(locale: string) {
       taxes: common.taxes,
       ...messages
     };
+
+    // Store in cache for this locale
+    messagesCache.set(locale, finalMessages);
+    return finalMessages;
   } catch (error) {
     console.error(`[i18n] Error loading translation files for ${locale}:`, error);
     return {};

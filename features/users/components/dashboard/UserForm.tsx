@@ -36,7 +36,6 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
   const { data: rolesData, isLoading: rolesLoading } = useRoles();
 
   const roles = rolesData || [];
-  console.log(editingUser);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(editingUser?.avatar || null);

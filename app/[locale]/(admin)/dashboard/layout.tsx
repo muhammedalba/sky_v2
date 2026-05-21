@@ -4,7 +4,7 @@ import { getServerUserFromToken, checkUserPermission } from "@/lib/auth";
 import { User } from "@/types";
 import DashboardLayout from "@/widgets/layout/DashboardLayout";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 
 import { AsyncBoundary } from "@/shared/ui/boundaries/AsyncBoundary";
 import { Permissions } from "@/features/roles/types";
@@ -17,6 +17,9 @@ export default async function DashboardLayoutWrapper({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // Enable next-intl request deduplication — prevents re-loading all JSON files on locale switch
+  setRequestLocale(locale);
+
   const cookieStore = await cookies();
 
   // Server-side check using JWT from HttpOnly cookie

@@ -410,7 +410,6 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     try {
       await updateMutation.mutateAsync({ id: initialData._id, data: formData });
       toast.success(tMessages('updateSuccess') || 'Product updated successfully');
-      console.log("Navigating to:", `/${locale}/dashboard/products`);
       router.push(`/dashboard/products`);
     } catch (error: any) {
       toast.error(error?.message || tMessages('updateError') || 'Error while updating product');

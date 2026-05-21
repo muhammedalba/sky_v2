@@ -9,7 +9,6 @@ export function useRoles() {
     queryKey: ['roles'],
     queryFn: async () => {
       const response = await rolesApi.getAll();
-      console.log('from useRoles ',response.data);
       return response?.data;
     },
   });
@@ -20,7 +19,6 @@ export function usePermissionsList() {
     queryKey: ['permissions-list'],
     queryFn: async () => {
       const response = await rolesApi.getPermissionsList();
-      console.log('from usePermissionsList ',response);
       return response.data;
     },
   });

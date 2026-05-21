@@ -41,7 +41,7 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
   const uo = d?.users?.overview;
   const mo = d?.marketingStats?.overview;
   const st = d?.stats;
-console.log(d);
+
 
   // ─── Cards definition (memoized) ──────────────────────────────────────────
 

@@ -2,13 +2,20 @@ import { ReactNode } from "react";
 import AuthNavbar from "@/widgets/layout/AuthNavbar";
 import StoreFooter from "@/widgets/layout/StoreFooter";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 
 interface AuthLayoutProps {
   children: ReactNode;
 }
 
-export default async function AuthLayout({ children }: AuthLayoutProps) {
+export default async function AuthLayout({
+  children,
+  params,
+}: AuthLayoutProps & { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  // Enable next-intl request deduplication — prevents re-loading all JSON files on locale switch
+  setRequestLocale(locale);
+
   const allMessages = await getMessages();
   const authLayoutMessages = {
     common: allMessages.common,
