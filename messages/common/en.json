@@ -266,5 +266,14 @@
       "isActive": "Enable Tax",
       "actions": "Actions"
     }
+  },
+  "notifications": {
+    "alerts": {
+      "systemAlert": "System Alert",
+      "dashboardRevoked": "Your dashboard access has been revoked.",
+      "permissionsUpdate": "Your permissions have been updated. Reloading...",
+      "orderUpdate": "Order Update",
+      "newNotification": "New Notification"
+    }
   }
 }

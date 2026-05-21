@@ -5,17 +5,16 @@ import { useLocale } from 'next-intl';
 import { formatCurrency } from '@/lib/utils';
 
 /**
- * Hook مساعدة لتنسيق العملة باستخدام إعدادات المتجر (سعر الصرف والعملة الحالية)
- * يغنيك عن الحاجة لجلب الإعدادات في كل مكون يدوياً
+ * hook to format currency using settings
  */
 export function useFormatCurrency() {
   const settings = useSettings();
   const locale = useLocale();
 
   /**
-   * دالة تنسيق السعر
-   * @param amount المبلغ الأساسي (بالدولار مثلاً)
-   * @returns المبلغ منسقاً نصياً مع رمز العملة المناسب
+   * format currency using settings
+   * @param amount 
+   * @returns 
    */
   return (amount: number): string => {
     return formatCurrency(

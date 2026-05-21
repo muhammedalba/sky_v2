@@ -1,88 +1,88 @@
 {
-      "buttons": {
-            "save": "حفظ",
-            "saving": "جاري الحفظ...",
-            "cancel": "إلغاء",
-            "delete": "حذف",
-            "edit": "تعديل",
-            "create": "إنشاء",
-            "add": "إضافة",
-            "search": "بحث",
-            "filter": "تصفية",
-            "export": "تصدير",
-            "import": "استيراد",
-            "submit": "إرسال",
-            "back": "رجوع",
-            "next": "التالي",
-            "previous": "السابق",
-            "close": "إغلاق",
-            "confirm": "تأكيد",
-            "retry": "المحاولة مرة أخرى",
-            "clearAll": "مسح الكل",
-            "applyFilters": "تطبيق الفلاتر",
-            "markRead": "تحديد كمقروء",
-            "actions": "الإجراءات"
-      },
-      "errors": {
-            "required": "هذا الحقل مطلوب",
-            "invalidEmail": "عنوان بريد إلكتروني غير صالح",
-            "invalidPassword": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
-            "serverError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-            "notFound": "المورد غير موجود",
-            "unauthorized": "أنت غير مخول للقيام بهذا الإجراء",
-            "passwordMismatch": "انتظر، كلمات المرور غير متطابقة. يرجى التحقق مرة أخرى.",
-            "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
-            "updateFailed": "فشل التحديث، يرجى المحاولة مرة أخرى"
-      },
-      "messages": {
-            "success": "تمت العملية بنجاح",
-            "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
-            "deleteConfirmWithName": "لا يمكن التراجع عن حذف العنصر: \"{name}\"",
-            "deleteItem": "حذف {item}",
-            "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد المغادرة؟",
-            "loading": "جاري التحميل...",
-            "noData": "لا توجد بيانات متاحة",
-            "showingPage": "عرض الصفحة {page} من {total}",
-            "showingResults": "عرض {count} نتيجة",
-            "available": "متاح",
-            "unavailable": "غير متاح",
-            "updateSuccess": "تم التحديث بنجاح"
-      },
-      "tabs": {
-            "all": "الكل",
-            "active": "نشطة",
-            "inactive": "معطلة"
-      },
-      "results": {
-            "count": "{count} نتيجة",
-            "found": "تم العثور على {count} نتيجة",
-            "total": "الإجمالي: {count}"
-      },
-      "navigation": {
-            "dashboard": "لوحة القيادة",
-            "products": "المنتجات",
-            "categories": "الفئات",
-            "orders": "الطلبات",
-            "users": "المستخدمين",
-            "settings": "الإعدادات",
-            "logout": "تسجيل الخروج",
-            "profile": "الملف الشخصي",
-            "subCategories": "الفئات الفرعية",
-            "brands": "العلامات التجارية",
-            "suppliers": "الموردين",
-            "coupons": "القسائم",
-            "carousel": "شريط الصور",
-            "promoBanners": "البانرات الترويجية",
-            "productAnalytics": "تحليلات المنتجات",
-            "externalPlatforms": "مركز القيادة",
-            "shipping": "شركات الشحن",
-            "shippingRates": "أسعار الشحن",
-            "taxes": "الضرائب",
-            "locations": "المواقع الجغرافية",
-            "roles": "الأدوار والصلاحيات",
-            "notifications": "الإشعارات"
-      },
-      "auth": {
+  "buttons": {
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "add": "إضافة",
+    "search": "بحث",
+    "filter": "تصفية",
+    "export": "تصدير",
+    "import": "استيراد",
+    "submit": "إرسال",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "retry": "المحاولة مرة أخرى",
+    "clearAll": "مسح الكل",
+    "applyFilters": "تطبيق الفلاتر",
+    "markRead": "تحديد كمقروء",
+    "actions": "الإجراءات"
+  },
+  "errors": {
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "عنوان بريد إلكتروني غير صالح",
+    "invalidPassword": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+    "serverError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "notFound": "المورد غير موجود",
+    "unauthorized": "أنت غير مخول للقيام بهذا الإجراء",
+    "passwordMismatch": "انتظر، كلمات المرور غير متطابقة. يرجى التحقق مرة أخرى.",
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+    "updateFailed": "فشل التحديث، يرجى المحاولة مرة أخرى"
+  },
+  "messages": {
+    "success": "تمت العملية بنجاح",
+    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+    "deleteConfirmWithName": "لا يمكن التراجع عن حذف العنصر: \"{name}\"",
+    "deleteItem": "حذف {item}",
+    "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد المغادرة؟",
+    "loading": "جاري التحميل...",
+    "noData": "لا توجد بيانات متاحة",
+    "showingPage": "عرض الصفحة {page} من {total}",
+    "showingResults": "عرض {count} نتيجة",
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "updateSuccess": "تم التحديث بنجاح"
+  },
+  "tabs": {
+    "all": "الكل",
+    "active": "نشطة",
+    "inactive": "معطلة"
+  },
+  "results": {
+    "count": "{count} نتيجة",
+    "found": "تم العثور على {count} نتيجة",
+    "total": "الإجمالي: {count}"
+  },
+  "navigation": {
+    "dashboard": "لوحة القيادة",
+    "products": "المنتجات",
+    "categories": "الفئات",
+    "orders": "الطلبات",
+    "users": "المستخدمين",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "subCategories": "الفئات الفرعية",
+    "brands": "العلامات التجارية",
+    "suppliers": "الموردين",
+    "coupons": "القسائم",
+    "carousel": "شريط الصور",
+    "promoBanners": "البانرات الترويجية",
+    "productAnalytics": "تحليلات المنتجات",
+    "externalPlatforms": "مركز القيادة",
+    "shipping": "شركات الشحن",
+    "shippingRates": "أسعار الشحن",
+    "taxes": "الضرائب",
+    "locations": "المواقع الجغرافية",
+    "roles": "الأدوار والصلاحيات",
+    "notifications": "الإشعارات"
+  },
+  "auth": {
     "login": "تسجيل الدخول",
     "register": "فتح حساب جديد",
     "name": "الاسم الثلاثي / اسم المنشأة",
@@ -186,15 +186,15 @@
     }
   },
   "shipping": {
-      "title": "شركات الشحن",
-      "subtitle": "إدارة مزودي الشحن المتاحين في المتجر وتتبع حالاتهم",
-      "totalResults": "{count} شركة شحن",
-      "createProvider": "إضافة شركة شحن",
-      "editProvider": "تعديل بيانات الشركة",
-      "modalDescription": "أدخل بيانات مزود الشحن ليتمكن العملاء من استخدامه عند الطلب.",
-      "searchPlaceholder": "البحث عن شركة شحن باسمها أو كودها...",
-      "emptyDescription": "لم يتم إضافة أي شركات شحن حتى الآن.",
-      "fields": {
+    "title": "شركات الشحن",
+    "subtitle": "إدارة مزودي الشحن المتاحين في المتجر وتتبع حالاتهم",
+    "totalResults": "{count} شركة شحن",
+    "createProvider": "إضافة شركة شحن",
+    "editProvider": "تعديل بيانات الشركة",
+    "modalDescription": "أدخل بيانات مزود الشحن ليتمكن العملاء من استخدامه عند الطلب.",
+    "searchPlaceholder": "البحث عن شركة شحن باسمها أو كودها...",
+    "emptyDescription": "لم يتم إضافة أي شركات شحن حتى الآن.",
+    "fields": {
       "logo": "الشعار",
       "name": "اسم الشركة",
       "status": "الحالة",
@@ -202,19 +202,19 @@
     }
   },
   "shippingRates": {
-      "title": "تسعيرات الشحن",
-      "description": "إدارة تكاليف الشحن حسب الدول والمدن والأوزان",
-      "totalResults": "{count} تسعيرة شحن",
-      "createRate": "إضافة تسعيرة شحن",
-      "editRate": "تعديل تسعيرة شحن",
-      "modalDescription": "أدخل تفاصيل تسعيرة الشحن والنطاق الجغرافي المطبق.",
-      "searchPlaceholder": "البحث عن تسعيرة شحن...",
-      "empty": {
-        "title": "لا توجد تسعيرات",
-        "description": "قم بإضافة تسعيرة جديدة للبدء"
-      },
-      "globalFallback": "تسعيرة عالمية (جميع الدول)",
-      "fields": {
+    "title": "تسعيرات الشحن",
+    "description": "إدارة تكاليف الشحن حسب الدول والمدن والأوزان",
+    "totalResults": "{count} تسعيرة شحن",
+    "createRate": "إضافة تسعيرة شحن",
+    "editRate": "تعديل تسعيرة شحن",
+    "modalDescription": "أدخل تفاصيل تسعيرة الشحن والنطاق الجغرافي المطبق.",
+    "searchPlaceholder": "البحث عن تسعيرة شحن...",
+    "empty": {
+      "title": "لا توجد تسعيرات",
+      "description": "قم بإضافة تسعيرة جديدة للبدء"
+    },
+    "globalFallback": "تسعيرة عالمية (جميع الدول)",
+    "fields": {
       "provider": "شركة الشحن",
       "country": "الدولة",
       "region": "المنطقة",
@@ -265,6 +265,15 @@
       "isIncludedInPriceDesc": "إذا كانت مفعلة، فإن أسعار المنتجات تتضمن الضريبة مسبقاً",
       "isActive": "تفعيل الضريبة",
       "actions": "إجراءات"
+    }
+  },
+  "notifications": {
+    "alerts": {
+      "systemAlert": "تنبيه النظام",
+      "dashboardRevoked": "تم سحب صلاحية الوصول إلى لوحة القيادة.",
+      "permissionsUpdate": "تم تحديث صلاحياتك. سيتم تحديث الصفحة...",
+      "orderUpdate": "تحديث حالة الطلب",
+      "newNotification": "إشعار جديد"
     }
   }
 }

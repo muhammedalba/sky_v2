@@ -41,7 +41,6 @@ export default function AdminNotificationsPage() {
   // Use the admin-specific endpoint that returns ALL system notifications (not just current user's)
   const { data: response, isLoading } = useGetAdminNotifications(1, 100);
   const deleteMutation = useAdminDeleteNotification();
-
   const {
     openDialog,
     closeDialog,
@@ -125,7 +124,7 @@ export default function AdminNotificationsPage() {
             if (!item.targetRole) {
               return <span className="text-sm text-muted-foreground">N/A</span>;
             }
-            if (typeof item.targetRole === "object") { 
+            if (typeof item.targetRole === "object") {
               const roleName = item.targetRole.name;
               return (
                 <Badge
@@ -210,7 +209,7 @@ export default function AdminNotificationsPage() {
         title={t("admin.title")}
         subtitle={t("admin.list")}
         totalResults={tMessages("showingResults", {
-          count: response?.data.length || 0,
+          count: response?.data?.length || 0,
         })}
         action={{
           label: t("admin.sendTitle"),

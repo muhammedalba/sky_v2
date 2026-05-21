@@ -6,12 +6,12 @@ export interface CrudApi<T> {
   getOne: (id: string, params?: Record<string, unknown>) => Promise<ApiResponse<T>>;
   create: (data: FormData | Record<string, unknown>) => Promise<ApiResponse<T>>;
   update: (id: string, data: FormData | Record<string, unknown>) => Promise<ApiResponse<T>>;
-  delete: (id: string) => Promise<ApiResponse<any>>;
-  getStats?: () => Promise<ApiResponse<any>>;
+  delete: (id: string) => void;
+  getStats?: () => Promise<ApiResponse<T>>;
 }
 
 export function createCrudApi<T>(baseEndpoint: string, hasStats = false): CrudApi<T> {
-  const getHeaders = (data: any) => {
+  const getHeaders = (data: FormData | Record<string, unknown>) => {
     const isFormData = data instanceof FormData || (data && typeof data === 'object' && 'append' in data);
     return isFormData
       ? { 'Content-Type': 'multipart/form-data' }
@@ -35,7 +35,7 @@ export function createCrudApi<T>(baseEndpoint: string, hasStats = false): CrudAp
         headers: getHeaders(data),
       }) as unknown as Promise<ApiResponse<T>>,
 
-    delete: (id: string) => apiClient.delete(`${baseEndpoint}/${id}`) as unknown as Promise<ApiResponse<any>>,
+    delete: (id: string) => apiClient.delete(`${baseEndpoint}/${id}`),
   };
 
   if (hasStats) {

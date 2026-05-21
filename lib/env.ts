@@ -7,7 +7,7 @@
 const isServer = typeof window === 'undefined';
 const isProd = process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 
-console.log(isProd, "isProd");
+
 
 // --- Required Variables Validation ---
 // In production client-side, use relative path '/api/v1' for Next.js rewrites (Proxy).
@@ -17,7 +17,7 @@ const API_URL = isProd
   : process.env.NEXT_PUBLIC_API_URL;
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
-console.log(API_URL, "API_URL");
+
 // Critical endpoints
 const LOGIN_EP = process.env.NEXT_PUBLIC_ENDPOINT_AUTH_LOGIN;
 const REGISTER_EP = process.env.NEXT_PUBLIC_ENDPOINT_AUTH_REGISTER;
@@ -155,10 +155,9 @@ export const env = {
     },
     NOTIFICATIONS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS || '/notifications',
-      ADMIN_SEND: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_SEND || '/notifications/admin/send',
       ADMIN_DELETE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_DELETE || '/notifications/admin',
+      ADMIN_SEND: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_SEND || '/notifications/admin/send',
       STREAM: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_STREAM || '/notifications/stream',
     },
   },
-  HIDDEN_EMAILS: (process.env.NEXT_PUBLIC_HIDDEN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean),
 } as const;

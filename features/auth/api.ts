@@ -13,11 +13,11 @@ const ENDPOINTS = env.ENDPOINTS.AUTH;
 const request = {
   get: <T>(url: string, config?: AxiosRequestConfig) => 
     apiClient.get(url, config) as unknown as Promise<ApiResponse<T>>,
-  post: <T>(url: string, data?: any, config?: AxiosRequestConfig) => 
+  post: <T>(url: string, data?: FormData | object, config?: AxiosRequestConfig) => 
     apiClient.post(url, data, config) as unknown as Promise<ApiResponse<T>>,
-  patch: <T>(url: string, data?: any, config?: AxiosRequestConfig) => 
+  patch: <T>(url: string, data?: FormData | object, config?: AxiosRequestConfig) => 
     apiClient.patch(url, data, config) as unknown as Promise<ApiResponse<T>>,
-  put: <T>(url: string, data?: any, config?: AxiosRequestConfig) => 
+  put: <T>(url: string, data?: FormData | object, config?: AxiosRequestConfig) => 
     apiClient.put(url, data, config) as unknown as Promise<ApiResponse<T>>,
 };
 
@@ -47,7 +47,7 @@ export const authApi = {
   me: () => request.get<User>(ENDPOINTS.ME),
 
   logout: () => request.post<void>(ENDPOINTS.LOGOUT),
-
+ 
   updateMe: (data: FormData) => {
     if (!ENDPOINTS.UPDATE_ME) throw new Error('Update me endpoint not configured');
     return request.put<User>(ENDPOINTS.UPDATE_ME, data, {

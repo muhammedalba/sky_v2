@@ -21,15 +21,15 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
       },
     });
 
-    if (!response.ok) {
+    if (!response.ok && response?.status == 503) {
       console.error(`[SettingsService] Failed to fetch settings: ${response.statusText}`);
       return {
         ...DEFAULT_SETTINGS,
         maintenanceMode: true,
-        // maintenanceMessage: {
-        //   ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
-        //   en: 'The site is currently under maintenance. Please try again later.'
-        // }
+        maintenanceMessage: {
+          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
+          en: 'The site is currently under maintenance. Please try again later.'
+        }
       };
     }
 
