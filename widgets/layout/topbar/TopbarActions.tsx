@@ -33,10 +33,10 @@ const TopbarActions = ({
   }, [theme, setTheme]);
 
   // 3. Prefetch the alternate locale on mount so switching is instant
-  useEffect(() => {
-    const otherLocale = locale === "ar" ? "en" : "ar";
-    router.prefetch(pathname, { locale: otherLocale as "ar" | "en" });
-  }, [locale, pathname, router]);
+  // useEffect(() => {
+  //   const otherLocale = locale === "ar" ? "en" : "ar";
+  //   router.prefetch(pathname, { locale: otherLocale as "ar" | "en" });
+  // }, [locale, pathname, router]);
 
   // 4. تحصين دالة تغيير اللغة باستخدام useCallback
   const switchLocale = useCallback(

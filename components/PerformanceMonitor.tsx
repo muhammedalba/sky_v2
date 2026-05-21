@@ -5,7 +5,8 @@ import { useReportWebVitals } from "next/web-vitals";
 export default function PerformanceMonitor() {
   useReportWebVitals((metric) => {
     // Only log in development mode to avoid cluttering production
-    if (process.env.NODE_ENV === "development") {
+    // if (process.env.NODE_ENV === "development") {
+    if (true) {
       console.log(metric.entries[0].name.slice(21));
 
       const timeInMs = Math.round(metric.value);
