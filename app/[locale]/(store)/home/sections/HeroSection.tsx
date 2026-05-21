@@ -10,7 +10,7 @@ export default function HeroSection() {
   const t = useTranslations("home");
 
   return (
-    <section className="relative `min-h-screenflex items-center pb-20 bg-background text-foreground">
+    <section className="relative min-h-screen  flex items-center pb-20 bg-background text-foreground">
       {/* Video Background — preload=none delays the 6.7 MB download until autoplay starts */}
       <video
         autoPlay
@@ -98,6 +98,8 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+      <div className="absolute bottom-0 inset-x-0 h-7 bg-linear-to-b from-transparent to-background z-40" />
     </section>
   );
 }
+  

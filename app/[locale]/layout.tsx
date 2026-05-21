@@ -119,11 +119,9 @@ export default async function RootLayout({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Store",
-    name:
-      finalSettings.siteName?.[locale as "ar" | "en"] || "SkyGalaxy",
+    name: finalSettings.siteName?.[locale as "ar" | "en"] || "SkyGalaxy",
     image: finalSettings.logo || "",
-    description:
-      finalSettings.siteDescription?.[locale as "ar" | "en"] || "",
+    description: finalSettings.siteDescription?.[locale as "ar" | "en"] || "",
   };
 
   return (
@@ -155,12 +153,14 @@ export default async function RootLayout({
             <ToastProvider />
 
             {/* Performance Monitoring */}
-            <PerformanceMonitor />
+            <PerformanceMonitor debugMode={finalSettings.debugMode ?? false} />
             {children}
             {/* JSON-LD Structured Data for SEO Rich Snippets */}
             <script
               type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(structuredData),
+              }}
             />
           </MaintenanceGuard>
         </SettingsProvider>

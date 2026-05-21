@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, ReactNode } from 'react';
+import { Suspense, ReactNode } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import Spinner from '@/shared/ui/Spinner';
 

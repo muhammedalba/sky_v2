@@ -2,15 +2,16 @@
 
 import { useReportWebVitals } from "next/web-vitals";
 
-export default function PerformanceMonitor() {
+export default function PerformanceMonitor({
+  debugMode = false,
+}: {
+  debugMode: boolean;
+}) {
   useReportWebVitals((metric) => {
     // Only log in development mode to avoid cluttering production
     // if (process.env.NODE_ENV === "development") {
-    if (true) {
-      console.log(metric.entries[0].name.slice(21));
-
+    if (debugMode) {
       const timeInMs = Math.round(metric.value);
-
       let speedStatus = "🟢 Fast";
 
       switch (metric.name) {
@@ -33,7 +34,7 @@ export default function PerformanceMonitor() {
       }
 
       console.log(
-        `[Web Vitals] Router is ${metric?.entries[0]?.name?.slice(21)} --> name: ${metric.name} --> time: ${timeInMs}ms --> status: ${speedStatus}`,
+        `[Web Vitals] Router is ${metric?.entries[0]?.name?.slice(21) ?? ""} --> name: ${metric.name} --> time: ${timeInMs}ms --> status: ${speedStatus}`,
       );
     }
   });

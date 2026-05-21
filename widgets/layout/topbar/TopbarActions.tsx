@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useTransition, useCallback, useEffect } from "react";
+import { memo, useTransition, useCallback } from "react";
 import { useUIStore } from "@/store/ui-store";
 import { useRouter, usePathname } from "@/navigation";
 import { useParams } from "next/navigation";
