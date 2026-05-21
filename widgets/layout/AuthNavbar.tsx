@@ -133,7 +133,7 @@ export default function AuthNavbar() {
                 {/* Sidebar Panel */}
                 <div
                     className={cn(
-                        "absolute top-0 bottom-0 w-[85%] max-w-[340px] bg-background border-r border-border/50 shadow-2xl transition-transform duration-500 ease-out flex flex-col z-[10001]",
+                        "absolute top-0 bottom-0 w-[85%] max-w-[340px] bg-background border-r border-border/50 shadow-2xl transition-transform duration-500 ease-out flex flex-col z-10001",
                         locale === 'ar'
                             ? (mobileMenuOpen ? "right-0 translate-x-0" : "right-0 translate-x-full")
                             : (mobileMenuOpen ? "left-0 translate-x-0" : "left-0 -translate-x-full")
