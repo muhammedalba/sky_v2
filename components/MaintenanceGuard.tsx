@@ -21,10 +21,9 @@ export default function MaintenanceGuard({
 
   // Check if current URL is a login or register page to skip maintenance mode
   const isMaintenancePage = [
-    `/${locale}/login`,
-    `/${locale}/register`,
+
     `/${locale}/auth/login`,
-    `/${locale}/auth/register`,
+    `/${locale}/auth/forgot-password`,
   ].includes(pathname);
 
   // If maintenance is active, user cannot bypass, and it's not a login page, show Maintenance screen

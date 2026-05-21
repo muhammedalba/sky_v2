@@ -54,7 +54,7 @@ export function SmartForm<T extends FieldValues>({
   return (
     <div className="w-full">
       {serverError  && <ErrorMessage showIcon={true} message={serverError as string} className="mb-6 animate-in slide-in-from-top-1 px-4 py-3 rounded-2xl" />}
-      {successMessage && <SuccessMessage showIcon={false} message={successMessage} className={`mb-6 animate-in slide-in-from-top-1 px-4 py-3 rounded-2xl ${isRegistrationDisabled ? "bg-warning/10 text-warning border-warning/30 font-bold" : ""}`} />}
+      {successMessage && <SuccessMessage showIcon={!isRegistrationDisabled} message={successMessage} className={`mb-6 animate-in slide-in-from-top-1 px-4 py-3 rounded-2xl ${isRegistrationDisabled ? "bg-warning/10 text-warning border-warning/30 font-bold" : ""}`} />}
 
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(handleFormSubmit)} className={className}> 

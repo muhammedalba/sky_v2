@@ -51,9 +51,9 @@ export default function AuthNavbar() {
     }, [userMenuOpen, mobileMenuOpen]);
 
     const navItems = [
-        { name: t('home'), href: '/home', active: segment === 'home' || !segment, icon: Icons.Dashboard },
-        { name: t('products'), href: '/products', active: segment === 'products', icon: Icons.Products },
-        { name: t('contact'), href: '/contact', active: segment === 'contact', icon: Icons.Users },
+        { name: t('home'), href: '/home', active: segment === 'home' || !segment, icon: Icons.Dashboard , iconClassName:'text-primary' },
+        { name: t('products'), href: '/products', active: segment === 'products', icon: Icons.Products, iconClassName:'text-success' },
+        { name: t('contact'), href: '/contact', active: segment === 'contact', icon: Icons.Phone, iconClassName:'text-warning' },
     ];
 
 
@@ -106,9 +106,9 @@ export default function AuthNavbar() {
                                     e.stopPropagation();
                                     setMobileMenuOpen(true);
                                 }}
-                                className="lg:hidden w-11 h-11 rounded-full flex items-center justify-center bg-muted/40 border border-white/5 backdrop-blur-md hover:bg-accent transition-all shadow-sm"
+                                className="lg:hidden cursor-pointer w-11 h-11 rounded-full flex items-center justify-center bg-muted/40 border border-white/5 backdrop-blur-md hover:bg-accent transition-all shadow-sm"
                             >
-                                <Icons.Menu className="h-5 w-5" />
+                                <Icons.Menu className="h-5 w-5 " />
                             </button>
                         </div>
                     </div>
@@ -144,9 +144,9 @@ export default function AuthNavbar() {
                         <SidebarHeader />
                         <button
                             onClick={() => setMobileMenuOpen(false)}
-                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
+                            className="w-10 cursor-pointer h-10 rounded-full flex items-center justify-center bg-destructive/5 hover:bg-destructive/20 transition-colors"
                         >
-                            <Icons.X className="h-5 w-5" />
+                            <Icons.X className="h-5 w-5 text-destructive hover:text-destructive/" />
                         </button>
                     </div>
 
@@ -159,13 +159,13 @@ export default function AuthNavbar() {
                                     href={item.href}
                                     onClick={() => setMobileMenuOpen(false)}
                                     className={cn(
-                                        "flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 font-bold",
+                                        "flex items-center gap-4 px-3 py-3.5 rounded-2xl transition-all duration-300 font-bold",
                                         item.active
                                             ? "bg-primary text-white shadow-xl shadow-primary/20"
                                             : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                                     )}
                                 >
-                                    <item.icon className="w-5 h-5" />
+                                    <item.icon className={cn(`w-5 h-5 ${item.iconClassName}`)} />
                                     <span>{item.name}</span>
                                 </Link>
                             ))}
@@ -175,14 +175,14 @@ export default function AuthNavbar() {
                             <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">{t('preference')}</p>
 
                             {/* Theme Toggle */}
-                            <div className="flex items-center justify-between px-4">
+                            <div className="flex items-center justify-between px-4 py-2 rounded-xl hover:bg-accent/50 hover:text-foreground ">
                                 <span className="text-sm font-bold">{t('theme')}</span>
                                 <TopbarActions showLocaleSwitcher={false} showBar={false} />
 
                             </div>
 
                             {/* Language Switcher */}
-                            <div className="flex items-center justify-between px-4">
+                            <div className="flex items-center justify-between px-4  py-2 rounded-xl hover:bg-accent/50 hover:text-foreground">
                                 <span className="text-sm font-bold">{t('language')}</span>
                                 <TopbarActions showThemeSwitcher={false} showBar={false} />
                             </div>

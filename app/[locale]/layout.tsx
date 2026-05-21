@@ -91,6 +91,7 @@ export default async function RootLayout({
     navigation: allMessages.navigation,
     messages: allMessages.messages,
     maintenance: allMessages.maintenance,
+    notifications: allMessages.notifications,
   };
 
   // Use fallback settings if API fails

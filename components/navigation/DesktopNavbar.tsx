@@ -15,6 +15,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { env } from '@/lib/env';
+import NotificationBell from '@/features/notifications/components/NotificationBell';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -136,6 +137,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             {/* Language */}
             <TopbarActions />
 
+      
             {/* Cart */}
             <CartButton is_Admin={is_Admin} cartItemCount={cartItemCount} />
 

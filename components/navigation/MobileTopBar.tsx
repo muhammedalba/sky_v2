@@ -70,6 +70,7 @@ function MobileTopBar({ categories }: MobileTopBarProps) {
 
             {/* Language Switcher */}
             <TopbarActions />
+            
             {/* Logo */}
             <Link
               href="/home"

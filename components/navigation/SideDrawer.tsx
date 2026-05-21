@@ -179,7 +179,7 @@ export default function SideDrawer({
           <SidebarHeader />
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
+            className="w-10 cursor-pointer h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
             aria-label="Close menu"
           >
             <Icons.X className='size-5' />
