@@ -97,7 +97,7 @@ interface TopPromoBannerProps {
 
 export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
   const locale = useLocale();
-  const t = useTranslations('PromoBanner');
+  const t = useTranslations('home.promoBanner');
 
   const { dismissed, dismiss } = useBannerDismissed(banner?._id);
 
@@ -131,9 +131,9 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
     if (!localizedText) return null;
 
     const singleItem = (
-      <span className="inline-flex items-center gap-2 mx-8 text-xs sm:text-sm font-black tracking-wide text-zinc-100 uppercase">
+      <span className="inline-flex items-center gap-2 mx-8 text-xs sm:text-sm font-black tracking-wide  uppercase">
         <Icons.PromoBanners className="h-4.5 w-4.5 text-warning shrink-0" aria-hidden="true" />
-        <span>{localizedText}</span>
+        <span>{localizedText}</span> 
         {bannerLink && (
           <span className="underline decoration-warning/60 hover:decoration-warning transition-all text-xs font-bold text-warning ml-1">
             {t('viewDetails')}
@@ -190,7 +190,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
     <div
       role="banner"
       aria-label={t('bannerAriaLabel')}
-      className="fixed top-0 inset-x-0 z-50 h-10 bg-background font-black text-foreground tracking-tight flex items-center justify-between overflow-hidden select-none shadow-xs"
+      className="fixed top-0 inset-x-0 z-50 h-10 bg-primary/90  backdrop-blur-xl  font-black text-white tracking-tight flex items-center justify-between overflow-hidden select-none shadow-xs"
     >
       {bannerLink ? (
         <Link href={bannerLink} className="flex-1 h-full flex items-center cursor-pointer">

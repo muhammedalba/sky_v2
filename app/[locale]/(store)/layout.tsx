@@ -11,13 +11,13 @@ import type { PromoBanner } from "@/features/marketing/types";
 
 // ─── Server-side Data Fetch ───────────────────────────────────────────────────
 
-async function getCategories(): Promise<CategoryItem[]> {
+async function getCategories(locale: string): Promise<CategoryItem[]> {
   try {
     const res = await fetch(
       `${env.API_URL}${env.ENDPOINTS.CATEGORIES.BASE}?limit=20`,
       {
         next: { revalidate: 300 },
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept-Language": locale, },
       },
     );
 
@@ -33,13 +33,13 @@ async function getCategories(): Promise<CategoryItem[]> {
   }
 }
 
-async function getActivePromoBanner(): Promise<PromoBanner | null> {
+async function getActivePromoBanner(locale: string): Promise<PromoBanner | null> {
   try {
     const res = await fetch(
       `${env.API_URL}${env.ENDPOINTS.PROMO_BANNER.ACTIVE}`,
       {
         next: { revalidate: 60 },
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept-Language": locale, },
       },
     );
 
@@ -66,12 +66,11 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const categories = await getCategories();
-  const promoBanner = await getActivePromoBanner();
+  const categories = await getCategories(locale);
+  const promoBanner = await getActivePromoBanner(locale);
   const allMessages = await getMessages();
 
-  console.log(promoBanner);
-  
+
 
   // Pick only customer-facing storefront messages to avoid admin bloat
   const storeMessages = {

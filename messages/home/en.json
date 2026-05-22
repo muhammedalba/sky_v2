@@ -134,5 +134,10 @@
   "meta": {
     "title": "Sky Galaxy - Best Insulation & Construction Materials in KSA",
     "description": "Sky Galaxy is your premier destination for waterproofing, thermal insulation, adhesives, and modern construction systems in Saudi Arabia. High quality and fast supply."
+  },
+  "promoBanner": {
+    "viewDetails": "→ View Details ",
+    "dismissAria": "Dismiss announcement",
+    "bannerAriaLabel": "Promotional announcement banner"
   }
 }
