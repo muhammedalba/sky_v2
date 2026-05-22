@@ -91,6 +91,20 @@
     "partners": "شريك ومورد",
     "quality": "ضمان الجودة"
   },
+  "stats_bar": {
+    "products_val": "500",
+    "products_suffix": "+",
+    "products_label": "منتج متوفر",
+    "brands_val": "15",
+    "brands_suffix": "+",
+    "brands_label": "علامة تجارية",
+    "years_val": "10",
+    "years_suffix": "+",
+    "years_label": "سنوات خبرة",
+    "projects_val": "150",
+    "projects_suffix": "+",
+    "projects_label": "عميل مشروع منجز"
+  },
   "testimonials": {
     "title": "قالوا عن سكاي جالاكسي",
     "description": "ثقة عملائنا هي الركيزة الأساسية التي نبني عليها نجاحنا."

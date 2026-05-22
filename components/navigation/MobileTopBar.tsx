@@ -45,7 +45,7 @@ function MobileTopBar({ categories }: MobileTopBarProps) {
       <header
         id="mobile-top-bar"
         className={cn(
-          'fixed top-0 z-40 inset-x-0 md:hidden transition-all duration-500 ease-in-out',
+          'fixed top-(--promo-banner-height,0px) z-40 inset-x-0 md:hidden transition-all duration-500 ease-in-out',
           scrolled
             ? 'bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-lg'
             : 'bg-transparent'

@@ -6,6 +6,8 @@ import { env } from "@/lib/env";
 import type { CategoryItem } from "@/components/navigation/CategoriesScroller";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
+import TopPromoBanner from "@/components/navigation/TopPromoBanner";
+import type { PromoBanner } from "@/features/marketing/types";
 
 // ─── Server-side Data Fetch ───────────────────────────────────────────────────
 
@@ -31,6 +33,25 @@ async function getCategories(): Promise<CategoryItem[]> {
   }
 }
 
+async function getActivePromoBanner(): Promise<PromoBanner | null> {
+  try {
+    const res = await fetch(
+      `${env.API_URL}${env.ENDPOINTS.PROMO_BANNER.ACTIVE}`,
+      {
+        next: { revalidate: 60 },
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    return json?.data || null;
+  } catch {
+    return null;
+  }
+}
+
 // Settings are fetched once in [locale]/layout.tsx via the shared
 // getStoreSettings() (shared/api/settings.ts) with ISR cache tag 'settings'.
 // They reach all client components through SettingsProvider — no extra fetch needed here.
@@ -46,7 +67,11 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
   setRequestLocale(locale);
 
   const categories = await getCategories();
+  const promoBanner = await getActivePromoBanner();
   const allMessages = await getMessages();
+
+  console.log(promoBanner);
+  
 
   // Pick only customer-facing storefront messages to avoid admin bloat
   const storeMessages = {
@@ -83,7 +108,10 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
 
   return (
     <NextIntlClientProvider messages={storeMessages}>
-      <div className="min-h-screen  flex flex-col bg-background font-sans antialiased">
+      <div className="min-h-screen flex flex-col bg-background font-sans antialiased pt-(--promo-banner-height,0px) transition-[padding-top] duration-300 ease-in-out">
+        {/* Top promo banner */}
+        <TopPromoBanner banner={promoBanner} />
+
         {/* Top Navigation — Mobile & Desktop handled internally */}
         <StoreNavbarLoader categories={categories} />
 

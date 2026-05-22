@@ -5,10 +5,18 @@ import Link from "next/link";
 import { Button } from "@/shared/ui/Button";
 import { Icons } from "@/shared/ui/Icons";
 import Badge from "@/shared/ui/Badge";
+import { useSettings } from "@/app/providers/SettingsProvider";
+import { useLocale } from "next-intl";
+import { truncate } from "@/lib/utils";
 
 export default function HeroSection() {
   const t = useTranslations("home");
-
+  const settings = useSettings();
+  const locale = useLocale();
+  const siteName =
+    settings.siteName?.[locale as "ar" | "en"] || t("brand.name");
+  const siteDescription =
+    settings.siteDescription?.[locale as "ar" | "en"] || t("hero.description");
   return (
     <section className="relative min-h-screen  flex items-center pb-20 bg-background text-foreground">
       {/* Video Background — preload=none delays the 6.7 MB download until autoplay starts */}
@@ -43,14 +51,14 @@ export default function HeroSection() {
 
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-lg">
-                {t("brand.name")}
+                {truncate(siteName, 25)}
                 <br />
-                <span className="title-gradient max-w-2xl m-auto mt-2 block pb-2">
+                <span className="title-gradient max-w-4xl m-auto mt-2 block pb-2">
                   {t("brand.tagline")}
                 </span>
               </h1>
-              <p className="max-w-xl text-lg md:text-xl text-foreground/50 font-medium leading-relaxed mt-2 mx-auto">
-                {t("hero.description")}
+              <p className="max-w-3xl text-xs sm:text-sm  md:text-md lg:text-lg text-foreground/50 font-medium leading-relaxed mt-2 mx-auto">
+                {truncate(siteDescription, 250)}
               </p>
             </div>
 
@@ -98,8 +106,7 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 inset-x-0 h-7 bg-linear-to-b from-transparent to-background z-40" />
+      {/* <div className="absolute bottom-0 inset-x-0 h-7 bg-linear-to-b from-transparent to-background z-40" /> */}
     </section>
   );
 }
-  

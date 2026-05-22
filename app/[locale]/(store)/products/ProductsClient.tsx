@@ -946,7 +946,7 @@ export default function ProductsClient() {
             {/* Asymmetric Spotlight Layout: Double width first featured card */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
               {/* Col-span-6 (Main spotlight showcase banner) */}
-              <div className="md:col-span-6 flex flex-col justify-between bg-gradient-to-tr from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-6 sm:p-10 relative overflow-hidden group">
+              <div className="md:col-span-6 flex flex-col justify-between bg-linear-to-tr from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-6 sm:p-10 relative overflow-hidden group">
                 <div className="absolute -right-10 -bottom-10 w-60 h-60 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 space-y-4">
@@ -1020,7 +1020,7 @@ export default function ProductsClient() {
                       setSelectedBrand(brand._id);
                       setPage(1);
                     }}
-                    className="px-8 py-5 rounded-2xl bg-card border border-border/40 shadow-2xs hover:border-primary/25 hover:shadow-md transition-all shrink-0 flex items-center justify-center min-w-[10rem] h-20"
+                    className="px-8 py-5 rounded-2xl bg-card border border-border/40 shadow-2xs hover:border-primary/25 hover:shadow-md transition-all shrink-0 flex items-center justify-center min-w-40 h-20"
                   >
                     <span className="text-sm sm:text-base font-extrabold uppercase tracking-widest text-muted-foreground/80 hover:text-primary transition-colors">
                       {bName}

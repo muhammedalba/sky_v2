@@ -2,44 +2,73 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { env } from "./env";
 
+/**
+ * Combines and merges Tailwind CSS classes dynamically, resolving conflicts.
+ * Uses `clsx` to construct class names conditionally and `twMerge` to merge them cleanly.
+ * 
+ * @param inputs - Array of class values (strings, objects, arrays, etc.) to merge.
+ * @returns A single unified string of Tailwind classes.
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Fallback exchange rate between SAR and USD (1 USD = 3.75 SAR).
+ */
 const FALLBACK_EXCHANGE_RATE = 3.75;
 
+/**
+ * Formats a monetary amount into the appropriate localized currency string.
+ * - For Arabic locales: Displays in the base currency (e.g. SAR).
+ * - For English/other locales: Converts the base currency into USD by dividing by the exchange rate.
+ * 
+ * @param amountInBaseCurrency - The original amount in the base currency (e.g., SAR).
+ * @param locale - Active language locale (defaults to setting's default locale or "ar").
+ * @param exchangeRate - Exchange rate for currency conversion (optional).
+ * @param currencyCode - Specific currency code to use for Arabic locale (optional, defaults to "SAR").
+ * @returns A formatted currency string (e.g., "$10.00" or "١٠٫٠٠ ر.س.‏").
+ */
 export function formatCurrency(
   amountInBaseCurrency: number,
   locale: string = env.DEFAULT_LOCALE ?? "ar",
   exchangeRate?: number,
   currencyCode?: string,
 ): string {
-  // 1. تحديد ما إذا كانت اللغة عربية
+  // 1. Check if the locale is Arabic
   const isArabic = locale.startsWith("ar");
 
-  // 2. إذا اللغة عربية: السعر الأساسي (الريال).
-  // إذا إنجليزية: نقسم السعر الأساسي على سعر الصرف (مثال: 37.5 / 3.75 = 10 دولار)
+  // 2. Adjust currency amount based on language.
+  // If Arabic: use base currency directly.
+  // If English/other: divide by exchange rate (e.g., 37.5 / 3.75 = 10 USD)
   let finalAmount = amountInBaseCurrency;
   if (!isArabic && exchangeRate && exchangeRate > 0) {
-    // نفترض أن المستخدم أدخل 3.75 في لوحة التحكم، لذا نقسم
     finalAmount = amountInBaseCurrency / exchangeRate;
   }
 
-  // 3. تحديد كود العملة: عربي يأخذ العملة الأساسية، إنجليزي يأخذ USD
+  // 3. Determine currency code: base currency code for Arabic, USD for others
   const code = isArabic ? currencyCode || "SAR" : "USD";
 
-  // 4. تحديد التنسيق المحلي
+  // 4. Determine format locale
   const formatLocale = isArabic ? "ar-SA" : "en-US";
 
-  // 5. إرجاع المبلغ المنسق
+  // 5. Return the formatted currency string
   return new Intl.NumberFormat(formatLocale, {
     style: "currency",
     currency: code,
     currencyDisplay: "symbol",
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2, // لضمان عدم ظهور أكثر من رقمين عشريين
+    maximumFractionDigits: 2, // Ensures exact 2 decimal places
   }).format(finalAmount);
 }
+
+/**
+ * Formats a date object or string to display only year, month, and day.
+ * 
+ * @param date - The Date object or string to format.
+ * @param locale - Format locale (defaults to "en-US").
+ * @returns Formatted date string (e.g., "May 22, 2026") or "-" if date is invalid.
+ */
 export function formatDate(
   date: string | Date,
   locale: string = "en-US",
@@ -55,6 +84,13 @@ export function formatDate(
   }).format(d);
 }
 
+/**
+ * Formats a date object or string to show both date and time (hour/minute).
+ * 
+ * @param date - The Date object or string to format.
+ * @param locale - Format locale (defaults to "en-US").
+ * @returns Formatted datetime string (e.g., "May 22, 2026, 04:30 PM") or "-" if date is invalid.
+ */
 export function formatDateTime(
   date: string | Date,
   locale: string = "en-US",
@@ -72,6 +108,13 @@ export function formatDateTime(
   }).format(d);
 }
 
+/**
+ * Formats a date into a smart relative time string (e.g. "just now", "Today, 10:30 AM", "Yesterday, 09:15 PM").
+ * 
+ * @param date - The target Date object or date string.
+ * @param locale - Format locale (defaults to "ar-SA").
+ * @returns Localized relative time string, or a fully formatted date if older than yesterday.
+ */
 export function formatRelativeTime(
   date: string | Date,
   locale: string = "ar-SA",
@@ -113,6 +156,12 @@ export function formatRelativeTime(
   return formatDateTime(date, locale);
 }
 
+/**
+ * Gets Tailwind utility color classes for an order or item status badge.
+ * 
+ * @param status - The status keyword (e.g. "pending", "delivered", "cancelled").
+ * @returns Class string combining background and text color utility classes.
+ */
 export function getStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
     pending: "bg-warning/10 text-warning",
@@ -124,11 +173,27 @@ export function getStatusColor(status: string): string {
   return statusColors[status] || "bg-muted text-muted-foreground";
 }
 
+/**
+ * Truncates long strings to a specified maximum length, appending an ellipsis (...).
+ * 
+ * @param str - The source string.
+ * @param length - Maximum length before truncation.
+ * @returns Truncated string or original string if short enough.
+ */
 export function truncate(str: string, length: number): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + "...";
 }
 
+/**
+ * Extracts the appropriate translation value from a multi-language object or handles plain values.
+ * Supports fallback mechanisms if the requested locale translation is missing.
+ * 
+ * @template T - The type of value expected.
+ * @param value - The multi-lingual dictionary (e.g. `{ ar: "...", en: "..." }`) or a direct value.
+ * @param locale - Desired language locale string.
+ * @returns The translation string or value corresponding to the locale, or falls back to ar/en/first available key.
+ */
 export function getLocalizedValue<T>(
   value: T | { [key: string]: T } | unknown,
   locale: string,
@@ -142,6 +207,12 @@ export function getLocalizedValue<T>(
   return value as T;
 }
 
+/**
+ * Determines the Badge UI component style variant based on the user's role permission level.
+ * 
+ * @param level - Permission rank number (e.g., 90 for SuperAdmin).
+ * @returns Compatible Badge variant name ("success", "destructive", "warning", or "secondary").
+ */
 export function getRoleBadgeVariant(
   level: number,
 ): "default" | "secondary" | "destructive" | "warning" | "success" {
@@ -151,11 +222,23 @@ export function getRoleBadgeVariant(
   return "secondary"; // Regular User
 }
 
+/**
+ * Helper to strip the "@gmail.com" suffix from email strings for clean alias display.
+ * 
+ * @param email - User's email string.
+ * @returns E-mail name prefix without domain, or empty string.
+ */
 export function formatEmail(email?: string | null): string {
   if (!email) return "";
   return email.replace(/gmail\.com$/i, "");
 }
 
+/**
+ * Maps notification action events to the appropriate UI Badge component style variant.
+ * 
+ * @param action - Action event type name (e.g., "SYSTEM_UPDATE").
+ * @returns The badge styling variant.
+ */
 export function getActionBadgeVariant(
   action?: string | null,
 ): "default" | "secondary" | "destructive" | "danger" | "success" | "warning" | "outline" {

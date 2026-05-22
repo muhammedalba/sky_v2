@@ -91,6 +91,20 @@
     "partners": "Partners & Suppliers",
     "quality": "Quality Assurance"
   },
+  "stats_bar": {
+    "products_val": "500",
+    "products_suffix": "+",
+    "products_label": "Available Products",
+    "brands_val": "15",
+    "brands_suffix": "+",
+    "brands_label": "Brands",
+    "years_val": "10",
+    "years_suffix": "+",
+    "years_label": "Years of Experience",
+    "projects_val": "150",
+    "projects_suffix": "+",
+    "projects_label": "Completed Projects"
+  },
   "testimonials": {
     "title": "What They Say About Sky Galaxy",
     "description": "Our customers' trust is the fundamental pillar upon which we build our success."

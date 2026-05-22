@@ -102,7 +102,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
     <header
       id="desktop-navbar"
       className={cn(
-        'hidden md:block fixed top-0 z-40 inset-x-0 transition-all duration-500 ease-in-out',
+        'hidden md:block fixed top-[var(--promo-banner-height,0px)] z-40 inset-x-0 transition-all duration-500 ease-in-out',
         scrolled
           ? 'bg-background/70 backdrop-blur-2xl border-b border-border/60 shadow-sm'
           : 'bg-transparent '
