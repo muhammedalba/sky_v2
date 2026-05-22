@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLocale } from 'next-intl';
 import { rolesApi } from '../api';
 import { Role } from '@/features/users/types';
 
@@ -15,8 +16,10 @@ export function useRoles() {
 }
 
 export function usePermissionsList() {
+  // تضمين اللغة في queryKey لإعادة جلب البيانات المترجمة عند تغيير اللغة
+  const locale = useLocale();
   return useQuery({
-    queryKey: ['permissions-list'],
+    queryKey: ['permissions-list', locale],
     queryFn: async () => {
       const response = await rolesApi.getPermissionsList();
       return response.data;

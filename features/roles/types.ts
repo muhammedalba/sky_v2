@@ -6,7 +6,10 @@ export enum Permissions {
   // ---- Settings ----
   VIEW_SETTINGS = 'view_settings',
   UPDATE_SETTINGS = 'update_settings',
+  UPDATE_MAINTENANCE = 'update_maintenance',
+  UPDATE_DEBUG = 'update_debug',
 
+  // Locations
   VIEW_LOCATIONS = 'view_locations',
   CREATE_LOCATION = 'create_location',
   UPDATE_LOCATION = 'update_location',
