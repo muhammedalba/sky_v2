@@ -30,7 +30,8 @@
     }
   },
   "trust": {
-    "label": "Partners in Success & Suppliers"
+    "label": "Partners in Success & Suppliers",
+    "approved_distributors": "Approved Distributors"
   },
   "categories": {
     "title": "Browse Categories",

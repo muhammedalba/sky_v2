@@ -219,7 +219,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
           {category.image && (
             <ImageWithFallback
               src={category.image}
-              alt={category.name}
+              alt={`category: ${category.name}`}
               width={20}
               height={20}
               className="w-5 h-5 rounded-full object-cover"

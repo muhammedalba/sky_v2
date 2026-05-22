@@ -6,6 +6,8 @@ import { useBrands } from "@/features/brands/hooks/useBrands";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useMemo } from "react";
 import { Brand } from "@/types";
+import Badge from "@/shared/ui/Badge";
+import { Icons } from "@/shared/ui/Icons";
 const EMPTY_BRANDS: Brand[] = [];
 
 // 1.Separate styles from the component to prevent them from being re-injected into the DOM with every render.
@@ -66,7 +68,7 @@ export default function TrustedBy() {
                 <span className="text-sm sm:text-base font-extrabold uppercase tracking-widest text-muted-foreground/80 hover:text-primary transition-colors">
                   {getTrans(brand.name)}
                   <Image
-                    src={brand.image??""}
+                    src={brand.image ?? ""}
                     alt={getTrans(brand.name)}
                     width={150}
                     height={48}
@@ -89,8 +91,12 @@ export default function TrustedBy() {
       <MarqueeStyles />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
+          <Badge variant={'success'} className="p-1 px-4 rounded-full text-xs sm:text-sm md:text-md font-black   shrink-0 text-center hover:bg-success/10 hover:text-success ">
+            <Icons.Shield className="w-5 h-5 text-success me-1" />
+            {t("trust.approved_distributors")}
+          </Badge>
           <div className="flex flex-col items-center gap-2">
-            <p className="title-gradient text-md sm:text-xl md:text-3xl font-black uppercase tracking-[0.2em] shrink-0 text-center">
+            <p className="title-gradient text-md sm:text-xl md:text-3xl  font-black   shrink-0 text-center">
               {t("trust.label")}
             </p>
             <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 mx-auto" />

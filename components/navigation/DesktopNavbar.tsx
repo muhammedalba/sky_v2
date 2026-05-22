@@ -15,7 +15,6 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { env } from '@/lib/env';
-import NotificationBell from '@/features/notifications/components/NotificationBell';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -102,7 +101,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
     <header
       id="desktop-navbar"
       className={cn(
-        'hidden md:block fixed top-[var(--promo-banner-height,0px)] z-40 inset-x-0 transition-all duration-500 ease-in-out',
+        'hidden md:block fixed top-(--promo-banner-height,0px) z-40 inset-x-0 transition-all duration-500 ease-in-out',
         scrolled
           ? 'bg-background/70 backdrop-blur-2xl border-b border-border/60 shadow-sm'
           : 'bg-transparent '

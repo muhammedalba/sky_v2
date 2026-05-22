@@ -74,13 +74,11 @@ export default function HomeClient({ locale }: { locale: string }) {
       {/* 1. HERO SECTION (Above the Fold - Static Import) */}
       <HeroSection />
 
-  
       {/* Stats Bar (Above the Fold - Static Import) */}
       <StatsBar />
+
       {/* 2. TRUST INDICATORS (Above the Fold - Static Import) */}
       <TrustedBy />
-
-    
 
       {/* 3. CORE CATEGORIES (Below the Fold - Dynamic Import) */}
       <CategoriesSection locale={locale} />

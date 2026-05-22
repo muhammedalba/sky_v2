@@ -96,7 +96,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
             ? products.map((item: Product, i: number) => (
                 <ScrollReveal key={item._id} direction="up" delay={i * 100}>
                   <Card className="group flex flex-col bg-card hover:shadow-2xl hover:border-primary/50 transition-all duration-500 rounded-3xl overflow-hidden border-border/50 h-full relative cursor-pointer">
-                    <button className="absolute top-4 left-4 z-20 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center border border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
+                    <button type="button" onClick={() => {}} title='add to wishlist' aria-label='add to wishlist' className="absolute top-4 left-4 z-20 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center border border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
                       <Icons.Star className="w-4 h-4" />
                     </button>
 

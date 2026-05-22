@@ -82,6 +82,8 @@ const BottomNavItem = memo(function BottomNavItem({
     <Link
       href={item.href}
       aria-label={label}
+      title={label}
+      aria-placeholder={label}
       className={cn(
         'relative z-10 flex h-full flex-1 items-center justify-center',
         'select-none outline-none active:scale-95 transition-transform duration-300',
