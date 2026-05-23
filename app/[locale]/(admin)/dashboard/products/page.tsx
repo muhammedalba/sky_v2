@@ -80,8 +80,10 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
   ], [t]);
   // handle pagination
   const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
+
   // handle tab change
   const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
+
   // handle soft delete
   const handleSoftDelete = useCallback((id: string, title: string) => {
     confirmDialog.openDialog({
@@ -94,6 +96,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
       },
     });
   }, [confirmDialog, t, deleteMutation, refetch]);
+  
   // handle hard delete
   const handleHardDelete = useCallback((id: string, title: string) => {
     confirmDialog.openDialog({

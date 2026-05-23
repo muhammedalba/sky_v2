@@ -4,16 +4,26 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/shared/ui/Button";
-import { ChevronRightIcon, EyeIcon, PackageIcon, ShoppingCartIcon, StarIcon } from "@/shared/ui/Icons";
+import {
+  ChevronRightIcon,
+  EyeIcon,
+  HeartIcon,
+  PackageIcon,
+  ShoppingCartIcon,
+  StarIcon,
+} from "@/shared/ui/Icons";
 import { Card } from "@/shared/ui/Card";
 import { useProducts } from "@/features/products/hooks/useProducts";
 import { Product } from "@/types";
-import { getLocalizedValue } from "@/lib/utils";
+import { getLocalizedValue, truncate } from "@/lib/utils";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import Badge from "@/shared/ui/Badge";
+import { Tooltip } from "@/shared/ui/Tooltip";
 
 export default function BestSellersSection({ locale }: { locale: string }) {
   const t = useTranslations("home");
-  const { data: productsData } = useProducts({ limit: 4 });
+  const { data: productsData } = useProducts({ limit: 4, isFeatured: true });
   const products = productsData?.data || [];
 
   return (
@@ -21,11 +31,11 @@ export default function BestSellersSection({ locale }: { locale: string }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal animation="slide-up">
           <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16">
-            <div className="space-y-4">
+            <div className="space-y-4 w-full">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black tracking-widest uppercase">
                 {t("best_sellers.badge")}
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
+              <h2 className="text-4xl md:text-5xl font-black title-gradient tracking-tight">
                 {t("best_sellers.title")}
               </h2>
               <p className="text-lg text-muted-foreground font-medium max-w-2xl">
@@ -47,57 +57,73 @@ export default function BestSellersSection({ locale }: { locale: string }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.length > 0
             ? products.map((item: Product, i: number) => {
-                const localizedUses = item.uses
-                  ? locale === "ar"
-                    ? item.uses.ar
-                    : item.uses.en
-                  : [];
-                const rating = Math.round(item.ratingsAverage || 5);
+                const localizedUses = item.uses ? item.uses : [];
 
                 return (
-                  <ScrollReveal key={item._id} animation="slide-up" delay={i * 100}>
+                  <ScrollReveal
+                    key={item._id}
+                    animation="slide-up"
+                    delay={i * 100}
+                  >
                     <Card className="group flex flex-col bg-card hover:shadow-2xl hover:border-primary/50 transition-all duration-500 rounded-4xl overflow-hidden border-border/50 h-full relative cursor-pointer hover:scale-[1.02]">
-                      
                       {/* Image container & hover overlays */}
-                      <div className="aspect-square bg-secondary/30 dark:bg-secondary/10 relative overflow-hidden flex items-center justify-center p-8">
+                      <div className="aspect-square bg- relative overflow-hidden flex items-center justify-center">
                         {/* Wishlist Button (Start corner) */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
-                          title="add to wishlist"
-                          aria-label="add to wishlist"
-                          className="absolute top-4 inset-s-4 z-20 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center border border-border/50 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors duration-300"
+                        <div
+                          dir={"ltr"}
+                          className="absolute top-4 inset-s-4 z-30 flex flex-col gap-2 md:-translate-x-24 md:group-hover:translate-x-4 transition-all duration-300"
                         >
-                          <StarIcon className="w-4 h-4" />
-                        </button>
-
-                        {/* Best Seller Badge (End corner) */}
-                        <div className="absolute top-4 inset-e-4 z-20 flex flex-col gap-2">
-                          <span className="bg-primary text-primary-foreground text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-md shadow-sm">
-                            {t("best_sellers.badge")}
-                          </span>
-                        </div>
-
-                        {/* Hover Overlay */}
-                        <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-10 backdrop-blur-[2px]">
-                          <Link href={`/products/${item._id}`}>
-                            <div className="bg-background/90 text-foreground hover:bg-primary hover:text-primary-foreground rounded-full p-3 transition-colors duration-300 shadow-lg cursor-pointer">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            title="add to wishlist"
+                            aria-label="add to wishlist"
+                            className="cursor-pointer w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-primary/70 hover:text-primary-foreground transition-colors duration-300"
+                          >
+                            <Tooltip
+                              position="inset"
+                              content={'t("common.add_to_wishlist")'}
+                            >
+                              {" "}
+                              <HeartIcon className="w-4 h-4" />
+                            </Tooltip>{" "}
+                          </button>
+                          {/* Quick view */}
+                          <Link
+                            href={`/products/${item.sku}`}
+                            title="add to wishlist"
+                            aria-label="add to wishlist"
+                            className="cursor-pointer w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-primary/70 hover:text-primary-foreground transition-colors duration-300"
+                          >
+                            <Tooltip
+                              position="inset"
+                              content={'t("common.add_to_wishlist")'}
+                            >
                               <EyeIcon className="w-5 h-5" />
-                            </div>
+                            </Tooltip>{" "}
                           </Link>
+                        </div>
+                        {/* Best Seller Badge (End corner) */}
+                        <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+                          <Badge
+                            variant={"warning"}
+                            className="text-[10px] bg-warning text-warning-foreground font-black tracking-wider uppercase px-2.5 py-1 rounded-md shadow-sm"
+                          >
+                            {t("best_sellers.badge")}
+                          </Badge>
                         </div>
 
                         {/* Product Image */}
                         {item.imageCover ? (
-                          <Image
+                          <ImageWithFallback
                             src={item.imageCover}
                             alt={getLocalizedValue(item.title, locale)}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                            className="object-contain group-hover:scale-110 transition-transform duration-500 p-8"
+                            className="object-contain group-hover:scale-110 transition-transform duration-500 "
                             loading="lazy"
                           />
                         ) : (
@@ -108,33 +134,67 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                       {/* Card details */}
                       <div className="p-6 flex flex-col grow">
                         {/* Category Name */}
-                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                          {typeof item.category === "object" &&
-                          item.category &&
-                          "name" in item.category
-                            ? getLocalizedValue(
-                                (item.category as { name: Record<string, string> }).name,
-                                locale,
-                              )
-                            : ""}
+                        <div className="border-b border-border/40 flex flex-wrap gap-2">
+                          <Badge
+                            variant="default"
+                            className="text-xs  uppercase tracking-wider w-fit"
+                          >
+                            {typeof item.category === "object" &&
+                            item.category &&
+                            "name" in item.category
+                              ? getLocalizedValue(
+                                  (
+                                    item.category as {
+                                      name: Record<string, string>;
+                                    }
+                                  ).name,
+                                  locale,
+                                )
+                              : ""}
+                          </Badge>
+                          <Badge
+                            variant="default"
+                            className="text-xs   uppercase tracking-wider mb-2 w-fit"
+                          >
+                            {typeof item.brand === "object" &&
+                            item.brand &&
+                            "name" in item.brand
+                              ? getLocalizedValue(
+                                  (
+                                    item.brand as {
+                                      name: Record<string, string>;
+                                    }
+                                  ).name,
+                                  locale,
+                                )
+                              : ""}
+                          </Badge>
                         </div>
-
                         {/* Title */}
-                        <h3 className="text-lg font-black text-foreground mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
-                          {getLocalizedValue(item.title, locale)}
+                        <h3 className="text-lg font-semibold text-foreground/90 my-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
+                          {truncate(getLocalizedValue(item.title, locale), 30)}
                         </h3>
+                        <p className="text-sm font-normal text-foreground/60 mb-3">
+                          {truncate(
+                            getLocalizedValue(item.description, locale),
+                            50,
+                          )}
+                        </p>
 
                         {/* Uses Tags Grid */}
                         {localizedUses && localizedUses.length > 0 && (
                           <div className="flex flex-wrap gap-1.5 mb-4">
-                            {localizedUses.slice(0, 2).map((use: string, idx: number) => (
-                              <span
-                                key={idx}
-                                className="text-[10px] font-bold text-muted-foreground border border-border/50 rounded-md px-2.5 py-0.5 bg-secondary/50 dark:bg-secondary/15"
-                              >
-                                {use}
-                              </span>
-                            ))}
+                            {localizedUses
+                              .slice(0, 2)
+                              .map((use: string, idx: number) => (
+                                <Badge
+                                  variant={"secondary"}
+                                  key={idx}
+                                  // className="text-[10px] font-bold text-muted-foreground border border-border/50 rounded-md px-2.5 py-0.5 bg-secondary/50 dark:bg-secondary/15"
+                                >
+                                  {use}
+                                </Badge>
+                              ))}
                           </div>
                         )}
 
@@ -142,7 +202,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                         <div className="mt-auto border-t border-border/40 pt-4 flex items-end justify-between">
                           {/* Price */}
                           <div className="text-2xl font-black text-primary tracking-tight">
-                            {item.priceRange?.min || 0}{" "}
+                            {item.priceRange?.min || 0}
                             <span className="text-sm font-medium text-muted-foreground">
                               {t("common.currency")}
                             </span>
@@ -151,11 +211,13 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                           {/* Ratings column */}
                           <div className="flex flex-col items-end gap-1">
                             <div className="flex gap-0.5">
-                              {[1, 2, 3, 4, 5].map((s) => (
+                              {[...Array(5)].map((_, i) => (
                                 <StarIcon
-                                  key={s}
-                                  className={`w-3.5 h-3.5 ${
-                                    s <= rating ? "text-warning" : "text-border dark:text-muted/50"
+                                  key={i}
+                                  className={`w-3 h-3 ${
+                                    i < Math.round(item.ratingsAverage || 0)
+                                      ? "text-amber-400"
+                                      : "text-zinc-200"
                                   }`}
                                 />
                               ))}
@@ -169,20 +231,29 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                         </div>
 
                         {/* Add to Cart button */}
-                        <Link href={`/products/${item._id}`} className="mt-4 block w-full">
-                          <Button className="w-full h-12 bg-foreground text-background hover:bg-primary hover:text-primary-foreground font-black rounded-xl transition-all duration-300 flex justify-center items-center gap-2 shadow-sm hover:shadow-lg">
+                        <Link
+                          href={`/products/${item.slug}`}
+                          className="mt-4 block w-full"
+                        >
+                          <Button
+                            variant={"default"}
+                            size="lg"
+                            className="w-full hover:bg-background/80 hover:text-primary font-black hover:border-primary border border-border shadow-sm hover:shadow-lg"
+                          >
                             <ShoppingCartIcon className="w-4 h-4" />
                             {t("common.add_to_cart")}
                           </Button>
                         </Link>
                       </div>
-
                     </Card>
                   </ScrollReveal>
                 );
               })
             : [1, 2, 3, 4].map((i: number) => (
-                <div key={i} className="aspect-square bg-secondary animate-pulse rounded-3xl" />
+                <div
+                  key={i}
+                  className="aspect-square bg-secondary animate-pulse rounded-3xl"
+                />
               ))}
         </div>
       </div>

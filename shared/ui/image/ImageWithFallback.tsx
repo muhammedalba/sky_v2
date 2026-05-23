@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 interface ImageWithFallbackProps extends ImageProps {
   fallback?: React.ReactNode;
+  
 }
 
 export default function ImageWithFallback({

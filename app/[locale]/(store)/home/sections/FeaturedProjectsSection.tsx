@@ -4,26 +4,16 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Card } from "@/shared/ui/Card";
 import { ChevronRightIcon, PackageIcon } from "@/shared/ui/Icons";
-import { useState, useRef, useEffect } from "react";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
-const ScrollReveal = ({ children, className = "", delay = 0, direction = "up" }: { children: React.ReactNode; className?: string; delay?: number; direction?: "up" | "down" | "left" | "right" | "none"; }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.unobserve(entry.target); } }, { threshold: 0.1, rootMargin: "50px" });
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-  const getTranslate = () => { if (direction === "up") return "translate-y-12"; if (direction === "down") return "-translate-y-12"; if (direction === "left") return "translate-x-12"; if (direction === "right") return "-translate-x-12"; return ""; };
-  return <div ref={ref} className={`transition-all duration-1000 ease-out ${isVisible ? "opacity-100 translate-y-0 translate-x-0" : `opacity-0 ${getTranslate()}`} ${className}`} style={{ transitionDelay: `${delay}ms` }}>{children}</div>;
-};
+
 
 const SectionDivider = ({ inverted = false }: { inverted?: boolean }) => (
   <div className="relative h-24 w-full bg-background overflow-hidden -mt-px">
     <div
       className="absolute inset-0 bg-secondary"
       style={{
-        clipPath: inverted
+        clipPath:inverted
           ? "polygon(0 0, 100% 100%, 100% 0, 0 0)"
           : "polygon(0 0, 100% 0, 0 100%, 0 0)",
       }}

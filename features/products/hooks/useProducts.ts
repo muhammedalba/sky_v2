@@ -82,16 +82,16 @@ export function useUpdateProduct() {
       const response = await productsApi.update(id, data);
       return response.data as unknown as ProductWithVariants;
     },
-    onSuccess: async (data, variables) => {
+    onSuccess: async () => {
       // 1. تحديث قائمة المنتجات (الكاش المكون من عنصرين)
       await queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length === 2,
+        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length === 3,
       });
 
       // 2. 🔴 الحل السحري: مسح كاش أي منتج مفرد (الكاش المكون من 3 عناصر أو أكثر)
       // هذا سيمسح الـ Slug القديم، والـ Slug الجديد، وأي شيء يخص صفحة التعديل بصمت!
       await queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length >= 3,
+        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length >= 4,
         refetchType: 'none', // صمت تام: امسح البيانات ولكن لا ترسل أي طلب GET الآن
       });
     },

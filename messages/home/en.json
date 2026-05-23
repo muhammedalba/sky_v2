@@ -55,7 +55,7 @@
     }
   },
   "best_sellers": {
-    "badge": "Store",
+    "badge": "Best Seller",
     "title": "Best Selling Products",
     "description": "Carefully selected products that meet the highest technical specifications for major projects.",
     "view_all": "Shop All Products",
