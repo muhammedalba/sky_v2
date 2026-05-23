@@ -47,7 +47,7 @@ const FeaturedProjectsSection = dynamic(
   },
 );
 
-export default function HomeClient({ locale }: { locale: string }) {
+export default function HomeClient() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. HERO SECTION (Above the Fold - Static Import) */}
@@ -60,10 +60,10 @@ export default function HomeClient({ locale }: { locale: string }) {
       <TrustedBy />
 
       {/* 3. CORE CATEGORIES (Below the Fold - Dynamic Import) */}
-      <CategoriesSection locale={locale} />
+      <CategoriesSection  />
 
       {/* 4. BEST SELLERS (Below the Fold - Dynamic Import) */}
-      <BestSellersSection locale={locale} />
+      <BestSellersSection  />
 
       {/* 5. PROMO BANNER (Below the Fold - Dynamic Import) */}
       <PromoBannerSection />
