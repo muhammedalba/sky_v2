@@ -27,7 +27,7 @@ export default function PromoBannerSection() {
         <ScrollReveal>
           <div className="relative rounded-[3rem] bg-foreground text-background overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-linear-to-r from-primary/20 to-transparent" />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]  mix-blend-overlay" />
+            {/* <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]  mix-blend-overlay" /> */}
             <BoxIcon className="absolute -left-20 -top-20 w-[400px] h-[400px] text-background/5 -rotate-12 pointer-events-none" />
 
             <div className="relative p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-start">

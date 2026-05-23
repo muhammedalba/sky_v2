@@ -8,6 +8,7 @@ import Badge from "@/shared/ui/Badge";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { useLocale } from "next-intl";
 import { truncate } from "@/lib/utils";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 export default function HeroSection() {
   const t = useTranslations("home");
@@ -35,7 +36,7 @@ export default function HeroSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-48 lg:mt-36">
         <div className="grid grid-cols-1 gap-12 items-center">
-          <div className="space-y-8 text-center">
+          <ScrollReveal delay={100} animation="slide-up" className="space-y-8 text-center">
             <Badge
               variant="outline"
               className="tracking-widest inline-flex items-center gap-2"
@@ -49,7 +50,7 @@ export default function HeroSection() {
               </span>
             </Badge>
 
-            <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <ScrollReveal animation="slide-left" delay={300} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-lg">
                 {truncate(siteName, 25)}
                 <br />
@@ -60,7 +61,7 @@ export default function HeroSection() {
               <p className="max-w-3xl text-xs sm:text-sm  md:text-md lg:text-lg text-foreground/50 font-medium leading-relaxed mt-2 mx-auto">
                 {truncate(siteDescription, 250)}
               </p>
-            </div>
+            </ScrollReveal>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
               <Link href="/products" className="w-full sm:w-auto">
@@ -103,7 +104,7 @@ export default function HeroSection() {
                 </Badge>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
       {/* <div className="absolute bottom-0 inset-x-0 h-7 bg-linear-to-b from-transparent to-background z-40" /> */}

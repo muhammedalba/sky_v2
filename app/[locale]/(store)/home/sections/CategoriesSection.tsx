@@ -72,7 +72,7 @@ export default function CategoriesSection({ locale }: { locale: string }) {
                       <h3 className="text-3xl md:text-5xl font-black text-white mb-3 line-clamp-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                         {getLocalizedValue(categories[0].name, locale)}
                       </h3>
-                      <p className="text-white/70 font-medium max-w-md mb-6 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                      <p className="text-white/70 font-medium max-w-md mb-6 line-clamp-2 transform translate-y-4 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
                         {t("categories.items.waterproofing.desc")}
                       </p>
                       

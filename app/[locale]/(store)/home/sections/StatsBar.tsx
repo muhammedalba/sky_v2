@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { BrandsIcon, CalendarIcon, PackageIcon, UsersIcon } from "@/shared/ui/Icons";
 import { useState, useEffect, useRef, useMemo } from "react";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 // CountUp component optimized for high performance
 const CountUp = ({
@@ -122,7 +123,7 @@ export default function StatsBar() {
           {stats.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div
+              <ScrollReveal animation="slide-right" delay={200 * index} 
                 key={index}
                 className="group flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-start gap-2 p-4 lg:px-8 lg:first:pt-4 lg:divide-x-0 transition-all duration-300 hover:scale-[1.02]"
               >
@@ -145,7 +146,7 @@ export default function StatsBar() {
                     {item.label}
                   </p>
                 </div>
-              </div>
+              </ScrollReveal>
             );
           })}
         </div>

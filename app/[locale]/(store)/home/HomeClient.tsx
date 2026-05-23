@@ -1,11 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import TrustedBy from "@/components/home/TrustedBy";
 import HeroSection from "./sections/HeroSection";
-import StatsBar from "./sections/StatsBar";
 
 // --- Sections Below the Fold (Dynamically Imported) ---
+const TrustedBy = dynamic(() => import("@/components/home/TrustedBy"), {
+  loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
+});
+const StatsBar = dynamic(() => import("./sections/StatsBar"), {
+  loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
+});
 const CategoriesSection = dynamic(
   () => import("./sections/CategoriesSection"),
   {

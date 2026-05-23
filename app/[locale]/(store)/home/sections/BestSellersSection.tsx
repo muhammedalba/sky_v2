@@ -6,57 +6,12 @@ import Image from "next/image";
 import { Button } from "@/shared/ui/Button";
 import { ChevronRightIcon, PackageIcon, ShoppingCartIcon, StarIcon } from "@/shared/ui/Icons";
 import { Card } from "@/shared/ui/Card";
-import { useState, useRef, useEffect } from "react";
 import { useProducts } from "@/features/products/hooks/useProducts";
 import { Product } from "@/types";
 import { getLocalizedValue } from "@/lib/utils";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
-const ScrollReveal = ({
-  children,
-  className = "",
-  delay = 0,
-  direction = "up",
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-  direction?: "up" | "down" | "left" | "right" | "none";
-}) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1, rootMargin: "50px" },
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const getTranslate = () => {
-    if (direction === "up") return "translate-y-12";
-    if (direction === "down") return "-translate-y-12";
-    if (direction === "left") return "translate-x-12";
-    if (direction === "right") return "-translate-x-12";
-    return "";
-  };
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ease-out ${isVisible ? "opacity-100 translate-y-0 translate-x-0" : `opacity-0 ${getTranslate()}`} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
 
 export default function BestSellersSection({ locale }: { locale: string }) {
   const t = useTranslations("home");
@@ -66,7 +21,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
   return (
     <section className="py-24 bg-background relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal>
+        <ScrollReveal animation="slide-up">
           <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black tracking-widest uppercase">
@@ -94,7 +49,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.length > 0
             ? products.map((item: Product, i: number) => (
-                <ScrollReveal key={item._id} direction="up" delay={i * 100}>
+                <ScrollReveal key={item._id} animation="slide-up" delay={i * 500}>
                   <Card className="group flex flex-col bg-card hover:shadow-2xl hover:border-primary/50 transition-all duration-500 rounded-3xl overflow-hidden border-border/50 h-full relative cursor-pointer">
                     <button type="button" onClick={() => {}} title='add to wishlist' aria-label='add to wishlist' className="absolute top-4 left-4 z-20 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center border border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
                       <StarIcon className="w-4 h-4" />

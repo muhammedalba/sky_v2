@@ -8,27 +8,10 @@ import { useMemo } from "react";
 import { Brand } from "@/types";
 import Badge from "@/shared/ui/Badge";
 import { ShieldIcon } from "@/shared/ui/Icons";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 const EMPTY_BRANDS: Brand[] = [];
 
-// 1.Separate styles from the component to prevent them from being re-injected into the DOM with every render.
-const MarqueeStyles = () => (
-  <style>{`
-    @keyframes marquee {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); }
-    }
-    .animate-marquee {
-      animation: marquee 60s linear infinite;
-    }
-    [dir="rtl"] .animate-marquee {
-      animation: marquee-rtl 60s linear infinite;
-    }
-    @keyframes marquee-rtl {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(50%); }
-    }
-  `}</style>
-);
+
 
 export default function TrustedBy() {
   const t = useTranslations("home");
@@ -88,9 +71,9 @@ export default function TrustedBy() {
 
   return (
     <section className="py-16 sm:py-24 border-t border-border/30 bg-muted/5 overflow-hidden relative z-10">
-      <MarqueeStyles />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center gap-8">
+        <ScrollReveal animation="slide-up"  className="flex flex-col items-center gap-8">
           <Badge variant={'success'} className="p-1 px-4 rounded-full text-xs sm:text-sm md:text-md font-black   shrink-0 text-center hover:bg-success/10 hover:text-success ">
             <ShieldIcon className="w-5 h-5 text-success me-1" />
             {t("trust.approved_distributors")}
@@ -105,8 +88,8 @@ export default function TrustedBy() {
             <div className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500">
               {marqueeContent}
             </div>
-          </div>
-        </div>
+          </div> 
+        </ScrollReveal>
       </div>
     </section>
   );
