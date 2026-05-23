@@ -6,7 +6,7 @@ import {
   useAdminDeleteNotification,
 } from "@/features/notifications/hooks/useNotifications";
 import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
-import { Icons } from "@/shared/ui/Icons";
+import { BellIcon, SendIcon, TrashIcon } from "@/shared/ui/Icons";
 import { Badge } from "@/shared/ui/Badge";
 import { Button } from "@/shared/ui/Button";
 import { Tooltip } from "@/shared/ui/Tooltip";
@@ -192,7 +192,7 @@ export default function AdminNotificationsPage() {
                   className="h-8 w-8 rounded-xl hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleDelete(item._id)}
                 >
-                  <Icons.Trash className="h-4 w-4 text-destructive" />
+                  <TrashIcon className="h-4 w-4 text-destructive" />
                 </Button>
               </Tooltip>
             </Can>
@@ -213,7 +213,7 @@ export default function AdminNotificationsPage() {
         })}
         action={{
           label: t("admin.sendTitle"),
-          icon: <Icons.Send className="w-4 h-4" />,
+          icon: <SendIcon className="w-4 h-4" />,
           onClick: () => router.push("/dashboard/notifications/send"),
           permission: Permissions.SEND_NOTIFICATION,
         }}
@@ -226,7 +226,7 @@ export default function AdminNotificationsPage() {
         emptyState={{
           title: t("empty"),
           description: t("emptyDesc"),
-          icon: <Icons.Bell className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <BellIcon className="h-10 w-10 text-muted-foreground/40" />,
         }}
       />
 

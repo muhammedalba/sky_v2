@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Input } from '../Input';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { Icons } from '../Icons';
+import React, { useState, useRef, useEffect } from "react";
+import { Input } from "../Input";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Icons, PlusIcon, SearchIcon, SpinnerIcon } from "../Icons";
 
 export interface SearchOption {
   _id: string;
@@ -41,14 +41,14 @@ export function SearchableSelect({
   error,
   getDisplayValue,
   onOpen,
-  initialDisplayValue = '',
+  initialDisplayValue = "",
   className,
   icon,
   iconColor,
   disabled = false,
   createLink,
 }: SearchableSelectProps) {
-  const t = useTranslations('common');
+  const t = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState(initialDisplayValue);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -64,24 +64,26 @@ export function SearchableSelect({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Clear search text if value is cleared externally
   useEffect(() => {
     if (!value) {
-      setSearch('');
+      setSearch("");
     }
   }, [value]);
 
   return (
     <div className={`relative space-y-2 mt-7 ${className}`} ref={wrapperRef}>
-
       <Input
         icon={icon}
         iconColor={iconColor}
@@ -100,14 +102,13 @@ export function SearchableSelect({
           if (onOpen) onOpen();
         }}
         error={error}
-
       />
 
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-background border border-border/50 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 flex justify-center items-center gap-2 text-sm text-muted-foreground">
-              <Icons.Spinner className="w-4 h-4" /> Loading...
+              <SpinnerIcon className="w-4 h-4" /> Loading...
             </div>
           ) : options && options.length > 0 ? (
             <ul className="p-1">
@@ -120,8 +121,11 @@ export function SearchableSelect({
                     setSearch(displayVal);
                     setIsOpen(false);
                   }}
-                  className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors ${value === opt._id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/20 text-foreground'
-                    }`}
+                  className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors ${
+                    value === opt._id
+                      ? "bg-primary/10 text-primary"
+                      : "hover:bg-secondary/20 text-foreground"
+                  }`}
                 >
                   {getDisplayValue(opt)}
                 </li>
@@ -130,18 +134,18 @@ export function SearchableSelect({
           ) : (
             <div className="p-6 flex flex-col items-center justify-center text-center gap-3">
               <div className="bg-secondary/50 p-3 rounded-full">
-                <Icons.Search className="w-6 h-6 text-muted-foreground/50" />
+                <SearchIcon className="w-6 h-6 text-muted-foreground/50" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
-                {t('messages.noData')}
+                {t("messages.noData")}
               </p>
               {createLink && (
-                <Link 
-                  href={createLink} 
+                <Link
+                  href={createLink}
                   className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl transition-colors text-sm font-bold"
                 >
-                  <Icons.Plus className="w-4 h-4" />
-                  {t('buttons.create')}
+                  <PlusIcon className="w-4 h-4" />
+                  {t("buttons.create")}
                 </Link>
               )}
             </div>

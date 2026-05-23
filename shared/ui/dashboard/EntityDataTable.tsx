@@ -10,7 +10,7 @@ import {
 import { Card } from '@/shared/ui/Card';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import Pagination, { PaginationData } from '@/shared/ui/Pagination';
-import { Icons } from '@/shared/ui/Icons';
+import { BrandsIcon, ChevronLeftIcon, ChevronRightIcon } from "@/shared/ui/Icons";
 import { Button } from '@/shared/ui/Button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -139,9 +139,9 @@ export default function EntityDataTable<T extends { _id: string }>({
                           onClick={() => toggleRow(item._id)}
                         >
                           {expandedRows[item._id] ? (
-                            <Icons.ChevronLeft className="h-4 w-4 -rotate-90 transition-transform" />
+                            <ChevronLeftIcon className="h-4 w-4 -rotate-90 transition-transform" />
                           ) : (
-                            <Icons.ChevronRight className="h-4 w-4 rotate-90 rtl:-rotate-90 transition-transform" />
+                            <ChevronRightIcon className="h-4 w-4 rotate-90 rtl:-rotate-90 transition-transform" />
                           )}
                         </Button>
                       </TableCell>
@@ -164,7 +164,7 @@ export default function EntityDataTable<T extends { _id: string }>({
                   <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95 duration-500">
                     <div className="p-4 rounded-3xl bg-muted/30 ring-1 ring-border/20">
                       {emptyState?.icon || (
-                        <Icons.Brands className="h-10 w-10 text-muted-foreground/40" />
+                        <BrandsIcon className="h-10 w-10 text-muted-foreground/40" />
                       )}
                     </div>
                     <div className="space-y-1">

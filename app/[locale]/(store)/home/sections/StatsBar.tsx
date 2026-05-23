@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Icons } from "@/shared/ui/Icons";
+import { BrandsIcon, CalendarIcon, PackageIcon, UsersIcon } from "@/shared/ui/Icons";
 import { useState, useEffect, useRef, useMemo } from "react";
 
 // CountUp component optimized for high performance
@@ -82,7 +82,7 @@ export default function StatsBar() {
   // Memoize stats array to prevent recreation on re-renders (if any parent state changes)
   const stats = useMemo(() => [
     {
-      icon: Icons.Package,
+      icon: PackageIcon,
       val: productsVal,
       suffix: t("stats_bar.products_suffix") || "+",
       label: t("stats_bar.products_label"),
@@ -90,7 +90,7 @@ export default function StatsBar() {
         "text-primary bg-primary/10 group-hover:bg-primary group-hover:text-primary-foreground",
     },
     {
-      icon: Icons.Brands,
+      icon: BrandsIcon,
       val: brandsVal,
       suffix: t("stats_bar.brands_suffix") || "+",
       label: t("stats_bar.brands_label"),
@@ -98,7 +98,7 @@ export default function StatsBar() {
         "text-success bg-success/10 group-hover:bg-success group-hover:text-success-foreground",
     },
     {
-      icon: Icons.Calendar,
+      icon: CalendarIcon,
       val: yearsVal,
       suffix: t("stats_bar.years_suffix") || "+",
       label: t("stats_bar.years_label"),
@@ -106,7 +106,7 @@ export default function StatsBar() {
         "text-warning bg-warning/10 group-hover:bg-warning group-hover:text-warning-foreground",
     },
     {
-      icon: Icons.Users,
+      icon: UsersIcon,
       val: projectsVal,
       suffix: t("stats_bar.projects_suffix") || "+",
       label: t("stats_bar.projects_label"),

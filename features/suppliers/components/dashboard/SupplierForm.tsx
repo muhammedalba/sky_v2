@@ -12,7 +12,7 @@ import { SupplierFormValues, supplierSchema } from '@/features/suppliers/supplie
 import { Switch } from '@/shared/ui/Switch';
 import { useTranslations, useLocale } from 'next-intl';
 import { useToast } from '@/shared/hooks/useToast';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, GlobeIcon, MailIcon, MapPinIcon, PhoneIcon, UserIcon } from "@/shared/ui/Icons";
 import { useRouter } from 'next/navigation';
 import { Textarea } from '@/shared/ui/Textarea';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
@@ -114,7 +114,7 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5">
           <Input
             label={t('fields.name')}
-            icon={Icons.Edit}
+            icon={EditIcon}
             {...register('name')}
             error={errors.name?.message}
             disabled={createMutation.isPending || updateMutation.isPending}
@@ -122,7 +122,7 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
 
           <Input
             label="Contact Name"
-            icon={Icons.User}
+            icon={UserIcon}
             {...register('contactName')}
             error={errors.contactName?.message}
             disabled={createMutation.isPending || updateMutation.isPending}
@@ -131,7 +131,7 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
           <Input
             label="Email"
             type="email"
-            icon={Icons.Mail}
+            icon={MailIcon}
             {...register('email')}
             error={errors.email?.message}
             disabled={createMutation.isPending || updateMutation.isPending}
@@ -139,7 +139,7 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
 
           <Input
             label="Phone"
-            icon={Icons.Phone}
+            icon={PhoneIcon}
             {...register('phone')}
             error={errors.phone?.message}
             disabled={createMutation.isPending || updateMutation.isPending}
@@ -148,7 +148,7 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
 
           <Input
             label="Website"
-            icon={Icons.Globe}
+            icon={GlobeIcon}
             {...register('website')}
             error={errors.website?.message}
             disabled={createMutation.isPending || updateMutation.isPending}
@@ -169,7 +169,7 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
           <div className="md:col-span-2">
             <Textarea
               label={t('fields.address')}
-              icon={Icons.MapPin}
+              icon={MapPinIcon}
               {...register('address')}
               error={errors.address?.message}
               disabled={createMutation.isPending || updateMutation.isPending}

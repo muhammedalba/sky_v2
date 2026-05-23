@@ -9,7 +9,7 @@ import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
 import SearchBar from './SearchBar';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
-import { Icons } from '@/shared/ui/Icons';
+import { DashboardIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
 import { checkUserPermission } from '@/lib/auth';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useSettings } from '@/app/providers/SettingsProvider';
@@ -44,9 +44,9 @@ const CartButton = memo(({ is_Admin, cartItemCount }: { is_Admin: boolean, cartI
     >
       <div className="relative">
         {is_Admin ? (
-          <Icons.Dashboard className="size-5 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
+          <DashboardIcon className="size-5 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
         ) : (
-          <Icons.ShoppingCart className="size-5 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
+          <ShoppingCartIcon className="size-5 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
         )}
 
         {cartItemCount > 0 && !is_Admin && (

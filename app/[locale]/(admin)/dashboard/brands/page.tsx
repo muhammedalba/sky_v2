@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useBrands, useDeleteBrand } from '@/features/brands/hooks/useBrands';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
@@ -128,7 +128,7 @@ export default function BrandsPage() {
                 className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
                 onClick={() => handleOpenModal(brand)}
                 disabled={deleteBrandPending || isLoading || isConfirmLoading}                   >
-                <Icons.Edit className="h-4 w-4" />
+                <EditIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -143,7 +143,7 @@ export default function BrandsPage() {
                 isLoading={deleteBrandPending}
                 disabled={deleteBrandPending || isLoading || isConfirmLoading}
               >
-                <Icons.Trash className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -160,7 +160,7 @@ export default function BrandsPage() {
         totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createBrand'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
           permission: Permissions.CREATE_BRAND
         }}

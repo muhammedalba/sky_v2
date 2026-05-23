@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/shared/ui/Button';
-import { Icons } from '@/shared/ui/Icons';
+import { WarningIcon, XIcon } from "@/shared/ui/Icons";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -91,7 +91,7 @@ export default function ConfirmDialog({
                 }`}
             >
               {/* أبقيت على حيلتك الذكية بتدوير الأيقونة، لكن مع تحسين تموضعها */}
-              <Icons.Warning className={`w-6 h-6 `} />
+              <WarningIcon className={`w-6 h-6 `} />
             </div>
 
             {/* Text Content */}
@@ -106,7 +106,7 @@ export default function ConfirmDialog({
                   disabled={isLoading}
                   aria-label="Close dialog"
                 >
-                  <Icons.X className="w-4 h-4 text-destructive" />
+                  <XIcon className="w-4 h-4 text-destructive" />
                 </button>
               </div>
               <p className="mt-5 text-sm text-muted-foreground leading-relaxed">

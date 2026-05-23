@@ -3,7 +3,7 @@
 import { Link } from "@/navigation";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Icons } from "@/shared/ui/Icons";
+import { DashboardIcon, MenuIcon, PhoneIcon, ProductsIcon, XIcon } from "@/shared/ui/Icons";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -55,21 +55,21 @@ export default function AuthNavbar() {
       name: t("home"),
       href: "/home",
       active: segment === "home" || !segment,
-      icon: Icons.Dashboard,
+      icon: DashboardIcon,
       iconClassName: "text-primary",
     },
     {
       name: t("products"),
       href: "/products",
       active: segment === "products",
-      icon: Icons.Products,
+      icon: ProductsIcon,
       iconClassName: "text-success",
     },
     {
       name: t("contact"),
       href: "/contact",
       active: segment === "contact",
-      icon: Icons.Phone,
+      icon: PhoneIcon,
       iconClassName: "text-warning",
     },
   ];
@@ -128,7 +128,7 @@ export default function AuthNavbar() {
                 }}
                 className="lg:hidden cursor-pointer w-11 h-11 rounded-full flex items-center justify-center bg-muted/40 border border-white/5 backdrop-blur-md hover:bg-accent transition-all shadow-sm"
               >
-                <Icons.Menu className="h-5 w-5 " />
+                <MenuIcon className="h-5 w-5 " />
               </button>
             </div>
           </div>
@@ -170,7 +170,7 @@ export default function AuthNavbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="w-10 cursor-pointer h-10 rounded-full flex items-center justify-center bg-destructive/5 hover:bg-destructive/20 transition-colors"
             >
-              <Icons.X className="h-5 w-5 text-destructive hover:text-destructive/" />
+              <XIcon className="h-5 w-5 text-destructive hover:text-destructive/" />
             </button>
           </div>
 

@@ -9,7 +9,7 @@ import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Select } from '@/shared/ui/Select';
 import { SearchableSelect, SearchOption } from '@/shared/ui/form/SearchableSelect';
-import { Icons } from '@/shared/ui/Icons';
+import { BellIcon, GlobeIcon, MessageCircleIcon, SendIcon, SpinnerIcon, UserIcon, UsersIcon } from "@/shared/ui/Icons";
 import { useAdminSendNotification, useGetNotificationActions } from '@/features/notifications/hooks/useNotifications';
 import { useUsers } from '@/features/users/hooks/useUsers';
 import { useRoles } from '@/features/roles/hooks/useRoles';
@@ -86,7 +86,7 @@ export default function SendNotificationForm() {
     FALLBACK_ACTIONS.map((act) => ({
       value: act.value,
       label: getTrans(act.label),
-      icon: Icons.Bell
+      icon: BellIcon
     })),
     [getTrans]
   );
@@ -114,15 +114,15 @@ export default function SendNotificationForm() {
       label: tUsers.has(`roles.${role.name.toLowerCase()}`)
         ? tUsers(`roles.${role.name.toLowerCase()}`)
         : role.name,
-      icon: Icons.User
+      icon: UserIcon
     })) || [],
     [rolesData, tUsers]
   );
 
   const targetTypeOptions = useMemo(() => [
-    { value: 'broadcast', label: t('typeBroadcast'), icon: Icons.Globe },
-    { value: 'direct', label: t('typeDirect'), icon: Icons.User },
-    { value: 'role', label: t('typeRole'), icon: Icons.Users }
+    { value: 'broadcast', label: t('typeBroadcast'), icon: GlobeIcon },
+    { value: 'direct', label: t('typeDirect'), icon: UserIcon },
+    { value: 'role', label: t('typeRole'), icon: UsersIcon }
   ], [t]);
 
   return (
@@ -157,7 +157,7 @@ export default function SendNotificationForm() {
                   isLoading={usersLoading}
                   error={errors.userId?.message}
                   placeholder={t('selectUserPlaceholder')}
-                  icon={Icons.User}
+                  icon={UserIcon}
                   label={t('selectUser')}
                   getDisplayValue={(opt) => typeof opt.name === 'string' ? opt.name : opt.name?.en || ''}
                 />
@@ -195,7 +195,7 @@ export default function SendNotificationForm() {
                 options={actionsData ? actionOptions : fallbackActions}
                 disabled={actionsLoading}
                 error={errors.actionType?.message}
-                icon={Icons.Bell}
+                icon={BellIcon}
                 label={t('action')}
               />
             </div>
@@ -215,7 +215,7 @@ export default function SendNotificationForm() {
                   placeholder={locale === 'ar' ? 'أدخل اسم الإجراء المخصص' : 'Enter custom action name'}
                   error={errors.customAction?.message}
                   className="uppercase"
-                  icon={Icons.Bell}
+                  icon={BellIcon}
 
                   onChange={(e) => {
                     const value = e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, '_');
@@ -240,7 +240,7 @@ export default function SendNotificationForm() {
                 rows={4}
                 className="text-right font-sans"
                 dir="rtl"
-                icon={Icons.MessageCircle}
+                icon={MessageCircleIcon}
               />
             </div>
           )}
@@ -259,7 +259,7 @@ export default function SendNotificationForm() {
                 rows={4}
                 className="text-left font-sans"
                 dir="ltr"
-                icon={Icons.MessageCircle}
+                icon={MessageCircleIcon}
               />
             </div>
           )}
@@ -281,9 +281,9 @@ export default function SendNotificationForm() {
           className="min-w-[120px]"
         >
           {isPending ? (
-            <Icons.Spinner className="w-4 h-4 mr-2 animate-spin" />
+            <SpinnerIcon className="w-4 h-4 mr-2 animate-spin" />
           ) : (
-            <Icons.Send className="w-4 h-4 mr-2" />
+            <SendIcon className="w-4 h-4 mr-2" />
           )}
           {t('sendButton')}
         </Button>

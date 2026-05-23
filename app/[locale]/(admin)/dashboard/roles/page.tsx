@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useRoles, useDeleteRole } from '@/features/roles/hooks/useRoles';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, PlusIcon, ShieldIcon, TrashIcon, UsersIcon } from "@/shared/ui/Icons";
 import { Badge } from '@/shared/ui/Badge';
 import { Button } from '@/shared/ui/Button';
 import { Tooltip } from '@/shared/ui/Tooltip';
@@ -88,7 +88,7 @@ export default function RolesPage() {
       className: "text-center",
       render: (role: Role) => (
         <div className="flex items-center justify-center gap-2">
-          <Icons.Users className="w-4 h-4 text-info/60" />
+          <UsersIcon className="w-4 h-4 text-info/60" />
           <span className="font-bold">{role.userCount || 0}</span>
         </div>
       )
@@ -122,7 +122,7 @@ export default function RolesPage() {
                 className="h-8 w-8 bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
                 onClick={() => handleEdit(role)}
               >
-                <Icons.Edit className="h-4 w-4 text-primary" />
+                <EditIcon className="h-4 w-4 text-primary" />
               </Button>
             </Tooltip>
           </Can>
@@ -136,7 +136,7 @@ export default function RolesPage() {
                   className="h-8 w-8 rounded-xl hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleDelete(role._id, role.name)}
                 >
-                  <Icons.Trash className="h-4 w-4 text-destructive" />
+                  <TrashIcon className="h-4 w-4 text-destructive" />
                 </Button>
               </Tooltip>
             </Can>
@@ -154,7 +154,7 @@ export default function RolesPage() {
         totalResults={t('totalResults', { count: roles?.length || 0 })}
         action={{
           label: t('createRole'),
-          icon: <Icons.Plus className="w-4 h-4" />,
+          icon: <PlusIcon className="w-4 h-4" />,
           onClick: handleCreate,
           permission: Permissions.CREATE_ROLE,
         }}
@@ -167,7 +167,7 @@ export default function RolesPage() {
         emptyState={{
           title: t('emptyState.title'),
           description: t('emptyState.description'),
-          icon: <Icons.Shield className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <ShieldIcon className="h-10 w-10 text-muted-foreground/40" />,
         }}
       />
 

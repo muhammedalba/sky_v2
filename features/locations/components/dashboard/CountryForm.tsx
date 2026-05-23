@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { GlobeIcon } from "@/shared/ui/Icons";
 import { useToast } from '@/shared/hooks/useToast';
 import { Country } from '../../types';
 import { useCreateCountry, useUpdateCountry } from '../../hooks/useLocations';
@@ -86,7 +86,7 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label={t('form.nameAr')}
-          icon={Icons.Globe}
+          icon={GlobeIcon}
           {...register('name.ar')}
           error={errors.name?.ar?.message}
           disabled={isPending}
@@ -94,7 +94,7 @@ export default function CountryForm({ editingCountry, onSuccess, onCancel }: Cou
         />
         <Input
           label={t('form.nameEn')}
-          icon={Icons.Globe}
+          icon={GlobeIcon}
           {...register('name.en')}
           error={errors.name?.en?.message}
           disabled={isPending}

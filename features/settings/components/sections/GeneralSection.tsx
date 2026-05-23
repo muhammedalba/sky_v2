@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/sha
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
-import { Icons } from '@/shared/ui/Icons';
+import { DashboardIcon, DollarSignIcon, GlobeIcon, RefreshCwIcon, TagIcon } from "@/shared/ui/Icons";
 import { Select } from '@/shared/ui/Select';
 import { SettingsInput } from '../../settings.schema';
 
@@ -68,7 +68,7 @@ export default function GeneralSection() {
     <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
       <CardHeader className="bg-muted/20 border-b border-border/50">
         <CardTitle className="text-xl flex items-center gap-2 title-gradient">
-          <Icons.Dashboard className="w-5 h-5 text-primary" /> {t('general.title')}
+          <DashboardIcon className="w-5 h-5 text-primary" /> {t('general.title')}
         </CardTitle>
         <CardDescription>{t('general.desc')}</CardDescription>
       </CardHeader>
@@ -76,7 +76,7 @@ export default function GeneralSection() {
         {/* Basic Info */}
         <div className="space-y-4">
           <h4 className="font-bold text-sm flex items-center gap-2">
-            <Icons.Dashboard className="w-4 h-4 text-primary" /> {t('general.info')}
+            <DashboardIcon className="w-4 h-4 text-primary" /> {t('general.info')}
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
@@ -113,7 +113,7 @@ export default function GeneralSection() {
         {/* Branding */}
         <div className="pt-6 border-t border-border/50 space-y-4">
           <h4 className="font-bold text-sm flex items-center gap-2">
-            <Icons.Dashboard className="w-4 h-4 text-primary" /> {t('general.branding')}
+            <DashboardIcon className="w-4 h-4 text-primary" /> {t('general.branding')}
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
@@ -150,7 +150,7 @@ export default function GeneralSection() {
         {/* Currency */}
         <div className="pt-6 border-t border-border/50 space-y-4">
           <h4 className="font-bold text-sm flex items-center gap-2">
-            <Icons.RefreshCw className="w-4 h-4 text-primary" /> {t('general.currency')}
+            <RefreshCwIcon className="w-4 h-4 text-primary" /> {t('general.currency')}
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Select
@@ -163,14 +163,14 @@ export default function GeneralSection() {
               label={t('general.currencyCode')}
               error={errors.currencyCode?.message}
               className="rounded-xl h-11"
-              icon={Icons.Globe}
+              icon={GlobeIcon}
             />
             <Input
               {...register('currencySymbol')}
               label={t('general.currencySymbol')}
               error={errors.currencySymbol?.message}
               className="rounded-xl h-11"
-              icon={Icons.Tag}
+              icon={TagIcon}
             />
             <Input
               {...register('exchangeRate')}
@@ -179,7 +179,7 @@ export default function GeneralSection() {
               label={t('general.exchangeRate')}
               error={errors.exchangeRate?.message}
               className="rounded-xl h-11"
-              icon={Icons.DollarSign}
+              icon={DollarSignIcon}
             />
           </div>
         </div>

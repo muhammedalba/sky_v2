@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/sha
 import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
 import { CHART_TOOLTIP_STYLE, CHART_COLORS } from '@/shared/ui/charts/ChartUtils';
 import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
-import { Icons } from '@/shared/ui/Icons';
+import { ActivityIcon, AlertTriangleIcon, BarChart3Icon, BoxIcon, PackageIcon, RefreshCwIcon, TrendingUpIcon } from "@/shared/ui/Icons";
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -186,56 +186,56 @@ export function ProductAnalyticsContainer() {
 
   const cards = useMemo<CardDef[]>(() => [
     {
-      Icon: Icons.Package,
+      Icon: PackageIcon,
       label: t('overview.totalProducts'),
       value: summary?.totalProducts ?? 0,
       sub: t('overview.newThisPeriod', { count: summary?.currentPeriodProducts ?? 0 }),
       badgeVariant: (summary?.currentPeriodProducts ?? 0) > 0 ? 'default' : 'destructive',
     },
     {
-      Icon: Icons.Activity,
+      Icon: ActivityIcon,
       label: t('overview.activeProducts'),
       value: summary?.statusBreakdown?.['true'] ?? 0,
       sub: t('overview.activeProductsDesc'),
       badgeVariant: (summary?.statusBreakdown?.['true'] ?? 0) > 0 ? 'success' : 'destructive',
     },
     {
-      Icon: Icons.Box,
+      Icon: BoxIcon,
       label: t('overview.totalStock'),
       value: (summary?.totalStock ?? 0).toLocaleString(),
       sub: t('overview.totalStockDesc'),
       badgeVariant: (summary?.totalStock ?? 0) > 0 ? 'success' : 'destructive',
     },
     {
-      Icon: Icons.AlertTriangle,
+      Icon: AlertTriangleIcon,
       label: t('overview.lowStockItems'),
       value: summary?.lowStockCount ?? 0,
       sub: t('overview.lowStockDesc'),
       badgeVariant: (summary?.lowStockCount ?? 0) > 0 ? 'destructive' : 'success',
     },
     {
-      Icon: Icons.BarChart3,
+      Icon: BarChart3Icon,
       label: t('overview.simpleProducts'),
       value: summary?.composition?.simple ?? 0,
       sub: t('overview.simpleProductsDesc'),
       badgeVariant: (summary?.composition?.simple ?? 0) > 0 ? 'success' : 'secondary',
     },
     {
-      Icon: Icons.BarChart3,
+      Icon: BarChart3Icon,
       label: t('overview.variableProducts'),
       value: summary?.composition?.variable ?? 0,
       sub: t('overview.variableProductsDesc'),
       badgeVariant: (summary?.composition?.variable ?? 0) > 0 ? 'success' : 'secondary',
     },
     {
-      Icon: Icons.TrendingUp,
+      Icon: TrendingUpIcon,
       label: t('overview.brands'),
       value: stats?.brandPerformance?.length ?? 0,
       sub: t('overview.brandsDesc'),
       badgeVariant: (stats?.brandPerformance?.length ?? 0) > 0 ? 'success' : 'secondary',
     },
     {
-      Icon: Icons.Package,
+      Icon: PackageIcon,
       label: t('overview.suppliers'),
       value: stats?.supplierStats?.length ?? 0,
       sub: t('overview.suppliersDesc'),
@@ -266,7 +266,7 @@ export function ProductAnalyticsContainer() {
         totalResults={periodLabel}
         action={{
           label: t('refresh'),
-          icon: <Icons.RefreshCw className="w-4 h-4" />,
+          icon: <RefreshCwIcon className="w-4 h-4" />,
           onClick: handleRefetch,
           disabled: isLoading || isRefetching,
         }}
@@ -282,7 +282,7 @@ export function ProductAnalyticsContainer() {
       {/* ── Error Banner ────────────────────────────────────────────────────── */}
       {error && (
         <div className="rounded-2xl p-4 bg-destructive/10 border border-destructive/20 flex items-center gap-3">
-          <Icons.AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+          <AlertTriangleIcon className="w-4 h-4 text-destructive shrink-0" />
           <p className="text-sm text-destructive font-medium">
             {t('alerts.fetchError')}
           </p>
@@ -526,7 +526,7 @@ export function ProductAnalyticsContainer() {
       {!isLoading && (summary?.lowStockCount ?? 0) > 0 && (
         <div className="rounded-2xl p-5 bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
           <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-600 shrink-0">
-            <Icons.AlertTriangle className="w-5 h-5" />
+            <AlertTriangleIcon className="w-5 h-5" />
           </div>
           <div>
             <h4 className="text-base font-bold text-amber-600">{t('alerts.inventoryAlert')}</h4>

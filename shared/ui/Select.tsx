@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import ErrorMessage from "./ErrorMessage";
-import { Icons } from "./Icons";
+import { EditIcon } from "./Icons";
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: {
@@ -23,7 +23,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       <div
         className={cn("w-full flex items-center h-10 relative  ", className)}
       >
-
         <select
           id={props.id}
           className={cn(
@@ -46,9 +45,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {IconComponent ? (
           <IconComponent className="absolute top-1/3 inset-s-2 my-auto w-4 h-4 text-primary pointer-events-none" />
         ) : (
-          <Icons.Edit className="absolute top-1/3 inset-s-2 my-auto w-4 h-4 text-primary pointer-events-none" />
+          <EditIcon className="absolute top-1/3 inset-s-2 my-auto w-4 h-4 text-primary pointer-events-none" />
         )}
-        {/* <Icons.ChevronDown className="absolute top-1/2 inset-e-3 my-auto w-4 h-4 text-muted-foreground pointer-events-none" /> */}
+        {/* <ChevronDown className="absolute top-1/2 inset-e-3 my-auto w-4 h-4 text-muted-foreground pointer-events-none" /> */}
         {error && <ErrorMessage message={error} />}
       </div>
     );

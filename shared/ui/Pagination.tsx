@@ -1,6 +1,6 @@
 'use client';
 
-import { Icons } from '@/shared/ui/Icons';
+import { ChevronLeftIcon, ChevronRightIcon } from "@/shared/ui/Icons";
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
@@ -85,7 +85,7 @@ export default function Pagination({ pagination, onPageChange, className }: Pagi
           aria-label="Previous page"
         >
           {/* إضافة rtl:rotate-180 لدعم اللغتين العربية والإنجليزية تلقائياً */}
-          <Icons.ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+          <ChevronLeftIcon className="w-4 h-4 rtl:rotate-180" />
         </button>
 
         {/* Page Numbers */}
@@ -136,7 +136,7 @@ export default function Pagination({ pagination, onPageChange, className }: Pagi
           aria-label="Next page"
         >
           {/* إضافة rtl:rotate-180 */}
-          <Icons.ChevronRight className="w-4 h-4 rtl:rotate-180" />
+          <ChevronRightIcon className="w-4 h-4 rtl:rotate-180" />
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useCallback, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
+import { SettingsIcon, XIcon } from "@/shared/ui/Icons";
 
 interface FilterDrawerProps {
   isOpen: boolean;
@@ -100,7 +100,7 @@ export function FilterDrawer({
         <div className="flex items-center justify-between gap-3 px-6 py-5 border-b border-border/40 bg-background/80 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10 text-primary shrink-0">
-              <Icons.Settings className="w-[18px] h-[18px]" />
+              <SettingsIcon className="w-[18px] h-[18px]" />
             </div>
             <div className="min-w-0">
               <h2 className="text-base font-extrabold tracking-tight text-foreground truncate">
@@ -119,7 +119,7 @@ export function FilterDrawer({
             className="p-2 rounded-xl hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors shrink-0"
             aria-label="Close filters"
           >
-            <Icons.X className="w-5 h-5" />
+            <XIcon className="w-5 h-5" />
           </button>
         </div>
 

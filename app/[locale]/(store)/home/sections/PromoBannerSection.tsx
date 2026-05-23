@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Button } from "@/shared/ui/Button";
-import { Icons } from "@/shared/ui/Icons";
+import { ActivityIcon, BoxIcon, DownloadIcon, FileTextIcon } from "@/shared/ui/Icons";
 import { useState, useRef, useEffect } from "react";
 
 const ScrollReveal = ({ children, className = "", delay = 0, direction = "up" }: { children: React.ReactNode; className?: string; delay?: number; direction?: "up" | "down" | "left" | "right" | "none"; }) => {
@@ -28,12 +28,12 @@ export default function PromoBannerSection() {
           <div className="relative rounded-[3rem] bg-foreground text-background overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-linear-to-r from-primary/20 to-transparent" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]  mix-blend-overlay" />
-            <Icons.Box className="absolute -left-20 -top-20 w-[400px] h-[400px] text-background/5 -rotate-12 pointer-events-none" />
+            <BoxIcon className="absolute -left-20 -top-20 w-[400px] h-[400px] text-background/5 -rotate-12 pointer-events-none" />
 
             <div className="relative p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-start">
               <div className="space-y-6 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/10 border border-background/20 font-black text-sm backdrop-blur-md mx-auto md:mx-0">
-                  <Icons.Activity className="w-4 h-4 text-warning" />
+                  <ActivityIcon className="w-4 h-4 text-warning" />
                   {t("promo.badge")}
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black tracking-tight">
@@ -47,7 +47,7 @@ export default function PromoBannerSection() {
                 <Link href="/contact" className="w-full sm:w-auto">
                   <Button className="w-full h-16 px-10 rounded-2xl bg-warning hover:bg-warning/90 text-warning-foreground font-black text-lg gap-3 shadow-xl">
                     {t("promo.cta_quote")}
-                    <Icons.FileText className="w-5 h-5" />
+                    <FileTextIcon className="w-5 h-5" />
                   </Button>
                 </Link>
                 <Link href="/contact" className="w-full sm:w-auto">
@@ -56,7 +56,7 @@ export default function PromoBannerSection() {
                     className="w-full h-16 px-10 rounded-2xl border-background/20 hover:bg-background/10 text-background font-black text-lg gap-3"
                   >
                     {t("promo.cta_catalog")}
-                    <Icons.Download className="w-5 h-5" />
+                    <DownloadIcon className="w-5 h-5" />
                   </Button>
                 </Link>
               </div>

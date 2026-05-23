@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
-import { Icons } from "@/shared/ui/Icons";
+import { BellIcon, CheckIcon, ChevronRightIcon, DashboardIcon, EditIcon, HomeIcon, LogoutIcon, MailIcon, PackageIcon, PlusIcon, RefreshCwIcon, ShieldIcon, ShoppingCartIcon, SpinnerIcon, StarIcon, TrashIcon, UserIcon } from "@/shared/ui/Icons";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { formatEmail } from "@/lib/utils";
 import { redirect } from "next/navigation";
@@ -34,20 +34,20 @@ export default function AccountPage() {
     {
       label: t("stats.total_orders"),
       value: "12",
-      icon: Icons.ShoppingCart,
+      icon: ShoppingCartIcon,
       color: "bg-primary/10 text-primary border-primary/20",
     },
     {
       label: t("stats.active_orders"),
       value: "1",
-      icon: Icons.RefreshCw,
+      icon: RefreshCwIcon,
       color:
         "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
     },
     {
       label: t("stats.saved_items"),
       value: "5",
-      icon: Icons.Star || Icons.Home,
+      icon: StarIcon || HomeIcon,
       color:
         "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
     },
@@ -108,7 +108,7 @@ export default function AccountPage() {
                   {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
                 <button className="absolute -bottom-1.5 -right-1.5 w-7 h-7 bg-primary text-primary-foreground rounded-lg flex items-center justify-center shadow-md border-2 border-card hover:scale-110 transition-transform">
-                  <Icons.Edit className="w-3.5 h-3.5" />
+                  <EditIcon className="w-3.5 h-3.5" />
                 </button>
               </div>
 
@@ -119,12 +119,12 @@ export default function AccountPage() {
                     {user?.name || (locale === "ar" ? "ضيف" : "Guest")}
                   </h1>
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    <Icons.Check className="w-3 h-3" />
+                    <CheckIcon className="w-3 h-3" />
                     {locale === "ar" ? "حساب موثق" : "Verified"}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-1.5">
-                  <Icons.Mail className="w-4 h-4 shrink-0 text-muted-foreground/60" />
+                  <MailIcon className="w-4 h-4 shrink-0 text-muted-foreground/60" />
                   {user?.email ? formatEmail(user.email) : "user@example.com"}
                 </p>
               </div>
@@ -134,7 +134,7 @@ export default function AccountPage() {
             <div className="flex items-center gap-3">
               <Link href={`/${locale}/notifications`}>
                 <button className="h-10 px-4 rounded-xl border border-border bg-card text-foreground hover:bg-muted font-semibold text-sm transition-all flex items-center gap-2">
-                  <Icons.Bell className="w-4 h-4" />
+                  <BellIcon className="w-4 h-4" />
                   {locale === "ar" ? "الإشعارات" : "Notifications"}
                 </button>
               </Link>
@@ -143,7 +143,7 @@ export default function AccountPage() {
                 className="h-10 px-4 rounded-xl border-border hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 font-semibold gap-2 text-sm transition-all"
                 onClick={() => logout()}
               >
-                <Icons.Logout className="w-4 h-4" />
+                <LogoutIcon className="w-4 h-4" />
                 {t("actions.logout")}
               </Button>
             </div>
@@ -166,7 +166,7 @@ export default function AccountPage() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              <Icons.Dashboard className="w-4.5 h-4.5 shrink-0" />
+              <DashboardIcon className="w-4.5 h-4.5 shrink-0" />
               <span className="flex-1 truncate">
                 {locale === "ar" ? "لوحة التحكم" : "Dashboard"}
               </span>
@@ -180,7 +180,7 @@ export default function AccountPage() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              <Icons.User className="w-4.5 h-4.5 shrink-0" />
+              <UserIcon className="w-4.5 h-4.5 shrink-0" />
               <span className="flex-1 truncate">{t("tabs.profile")}</span>
             </button>
 
@@ -192,7 +192,7 @@ export default function AccountPage() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              <Icons.Home className="w-4.5 h-4.5 shrink-0" />
+              <HomeIcon className="w-4.5 h-4.5 shrink-0" />
               <span className="flex-1 truncate">{t("tabs.addresses")}</span>
             </button>
 
@@ -204,7 +204,7 @@ export default function AccountPage() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              <Icons.Shield className="w-4.5 h-4.5 shrink-0" />
+              <ShieldIcon className="w-4.5 h-4.5 shrink-0" />
               <span className="flex-1 truncate">{t("tabs.security")}</span>
             </button>
           </aside>
@@ -265,7 +265,7 @@ export default function AccountPage() {
                           className="font-semibold text-primary hover:text-primary/90 text-sm gap-1"
                         >
                           {t("actions.view_all_orders")}
-                          <Icons.ChevronRight className="w-4 h-4 rtl:rotate-180" />
+                          <ChevronRightIcon className="w-4 h-4 rtl:rotate-180" />
                         </Button>
                       </Link>
                     </div>
@@ -278,7 +278,7 @@ export default function AccountPage() {
                         >
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground border border-border">
-                              <Icons.Package className="w-5 h-5 text-muted-foreground/80" />
+                              <PackageIcon className="w-5 h-5 text-muted-foreground/80" />
                             </div>
                             <div>
                               <h3 className="font-bold text-sm text-foreground">
@@ -308,7 +308,7 @@ export default function AccountPage() {
                             >
                               {order.status}
                             </div>
-                            <Icons.ChevronRight className="w-5 h-5 text-muted-foreground/30 rtl:rotate-180 hidden sm:block" />
+                            <ChevronRightIcon className="w-5 h-5 text-muted-foreground/30 rtl:rotate-180 hidden sm:block" />
                           </div>
                         </div>
                       ))}
@@ -384,7 +384,7 @@ export default function AccountPage() {
                           className="h-11 px-6 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm transition-all flex items-center gap-2"
                         >
                           {isSavingProfile && (
-                            <Icons.Spinner className="w-4 h-4 text-primary-foreground" />
+                            <SpinnerIcon className="w-4 h-4 text-primary-foreground" />
                           )}
                           {t("buttons.saveChanges")}
                         </Button>
@@ -416,7 +416,7 @@ export default function AccountPage() {
                       </p>
                     </div>
                     <Button className="h-9 px-4 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 text-xs gap-1.5">
-                      <Icons.Plus className="w-4 h-4" />
+                      <PlusIcon className="w-4 h-4" />
                       {t("actions.add_address")}
                     </Button>
                   </div>
@@ -434,10 +434,10 @@ export default function AccountPage() {
                             </span>
                             <div className="flex items-center gap-1">
                               <button className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all">
-                                <Icons.Edit className="w-3.5 h-3.5" />
+                                <EditIcon className="w-3.5 h-3.5" />
                               </button>
                               <button className="w-8 h-8 rounded-lg hover:bg-destructive/10 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all">
-                                <Icons.Trash className="w-3.5 h-3.5" />
+                                <TrashIcon className="w-3.5 h-3.5" />
                               </button>
                             </div>
                           </div>
@@ -456,7 +456,7 @@ export default function AccountPage() {
                         </div>
 
                         <div className="pt-4 mt-4 border-t border-border/40 flex items-center gap-2 text-xs text-muted-foreground">
-                          <Icons.Mail className="w-3.5 h-3.5 shrink-0" />
+                          <MailIcon className="w-3.5 h-3.5 shrink-0" />
                           <span>{address.phone}</span>
                         </div>
                       </Card>
@@ -513,7 +513,7 @@ export default function AccountPage() {
 
                       <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs leading-relaxed">
                         <p className="font-semibold mb-1 flex items-center gap-1.5">
-                          <Icons.Shield className="w-4 h-4 shrink-0" />
+                          <ShieldIcon className="w-4 h-4 shrink-0" />
                           {locale === "ar" ? "نصيحة أمان مهمة" : "Security Tip"}
                         </p>
                         {t("passwordSecurityNote")}
@@ -526,7 +526,7 @@ export default function AccountPage() {
                           className="h-11 px-6 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm transition-all flex items-center gap-2"
                         >
                           {isSavingPassword && (
-                            <Icons.Spinner className="w-4 h-4 text-primary-foreground" />
+                            <SpinnerIcon className="w-4 h-4 text-primary-foreground" />
                           )}
                           {t("buttons.updatePassword")}
                         </Button>

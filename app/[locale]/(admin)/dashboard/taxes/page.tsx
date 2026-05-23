@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/shared/ui/Button';
 import { useToast } from '@/shared/hooks/useToast';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import { Badge } from '@/shared/ui/Badge';
 import { Tax, useTaxes, useDeleteTax, useUpdateTax } from '@/features/taxes/hooks/useTaxes';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
@@ -176,7 +176,7 @@ export default function TaxesPage() {
             onClick={() => handleEdit(item)}
             disabled={isLoading || updateTaxPending}
           >
-            <Icons.Edit className="w-4 h-4" />
+            <EditIcon className="w-4 h-4" />
           </Button>
           <Button
             size="icon"
@@ -185,7 +185,7 @@ export default function TaxesPage() {
             onClick={() => handleDelete(item)}
             disabled={isLoading || deleteTaxPending}
           >
-            <Icons.Trash className="w-4 h-4" />
+            <TrashIcon className="w-4 h-4" />
           </Button>
         </div>
       ),
@@ -200,7 +200,7 @@ export default function TaxesPage() {
         totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createTax'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => {
             setEditingTax(null);
             setIsFormOpen(true);

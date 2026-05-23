@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { Checkbox } from '@/shared/ui/Checkbox';
 import { usePermissionsList, useCreateRole, useUpdateRole } from '../hooks/useRoles';
 import { Role, PermissionGroup } from '../types';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, ShieldIcon } from "@/shared/ui/Icons";
 import { Badge } from '@/shared/ui/Badge';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -117,7 +117,7 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
             onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
             required
             disabled={isSubmitting}
-            icon={Icons.Shield}
+            icon={ShieldIcon}
           />
           <Input
             label={t('dialog.levelLabel')}
@@ -136,7 +136,7 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
               onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
               rows={2}
               disabled={isSubmitting}
-              icon={Icons.Edit}
+              icon={EditIcon}
             />
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function RoleDialog({ role, isOpen, onClose, onSuccess }: RoleDia
         <div className="space-y-4">
           <div className="flex items-center justify-between border-b border-border/40 pb-2">
             <h3 className="title-gradient font-bold flex items-center gap-2">
-              <Icons.Shield className="w-5 h-5 text-destructive" />
+              <ShieldIcon className="w-5 h-5 text-destructive" />
               {t('dialog.availablePerms')}
             </h3>
             <Badge variant="success">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image, { ImageProps } from 'next/image';
-import { Icons } from '@/shared/ui/Icons';
+import { ProductsIcon } from "@/shared/ui/Icons";
 import { cn } from '@/lib/utils';
 
 interface ImageWithFallbackProps extends ImageProps {
@@ -20,7 +20,7 @@ export default function ImageWithFallback({
   if (error || !src) {
     return (
       <div className={cn("flex items-center justify-center bg-secondary/50", className)}>
-        {fallback || <Icons.Products className="w-6 h-6 text-muted-foreground m-auto" />}
+        {fallback || <ProductsIcon className="w-6 h-6 text-muted-foreground m-auto" />}
       </div>
     );
   }

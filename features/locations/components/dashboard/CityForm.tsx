@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { MapPinIcon } from "@/shared/ui/Icons";
 import { useToast } from '@/shared/hooks/useToast';
 import { City } from '../../types';
 import { useCreateCity, useUpdateCity } from '../../hooks/useLocations';
@@ -95,7 +95,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label={t('form.nameAr')}
-          icon={Icons.MapPin}
+          icon={MapPinIcon}
           {...register('name.ar')}
           error={errors.name?.ar?.message}
           disabled={isPending}
@@ -103,7 +103,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
         />
         <Input
           label={t('form.nameEn')}
-          icon={Icons.MapPin}
+          icon={MapPinIcon}
           {...register('name.en')}
           error={errors.name?.en?.message}
           disabled={isPending}

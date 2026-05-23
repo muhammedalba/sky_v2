@@ -5,7 +5,7 @@ import { useRouter } from "@/navigation";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { Icons } from "@/shared/ui/Icons";
+import { SearchIcon, XIcon } from "@/shared/ui/Icons";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 
 interface SearchBarProps {
@@ -90,7 +90,7 @@ export default function SearchBar({
             : "border-border/40 hover:border-border/60",
         )}
       >
-        <Icons.Search className="size-5 text-muted-foreground shrink-0" />
+        <SearchIcon className="size-5 text-muted-foreground shrink-0" />
         <input
           type="search"
           value={query}
@@ -110,7 +110,7 @@ export default function SearchBar({
             }}
             className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
-            <Icons.X className="size-4" />
+            <XIcon className="size-4" />
           </button>
         )}
       </div>

@@ -10,7 +10,7 @@ import { orderStatusSchema, type OrderStatusInput } from '@/features/orders/orde
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Select } from '@/shared/ui/Select';
 import { Button } from '@/shared/ui/Button';
-import { Icons } from '@/shared/ui/Icons';
+import { MenuIcon, OrdersIcon, ProductsIcon, UsersIcon } from "@/shared/ui/Icons";
 import { Badge } from '@/shared/ui/Badge';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/Table';
@@ -74,7 +74,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
          <div className="p-6 bg-secondary/20 rounded-full mb-4">
-            <Icons.Orders className="w-12 h-12 text-muted-foreground" />
+            <OrdersIcon className="w-12 h-12 text-muted-foreground" />
          </div>
          <h2 className="text-2xl font-black">Order not found</h2>
          <Button variant="link" onClick={() => router.back()}>Go back to orders</Button>
@@ -101,7 +101,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
             onClick={() => router.back()}
             className="rounded-full hover:bg-secondary"
           >
-             <Icons.Menu className="w-5 h-5 rotate-180" />
+             <MenuIcon className="w-5 h-5 rotate-180" />
            </Button>
            <div>
              <div className="flex items-center gap-3">
@@ -115,7 +115,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
         </div>
         <div className="flex items-center gap-3">
            <Button variant="outline" className="rounded-xl px-6 font-bold flex items-center gap-2">
-              <Icons.Menu className="w-4 h-4" />{/* Print icon replacement */}
+              <MenuIcon className="w-4 h-4" />{/* Print icon replacement */}
               Invoice
            </Button>
         </div>
@@ -156,7 +156,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                                         />
                                       </div>
                                    ) : (
-                                      <Icons.Products className="w-6 h-6 m-3 text-muted-foreground" />
+                                      <ProductsIcon className="w-6 h-6 m-3 text-muted-foreground" />
                                    )}
                                 </div>
                                 <div>
@@ -221,11 +221,11 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="space-y-4">
                    <div className="flex items-center gap-3 text-sm font-medium">
-                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground"><Icons.Users className="w-4 h-4" /></div>
+                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground"><UsersIcon className="w-4 h-4" /></div>
                       <span className="text-foreground">{order.user?.phone || 'No phone number'}</span>
                    </div>
                    <div className="flex items-start gap-3 text-sm font-medium leading-relaxed">
-                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:bg-primary transition-colors mt-0.5 whitespace-nowrap"><Icons.Menu className="w-4 h-4" /></div>{/* Map pin icon replacement */}
+                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:bg-primary transition-colors mt-0.5 whitespace-nowrap"><MenuIcon className="w-4 h-4" /></div>{/* Map pin icon replacement */}
                       <span className="text-foreground">
                          {order.shippingAddress?.details}, {order.shippingAddress?.city} <br />
                          {order.shippingAddress?.phone}
@@ -243,7 +243,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                  <div className="flex items-center justify-between p-4 rounded-2xl bg-success/10 dark:bg-success/5 border border-success/20 dark:border-success/10">
                     <div className="flex items-center gap-3">
                        <div className="w-8 h-8 rounded-full bg-success text-white flex items-center justify-center">
-                          <Icons.Menu className="w-4 h-4" />{/* Checkmark replacement */}
+                          <MenuIcon className="w-4 h-4" />{/* Checkmark replacement */}
                        </div>
                        <span className="text-success font-black text-sm uppercase tracking-wider">{order.paymentMethodType || 'CARD'}</span>
                     </div>

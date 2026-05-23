@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Card } from '@/shared/ui/Card';
-import { Icons } from '@/shared/ui/Icons';
+import { CheckIcon, MailIcon, SpinnerIcon } from "@/shared/ui/Icons";
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSettings } from '@/app/providers/SettingsProvider';
@@ -106,7 +106,7 @@ export default function ContactPage() {
             {/* Email Card */}
             <Card className="p-5 border-border/60 bg-card rounded-2xl shadow-sm hover:border-primary/20 hover:shadow-md transition-all flex items-start gap-4">
               <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/25 shrink-0">
-                <Icons.Mail className="w-5 h-5" />
+                <MailIcon className="w-5 h-5" />
               </div>
               <div className="min-w-0">
                 <h3 className="font-bold text-sm mb-0.5 text-foreground">{t('info.email')}</h3>
@@ -176,7 +176,7 @@ export default function ContactPage() {
                     className="flex flex-col items-center justify-center text-center py-12"
                   >
                     <div className="w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                      <Icons.Check className="w-8 h-8" />
+                      <CheckIcon className="w-8 h-8" />
                     </div>
                     <h3 className="text-2xl font-bold text-foreground mb-2">
                       {t('form.success')}
@@ -270,7 +270,7 @@ export default function ContactPage() {
                       disabled={isSubmitting}
                       className="w-full h-12 text-sm font-bold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-sm flex items-center justify-center gap-2"
                     >
-                      {isSubmitting && <Icons.Spinner className="w-4 h-4 text-primary-foreground" />}
+                      {isSubmitting && <SpinnerIcon className="w-4 h-4 text-primary-foreground" />}
                       {isSubmitting ? t('form.submitting') : t('form.submit')}
                     </Button>
                   </motion.form>

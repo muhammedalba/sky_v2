@@ -1,13 +1,13 @@
 'use client';
 
 import React, { memo } from 'react';
-import { Icons } from '@/shared/ui/Icons';
+import { MenuIcon } from "@/shared/ui/Icons";
 
 const SearchBar = () => {
   return (
     <div className="hidden md:flex flex-1 max-w-sm">
       <div className="relative w-full">
-        <Icons.Menu className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <MenuIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input 
           type="text" 
           placeholder="Search..." 

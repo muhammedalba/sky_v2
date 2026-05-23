@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Button } from "@/shared/ui/Button";
-import { Icons } from "@/shared/ui/Icons";
+import { BoxIcon, CheckIcon, DownloadIcon, ShieldIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
 import Badge from "@/shared/ui/Badge";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { useLocale } from "next-intl";
@@ -66,7 +66,7 @@ export default function HeroSection() {
               <Link href="/products" className="w-full sm:w-auto">
                 <Button className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-primary/80 hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 border-none font-black text-lg gap-3 transition-transform hover:scale-105">
                   {t("hero.cta_shop")}
-                  <Icons.ShoppingCart className="w-6 h-6 rtl:ml-2" />
+                  <ShoppingCartIcon className="w-6 h-6 rtl:ml-2" />
                 </Button>
               </Link>
               <Link
@@ -79,7 +79,7 @@ export default function HeroSection() {
                   className="w-full sm:w-auto h-16 px-10 text-white transition-all hover:scale-105 hover:text-white hover:bg-white/10 font-black text-lg gap-2 duration-500"
                 >
                   {t("hero.cta_download_catalog")}
-                  <Icons.Download className="w-5 h-5" />
+                  <DownloadIcon className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
@@ -87,9 +87,9 @@ export default function HeroSection() {
             {/* Trust Signals */}
             <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
               {[
-                { text: t("hero.trust_badges.certified"), icon: Icons.Check },
-                { text: t("hero.trust_badges.delivery"), icon: Icons.Box },
-                { text: t("hero.trust_badges.warranty"), icon: Icons.Shield },
+                { text: t("hero.trust_badges.certified"), icon: CheckIcon },
+                { text: t("hero.trust_badges.delivery"), icon: BoxIcon },
+                { text: t("hero.trust_badges.warranty"), icon: ShieldIcon },
               ].map((badge, idx) => (
                 <Badge
                   key={idx}

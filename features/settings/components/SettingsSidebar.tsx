@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
+import { DashboardIcon, LayoutIcon, MessageCircleIcon, OrdersIcon, SearchIcon, SettingsIcon, SunIcon, TruckIcon } from "@/shared/ui/Icons";
 
 interface SettingsSidebarProps {
   activeSection: string;
@@ -15,14 +15,14 @@ export default function SettingsSidebar({ activeSection, onSectionChange }: Sett
 
   // Axis 2.2: Memoizing navigation items to prevent recreation on every render
   const navItems = useMemo(() => [
-    { id: 'general', label: t('sidebar.general'), icon: Icons.Dashboard, iconClass: "text-primary" },
-    { id: 'seo', label: t('sidebar.seo'), icon: Icons.Search, iconClass: "text-destructive" },
-    { id: 'social', label: t('sidebar.social'), icon: Icons.Sun, iconClass: "text-primary" },
-    { id: 'contact', label: t('sidebar.contact'), icon: Icons.MessageCircle, iconClass: "text-warning/70" },
-    { id: 'payments', label: t('sidebar.payments'), icon: Icons.Orders, iconClass: "text-success" },
-    { id: 'shipping', label: t('sidebar.shipping'), icon: Icons.Truck, iconClass: "text-primary" },
-    { id: 'features', label: t('sidebar.features'), icon: Icons.Layout, iconClass: "text-warning" },
-    { id: 'advanced', label: t('sidebar.advanced'), icon: Icons.Settings, iconClass: "text-foreground/70" },
+    { id: 'general', label: t('sidebar.general'), icon: DashboardIcon, iconClass: "text-primary" },
+    { id: 'seo', label: t('sidebar.seo'), icon: SearchIcon, iconClass: "text-destructive" },
+    { id: 'social', label: t('sidebar.social'), icon: SunIcon, iconClass: "text-primary" },
+    { id: 'contact', label: t('sidebar.contact'), icon: MessageCircleIcon, iconClass: "text-warning/70" },
+    { id: 'payments', label: t('sidebar.payments'), icon: OrdersIcon, iconClass: "text-success" },
+    { id: 'shipping', label: t('sidebar.shipping'), icon: TruckIcon, iconClass: "text-primary" },
+    { id: 'features', label: t('sidebar.features'), icon: LayoutIcon, iconClass: "text-warning" },
+    { id: 'advanced', label: t('sidebar.advanced'), icon: SettingsIcon, iconClass: "text-foreground/70" },
   ], [t]);
 
   return (

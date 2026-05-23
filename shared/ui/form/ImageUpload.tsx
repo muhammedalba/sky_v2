@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Icons } from '@/shared/ui/Icons';
+import { ProductsIcon, XIcon } from "@/shared/ui/Icons";
 import Image from 'next/image';
 import ErrorMessage from '../ErrorMessage';
 import { cn } from '@/lib/utils';
@@ -60,7 +60,7 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
               className="absolute inset-0 text-white bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
 
             >
-              <Icons.X className="w-7 h-7 " /> {/* Use generic X or trash */}
+              <XIcon className="w-7 h-7 " /> {/* Use generic X or trash */}
             </button>
           </div>
         ) : (
@@ -68,7 +68,7 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
             onClick={() => inputRef.current?.click()}
             className={cn(`w-40 h-40 rounded-xl border-dashed border-2 ${error ? "border-destructive" : "border-muted-foreground/20 "} hover:border-primary/50 bg-secondary/20 flex flex-col items-center justify-center cursor-pointer transition-colors group`)}
           >
-            <Icons.Products className="w-8 h-8 text-muted-foreground group-hover:text-primary mb-2" />
+            <ProductsIcon className="w-8 h-8 text-muted-foreground group-hover:text-primary mb-2" />
             <span className="text-xs text-muted-foreground font-medium group-hover:text-primary">{t('upload.title')}</span>
           </div>
         )}

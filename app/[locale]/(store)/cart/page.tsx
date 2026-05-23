@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
-import { Icons } from '@/shared/ui/Icons';
+import { ChevronRightIcon, PackageIcon, PlusIcon, RefreshCwIcon, ShoppingCartIcon, TrashIcon } from "@/shared/ui/Icons";
 import { useCart, useRemoveFromCart, useClearCart } from '@/features/cart/hooks/useCart';
 import { getLocalizedValue } from '@/lib/utils';
 import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
@@ -35,7 +35,7 @@ export default function CartPage() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Icons.RefreshCw className="w-10 h-10 animate-spin text-primary" />
+        <RefreshCwIcon className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
@@ -67,8 +67,8 @@ export default function CartPage() {
               className="flex flex-col items-center justify-center py-20 text-center space-y-6"
             >
               <div className="w-32 h-32 bg-secondary/30 rounded-full flex items-center justify-center text-muted-foreground/30 relative">
-                 <Icons.ShoppingCart className="w-16 h-16" />
-                 <Icons.Plus className="absolute top-4 right-4 w-8 h-8 text-primary/20" />
+                 <ShoppingCartIcon className="w-16 h-16" />
+                 <PlusIcon className="absolute top-4 right-4 w-8 h-8 text-primary/20" />
               </div>
               <div className="space-y-2">
                 <h2 className="text-3xl font-black text-foreground">{t('empty.title')}</h2>
@@ -77,7 +77,7 @@ export default function CartPage() {
               <Link href="/products">
                 <Button size="lg" className="rounded-2xl h-14 px-10 font-black shadow-xl shadow-primary/20 gap-3">
                   {t('empty.cta')}
-                  <Icons.ChevronRight className="w-5 h-5 rtl:rotate-180" />
+                  <ChevronRightIcon className="w-5 h-5 rtl:rotate-180" />
                 </Button>
               </Link>
             </motion.div>
@@ -108,7 +108,7 @@ export default function CartPage() {
                              {item.product?.imageCover ? (
                                <img src={item.product.imageCover} alt={getLocalizedValue(item.product.title, locale)} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
                              ) : (
-                               <Icons.Package className="w-12 h-12 text-muted-foreground/20" />
+                               <PackageIcon className="w-12 h-12 text-muted-foreground/20" />
                              )}
                           </div>
 
@@ -145,7 +145,7 @@ export default function CartPage() {
                                onClick={() => removeItem(item.product?._id)}
                                disabled={isRemoving}
                              >
-                                <Icons.Trash className="w-6 h-6" />
+                                <TrashIcon className="w-6 h-6" />
                              </Button>
                           </div>
                         </div>
@@ -184,7 +184,7 @@ export default function CartPage() {
                        <div className="space-y-4">
                           <Button className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 gap-3 group">
                              {t('summary.checkout')}
-                             <Icons.ChevronRight className="w-6 h-6 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform" />
+                             <ChevronRightIcon className="w-6 h-6 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform" />
                           </Button>
                           
                           {/* Trust Badges */}

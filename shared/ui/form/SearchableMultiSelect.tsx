@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
-import { Input } from '../Input';
-import Spinner from '../Spinner';
-import { SearchOption } from './SearchableSelect';
-import { Icons } from '../Icons';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { SearchX, Plus } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import { Input } from "../Input";
+import Spinner from "../Spinner";
+import { SearchOption } from "./SearchableSelect";
+import { CheckIcon, XIcon, PlusIcon, SearchIcon } from "../Icons";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+
 
 interface SearchableMultiSelectProps {
   label: string;
@@ -19,7 +19,7 @@ interface SearchableMultiSelectProps {
   error?: string;
   getDisplayValue: (opt: SearchOption) => string;
   onOpen?: () => void;
-  icon?: any;
+  icon?: React.ComponentType<{ className?: string }>;
   iconColor?: string;
   disabled?: boolean;
   createLink?: string;
@@ -42,27 +42,28 @@ export function SearchableMultiSelect({
   disabled,
   createLink,
 }: SearchableMultiSelectProps) {
-  const t = useTranslations('common');
+  const t = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const selectedIds = selectedOptions.map(opt => opt._id);
+  const selectedIds = selectedOptions.map((opt) => opt._id);
 
   return (
     <div className="relative space-y-2" ref={wrapperRef}>
-
-
       <Input
         icon={icon}
         iconColor={iconColor}
@@ -97,7 +98,7 @@ export function SearchableMultiSelect({
                 className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
                 title="Remove"
               >
-                <Icons.X className="w-3 h-3" />
+                <XIcon className="w-3 h-3" />
               </button>
             </div>
           ))}
@@ -119,18 +120,21 @@ export function SearchableMultiSelect({
                     onClick={() => {
                       if (!isSelected) {
                         onSelect(opt);
-                        setSearch(''); // Auto clear search on multi-select picking
-                        onSearch('');  // Let the parent know
+                        setSearch(""); // Auto clear search on multi-select picking
+                        onSearch(""); // Let the parent know
                       } else {
                         onRemove(opt._id);
                       }
                       // Keep open for multi select
                     }}
-                    className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors flex justify-between items-center ${isSelected ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/20 text-foreground'
-                      }`}
+                    className={`px-4 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors flex justify-between items-center ${
+                      isSelected
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-secondary/20 text-foreground"
+                    }`}
                   >
                     {getDisplayValue(opt)}
-                    {isSelected && <Icons.Check className="w-4 h-4" />}
+                    {isSelected && <CheckIcon className="w-4 h-4" />}
                   </li>
                 );
               })}
@@ -138,18 +142,18 @@ export function SearchableMultiSelect({
           ) : (
             <div className="p-6 flex flex-col items-center justify-center text-center gap-3">
               <div className="bg-secondary/50 p-3 rounded-full">
-                <SearchX className="w-6 h-6 text-muted-foreground/50" />
+                <SearchIcon className="w-6 h-6 text-muted-foreground/50" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
-                {t('messages.noData')}
+                {t("messages.noData")}
               </p>
               {createLink && (
-                <Link 
-                  href={createLink} 
+                <Link
+                  href={createLink}
                   className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl transition-colors text-sm font-bold"
                 >
-                  <Plus className="w-4 h-4" />
-                  {t('buttons.create')}
+                  <PlusIcon className="w-4 h-4" />
+                  {t("buttons.create")}
                 </Link>
               )}
             </div>

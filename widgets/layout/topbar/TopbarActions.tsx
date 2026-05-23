@@ -4,7 +4,7 @@ import { memo, useTransition, useCallback } from "react";
 import { useUIStore } from "@/store/ui-store";
 import { useRouter, usePathname } from "@/navigation";
 import { useParams } from "next/navigation";
-import { Icons } from "@/shared/ui/Icons";
+import { MoonIcon, SunIcon } from "@/shared/ui/Icons";
 import { cn } from "@/lib/utils";
 
 import NotificationBell from "@/features/notifications/components/NotificationBell";
@@ -89,9 +89,9 @@ const TopbarActions = ({
           aria-label="Toggle theme"
         >
           {theme === "light" ? (
-            <Icons.Moon className="h-4 w-4" />
+            <MoonIcon className="h-4 w-4" />
           ) : (
-            <Icons.Sun className="h-4 w-4" />
+            <SunIcon className="h-4 w-4" />
           )}
         </button>
       )}

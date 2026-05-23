@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/shared/ui/Button';
 import { useToast } from '@/shared/hooks/useToast';
-import { Icons } from '@/shared/ui/Icons';
+import { ChevronRightIcon, ClockIcon, EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Badge } from '@/shared/ui/Badge';
 import { ShippingRate } from '@/features/shipping/types';
@@ -206,10 +206,10 @@ export default function ShippingRatesPage() {
           <div className="flex flex-col gap-0.5">
             <span className="font-medium text-primary text-sm">{country}</span>
             {region && <span className="text-xs text-foreground flex items-center gap-1">
-              <Icons.ChevronRight className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
+              <ChevronRightIcon className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
             </span>}
             {city && <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Icons.ChevronRight className="w-2.5 h-2.5 rtl:rotate-180" /> {city}
+              <ChevronRightIcon className="w-2.5 h-2.5 rtl:rotate-180" /> {city}
             </span>}
           </div>
         );
@@ -240,7 +240,7 @@ export default function ShippingRatesPage() {
       header: t('fields.estimatedDays'),
       render: (item: ShippingRate) => (
         <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-          <Icons.Clock className="w-4 h-4 text-warning" />
+          <ClockIcon className="w-4 h-4 text-warning" />
           {item.estimatedDays || '-'}
         </div>
       ),
@@ -268,7 +268,7 @@ export default function ShippingRatesPage() {
               onClick={() => handleEdit(item)}
               disabled={isLoading || updateRatePending}
             >
-              <Icons.Edit className="w-4 h-4" />
+              <EditIcon className="w-4 h-4" />
             </Button>
           </Tooltip>
           <Tooltip content={tButtons('delete')}>
@@ -279,7 +279,7 @@ export default function ShippingRatesPage() {
               onClick={() => handleDelete(item)}
               disabled={isLoading || deleteRatePending}
             >
-              <Icons.Trash className="w-4 h-4" />
+              <TrashIcon className="w-4 h-4" />
             </Button>
           </Tooltip>
         </div>
@@ -295,7 +295,7 @@ export default function ShippingRatesPage() {
         totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createRate'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => {
             setEditingRate(null);
             setIsFormOpen(true);

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Card } from "@/shared/ui/Card";
-import { Icons } from "@/shared/ui/Icons";
+import { ActivityIcon, StarIcon } from "@/shared/ui/Icons";
 import { useState, useRef, useEffect } from "react";
 
 const ScrollReveal = ({ children, className = "", delay = 0, direction = "up" }: { children: React.ReactNode; className?: string; delay?: number; direction?: "up" | "down" | "left" | "right" | "none"; }) => {
@@ -54,10 +54,10 @@ export default function TestimonialsSection() {
           ].map((testimonial, i) => (
             <ScrollReveal key={i} delay={i * 100} className="h-full">
               <Card className="p-8 bg-secondary/50 rounded-3xl border border-border/50 shadow-sm relative h-full flex flex-col hover:shadow-xl transition-shadow">
-                <Icons.Activity className="absolute top-6 left-6 w-10 h-10 text-muted-foreground/10 rotate-180" />
+                <ActivityIcon className="absolute top-6 left-6 w-10 h-10 text-muted-foreground/10 rotate-180" />
                 <div className="flex gap-1 text-warning mb-6">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Icons.Star key={s} className="w-4 h-4 fill-current" />
+                    <StarIcon key={s} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
                 <p className="text-foreground/80 font-medium leading-relaxed mb-8 italic grow">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Icons } from '@/shared/ui/Icons';
+import { ChevronDownIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
 
 interface GalleryUploadProps {
   previews: string[];
@@ -36,7 +36,7 @@ export default function GalleryUpload({
             </span>
           )}
         </div>
-        <Icons.ChevronDown
+        <ChevronDownIcon
           className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''
             }`}
         />
@@ -58,13 +58,13 @@ export default function GalleryUpload({
                   onClick={() => onRemove(idx)}
                   className="absolute inset-0 cursor-pointer bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                 >
-                  <Icons.X className="w-5 h-5 text-white" />
+                  <XIcon className="w-5 h-5 text-white" />
                 </button>
               </div>
             ))}
             {previews.length < maxImages && (
               <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border/60 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                <Icons.Plus className="w-5 h-5 text-muted-foreground" />
+                <PlusIcon className="w-5 h-5 text-muted-foreground" />
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/jpg"
@@ -112,7 +112,7 @@ export default function GalleryUpload({
           onClick={() => setIsExpanded(true)}
           className="w-full py-4 border border-dashed border-border/40 rounded-xl flex flex-col items-center gap-2 text-muted-foreground hover:bg-muted/30 transition-all"
         >
-          <Icons.Plus className="w-5 h-5" />
+          <PlusIcon className="w-5 h-5" />
           <span className="text-xs font-bold">{t('addGalleryImages')}</span>
         </button>
       )}

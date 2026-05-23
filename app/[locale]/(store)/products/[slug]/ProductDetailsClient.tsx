@@ -5,7 +5,7 @@ import { useProduct } from '@/features/products/hooks/useProducts';
 import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { Icons } from '@/shared/ui/Icons';
+import { MenuIcon } from "@/shared/ui/Icons";
 import { formatCurrency } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
@@ -49,7 +49,7 @@ export default function ProductDetailsClient({ params }: { params: Promise<{ loc
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
                 <div className="w-24 h-24 bg-secondary/20 rounded-full flex items-center justify-center mb-6">
-                    <Icons.Menu className="w-12 h-12 text-muted-foreground/40" />
+                    <MenuIcon className="w-12 h-12 text-muted-foreground/40" />
                 </div>
                 <h2 className="text-3xl font-black mb-2">Product not found</h2>
                 <p className="text-muted-foreground mb-8 max-w-md">
@@ -165,14 +165,14 @@ export default function ProductDetailsClient({ params }: { params: Promise<{ loc
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                     disabled={quantity <= 1}
                                 >
-                                    <Icons.Menu className="w-4 h-4" />
+                                    <MenuIcon className="w-4 h-4" />
                                 </button>
                                 <div className="w-10 text-center font-black text-xl">{quantity}</div>
                                 <button
                                     className="w-12 h-full flex items-center justify-center hover:bg-secondary/80 rounded-full transition-colors"
                                     onClick={() => setQuantity(quantity + 1)}
                                 >
-                                    <Icons.Menu className="w-4 h-4 rotate-45" />
+                                    <MenuIcon className="w-4 h-4 rotate-45" />
                                 </button>
                             </div>
 
@@ -185,7 +185,7 @@ export default function ProductDetailsClient({ params }: { params: Promise<{ loc
                             >
                                 {stock > 0 ? (
                                     <>
-                                        <Icons.Menu className="w-6 h-6 mr-3" />
+                                        <MenuIcon className="w-6 h-6 mr-3" />
                                         Add to Bag
                                     </>
                                 ) : (

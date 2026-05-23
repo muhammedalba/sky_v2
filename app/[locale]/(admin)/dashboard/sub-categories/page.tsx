@@ -5,7 +5,7 @@ import { useSubCategories, useDeleteSubCategory } from '@/features/categories/ho
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import { useToast } from '@/shared/hooks/useToast';
 import { useTrans } from '@/shared/hooks/useTrans';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
@@ -131,7 +131,7 @@ export default function SubCategoriesPage() {
                 onClick={() => handleOpenModal(sub)}
                 disabled={deleteSubCategoryPending || isLoading}
               >
-                <Icons.Edit className="h-4 w-4" />
+                <EditIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -146,7 +146,7 @@ export default function SubCategoriesPage() {
                 isLoading={deleteSubCategoryPending}
                 disabled={deleteSubCategoryPending || isLoading}
               >
-                <Icons.Trash className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -164,7 +164,7 @@ export default function SubCategoriesPage() {
 
         action={{
           label: t('createSubCategory'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
           disabled: deleteSubCategoryPending || isLoading,
           permission: Permissions.CREATE_SUB_CATEGORY

@@ -46,31 +46,6 @@ const FeaturedProjectsSection = dynamic(
 export default function HomeClient({ locale }: { locale: string }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <style>{`
-        /* Global CSS reset/utilities for the homepage */
-        .title-gradient {
-          background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary)/0.6));
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-        
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee { animation: marquee 30s linear infinite; }
-        [dir="rtl"] .animate-marquee { animation-direction: reverse; }
-        .mask-image-fade { 
-          mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); 
-          -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); 
-        }
-        
-        /* Custom Scrollbar for horizontal lists if needed */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
-
       {/* 1. HERO SECTION (Above the Fold - Static Import) */}
       <HeroSection />
 

@@ -6,7 +6,7 @@ import { useShippingProviders, useDeleteShippingProvider, useUpdateShippingProvi
 import { ShippingProvider } from '@/features/shipping/types';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
@@ -168,7 +168,7 @@ export default function ShippingPage() {
                 onClick={() => handleOpenModal(provider)}
                 disabled={deleteProviderPending || isLoading || updateProviderPending}
               >
-                <Icons.Edit className="h-4.5 w-4.5" />
+                <EditIcon className="h-4.5 w-4.5" />
               </Button>
             </Tooltip>
           </Can>
@@ -183,7 +183,7 @@ export default function ShippingPage() {
                 isLoading={deleteProviderPending}
                 disabled={deleteProviderPending || isLoading || updateProviderPending}
               >
-                <Icons.Trash className="h-4.5 w-4.5" />
+                <TrashIcon className="h-4.5 w-4.5" />
               </Button>
             </Tooltip>
           </Can>
@@ -200,7 +200,7 @@ export default function ShippingPage() {
         totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createProvider') || 'إضافة شركة شحن',
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
           disabled: deleteProviderPending || isLoading || updateProviderPending,
           permission: Permissions.CREATE_SHIPPING

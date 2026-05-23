@@ -10,7 +10,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
-import { Icons } from '@/shared/ui/Icons';
+import { CalendarIcon, KeyIcon, MailIcon, PhoneIcon, ShieldIcon, UserIcon } from "@/shared/ui/Icons";
 import PasswordInput from '@/shared/ui/PasswordInput';
 import { authApi } from '@/features/auth/api';
 import {
@@ -240,7 +240,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
               {/* Last login */}
               {user.lastLogin && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5">
-                  <Icons.Calendar className="w-3.5 h-3.5 shrink-0" />
+                  <CalendarIcon className="w-3.5 h-3.5 shrink-0" />
                   <span>
                     {t('lastLogin')}{' '}
                   </span>
@@ -277,13 +277,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         <TabButton
           active={activeTab === 'general'}
           onClick={() => setActiveTab('general')}
-          icon={<Icons.User className="w-4 h-4" />}
+          icon={<UserIcon className="w-4 h-4" />}
           label={t('tabs.general')}
         />
         <TabButton
           active={activeTab === 'security'}
           onClick={() => setActiveTab('security')}
-          icon={<Icons.Shield className="w-4 h-4" />}
+          icon={<ShieldIcon className="w-4 h-4" />}
           label={t('tabs.security')}
         />
       </div>
@@ -322,7 +322,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
           <Card className="border-none shadow-sm ring-1 ring-border/50 lg:col-span-2">
             <CardContent className="pt-6">
               <SectionHeader
-                icon={<Icons.User className="w-5 h-5" />}
+                icon={<UserIcon className="w-5 h-5" />}
                 title={t('personalInfo')}
                 description={t('personalInfoDescription')}
               />
@@ -337,7 +337,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 <Input
                   {...profileForm.register('name')}
                   label={t('fields.name')}
-                  icon={Icons.User}
+                  icon={UserIcon}
                   placeholder=" "
                   value={profileForm.watch('name')}
                   error={profileForm.formState.errors.name?.message}
@@ -349,7 +349,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                   {...profileForm.register('email')}
                   type="email"
                   label={t('fields.email')}
-                  icon={Icons.Mail}
+                  icon={MailIcon}
                   placeholder=" "
                   error={profileForm.formState.errors.email?.message}
                 />
@@ -361,7 +361,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                   {...profileForm.register('phone')}
                   type="tel"
                   label={t('fields.phone')}
-                  icon={Icons.Phone}
+                  icon={PhoneIcon}
 
                   placeholder=" "
                   error={profileForm.formState.errors.phone?.message}
@@ -391,14 +391,14 @@ export default function ProfileForm({ user }: ProfileFormProps) {
           <Card className="border-none shadow-sm ring-1 ring-border/50 max-w-2xl">
             <CardContent className="pt-6">
               <SectionHeader
-                icon={<Icons.Key className="w-5 h-5" />}
+                icon={<KeyIcon className="w-5 h-5" />}
                 title={t('changePassword')}
                 description={t('changePasswordDescription')}
               />
 
               {/* Security notice */}
               <div className="flex items-start gap-3 p-3.5 mb-6 rounded-xl bg-warning/10 border border-warning/20 text-warning-foreground">
-                <Icons.Shield className="w-4 h-4 mt-0.5 shrink-0 text-warning" />
+                <ShieldIcon className="w-4 h-4 mt-0.5 shrink-0 text-warning" />
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   {t('passwordSecurityNote')}
                 </p>
@@ -418,7 +418,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                   <PasswordInput
                     {...passwordForm.register('password')}
                     label={t('fields.newPassword')}
-                    icon={Icons.Shield}
+                    icon={ShieldIcon}
                     error={passwordForm.formState.errors.password?.message}
 
                   />
@@ -426,7 +426,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                   <PasswordInput
                     {...passwordForm.register('confirmPassword')}
                     label={t('fields.confirmPassword')}
-                    icon={Icons.Shield}
+                    icon={ShieldIcon}
                     error={passwordForm.formState.errors.confirmPassword?.message}
                   />
 

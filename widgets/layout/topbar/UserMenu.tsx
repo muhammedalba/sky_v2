@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { getServerUserFromToken } from '@/lib/auth';
-import { Icons } from '@/shared/ui/Icons';
+import { UserIcon } from "@/shared/ui/Icons";
 import LogoutButton from './LogoutButton';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
@@ -37,7 +37,7 @@ const UserMenu = async ({ locale }: { locale: string }) => {
           href={`/${locale}/dashboard/profile`}
           className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted transition-colors text-foreground"
         >
-          <Icons.User className="h-4 w-4 text-muted-foreground" />
+          <UserIcon className="h-4 w-4 text-muted-foreground" />
           Profile
         </Link>
         <LogoutButton /> 

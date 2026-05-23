@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { HeartIcon, LayoutIcon, StarIcon, TagIcon, UserIcon } from "@/shared/ui/Icons";
 import { SettingsInput } from '../../settings.schema';
 
 export default function FeaturesSection() {
@@ -22,28 +22,28 @@ export default function FeaturesSection() {
       id: 'reviews', 
       name: t('features.reviews'), 
       desc: t('features.reviewsDesc'), 
-      icon: Icons.Star, 
+      icon: StarIcon, 
       value: features?.reviews 
     },
     { 
       id: 'coupons', 
       name: t('features.coupons'), 
       desc: t('features.couponsDesc'), 
-      icon: Icons.Tag, 
+      icon: TagIcon, 
       value: features?.coupons 
     },
     { 
       id: 'guestCheckout', 
       name: t('features.guestCheckout'), 
       desc: t('features.guestCheckoutDesc'), 
-      icon: Icons.User, 
+      icon: UserIcon, 
       value: features?.guestCheckout 
     },
     { 
       id: 'wishlist', 
       name: t('features.wishlist'), 
       desc: t('features.wishlistDesc'), 
-      icon: Icons.Heart, 
+      icon: HeartIcon, 
       value: features?.wishlist 
     },
   ], [t, features]);
@@ -52,7 +52,7 @@ export default function FeaturesSection() {
     <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
       <CardHeader className="bg-muted/20 border-b border-border/50">
         <CardTitle className="text-xl flex items-center gap-2 title-gradient">
-          <Icons.Layout className="w-5 h-5 text-primary" /> {t('features.title')}
+          <LayoutIcon className="w-5 h-5 text-primary" /> {t('features.title')}
         </CardTitle>
         <CardDescription>{t('features.desc')}</CardDescription>
       </CardHeader>

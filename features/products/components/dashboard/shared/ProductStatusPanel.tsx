@@ -3,7 +3,7 @@
 import { UseFormRegister } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { SettingsIcon } from "@/shared/ui/Icons";
 
 interface ProductStatusPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +26,7 @@ export function ProductStatusPanel({ register, defaultValues }: ProductStatusPan
   return (
     <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <Icons.Settings className="w-5 h-5 text-muted-foreground" />
+        <SettingsIcon className="w-5 h-5 text-muted-foreground" />
         <div>
           <h3 className="font-bold text-sm">{t('statusSettings')}</h3>
         </div>

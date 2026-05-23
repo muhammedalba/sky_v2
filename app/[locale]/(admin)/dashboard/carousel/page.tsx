@@ -6,7 +6,7 @@ import { useCarousel, useDeleteCarousel, useUpdateCarousel } from '@/features/ma
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
-import { Icons } from '@/shared/ui/Icons';
+import { CarouselIcon, CheckIcon, EditIcon, PlusIcon, TrashIcon, XIcon } from "@/shared/ui/Icons";
 import { Switch } from '@/shared/ui/Switch';
 import { Tooltip } from '@/shared/ui/Tooltip';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
@@ -152,7 +152,7 @@ export default function CarouselPage() {
                 onClick={() => router.push(`/${locale}/dashboard/carousel/${item._id}/edit`)}
                 disabled={deleteCarouselPending || isLoading || updateCarouselPending}
               >
-                <Icons.Edit className="h-4 w-4" />
+                <EditIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -167,7 +167,7 @@ export default function CarouselPage() {
                 isLoading={deleteCarouselPending}
                 disabled={deleteCarouselPending || isLoading || updateCarouselPending}
               > 
-                <Icons.Trash className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -177,8 +177,8 @@ export default function CarouselPage() {
   ], [getTrans, handleDelete, tButtons, deleteCarouselPending, handleStatusChange, t, locale, router, updateCarouselPending, isLoading]);
 
   const viewTabs = useMemo(() => [
-    { id: 'active', label: t('fields.active') || 'Active', value: 'active', icon: Icons.Check, activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
-    { id: 'inactive', label: t('fields.inactive') || 'Inactive', value: 'inactive', icon: Icons.X, activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
+    { id: 'active', label: t('fields.active') || 'Active', value: 'active', icon: CheckIcon, activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
+    { id: 'inactive', label: t('fields.inactive') || 'Inactive', value: 'inactive', icon: XIcon, activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
   ], [t]);
 
   return (
@@ -189,7 +189,7 @@ export default function CarouselPage() {
         totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('addSlide') || 'Add Slide',
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => router.push(`/${locale}/dashboard/carousel/create`),
           disabled: deleteCarouselPending || isLoading || updateCarouselPending,
           permission: Permissions.CREATE_CAROUSEL
@@ -233,7 +233,7 @@ export default function CarouselPage() {
         emptyState={{
           title: t('emptyState.title') || "No slides found",
           description: t('emptyState.description') || "Engage your customers with beautiful high-resolution hero images.",
-          icon: <Icons.Carousel className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <CarouselIcon className="h-10 w-10 text-muted-foreground/40" />,
           createLabel: t('addSlide') || 'Add Slide',
           createLink: () => router.push(`/${locale}/dashboard/carousel/create`)
         }}

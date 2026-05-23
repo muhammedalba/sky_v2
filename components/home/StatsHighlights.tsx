@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Icons } from '@/shared/ui/Icons';
+import { AiSparkIcon, EyeIcon, MessageSquareQuoteIcon, TargetIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from '@/shared/ui/ScrollReveal';
 import { cn } from '@/lib/utils';
 import Badge from '@/shared/ui/Badge';
@@ -14,21 +14,21 @@ export default function StoreFeatures() {
          value: '+10',
          title: t('about_section.vision.title'),
          description: t('about_section.vision.desc'),
-         icon: Icons.Eye,
+         icon: EyeIcon,
          iconStyle: " text-destructive",
       },
       {
          value: '+10',
          title: t('about_section.message.title'),
          description: t('about_section.message.desc'),
-         icon: Icons.MessageSquareQuote,
+         icon: MessageSquareQuoteIcon,
          iconStyle: " text-success",
       },
       {
          value: '24/7',
          title: t('about_section.values.title'),
          description: t('about_section.values.desc'),
-         icon: Icons.Target,
+         icon: TargetIcon,
          iconStyle: " text-warning",
       },
    ];
@@ -40,7 +40,7 @@ export default function StoreFeatures() {
          {/* why choose us */}
          <div className="relative pt-12 z-10 flex flex-col items-center mb-10 justify-center">
             <Badge variant={"default"} className="flex items-center justify-center gap-2  ">
-               <Icons.AiSpark className="w-4 h-4 text-warning" />
+               <AiSparkIcon className="w-4 h-4 text-warning" />
                {t('about_section.badge')}
             </Badge>
             <h1 className="text-3xl font-black text-center  title-gradient  p-4">{t('about_section.title')}</h1>

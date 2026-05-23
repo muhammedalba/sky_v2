@@ -10,7 +10,7 @@ import ImageUpload from '@/shared/ui/form/ImageUpload';
 import { Carousel } from '@/types';
 import { useTranslations, useLocale } from 'next-intl';
 import { CarouselFormValues, carouselSchema } from '@/features/marketing/marketing.schema';
-import { Icons } from '@/shared/ui/Icons';
+import { CarouselIcon, EditIcon, ShieldIcon } from "@/shared/ui/Icons";
 import { Switch } from '@/shared/ui/Switch';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
 import { cn } from '@/lib/utils';
@@ -117,7 +117,7 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
           <div className="bg-background/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border/40 shadow-sm space-y-8">
             <div className="flex items-center gap-4 border-b border-border/40 pb-4">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Icons.Edit className="w-5 h-5 text-primary" />
+                <EditIcon className="w-5 h-5 text-primary" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-foreground">
@@ -159,7 +159,7 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-                  <Icons.Shield className="w-5 h-5 text-orange-500" />
+                  <ShieldIcon className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-foreground">
@@ -199,7 +199,7 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
           <div className="bg-background/50 backdrop-blur-sm p-6 rounded-2xl border border-border/40 shadow-sm space-y-6">
             <div className="flex items-center gap-3 border-b border-border/40 pb-4">
               <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                <Icons.Carousel className="w-4 h-4 text-purple-500" />
+                <CarouselIcon className="w-4 h-4 text-purple-500" />
               </div>
               <h3 className="font-bold text-foreground">
                 {t('fields.image') || 'Slide Images'}

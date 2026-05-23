@@ -9,7 +9,7 @@ import type { CategoryItem } from "./CategoriesScroller";
 import Image from "next/image";
 import UserAccountMenu from "@/widgets/layout/UserAccountMenu";
 import SidebarHeader from "@/widgets/layout/sidebar/SidebarHeader";
-import { Icons } from "@/shared/ui/Icons";
+import { XIcon } from "@/shared/ui/Icons";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -185,7 +185,7 @@ export default function SideDrawer({
             className="w-10 cursor-pointer h-10 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
             aria-label="Close menu"
           >
-            <Icons.X className="size-5" />
+            <XIcon className="size-5" />
           </button>
         </div>
 

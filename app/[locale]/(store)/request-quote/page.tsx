@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Card } from '@/shared/ui/Card';
-import { Icons } from '@/shared/ui/Icons';
+import { ActivityIcon, BoxIcon, CheckIcon, ChevronRightIcon, DownloadIcon, ShieldIcon, TagIcon, TrendingUpIcon, XIcon } from "@/shared/ui/Icons";
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/shared/ui/ScrollReveal';
@@ -66,7 +66,7 @@ export default function RequestQuotePage() {
           <ScrollReveal animation="slide-up">
             <div className="max-w-3xl mx-auto text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black tracking-widest uppercase animate-in fade-in slide-in-from-top-4 duration-700">
-                <Icons.Tag className="w-4 h-4" />
+                <TagIcon className="w-4 h-4" />
                 {t('info.competitive_prices')}
               </div>
               <h1 className="text-5xl lg:text-7xl font-black text-foreground leading-[1.1] tracking-tight">
@@ -88,9 +88,9 @@ export default function RequestQuotePage() {
             <ScrollReveal animation="slide-right">
               <div className="space-y-6">
                 {[
-                  { icon: Icons.Activity, title: t('info.fast_response'), desc: t('info.fast_response_desc'), color: "bg-info/10 text-info" },
-                  { icon: Icons.Shield, title: t('info.technical_support'), desc: t('info.technical_support_desc'), color: "bg-primary/10 text-primary" },
-                  { icon: Icons.TrendingUp, title: t('info.competitive_prices'), desc: t('info.competitive_prices_desc'), color: "bg-warning/10 text-warning" }
+                  { icon: ActivityIcon, title: t('info.fast_response'), desc: t('info.fast_response_desc'), color: "bg-info/10 text-info" },
+                  { icon: ShieldIcon, title: t('info.technical_support'), desc: t('info.technical_support_desc'), color: "bg-primary/10 text-primary" },
+                  { icon: TrendingUpIcon, title: t('info.competitive_prices'), desc: t('info.competitive_prices_desc'), color: "bg-warning/10 text-warning" }
                 ].map((item, i) => (
                   <Card key={i} className="p-6 border-border/50 shadow-sm hover:shadow-md transition-all group rounded-3xl">
                     <div className="flex gap-5">
@@ -109,7 +109,7 @@ export default function RequestQuotePage() {
               {/* Trust Card */}
               <Card className="mt-12 p-8 bg-foreground text-background rounded-4xl border-none overflow-hidden relative group">
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <Icons.Box className="absolute -right-12 -bottom-12 w-40 h-40 text-background/10 rotate-12" />
+                <BoxIcon className="absolute -right-12 -bottom-12 w-40 h-40 text-background/10 rotate-12" />
                 <div className="relative z-10 space-y-4">
                   <h3 className="text-2xl font-black">Sky Galaxy Industrial</h3>
                   <p className="text-background/70 font-medium leading-relaxed italic">
@@ -138,7 +138,7 @@ export default function RequestQuotePage() {
                       className="py-16 text-center space-y-6"
                     >
                       <div className="w-24 h-24 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                        <Icons.Check className="w-12 h-12" />
+                        <CheckIcon className="w-12 h-12" />
                       </div>
                       <h2 className="text-4xl font-black text-foreground">{t('form.success')}</h2>
                       <p className="text-xl text-muted-foreground max-w-md mx-auto font-medium">
@@ -245,7 +245,7 @@ export default function RequestQuotePage() {
                             className="h-14 px-6 rounded-2xl border-dashed border-2 border-border/50 hover:border-primary hover:bg-primary/5 transition-all flex items-center gap-3 font-black grow justify-start text-muted-foreground"
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            <Icons.Download className="w-5 h-5" />
+                            <DownloadIcon className="w-5 h-5" />
                             {fileName || (locale === 'ar' ? 'اختر ملفاً...' : 'Choose file...')}
                           </Button>
                           {fileName && (
@@ -256,7 +256,7 @@ export default function RequestQuotePage() {
                               className="w-14 h-14 rounded-2xl text-destructive hover:bg-destructive/10"
                               onClick={() => setFileName(null)}
                             >
-                              <Icons.X className="w-6 h-6" />
+                              <XIcon className="w-6 h-6" />
                             </Button>
                           )}
                         </div>
@@ -269,7 +269,7 @@ export default function RequestQuotePage() {
                         isLoading={isSubmitting}
                       >
                         {isSubmitting ? t('form.submitting') : t('form.submit')}
-                        <Icons.ChevronRight className="w-6 h-6 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform" />
+                        <ChevronRightIcon className="w-6 h-6 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform" />
                       </Button>
                     </motion.form>
                   )}

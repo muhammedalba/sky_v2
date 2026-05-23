@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Badge } from '@/shared/ui/Badge';
-import { Icons } from '@/shared/ui/Icons';
+import { StarIcon, UsersIcon } from "@/shared/ui/Icons";
 import { formatCurrency } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
@@ -40,7 +40,7 @@ function StarRating({ rating, qty }: StarRatingProps) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((s) => (
-        <Icons.Star
+        <StarIcon
           key={s}
           className={cn('w-3 h-3', s <= rounded ? 'text-amber-400' : 'text-muted-foreground/30')}
         />
@@ -224,7 +224,7 @@ export function ProductsSection({ d }: ProductsSectionProps) {
             {topCustomers.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 gap-2">
                 <div className="p-3 rounded-full bg-secondary/50">
-                  <Icons.Users className="w-6 h-6 text-muted-foreground" />
+                  <UsersIcon className="w-6 h-6 text-muted-foreground" />
                 </div>
                 <p className="text-sm text-muted-foreground">{t('noCustomers')}</p>
               </div>

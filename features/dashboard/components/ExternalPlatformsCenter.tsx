@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { Icons } from "@/shared/ui/Icons";
+import { AiSparkIcon, BarChart3Icon, ChevronRightIcon, DatabaseIcon, ExternalLinkIcon, GaugeIcon, GlobeIcon, InfinityIcon, SearchIcon, ShieldIcon, ShoppingBagIcon, SnapchatBrandIcon, StoreIcon, TagsIcon, TikTokBrandIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 /**
@@ -82,7 +82,7 @@ const PlatformCard = ({ platform, index, isVisible }: { platform: PlatformLink; 
           </div>
           
           <div className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary/50 border border-border/50 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
-            <Icons.ExternalLink className="w-4 h-4 text-primary" />
+            <ExternalLinkIcon className="w-4 h-4 text-primary" />
           </div>
         </div>
 
@@ -101,7 +101,7 @@ const PlatformCard = ({ platform, index, isVisible }: { platform: PlatformLink; 
               {platform.brand === "Google" ? "Authenticated" : "Active Service"}
             </span>
           </div>
-          <Icons.ChevronRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary transition-all duration-300 transform group-hover:translate-x-1" />
+          <ChevronRightIcon className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary transition-all duration-300 transform group-hover:translate-x-1" />
         </div>
       </div>
 
@@ -111,7 +111,7 @@ const PlatformCard = ({ platform, index, isVisible }: { platform: PlatformLink; 
   );
 };
 
-const PlatformSection = ({ group, t }: { group: PlatformGroup; t: any }) => {
+const PlatformSection = ({ group, t }: { group: PlatformGroup; t: ReturnType<typeof useTranslations> }) => {
   const GroupIcon = group.icon;
 
   return (
@@ -155,13 +155,13 @@ export default function ExternalPlatformsCenter() {
   const PLATFORM_GROUPS: PlatformGroup[] = [
     {
       id: "marketingGrowth",
-      icon: Icons.AiSpark,
+      icon: AiSparkIcon,
       platforms: [
         {
           id: "googleMerchantCenter",
           brand: "Google",
           url: "https://merchants.google.com/",
-          icon: Icons.ShoppingBag,
+          icon: ShoppingBagIcon,
           color: {
             text: "text-emerald-600 ",
             bg: "bg-muted",
@@ -173,7 +173,7 @@ export default function ExternalPlatformsCenter() {
           id: "metaBusinessSuite",
           brand: "Meta",
           url: "https://business.facebook.com/",
-          icon: Icons.Infinity,
+          icon: InfinityIcon,
           color: {
             text: "text-blue-600 ",
             bg: "bg-muted",
@@ -185,7 +185,7 @@ export default function ExternalPlatformsCenter() {
           id: "tiktokAdsManager",
           brand: "TikTok",
           url: "https://ads.tiktok.com/",
-          icon: Icons.TikTokBrand,
+          icon: TikTokBrandIcon,
           color: {
             text: "text-zinc-900 ",
             bg: "bg-zinc-100 ",
@@ -197,7 +197,7 @@ export default function ExternalPlatformsCenter() {
           id: "snapchatAdsManager",
           brand: "Snapchat",
           url: "https://ads.snapchat.com/",
-          icon: Icons.SnapchatBrand,
+          icon: SnapchatBrandIcon,
           color: {
             text: "text-amber-600 ",
             bg: "bg-amber-50 ",
@@ -209,13 +209,13 @@ export default function ExternalPlatformsCenter() {
     },
     {
       id: "analyticsOptimization",
-      icon: Icons.BarChart3,
+      icon: BarChart3Icon,
       platforms: [
         {
           id: "googleAnalytics",
           brand: "Google",
           url: "https://analytics.google.com/",
-          icon: Icons.BarChart3,
+          icon: BarChart3Icon,
           color: {
             text: "text-orange-600 ",
             bg: "bg-orange-50 ",
@@ -227,7 +227,7 @@ export default function ExternalPlatformsCenter() {
           id: "googleTagManager",
           brand: "Google",
           url: "https://tagmanager.google.com/",
-          icon: Icons.Tags,
+          icon: TagsIcon,
           color: {
             text: "text-indigo-600 ",
             bg: "bg-indigo-50 ",
@@ -239,7 +239,7 @@ export default function ExternalPlatformsCenter() {
           id: "googleSearchConsole",
           brand: "Google",
           url: "https://search.google.com/search-console",
-          icon: Icons.Search,
+          icon: SearchIcon,
           color: {
             text: "text-blue-500 ",
             bg: "bg-blue-50 ",
@@ -251,7 +251,7 @@ export default function ExternalPlatformsCenter() {
           id: "pageSpeedInsights",
           brand: "Web.dev",
           url: "https://pagespeed.web.dev/",
-          icon: Icons.Gauge,
+          icon: GaugeIcon,
           color: {
             text: "text-rose-600 ",
             bg: "bg-rose-50 ",
@@ -263,13 +263,13 @@ export default function ExternalPlatformsCenter() {
     },
     {
       id: "presenceTrust",
-      icon: Icons.Shield,
+      icon: ShieldIcon,
       platforms: [
         {
           id: "googleBusinessProfile",
           brand: "Google",
           url: "https://business.google.com/",
-          icon: Icons.Store,
+          icon: StoreIcon,
           color: {
             text: "text-sky-600 ",
             bg: "bg-sky-50 ",
@@ -281,7 +281,7 @@ export default function ExternalPlatformsCenter() {
           id: "bingWebmasterTools",
           brand: "Microsoft",
           url: "https://www.bing.com/webmasters",
-          icon: Icons.Globe,
+          icon: GlobeIcon,
           color: {
             text: "text-teal-600 ",
             bg: "bg-teal-50 ",
@@ -293,13 +293,13 @@ export default function ExternalPlatformsCenter() {
     },
     {
       id: "technicalInfrastructure",
-      icon: Icons.Database,
+      icon: DatabaseIcon,
       platforms: [
         {
           id: "mongoAtlas",
           brand: "MongoDB",
           url: "https://cloud.mongodb.com/",
-          icon: Icons.Database,
+          icon: DatabaseIcon,
           color: {
             text: "text-green-600 ",
             bg: "bg-green-50 ",
@@ -311,7 +311,7 @@ export default function ExternalPlatformsCenter() {
           id: "aivenRedis",
           brand: "Redis",
           url: "https://console.aiven.io/",
-          icon: Icons.Database,
+          icon: DatabaseIcon,
           color: {
             text: "text-red-600 ",
             bg: "bg-red-50 ",
@@ -328,7 +328,7 @@ export default function ExternalPlatformsCenter() {
       {/* Premium Header Section */}
       <header className="flex flex-col gap-5 max-w-4xl border-b pb-6">
         <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 w-fit animate-in fade-in slide-in-from-left-10 duration-700">
-          <Icons.Infinity className="w-4 h-4 text-primary" />
+          <InfinityIcon className="w-4 h-4 text-primary" />
           <span className="text-[13px] font-black text-primary uppercase tracking-[0.2em]">
             Ecosystem Hub
           </span>

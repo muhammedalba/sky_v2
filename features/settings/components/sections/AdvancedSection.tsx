@@ -11,7 +11,7 @@ import {
 import { Switch } from "@/shared/ui/Switch";
 import { Input } from "@/shared/ui/Input";
 import { Textarea } from "@/shared/ui/Textarea";
-import { Icons } from "@/shared/ui/Icons";
+import { ActivityIcon, AlertTriangleIcon, DashboardIcon, KeyIcon, RefreshCwIcon, SettingsIcon, TrashIcon } from "@/shared/ui/Icons";
 import { apiClient } from "@/lib/api/client";
 import { useToast } from "@/shared/hooks/useToast";
 import { SettingsInput } from "../../settings.schema";
@@ -66,7 +66,7 @@ export default function AdvancedSection() {
         id: "maintenanceMode",
         name: t("advanced.maintenance"),
         desc: t("advanced.maintenanceDesc"),
-        icon: Icons.Settings,
+        icon: SettingsIcon,
         value: maintenanceMode,
         permission: Permissions.UPDATE_MAINTENANCE,
       },
@@ -74,21 +74,21 @@ export default function AdvancedSection() {
         id: "allowRegistration",
         name: t("advanced.registration"),
         desc: t("advanced.registrationDesc"),
-        icon: Icons.Dashboard,
+        icon: DashboardIcon,
         value: allowRegistration,
       },
       {
         id: "autoBackup",
         name: t("advanced.backup"),
         desc: t("advanced.backupDesc"),
-        icon: Icons.RefreshCw,
+        icon: RefreshCwIcon,
         value: autoBackup,
       },
       {
         id: "debugMode",
         name: t("advanced.debug"),
         desc: t("advanced.debugDesc"),
-        icon: Icons.Activity,
+        icon: ActivityIcon,
         value: debugMode,
         permission: Permissions.UPDATE_DEBUG,
       },
@@ -109,7 +109,7 @@ export default function AdvancedSection() {
       <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
         <CardHeader className="bg-muted/20 border-b border-border/50">
           <CardTitle className="text-xl flex items-center gap-2 title-gradient">
-            <Icons.Settings className="w-5 h-5 text-destructive" />{" "}
+            <SettingsIcon className="w-5 h-5 text-destructive" />{" "}
             {t("advanced.title")}
           </CardTitle>
           <CardDescription>{t("advanced.desc")}</CardDescription>
@@ -147,7 +147,7 @@ export default function AdvancedSection() {
 
           <div className="pt-6 border-t border-border/50 space-y-4">
             <h4 className="font-bold text-sm flex items-center gap-2">
-              <Icons.Key className="w-4 h-4 text-primary" /> API Keys
+              <KeyIcon className="w-4 h-4 text-primary" /> API Keys
             </h4>
             <Input
               {...register("googleMapsApiKey")}
@@ -164,7 +164,7 @@ export default function AdvancedSection() {
         <Card className="border-warning/50 bg-warning/5 shadow-xs rounded-3xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2 text-warning">
-              <Icons.AlertTriangle className="w-5 h-5" />{" "}
+              <AlertTriangleIcon className="w-5 h-5" />{" "}
               {t("advanced.maintenanceMsg")}
             </CardTitle>
           </CardHeader>
@@ -191,7 +191,7 @@ export default function AdvancedSection() {
       <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden mt-6">
         <CardHeader className="bg-muted/10 border-b border-border/50">
           <CardTitle className="text-sm flex items-center gap-2 font-bold">
-            <Icons.RefreshCw className="w-4 h-4 text-primary" />{" "}
+            <RefreshCwIcon className="w-4 h-4 text-primary" />{" "}
             {t("advanced.systemMaintenance") || "System Maintenance"}
           </CardTitle>
         </CardHeader>
@@ -213,9 +213,9 @@ export default function AdvancedSection() {
               className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-xl text-xs font-bold hover:bg-muted transition-all disabled:opacity-50"
             >
               {isClearingCache ? (
-                <Icons.RefreshCw className="w-3 h-3 animate-spin text-primary" />
+                <RefreshCwIcon className="w-3 h-3 animate-spin text-primary" />
               ) : (
-                <Icons.Trash className="w-3 h-3 text-destructive" />
+                <TrashIcon className="w-3 h-3 text-destructive" />
               )}
               {t("advanced.clearButton") || "Clear Now"}
             </button>

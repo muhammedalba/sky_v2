@@ -5,7 +5,7 @@ import { useCategories, useDeleteCategory } from '@/features/categories/hooks/us
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Button } from '@/shared/ui/Button';
 import Modal from '@/shared/ui/Modal';
-import { Icons } from '@/shared/ui/Icons';
+import { CategoriesIcon, EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import { Badge } from '@/shared/ui/Badge';
 import { Category } from '@/types';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
@@ -130,7 +130,7 @@ export default function CategoriesPage() {
                 className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
                 onClick={() => handleOpenModal(category)}
                 disabled={deleteCategoryPending || isLoading}                   >
-                <Icons.Edit className="h-4 w-4" />
+                <EditIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -145,7 +145,7 @@ export default function CategoriesPage() {
                 disabled={deleteCategoryPending || isLoading}
                 isLoading={deleteCategoryPending}
               >
-                <Icons.Trash className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -162,7 +162,7 @@ export default function CategoriesPage() {
         totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createCategory'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
           disabled: deleteCategoryPending || isLoading,
           permission: Permissions.CREATE_CATEGORY
@@ -187,7 +187,7 @@ export default function CategoriesPage() {
         emptyState={{
           title: t('emptyState.title'),
           description: t('emptyState.description'),
-          icon: <Icons.Categories className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <CategoriesIcon className="h-10 w-10 text-muted-foreground/40" />,
           createLabel: t('createCategory'),
           createLink: () => handleOpenModal(),
         }}

@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
+import { CheckIcon, KeyIcon, MailIcon, ShieldIcon } from "@/shared/ui/Icons";
 
 interface StepWizardProps {
   currentStep: number;
@@ -41,17 +41,17 @@ const StepWizard = ({ currentStep, totalSteps, className }: StepWizardProps) => 
   // Get icon for each step
   const getStepIcon = (stepNumber: number, isCompleted: boolean) => {
     if (isCompleted) {
-      return <Icons.Check className="w-5 h-5 animate-in zoom-in-50 duration-300" />;
+      return <CheckIcon className="w-5 h-5 animate-in zoom-in-50 duration-300" />;
     }
 
     const iconClass = "w-5 h-5 sm:w-7 sm:h-7";
     switch (stepNumber) {
       case 1:
-        return <Icons.Mail className={iconClass} />;
+        return <MailIcon className={iconClass} />;
       case 2:
-        return <Icons.Shield className={iconClass} />;
+        return <ShieldIcon className={iconClass} />;
       case 3:
-        return <Icons.Key className={iconClass} />;
+        return <KeyIcon className={iconClass} />;
       default:
         return stepNumber;
     }

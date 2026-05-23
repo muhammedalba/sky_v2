@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
-import { Icons } from '@/shared/ui/Icons';
+import { SearchIcon, TargetIcon } from "@/shared/ui/Icons";
 import { SettingsInput } from '../../settings.schema';
 
 export default function SEOSection() {
@@ -16,7 +16,7 @@ export default function SEOSection() {
     <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
       <CardHeader className="bg-muted/20 border-b border-border/50">
         <CardTitle className="text-xl flex items-center gap-2 title-gradient">
-          <Icons.Search className="w-5 h-5 text-info" /> {t('seo.title')}
+          <SearchIcon className="w-5 h-5 text-info" /> {t('seo.title')}
         </CardTitle>
         <CardDescription>{t('seo.desc')}</CardDescription>
       </CardHeader>
@@ -55,7 +55,7 @@ export default function SEOSection() {
         <div className="pt-6 border-t border-border/50">
           <div className="flex items-center gap-4 p-4 border border-border/50 rounded-2xl bg-muted/5">
             <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-              <Icons.Target className="w-6 h-6 text-blue-500" />
+              <TargetIcon className="w-6 h-6 text-blue-500" />
             </div>
             <div className="flex-1">
               <Input

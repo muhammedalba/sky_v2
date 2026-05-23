@@ -3,7 +3,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 
-import { Icons } from '@/shared/ui/Icons';
+import { BoxIcon, CheckIcon, EditIcon, GlobeIcon, MapPinIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
 import {
   useCountries,
   useRegions,
@@ -144,7 +144,7 @@ export default function LocationsDashboardPage() {
           className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40"
           onClick={editAction}
         >
-          <Icons.Edit className="w-4 h-4" />
+          <EditIcon className="w-4 h-4" />
         </Button>
       </Tooltip>
     </Can>
@@ -206,15 +206,15 @@ export default function LocationsDashboardPage() {
   }, [activeTab, countries, regions, cities, search]);
 
   const viewTabs = useMemo(() => [
-    { id: 'all', label: tCommon('tabs.all'), value: 'all', icon: Icons.Box, iconClass: 'w-3 h-3 text-primary', activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
-    { id: 'active', label: tCommon('tabs.active'), value: 'active', icon: Icons.Check, iconClass: 'w-3 h-3 text-success', activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
-    { id: 'inactive', label: tCommon('tabs.inactive'), value: 'inactive', icon: Icons.X, iconClass: 'w-3 h-3 text-destructive', activeClass: 'bg-destructive text-white shadow-md shadow-destructive/20' },
+    { id: 'all', label: tCommon('tabs.all'), value: 'all', icon: BoxIcon, iconClass: 'w-3 h-3 text-primary', activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
+    { id: 'active', label: tCommon('tabs.active'), value: 'active', icon: CheckIcon, iconClass: 'w-3 h-3 text-success', activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
+    { id: 'inactive', label: tCommon('tabs.inactive'), value: 'inactive', icon: XIcon, iconClass: 'w-3 h-3 text-destructive', activeClass: 'bg-destructive text-white shadow-md shadow-destructive/20' },
   ], [tCommon]);
 
   const entityTabs = useMemo(() => [
-    { id: 'countries', label: t('tabs.countries'), value: 'countries', icon: Icons.Globe, iconClass: 'w-3 h-3 text-primary' },
-    { id: 'regions', label: t('tabs.regions'), value: 'regions', icon: Icons.MapPin, iconClass: 'w-3 h-3 text-success' },
-    { id: 'cities', label: t('tabs.cities'), value: 'cities', icon: Icons.MapPin, iconClass: 'w-3 h-3 text-warning' },
+    { id: 'countries', label: t('tabs.countries'), value: 'countries', icon: GlobeIcon, iconClass: 'w-3 h-3 text-primary' },
+    { id: 'regions', label: t('tabs.regions'), value: 'regions', icon: MapPinIcon, iconClass: 'w-3 h-3 text-success' },
+    { id: 'cities', label: t('tabs.cities'), value: 'cities', icon: MapPinIcon, iconClass: 'w-3 h-3 text-warning' },
   ], [t]);
 
   return (
@@ -225,7 +225,7 @@ export default function LocationsDashboardPage() {
         totalResults={t('totalResults', { count: filteredData.length })}
         action={{
           label: activeTab === 'countries' ? t('createCountry') : activeTab === 'regions' ? t('createRegion') : t('createCity'),
-          icon: <Icons.Plus className="w-4 h-4" />,
+          icon: <PlusIcon className="w-4 h-4" />,
           onClick: handleAddNew,
           disabled: isAnyLoading,
           permission: Permissions.CREATE_LOCATION
@@ -325,7 +325,7 @@ export default function LocationsDashboardPage() {
                 }}
               />
             ) : (
-              <EmptySelectionView icon={Icons.MapPin} text={t('placeholders.selectCountryToViewRegions')} />
+              <EmptySelectionView icon={MapPinIcon} text={t('placeholders.selectCountryToViewRegions')} />
             )
           )}
 
@@ -338,7 +338,7 @@ export default function LocationsDashboardPage() {
                 emptyState={{ title: t('emptyState.title'), description: t('emptyState.description'), createLink: () => setIsFormOpen(true) }}
               />
             ) : (
-              <EmptySelectionView icon={Icons.MapPin} text={t('placeholders.selectRegionToViewCities')} />
+              <EmptySelectionView icon={MapPinIcon} text={t('placeholders.selectRegionToViewCities')} />
             )
           )}
         </div>

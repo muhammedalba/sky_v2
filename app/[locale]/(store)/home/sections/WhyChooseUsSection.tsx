@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/Button";
-import { Icons } from "@/shared/ui/Icons";
+import { ShieldIcon, TrendingUpIcon, TruckIcon } from "@/shared/ui/Icons";
 import { Card } from "@/shared/ui/Card";
 import { useState, useRef, useEffect } from "react";
 
@@ -52,9 +52,9 @@ export default function WhyChooseUsSection() {
               </div>
               <div className="space-y-4 pt-4">
                 {[
-                  { title: t("why.features.quality.title"), desc: t("why.features.quality.desc"), icon: Icons.Shield },
-                  { title: t("why.features.pricing.title"), desc: t("why.features.pricing.desc"), icon: Icons.TrendingUp },
-                  { title: t("why.features.logistics.title"), desc: t("why.features.logistics.desc"), icon: Icons.Truck },
+                  { title: t("why.features.quality.title"), desc: t("why.features.quality.desc"), icon: ShieldIcon },
+                  { title: t("why.features.pricing.title"), desc: t("why.features.pricing.desc"), icon: TrendingUpIcon },
+                  { title: t("why.features.logistics.title"), desc: t("why.features.logistics.desc"), icon: TruckIcon },
                 ].map((feature, i) => (
                   <div key={i} className="flex flex-col sm:flex-row text-center sm:text-start items-center sm:items-start gap-6 group bg-card p-6 rounded-3xl border border-border/50 hover:shadow-xl transition-shadow">
                     <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">

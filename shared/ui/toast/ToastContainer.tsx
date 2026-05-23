@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Toast as ToastType, useToastStore } from '@/store/toast-store';
-import { Icons } from '@/shared/ui/Icons';
+import { CheckIcon, DashboardIcon, ErrorIcon, ProductsIcon } from "@/shared/ui/Icons";
 import { cn } from '@/lib/utils';
 import { createPortal } from 'react-dom';
 
@@ -24,10 +24,10 @@ const ToastItem = ({ toast }: { toast: ToastType }) => {
   };
 
   const icons = {
-    success: <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center text-success"><Icons.Check className="w-5 h-5" /></div>,
-    error: <div className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center text-destructive"><Icons.Error className="w-5 h-5" /></div>,
-    warning: <div className="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center text-warning"><Icons.Dashboard className="w-5 h-5" /></div>,
-    info: <div className="w-8 h-8 rounded-full bg-info/10 flex items-center justify-center text-info"><Icons.Products className="w-5 h-5" /></div>,
+    success: <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center text-success"><CheckIcon className="w-5 h-5" /></div>,
+    error: <div className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center text-destructive"><ErrorIcon className="w-5 h-5" /></div>,
+    warning: <div className="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center text-warning"><DashboardIcon className="w-5 h-5" /></div>,
+    info: <div className="w-8 h-8 rounded-full bg-info/10 flex items-center justify-center text-info"><ProductsIcon className="w-5 h-5" /></div>,
   };
 
   const borders = {
@@ -58,7 +58,7 @@ const ToastItem = ({ toast }: { toast: ToastType }) => {
           onClick={handleRemove}
           className="shrink-0 text-muted-foreground hover:text-foreground transition-colors p-1"
         >
-          <Icons.Error className="w-4 h-4" />
+          <ErrorIcon className="w-4 h-4" />
         </button>
       </div>
     </div>

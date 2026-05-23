@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Card } from "@/shared/ui/Card";
-import { Icons } from "@/shared/ui/Icons";
+import { ChevronRightIcon, PackageIcon } from "@/shared/ui/Icons";
 import { useState, useRef, useEffect } from "react";
 
 const ScrollReveal = ({ children, className = "", delay = 0, direction = "up" }: { children: React.ReactNode; className?: string; delay?: number; direction?: "up" | "down" | "left" | "right" | "none"; }) => {
@@ -78,7 +78,7 @@ export default function FeaturedProjectsSection() {
               <ScrollReveal key={i} delay={i * 100}>
                 <Card className="p-4 border-white/10 shadow-sm hover:shadow-2xl hover:border-primary/50 transition-all duration-500 rounded-4xl overflow-hidden group bg-white/5 backdrop-blur-md cursor-pointer">
                   <div className="aspect-video bg-white/5 rounded-3xl mb-6 relative overflow-hidden flex items-center justify-center">
-                    <Icons.Package className="w-16 h-16 text-white/20 group-hover:scale-110 transition-transform duration-700" />
+                    <PackageIcon className="w-16 h-16 text-white/20 group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                   <div className="px-4 pb-4 text-center md:text-start">
@@ -92,7 +92,7 @@ export default function FeaturedProjectsSection() {
                       <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/20 px-3 py-1 rounded-full">
                         {project.year}
                       </span>
-                      <Icons.ChevronRight className="w-5 h-5 text-white/50 group-hover:text-primary transition-colors rtl:rotate-180" />
+                      <ChevronRightIcon className="w-5 h-5 text-white/50 group-hover:text-primary transition-colors rtl:rotate-180" />
                     </div>
                   </div>
                 </Card>

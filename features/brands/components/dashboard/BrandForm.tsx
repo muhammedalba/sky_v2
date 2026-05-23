@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Brand } from '@/types';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon } from "@/shared/ui/Icons";
 import { BrandFormValues, brandSchema } from '@/features/brands/brand.schema';
 import { useToast } from '@/shared/hooks/useToast';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
@@ -78,7 +78,7 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
           <Input
             showAiAction
             aiActionTooltip={t('aiTranslateImprove')}
-            icon={Icons.Edit}
+            icon={EditIcon}
             label={t('fields.name') + (' (English)')}
             {...register('name.en')}
             error={(errors.name?.en?.message)}
@@ -91,7 +91,7 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
             label={t('fields.name') + (' (Arabic)')}
             showAiAction
             aiActionTooltip={t('aiTranslateImprove')}
-            icon={Icons.Edit}
+            icon={EditIcon}
             {...register('name.ar')}
             error={errors.name?.ar?.message}
             disabled={createMutation.isPending || updateMutation.isPending}

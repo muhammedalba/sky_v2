@@ -31,7 +31,7 @@ export interface Carousel {
 
 export interface PromoBanner {
   _id: string;
-  text: LocalizedString;
+  text: LocalizedString | string;
   link?: string;
   isActive: boolean;
   createdAt?: string;

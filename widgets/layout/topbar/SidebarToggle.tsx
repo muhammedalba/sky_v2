@@ -1,7 +1,7 @@
 'use client';
 
 import { useUIStore } from '@/store/ui-store';
-import { Icons } from '@/shared/ui/Icons';
+import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "@/shared/ui/Icons";
 
 export default function SidebarToggle() {
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
@@ -13,9 +13,9 @@ export default function SidebarToggle() {
       aria-label="Toggle Sidebar"
     >
       {sidebarCollapsed ? (
-        <Icons.PanelLeftOpen className="h-5 w-5 animate-in fade-in zoom-in duration-300" />
+        <PanelLeftOpenIcon className="h-5 w-5 animate-in fade-in zoom-in duration-300" />
       ) : (
-        <Icons.PanelLeftClose className="h-5 w-5 animate-in fade-in zoom-in duration-300" />
+        <PanelLeftCloseIcon className="h-5 w-5 animate-in fade-in zoom-in duration-300" />
       )}
     </button>
   );

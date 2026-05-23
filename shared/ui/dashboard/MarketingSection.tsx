@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Badge } from '@/shared/ui/Badge';
-import { Icons } from '@/shared/ui/Icons';
+import { CouponsIcon } from "@/shared/ui/Icons";
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import type { DashboardData } from './types';
@@ -64,7 +64,7 @@ export function MarketingSection({ d }: MarketingSectionProps) {
               {periodStr && <CardDescription>{periodStr}</CardDescription>}
             </div>
             <div className="p-2 rounded-xl bg-indigo-500/10">
-              <Icons.Coupons className="w-5 h-5 text-indigo-500" />
+              <CouponsIcon className="w-5 h-5 text-indigo-500" />
             </div>
           </div>
         </CardHeader>
@@ -90,7 +90,7 @@ export function MarketingSection({ d }: MarketingSectionProps) {
           {topCoupons.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 gap-2">
               <div className="p-3 rounded-full bg-secondary/50">
-                <Icons.Coupons className="w-6 h-6 text-muted-foreground" />
+                <CouponsIcon className="w-6 h-6 text-muted-foreground" />
               </div>
               <p className="text-sm text-muted-foreground">{t('noUsage')}</p>
               <p className="text-xs text-muted-foreground/60">{t('createCoupons')}</p>

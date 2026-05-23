@@ -12,7 +12,7 @@ import { UserFormValues, createUserSchema, editUserSchema } from '@/features/use
 import { Switch } from '@/shared/ui/Switch';
 import { useTranslations, useLocale } from 'next-intl';
 import { useToast } from '@/shared/hooks/useToast';
-import { Icons } from '@/shared/ui/Icons';
+import { KeyIcon, MailIcon, PhoneIcon, ShieldIcon, UserIcon } from "@/shared/ui/Icons";
 import { useRouter } from 'next/navigation';
 import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
 import { cn } from '@/lib/utils';
@@ -120,7 +120,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
             <div className="bg-background/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border/40 shadow-sm space-y-8">
               <div className="flex items-center gap-4 border-b border-border/40 pb-4">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icons.User className="w-5 h-5 text-primary" />
+                  <UserIcon className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-foreground">
@@ -134,7 +134,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                   <Input
                     {...register('name')}
                     label={t('fields.name')}
-                    icon={Icons.User}
+                    icon={UserIcon}
                     disabled={createMutation.isPending || updateMutation.isPending}
                     error={errors.name?.message}
                   />
@@ -143,7 +143,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 <div className="space-y-2">
                   <Input
                     {...register('email')}
-                    icon={Icons.Mail}
+                    icon={MailIcon}
                     label={t('fields.email')}
                     type="email"
                     disabled={createMutation.isPending || updateMutation.isPending}
@@ -154,7 +154,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 <div className="space-y-2">
                   <Input
                     {...register('phone')}
-                    icon={Icons.Phone}
+                    icon={PhoneIcon}
                     label={t('fields.phone')}
                     dir="ltr"
                     disabled={createMutation.isPending || updateMutation.isPending}
@@ -165,7 +165,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 <div className="space-y-2">
                   <Select
                     label={t('fields.role')}
-                    icon={Icons.Shield}
+                    icon={ShieldIcon}
                     {...register('role')}
                     options={Array.isArray(roles) ? roles.map((role: any) => ({
                       value: role._id,
@@ -181,7 +181,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
             <div className="bg-background/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border/40 shadow-sm space-y-8">
               <div className="flex items-center gap-4 border-b border-border/40 pb-4">
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-                  <Icons.Shield className="w-5 h-5 text-orange-500" />
+                  <ShieldIcon className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-foreground">
@@ -194,7 +194,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 <div className="space-y-2">
                   <PasswordInput
                     {...register('password')}
-                    icon={Icons.Key}
+                    icon={KeyIcon}
                     label={t('fields.password')}
                     placeholder={mode === 'edit' ? '******** (Leave empty to keep)' : '********'}
                     disabled={createMutation.isPending || updateMutation.isPending}
@@ -206,7 +206,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                 <div className="space-y-2">
                   <PasswordInput
                     {...register('confirmPassword')}
-                    icon={Icons.Key}
+                    icon={KeyIcon}
                     label={t('fields.passwordConfirm')}
                     placeholder={mode === 'edit' ? '******** (Leave empty to keep)' : '********'}
                     disabled={createMutation.isPending || updateMutation.isPending}

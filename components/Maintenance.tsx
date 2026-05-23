@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/shared/ui/Button';
 import { useSettings } from '@/app/providers/SettingsProvider';
-import { Icons } from '@/shared/ui/Icons';
+import { ClockIcon, MailIcon, MessageCircleIcon, RefreshCwIcon, SettingsIcon, WarningIcon } from "@/shared/ui/Icons";
 
 export default function Maintenance() {
   const t = useTranslations('maintenance');
@@ -37,9 +37,9 @@ export default function Maintenance() {
         <div className="relative inline-block">
           <div className="absolute inset-0 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-pulse opacity-50" />
           <div className="relative bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-10 rounded-[3rem] shadow-2xl shadow-slate-300/40 dark:shadow-2xl flex items-center justify-center group hover:scale-105 transition-transform duration-500">
-            <Icons.Settings className="w-24 h-24 text-primary animate-[spin_12s_linear_infinite]" />
+            <SettingsIcon className="w-24 h-24 text-primary animate-[spin_12s_linear_infinite]" />
             <div className="absolute -bottom-3 -right-3 bg-slate-900 dark:bg-primary text-white rounded-2xl p-3.5 border-4 border-white dark:border-slate-950 shadow-xl group-hover:rotate-12 transition-transform duration-300">
-              <Icons.Warning className="w-8 h-8 text-amber-400 dark:text-white animate-pulse" />
+              <WarningIcon className="w-8 h-8 text-amber-400 dark:text-white animate-pulse" />
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ export default function Maintenance() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl mx-auto px-4">
           <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-7 rounded-3xl flex items-center gap-5 text-start shadow-xl shadow-slate-200/40 dark:shadow-none hover:bg-white/90 dark:hover:bg-white/10 hover:translate-y-[-2px] transition-all duration-300 group">
             <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <Icons.Clock className="w-7 h-7 text-primary" />
+              <ClockIcon className="w-7 h-7 text-primary" />
             </div>
             <div>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">{t('status')}</p>
@@ -70,7 +70,7 @@ export default function Maintenance() {
 
           <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-7 rounded-3xl flex items-center gap-5 text-start shadow-xl shadow-slate-200/40 dark:shadow-none hover:bg-white/90 dark:hover:bg-white/10 hover:translate-y-[-2px] transition-all duration-300 group">
             <div className="w-14 h-14 shrink-0 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <Icons.MessageCircle className="w-7 h-7 text-purple-600 dark:text-purple-400" />
+              <MessageCircleIcon className="w-7 h-7 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">{t('support')}</p>
@@ -85,14 +85,14 @@ export default function Maintenance() {
             className="w-full sm:w-auto rounded-2xl h-16 px-10 font-black shadow-2xl shadow-primary/30 text-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground"
             onClick={() => window.location.reload()}
           >
-            <Icons.RefreshCw className="w-5 h-5 animate-spin-slow" />
+            <RefreshCwIcon className="w-5 h-5 animate-spin-slow" />
             {t('retryBtn')}
           </Button>
           <a 
             href="mailto:support@skygalaxy.com" 
             className="w-full sm:w-auto h-16 px-9 rounded-2xl border border-slate-300 bg-white/60  backdrop-blur-md flex items-center justify-center gap-3 font-bold  text-primary  hover:border-slate-400  transition-all group shadow-lg shadow-slate-200/30"
           >
-            <Icons.Mail className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors" />
+            <MailIcon className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors" />
             {t('contactUs')}
           </a>
         </div>

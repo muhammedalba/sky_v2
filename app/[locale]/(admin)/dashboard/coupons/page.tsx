@@ -8,7 +8,7 @@ import { useQueryState } from '@/shared/hooks/useQueryState';
 import { useCoupons, useDeleteCoupon, useUpdateCoupon } from '@/features/marketing/hooks/useCoupons';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Icons } from '@/shared/ui/Icons';
+import { CalendarIcon, EditIcon, PlusIcon, TrashIcon, UsersIcon } from "@/shared/ui/Icons";
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
@@ -134,7 +134,7 @@ export default function CouponsPage() {
       render: (coupon: Coupon) => (
         <div className="flex flex-col gap-1.5">
           <div className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-            <Icons.Users className="w-4 h-4 opacity-40" />
+            <UsersIcon className="w-4 h-4 opacity-40" />
             <span className="text-foreground font-bold">{coupon.usageCount || 0}</span>
             <span className="opacity-30">/</span>
             <span className="opacity-60 font-bold">{coupon.maxUsage || '∞'}</span>
@@ -162,7 +162,7 @@ export default function CouponsPage() {
             "text-sm font-bold flex items-center gap-2 px-3 py-1 rounded-lg w-fit",
             isExpired ? "text-destructive bg-destructive/5" : "text-foreground/80 bg-muted/30"
           )}>
-            <Icons.Calendar className="w-4 h-4 opacity-70" />
+            <CalendarIcon className="w-4 h-4 opacity-70" />
             {formatDate(coupon.expires)}
           </div>
         );
@@ -198,7 +198,7 @@ export default function CouponsPage() {
                 className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
                 onClick={() => router.push(`/${locale}/dashboard/coupons/${coupon._id}/edit`)}
                 disabled={updateCouponPending || isLoading || deleteCouponPending}                   >
-                <Icons.Edit className="h-4 w-4" />
+                <EditIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -213,7 +213,7 @@ export default function CouponsPage() {
                 isLoading={deleteCouponPending}
                 disabled={deleteCouponPending || isLoading || updateCouponPending}
               >
-                <Icons.Trash className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -230,7 +230,7 @@ export default function CouponsPage() {
         totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createCoupon'),
-          icon: <Icons.Plus className="w-4 h-4" />,
+          icon: <PlusIcon className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/coupons/create`),
           disabled: updateCouponPending || isLoading || deleteCouponPending,
           permission: Permissions.CREATE_COUPON

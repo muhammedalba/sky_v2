@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
 import SideDrawer from './SideDrawer';
 import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
-import { Icons } from '@/shared/ui/Icons';
+import { MenuIcon } from "@/shared/ui/Icons";
 import SearchBar from './SearchBar';
 import Link from 'next/link';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
@@ -62,7 +62,7 @@ function MobileTopBar({ categories }: MobileTopBarProps) {
             )}
             aria-label="Open menu"
           >
-            <Icons.Menu className='size-5' />
+            <MenuIcon className='size-5' />
           </button>
 
           <SearchBar useLiveSearch={true} className="w-1/4 sm:w-full" />

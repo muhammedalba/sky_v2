@@ -113,6 +113,32 @@
       transform: translateX(0);
     }
   }
+
+  /* Custom Animations added to Theme */
+  --animate-badge-pop: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-promo-marquee: promo-marquee-ltr 60s linear infinite;
+
+  @keyframes badge-pop {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes promo-marquee-ltr {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes promo-marquee-rtl {
+    from { transform: translateX(0%); }
+    to { transform: translateX(50%); }
+  }
 }
 
 @layer utilities {
@@ -289,26 +315,6 @@
 
 /* ─── Mobile Bottom Nav ────────────────────────────────────────────── */
 
-@keyframes badge-pop {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.2);
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.animate-badge-pop {
-  animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
 /* Haptic-like press feedback for nav items */
 .mobile-bottom-nav a:active {
   transform: scale(0.96);
@@ -321,10 +327,49 @@ input::-ms-clear {
   display: none;
 }
 
-
 /* Hide bottom nav when virtual keyboard is open (viewport shrinks) */
 @media (max-height: 450px) and (max-width: 768px) {
   .mobile-bottom-nav {
     display: none;
   }
+}
+
+/* ─── Homepage Utilities & Custom Animations ───────────────────────── */
+
+/* Marquee RTL Override */
+[dir="rtl"] .animate-marquee {
+  animation-direction: reverse;
+}
+.mask-image-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+/* Custom Scrollbar for horizontal lists if needed */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─── Top Promo Banner Animations ──────────────────────────────────── */
+[dir="rtl"] .animate-promo-marquee {
+  animation-name: promo-marquee-rtl;
+}
+.animate-promo-marquee:hover {
+  animation-play-state: paused;
 }

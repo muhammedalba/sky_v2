@@ -4,7 +4,7 @@ import { UseFormRegister } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
 import { useState } from 'react';
 
 function TagsInputField({
@@ -50,7 +50,7 @@ function TagsInputField({
         dir={dir}
         error={error}
         className="h-11 rounded-xl"
-        icon={Icons.Plus}
+        icon={PlusIcon}
         iconColor="text-blue-500"
       />
       {value.length > 0 && (
@@ -66,7 +66,7 @@ function TagsInputField({
                 onClick={() => removeTag(index)}
                 className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
               >
-                <Icons.X className="w-3 h-3" />
+                <XIcon className="w-3 h-3" />
               </button>
             </div>
           ))}
@@ -102,7 +102,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
   return (
     <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <Icons.Edit className="w-5 h-5 text-muted-foreground" />
+        <EditIcon className="w-5 h-5 text-muted-foreground" />
         <div>
           <h3 className="font-bold text-sm">{t('basicInformation')}</h3>
           <p className="text-xs text-muted-foreground">{t('basicDesc')}</p>
@@ -112,7 +112,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Input
-            icon={Icons.Edit}
+            icon={EditIcon}
             iconColor="text-blue-500"
             error={tError(errors?.title?.en?.message)}
             {...register('title.en')}
@@ -124,7 +124,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
         </div>
         <div className="space-y-2">
           <Input
-            icon={Icons.Edit}
+            icon={EditIcon}
             iconColor="text-blue-500"
             error={tError(errors?.title?.ar?.message)}
             {...register('title.ar')}
@@ -137,7 +137,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
         </div>
         <div className="space-y-2 lg:col-span-2">
           <Textarea
-            icon={Icons.Edit}
+            icon={EditIcon}
             iconColor="text-indigo-500"
             {...register('description.en')}
             error={tError(errors?.description?.en?.message)}
@@ -149,7 +149,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
         </div>
         <div className="space-y-2 lg:col-span-2">
           <Textarea
-            icon={Icons.Edit}
+            icon={EditIcon}
             iconColor="text-indigo-500"
             {...register('description.ar')}
             error={tError(errors?.description?.ar?.message)}

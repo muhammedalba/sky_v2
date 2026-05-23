@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Icons } from '@/shared/ui/Icons';
+import { LogoutIcon, ProductsIcon, UserIcon, UsersIcon } from "@/shared/ui/Icons";
 import { cn, formatEmail, truncate } from '@/lib/utils';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import LogoutButton from './topbar/LogoutButton';
@@ -90,7 +90,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                         </div>
                     )
                 ) : (
-                    <Icons.User className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <UserIcon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 )}
             </button>
             
@@ -129,7 +129,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                                 onClick={closeMenu}
                                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
                             >
-                                <Icons.User className="w-4 h-4 text-info" />
+                                <UserIcon className="w-4 h-4 text-info" />
                                 {t('profile')}
                             </Link>
                             <Link
@@ -137,14 +137,14 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                                 onClick={closeMenu}
                                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
                             >
-                                <Icons.Products className="text-success w-5 h-5 hover:text-primary " />
+                                <ProductsIcon className="text-success w-5 h-5 hover:text-primary " />
                                 {t('orders')}
                             </Link>
                             <button
                                 onClick={handleLogout}
                                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-destructive/10 text-sm font-medium text-destructive transition-colors"
                             >
-                                <Icons.Logout className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                <LogoutIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                 {t('logout')}
                             </button>
                         </>
@@ -155,7 +155,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                                 onClick={closeMenu}
                                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
                             >
-                                <Icons.User className="w-4 h-4 text-info" />
+                                <UserIcon className="w-4 h-4 text-info" />
                                {t('signup')}
                             </Link>
                             <Link
@@ -163,7 +163,7 @@ const UserAccountMenu = ({ iconOnly = false, dir = "bottom", className = "m-4", 
                                 onClick={closeMenu}
                                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent/50 text-sm font-medium transition-colors"
                             >
-                                <Icons.Users className="text-success w-5 h-5 hover:text-primary " />
+                                <UsersIcon className="text-success w-5 h-5 hover:text-primary " />
                                 {t('login')}
                             </Link>
                         </div>

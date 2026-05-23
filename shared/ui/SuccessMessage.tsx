@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import { Icons } from './Icons';
+import { cn } from "@/lib/utils";
+import { CheckIcon } from "./Icons";
 
 interface SuccessMessageProps {
   message: string;
@@ -7,17 +7,22 @@ interface SuccessMessageProps {
   showIcon?: boolean;
 }
 
-export default function SuccessMessage({ message, className, showIcon = true }: SuccessMessageProps) {
+export default function SuccessMessage({
+  message,
+  className,
+  showIcon = true,
+}: SuccessMessageProps) {
   return (
-    <div className={cn(
-      "flex items-center p-4 rounded-2xl bg-success/10 border border-success/20 text-success text-sm font-semibold",
-      className
-    )}>
-      {showIcon && <Icons.Check className="w-5 h-5 border border-success/20 rounded-full mx-2" />}
-      <div className="flex-1">
-        {message} 
-      </div>
-
+    <div
+      className={cn(
+        "flex items-center p-4 rounded-2xl bg-success/10 border border-success/20 text-success text-sm font-semibold",
+        className,
+      )}
+    >
+      {showIcon && (
+        <CheckIcon className="w-5 h-5 border border-success/20 rounded-full mx-2" />
+      )}
+      <div className="flex-1">{message}</div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import React, { forwardRef } from 'react';
-import { Icons } from './Icons';
+import { CheckIcon } from './Icons';
 
 interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
@@ -22,7 +22,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             {...props}
           />
           <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-            <Icons.Check className="h-3.5 w-3.5 stroke-3" />
+            <CheckIcon className="h-3.5 w-3.5 stroke-3" />
           </div>
         </div>
         {(label || description) && (

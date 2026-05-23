@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
-import { Icons } from '@/shared/ui/Icons';
+import { BoxIcon, CheckIcon, EditIcon, PlusIcon, RestoreIcon, TrashIcon, XIcon } from "@/shared/ui/Icons";
 
 export interface VariantRow {
   sku: string;
@@ -164,7 +164,7 @@ export default function VariantTable({
                           className={`p-2 rounded-lg transition-all ${isExpanded ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' : 'bg-muted text-muted-foreground hover:bg-border'}`}
                           title="Manage Components"
                         >
-                          <Icons.Box className="w-4 h-4" />
+                          <BoxIcon className="w-4 h-4" />
                         </button>
 
                         {isDeleted ? (
@@ -175,7 +175,7 @@ export default function VariantTable({
                               className="p-2 rounded-lg bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition-colors"
                               title={t('restoreProduct')}
                             >
-                              <Icons.Restore className="w-4 h-4" />
+                              <RestoreIcon className="w-4 h-4" />
                             </button>
                           )
                         ) : (
@@ -185,7 +185,7 @@ export default function VariantTable({
                             className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
                             title={t('deleteVariant')}
                           >
-                            <Icons.Trash className="w-4 h-4" />
+                            <TrashIcon className="w-4 h-4" />
                           </button>
                         )}
                       </div>
@@ -211,7 +211,7 @@ export default function VariantTable({
                               }}
                               className="text-xs font-bold text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 border border-primary/20"
                             >
-                              <Icons.Plus className="w-3.5 h-3.5" />
+                              <PlusIcon className="w-3.5 h-3.5" />
                               {t('addComponent')}
                             </button>
                           </div>
@@ -229,13 +229,13 @@ export default function VariantTable({
                                   }}
                                   className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg hover:scale-110 z-20"
                                 >
-                                  <Icons.X className="w-3.5 h-3.5" />
+                                  <XIcon className="w-3.5 h-3.5" />
                                 </button>
 
                                 <div className="space-y-4 pt-1">
                                   <Input
                                     label={t('componentName')}
-                                    icon={Icons.Edit}
+                                    icon={EditIcon}
                                     iconColor="text-violet-500"
                                     value={comp.name || ''}
                                     onChange={(e) => {
@@ -250,7 +250,7 @@ export default function VariantTable({
                                     <Input
                                       label={t('componentValue')}
                                       type="number"
-                                      icon={Icons.Plus}
+                                      icon={PlusIcon}
                                       iconColor="text-emerald-500"
                                       value={comp.value?.toString() || ''}
                                       onChange={(e) => {
@@ -263,7 +263,7 @@ export default function VariantTable({
                                     />
                                     <Input
                                       label={t('componentUnit')}
-                                      icon={Icons.Check}
+                                      icon={CheckIcon}
                                       iconColor="text-sky-500"
                                       value={comp.unit || ''}
                                       onChange={(e) => {
@@ -283,7 +283,7 @@ export default function VariantTable({
                               <div className="col-span-full py-10 text-center border-2 border-dashed border-border/40 rounded-3xl bg-muted/10">
                                 <div className="flex flex-col items-center gap-3">
                                   <div className="w-12 h-12 rounded-full bg-muted/20 flex items-center justify-center text-muted-foreground">
-                                    <Icons.Box className="w-6 h-6" />
+                                    <BoxIcon className="w-6 h-6" />
                                   </div>
                                   <div className="space-y-1">
                                     <p className="text-sm font-bold text-muted-foreground">{t('noCustomComponents')}</p>

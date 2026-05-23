@@ -2,7 +2,7 @@
 
 import { useLogout } from '@/features/auth/hooks/useAuth';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
+import { LogoutIcon } from "@/shared/ui/Icons";
 import { useTranslations } from 'next-intl';
 
 export default function LogoutButton({ iconOnly = false }: { iconOnly?: boolean }) {
@@ -20,7 +20,7 @@ export default function LogoutButton({ iconOnly = false }: { iconOnly?: boolean 
       className={cn("group flex  items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10 transition-all duration-200", !iconOnly ? "w-full" : "")}
     >
       <div className="flex items-center justify-center transition-transform duration-200 group-hover:-translate-x-1 rtl:group-hover:translate-x-1">
-        <Icons.Logout className="h-5 w-5 cursor-pointer" />
+        <LogoutIcon className="h-5 w-5 cursor-pointer" />
       </div>
 
       {!iconOnly && t('logout')}

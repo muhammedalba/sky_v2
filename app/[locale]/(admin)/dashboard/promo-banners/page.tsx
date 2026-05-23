@@ -6,7 +6,7 @@ import { usePromoBanners, useDeletePromoBanner, useUpdatePromoBanner } from '@/f
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Button } from '@/shared/ui/Button';
 import Modal from '@/shared/ui/Modal';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, ExternalLinkIcon, PlusIcon, PromoBannersIcon, TrashIcon } from "@/shared/ui/Icons";
 import { PromoBanner } from '@/types';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import { useTrans } from '@/shared/hooks/useTrans';
@@ -146,7 +146,7 @@ export default function PromoBannersPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="h-8 w-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover/link:bg-primary group-hover/link:text-white transition-all shrink-0">
-              <Icons.ExternalLink className="h-4 w-4" />
+              <ExternalLinkIcon className="h-4 w-4" />
             </div>
             <span className="text-[11px] font-bold text-muted-foreground group-hover/link:text-primary transition-colors truncate ltr:font-mono">
               {item.link.replace(/^https?:\/\//, '')}
@@ -189,7 +189,7 @@ export default function PromoBannersPage() {
                 className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
                 onClick={() => handleOpenModal(item)}
                 disabled={deletePromoBannerPending || isLoading || updateBannerPending}                   >
-                <Icons.Edit className="h-4 w-4" />
+                <EditIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -204,7 +204,7 @@ export default function PromoBannersPage() {
                 disabled={deletePromoBannerPending || isLoading || updateBannerPending}
                 isLoading={deletePromoBannerPending}
               >
-                <Icons.Trash className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </Tooltip>
           </Can>
@@ -221,7 +221,7 @@ export default function PromoBannersPage() {
         totalResults={t('totalResults', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('addBanner') || 'Add Banner',
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => handleOpenModal(),
           disabled: deletePromoBannerPending || isLoading || updateBannerPending,
           permission: Permissions.CREATE_PROMO_BANNER
@@ -262,7 +262,7 @@ export default function PromoBannersPage() {
         emptyState={{
           title: t('emptyState.title') || "No banners found",
           description: t('emptyState.description') || "Announce seasonal offers or important news at the top of your shop.",
-          icon: <Icons.PromoBanners className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <PromoBannersIcon className="h-10 w-10 text-muted-foreground/40" />,
           createLabel: t('addBanner') || "Add Banner",
           createLink: () => handleOpenModal()
         }}

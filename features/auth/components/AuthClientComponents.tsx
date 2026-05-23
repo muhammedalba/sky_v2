@@ -3,7 +3,7 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import { Button } from '@/shared/ui/Button';
-import { Icons } from '@/shared/ui/Icons';
+import { FacebookIcon, GoogleIcon } from "@/shared/ui/Icons";
 import { authApi } from '../api';
 
 /**
@@ -33,7 +33,7 @@ export function SocialLoginSection({ dividerText, disabled = false }: { dividerT
           className="h-12 rounded-xl border-border/50 bg-background hover:bg-secondary/50 transition-all font-bold text-foreground/80 hover:text-foreground hover:border-border"
           onClick={() => window.location.href = authApi.getGoogleAuthUrl()}
         >
-          <Icons.Google className="w-5 h-5 mr-2" />
+          <GoogleIcon className="w-5 h-5 mr-2" />
           Google
         </Button>
         <Button
@@ -43,7 +43,7 @@ export function SocialLoginSection({ dividerText, disabled = false }: { dividerT
           className="h-12 rounded-xl border-border/50 bg-background hover:bg-secondary/50 transition-all font-bold text-foreground/80 hover:text-foreground hover:border-border"
           onClick={() => window.location.href = authApi.getFacebookAuthUrl()}
         >
-          <Icons.Facebook className="w-5 h-5 mr-2" />
+          <FacebookIcon className="w-5 h-5 mr-2" />
           Facebook
         </Button>
       </div>

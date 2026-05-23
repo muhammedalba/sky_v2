@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
+import { XIcon } from "@/shared/ui/Icons";
 import { Button } from './Button';
 
 interface ModalProps {
@@ -75,7 +75,7 @@ export default function Modal({ isOpen, onClose, title, description, children, f
               onClick={onClose}
               className='absolute -top-1 inset-e-0 rounded-full'
             >
-              <Icons.X className="w-5 h-5 " /> {/* Close icon fallback */}
+              <XIcon className="w-5 h-5 " /> {/* Close icon fallback */}
             </Button>
           </div> 
 

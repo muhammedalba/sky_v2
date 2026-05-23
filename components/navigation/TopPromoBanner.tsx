@@ -3,35 +3,9 @@
 import { useEffect, useMemo, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
-import { Icons } from '@/shared/ui/Icons';
+import { PromoBannersIcon, XIcon } from "@/shared/ui/Icons";
 import { getLocalizedValue } from '@/lib/utils';
 import type { PromoBanner } from '@/features/marketing/types';
-
-// ─────────────────────────────────────────────
-// الأنماط خارج المكوّن تماماً: لا تُحقن من جديد عند كل render.
-// الأفضل نقلها إلى tailwind.config.ts أو globals.css.
-// ─────────────────────────────────────────────
-const BANNER_STYLES = `
-  @keyframes promo-marquee-ltr {
-    from { transform: translateX(0%); }
-    to   { transform: translateX(-50%); }
-  }
-  @keyframes promo-marquee-rtl {
-    from { transform: translateX(0%); }
-    to   { transform: translateX(50%); }
-  }
-  .animate-promo-marquee {
-    display: flex;
-    white-space: nowrap;
-    animation: promo-marquee-ltr 30s linear infinite;
-  }
-  [dir="rtl"] .animate-promo-marquee {
-    animation: promo-marquee-rtl 30s linear infinite;
-  }
-  .animate-promo-marquee:hover {
-    animation-play-state: paused;
-  }
-` as const;
 
 // ─────────────────────────────────────────────
 // مُساعِد localStorage معزول: يُسهّل الاختبار ويمنع التكرار
@@ -82,13 +56,6 @@ function useBannerDismissed(bannerId: string | undefined) {
 }
 
 // ─────────────────────────────────────────────
-// مكوّن الأنماط: يُحقن مرة واحدة فقط في الـ DOM
-// ─────────────────────────────────────────────
-function BannerStyles() {
-  return <style dangerouslySetInnerHTML={{ __html: BANNER_STYLES }} />;
-}
-
-// ─────────────────────────────────────────────
 // المكوّن الرئيسي
 // ─────────────────────────────────────────────
 interface TopPromoBannerProps {
@@ -132,7 +99,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
 
     const singleItem = (
       <span className="inline-flex items-center gap-2 mx-8 text-xs sm:text-sm font-black tracking-wide  uppercase">
-        <Icons.PromoBanners className="h-4.5 w-4.5 text-warning shrink-0" aria-hidden="true" />
+        <PromoBannersIcon className="h-4.5 w-4.5 text-warning shrink-0" aria-hidden="true" />
         <span>{localizedText}</span> 
         {bannerLink && (
           <span className="underline decoration-warning/60 hover:decoration-warning transition-all text-xs font-bold text-warning ml-1">
@@ -181,7 +148,6 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
   // ─── المحتوى الداخلي ─────────────────────────
   const innerContent = (
     <div className="w-full h-full relative flex items-center justify-center overflow-hidden mask-image-fade">
-      <BannerStyles />
       {marqueeItems}
     </div>
   );
@@ -206,7 +172,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
         className="absolute inset-e-2 top-1 z-50 p-1.5 rounded-full bg-destructive text-white hover:bg-destructive/90 cursor-pointer transition-all backdrop-blur-xs"
         aria-label={t('dismissAria')}
       >
-        <Icons.X className="h-3.5 w-3.5" aria-hidden="true" />
+        <XIcon className="h-3.5 w-3.5" aria-hidden="true" />
       </button>
     </div>
   );

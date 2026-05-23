@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSuppliers, useDeleteSupplier, useUpdateSupplier } from '@/features/suppliers/hooks/useSuppliers';
 import { Button } from '@/shared/ui/Button';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, GlobeIcon, MailIcon, PhoneIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog';
@@ -134,21 +134,21 @@ export default function SuppliersPage() {
           {supplier.phone && (
             <Tooltip content={supplier.phone}>
               <a href={`tel:${supplier.phone}`} className="text-success hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
-                <Icons.Phone className="w-4 h-4" />
+                <PhoneIcon className="w-4 h-4" />
               </a>
             </Tooltip>
           )}
           {supplier.email && (
             <Tooltip content={supplier.email}>
               <a href={`mailto:${supplier.email}`} className="text-warning/80 hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
-                <Icons.Mail className="w-4 h-4" />
+                <MailIcon className="w-4 h-4" />
               </a>
             </Tooltip>
           )}
           {supplier.website && (
             <Tooltip content={String(supplier.website)}>
               <a href={String(supplier.website)} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/70 transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border">
-                <Icons.Globe className="w-4 h-4" />
+                <GlobeIcon className="w-4 h-4" />
               </a>
             </Tooltip>
           )}
@@ -185,7 +185,7 @@ export default function SuppliersPage() {
             onClick={() => router.push(`/${locale}/dashboard/suppliers/${supplier.slug}/edit`)}
             disabled={deleteSupplierPending || isLoading || updateSupplierPending}
           >
-            <Icons.Edit className="w-4 h-4" />
+            <EditIcon className="w-4 h-4" />
           </Button>
           <Button
             size="icon"
@@ -195,7 +195,7 @@ export default function SuppliersPage() {
             isLoading={deleteSupplierPending}
             disabled={deleteSupplierPending || isLoading || updateSupplierPending}
           >
-            <Icons.Trash className="w-4 h-4" />
+            <TrashIcon className="w-4 h-4" />
           </Button>
         </div>
       )
@@ -210,7 +210,7 @@ export default function SuppliersPage() {
         totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: t('createSupplier'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => router.push(`/${locale}/dashboard/suppliers/create`),
           disabled: deleteSupplierPending || isLoading || updateSupplierPending,
           permission: Permissions.CREATE_SUPPLIER

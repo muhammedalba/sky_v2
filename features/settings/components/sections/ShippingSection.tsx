@@ -5,7 +5,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Input } from '@/shared/ui/Input';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { OrdersIcon, TruckIcon } from "@/shared/ui/Icons";
 import { SettingsInput } from '../../settings.schema';
 import ErrorMessage from '@/shared/ui/ErrorMessage';
 
@@ -20,7 +20,7 @@ export default function ShippingSection() {
     <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
       <CardHeader className="bg-muted/20 border-b border-border/50">
         <CardTitle className="text-xl flex items-center gap-2 title-gradient">
-          <Icons.Truck className="w-5 h-5 text-primary" /> {t('shipping.title')}
+          <TruckIcon className="w-5 h-5 text-primary" /> {t('shipping.title')}
         </CardTitle>
         <CardDescription>{t('shipping.desc')}</CardDescription>
       </CardHeader>
@@ -32,7 +32,7 @@ export default function ShippingSection() {
             {...register('freeShippingThreshold', { valueAsNumber: true })}
             type="number"
             label={t('shipping.freeThreshold')}
-            icon={Icons.Truck}
+            icon={TruckIcon}
             error={errors.freeShippingThreshold?.message}
             className="rounded-xl h-11"
           />
@@ -40,7 +40,7 @@ export default function ShippingSection() {
             {...register('vatRate', { valueAsNumber: true })}
             type="number"
             label={t('shipping.vatRate')}
-            icon={Icons.Orders}
+            icon={OrdersIcon}
             error={errors.vatRate?.message}
             className="rounded-xl h-11"
           />
@@ -51,7 +51,7 @@ export default function ShippingSection() {
           <div className="flex items-center justify-between p-4 border border-border/50 rounded-2xl bg-muted/5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Icons.Orders className="w-5 h-5 text-primary" />
+                <OrdersIcon className="w-5 h-5 text-primary" />
               </div>
               <div className="space-y-1">
                 <p className="font-medium">{t('shipping.taxesIncluded')}</p>

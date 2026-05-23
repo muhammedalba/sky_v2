@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { Icons } from '@/shared/ui/Icons';
+import { BarChart3Icon, BarChartIcon, BrandsIcon, CategoriesIcon, CheckIcon, CouponsIcon, ShoppingBagIcon, UsersIcon } from "@/shared/ui/Icons";
 import { StatCard } from '@/shared/ui/StatCard';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatCurrency } from '@/lib/utils';
@@ -47,54 +47,54 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
 
   const cards = useMemo(() => [
     {
-      Icon: Icons.ShoppingBag,
+      Icon: ShoppingBagIcon,
       label: t('totalOrders'),
       value: oo?.currentPeriodOrders ?? 0,
       sub: t('allOrders', { count: oo?.totalOrdersSystemWide ?? 0 }),
       badgeVariant: (oo?.currentPeriodOrders ?? 0) === 0 ? "destructive" : (oo?.currentPeriodOrders ?? 0) < 10 ? "default" : "success"
     },
     {
-      Icon: Icons.BarChart,
+      Icon: BarChartIcon,
       label: t('totalRevenue'),
       value: formatCurrency(oo?.totalRevenue ?? 0, locale),
       sub: t('aov', { amount: formatCurrency(oo?.averageOrderValue ?? 0, locale) }),
       badgeVariant: (oo?.totalRevenue ?? 0) === 0 ? "destructive" : (oo?.totalRevenue ?? 0) < 1000 ? "default" : "success"
     },
     {
-      Icon: Icons.Check,
+      Icon: CheckIcon,
       label: t('validOrders'),
       value: oo?.validOrdersCount ?? 0,
       badgeVariant: (oo?.validOrdersCount ?? 0) === 0 ? "destructive" : (oo?.validOrdersCount ?? 0) < 10 ? "default" : "success"
     },
     {
-      Icon: Icons.Users,
+      Icon: UsersIcon,
       label: t('totalUsers'),
       value: uo?.totalUsers ?? 0,
       sub: t('newUsers', { count: uo?.periodNewCustomers ?? 0 }),
       badgeVariant: (uo?.periodNewCustomers ?? 0) === 0 ? "destructive" : (uo?.periodNewCustomers ?? 0) < 5 ? "default" : "success"
     },
     {
-      Icon: Icons.Coupons,
+      Icon: CouponsIcon,
       label: t('activeCoupons'),
       value: mo?.activeCoupons ?? 0,
       sub: t('totalCoupons', { count: mo?.totalCoupons ?? 0 }),
       badgeVariant: (mo?.totalCoupons ?? 0) === 0 ? "destructive" : (mo?.totalCoupons ?? 0) < 5 ? "default" : "success"
     },
     {
-      Icon: Icons.BarChart3,
+      Icon: BarChart3Icon,
       label: t('marketingCost'),
       value: formatCurrency(mo?.totalMarketingCost ?? 0, locale),
       badgeVariant: (mo?.totalMarketingCost ?? 0) === 0 ? "destructive" : (mo?.totalMarketingCost ?? 0) < 100 ? "default" : "success"
     },
     {
-      Icon: Icons.Categories,
+      Icon: CategoriesIcon,
       label: t('categories'),
       value: st?.categories ?? 0,
       sub: t('subCategories', { count: st?.subCategories ?? 0 }),
       badgeVariant: (st?.categories ?? 0) === 0 ? "destructive" : (st?.categories ?? 0) < 10 ? "default" : "success"
     },
     {
-      Icon: Icons.Brands,
+      Icon: BrandsIcon,
       label: t('brands'),
       value: st?.brands ?? 0,
       sub: t('suppliers', { count: d?.suppliers?.totalSuppliers ?? 0 }),

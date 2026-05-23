@@ -8,7 +8,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { MapPinIcon } from "@/shared/ui/Icons";
 import { Select } from '@/shared/ui/Select';
 import { useToast } from '@/shared/hooks/useToast';
 import { Region } from '../../types';
@@ -92,7 +92,7 @@ export default function RegionForm({ initialCountryId, editingRegion, onSuccess,
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label={t('form.nameAr')}
-          icon={Icons.MapPin}
+          icon={MapPinIcon}
           {...register('name.ar')}
           error={errors.name?.ar?.message}
           disabled={isPending}
@@ -100,7 +100,7 @@ export default function RegionForm({ initialCountryId, editingRegion, onSuccess,
         />
         <Input
           label={t('form.nameEn')}
-          icon={Icons.MapPin}
+          icon={MapPinIcon}
           {...register('name.en')}
           error={errors.name?.en?.message}
           disabled={isPending}

@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react';
 import { useUIStore } from '@/store/ui-store';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/shared/ui/sheet/Sheet';
-import { Icons } from '@/shared/ui/Icons';
+import { MenuIcon } from "@/shared/ui/Icons";
 
 interface DashboardClientLayoutProps {
   sidebar: ReactNode;
@@ -51,7 +51,7 @@ export default function DashboardClientLayout({
           <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border ps-4 md:ps-0">
             <div className="flex items-center">
               <SheetTrigger className="md:hidden p-2 me-2 text-muted-foreground hover:bg-secondary rounded-lg">
-                <Icons.Menu className="w-6 h-6" />
+                <MenuIcon className="w-6 h-6" />
               </SheetTrigger>
               <div className="flex-1">
                  {topbar}

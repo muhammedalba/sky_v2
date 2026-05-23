@@ -4,7 +4,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
-import { Icons } from '@/shared/ui/Icons';
+import { CheckIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
 import { AllowedAttributeName, ATTRIBUTE_CONFIG, ATTRIBUTE_NAME_OPTIONS } from '@/shared/constants/product-constants';
 import { Select } from '@/shared/ui/Select';
 import { useToast } from '@/shared/hooks/useToast';
@@ -75,7 +75,7 @@ const AttributeRow = React.memo(({
           className="absolute -top-8 -inset-e-7 z-10 h-8 w-8 rounded-full "
           onClick={() => onRemove(index)}
         >
-          <Icons.X className="w-4 h-4" />
+          <XIcon className="w-4 h-4" />
         </Button>
       </div>
 
@@ -83,7 +83,7 @@ const AttributeRow = React.memo(({
         {attr.type === 'string' ? (
           <div className="flex gap-2 items-end flex-wrap">
             <Input
-              icon={Icons.Plus}
+              icon={PlusIcon}
               label={t('valuePlaceholder')}
               value={inputs.str}
               onChange={(e) => setInputs(prev => ({ ...prev, str: e.target.value.trim().toLowerCase() }))}
@@ -103,7 +103,7 @@ const AttributeRow = React.memo(({
                 onChange={(e) => setInputs(prev => ({ ...prev, num: e.target.value }))}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAction('num', 'allowedValues'))}
                 className="rounded-xl h-11 flex-1"
-                icon={Icons.Check}
+                icon={CheckIcon}
               />
               <Button type="button" onClick={() => handleAction('num', 'allowedValues')} variant="secondary" className="rounded-xl h-11">{t('addNumber')}</Button>
             </div>
@@ -175,7 +175,7 @@ const TagGroup = ({ label, items, onRemove, color }: TagGroupProps) => {
             onClick={() => onRemove(i)} // هنا i هو رقم (number)
             className="hover:text-destructive transition-colors"
           >
-            <Icons.X className="w-3.5 h-3.5" />
+            <XIcon className="w-3.5 h-3.5" />
           </button>
         </span>
       ))}
@@ -257,7 +257,7 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
   return (
     <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <Icons.Check className="w-5 h-5 text-muted-foreground" />
+        <CheckIcon className="w-5 h-5 text-muted-foreground" />
         <h3 className="font-bold text-sm">{t('title')}</h3>
       </div>
       <ErrorMessage message={t('weightWarning')} showIcon className=' items-start gap-3 p-4 md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning' />
@@ -274,7 +274,7 @@ export default function AttributeBuilder({ attributes, onChange }: { attributes:
           />
         ))}
         <Button type="button" variant="outline" className="w-full rounded-xl border-dashed py-6 hover:bg-secondary/50 transition-all" onClick={addAttribute}>
-          <Icons.Plus className="w-4 h-4 me-2" /> {t('addNewAttribute')}
+          <PlusIcon className="w-4 h-4 me-2" /> {t('addNewAttribute')}
         </Button>
       </div>
     </div>

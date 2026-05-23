@@ -9,7 +9,7 @@ import { Switch } from '@/shared/ui/Switch';
 import { ShippingProvider } from '../../types';
 import { useCreateShippingProvider, useUpdateShippingProvider } from '../../hooks/useShippingProviders';
 import { useToast } from '@/shared/hooks/useToast';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon } from "@/shared/ui/Icons";
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 
 const formSchema = z.object({
@@ -94,7 +94,7 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
       <div className="space-y-2">
         <Input
           label="اسم شركة الشحن"
-          icon={Icons.Edit}
+          icon={EditIcon}
           {...register('name')}
           error={errors.name?.message}
           disabled={isPending}

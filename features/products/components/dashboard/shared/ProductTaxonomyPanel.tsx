@@ -8,7 +8,7 @@ import {
   SearchOption,
 } from "@/shared/ui/form/SearchableSelect";
 import { SearchableMultiSelect } from "@/shared/ui/form/SearchableMultiSelect";
-import { Icons } from "@/shared/ui/Icons";
+import { BrandsIcon, CategoriesIcon, SubCategoriesIcon, UsersIcon } from "@/shared/ui/Icons";
 
 interface ProductTaxonomyPanelProps {
   locale: string;
@@ -104,7 +104,7 @@ export function ProductTaxonomyPanel({
   return (
     <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <Icons.Categories className="w-5 h-5 text-muted-foreground" />
+        <CategoriesIcon className="w-5 h-5 text-muted-foreground" />
         <div>
           <h3 className="font-bold text-sm">{t("taxonomy")}</h3>
           <p className="text-xs text-muted-foreground">{t("taxonomyDesc")}</p>
@@ -114,7 +114,7 @@ export function ProductTaxonomyPanel({
       <div className="space-y-4">
         {/* Brand */}
         <SearchableSelect
-          icon={Icons.Brands}
+          icon={BrandsIcon}
           iconColor="text-rose-500"
           label={t("brand")}
           value={watchedBrand ?? ""}
@@ -132,7 +132,7 @@ export function ProductTaxonomyPanel({
 
         {/* Supplier */}
         <SearchableSelect
-          icon={Icons.Users}
+          icon={UsersIcon}
           iconColor="text-teal-500"
           label={t("supplier")}
           value={watchedSupplier ?? ""}
@@ -148,7 +148,7 @@ export function ProductTaxonomyPanel({
 
         {/* Main Category */}
         <SearchableSelect
-          icon={Icons.Categories}
+          icon={CategoriesIcon}
           iconColor="text-amber-500"
           label={t("mainCategory")}
           value={watchedCategory || ""}
@@ -167,7 +167,7 @@ export function ProductTaxonomyPanel({
 
         {/* Sub Categories */}
         <SearchableMultiSelect
-          icon={Icons.SubCategories}
+          icon={SubCategoriesIcon}
           iconColor="text-orange-500"
           label={
             watchedCategory ? t("searchSubCategory") : t("selectCategoryFirst")

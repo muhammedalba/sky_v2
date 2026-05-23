@@ -7,7 +7,7 @@ import { useTrans } from "@/shared/hooks/useTrans";
 import { useMemo } from "react";
 import { Brand } from "@/types";
 import Badge from "@/shared/ui/Badge";
-import { Icons } from "@/shared/ui/Icons";
+import { ShieldIcon } from "@/shared/ui/Icons";
 const EMPTY_BRANDS: Brand[] = [];
 
 // 1.Separate styles from the component to prevent them from being re-injected into the DOM with every render.
@@ -92,7 +92,7 @@ export default function TrustedBy() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
           <Badge variant={'success'} className="p-1 px-4 rounded-full text-xs sm:text-sm md:text-md font-black   shrink-0 text-center hover:bg-success/10 hover:text-success ">
-            <Icons.Shield className="w-5 h-5 text-success me-1" />
+            <ShieldIcon className="w-5 h-5 text-success me-1" />
             {t("trust.approved_distributors")}
           </Badge>
           <div className="flex flex-col items-center gap-2">

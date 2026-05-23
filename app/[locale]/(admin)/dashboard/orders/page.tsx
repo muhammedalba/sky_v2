@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useOrders } from '@/features/orders/hooks/useOrders';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
-import { Icons } from '@/shared/ui/Icons';
+import { MenuIcon, OrdersIcon } from "@/shared/ui/Icons";
 import { formatDate, getStatusColor, cn } from '@/lib/utils';
 import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Order } from '@/types';
@@ -100,7 +100,7 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
         totalResults={t('totalOrders', { count: data?.meta?.pagination?.totalResults || 0 })}
         action={{
           label: 'Export CSV',
-          icon: <Icons.Menu className="w-5 h-5" />,
+          icon: <MenuIcon className="w-5 h-5" />,
           onClick: () => {
             // Future export CSV logic
           },
@@ -118,7 +118,7 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
         emptyState={{
           title: "No orders found",
           description: "Your shop's sales journey starts here. Promote your products to get sales!",
-          icon: <Icons.Orders className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <OrdersIcon className="h-10 w-10 text-muted-foreground/40" />,
         }}
       />
     </div>

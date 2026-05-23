@@ -8,7 +8,7 @@ import {
   useDeleteNotification,
   useMarkAsRead,
 } from "@/features/notifications/hooks/useNotifications";
-import { Icons } from "@/shared/ui/Icons";
+import { AiSparkIcon, BellIcon, CheckIcon, ClockIcon, CouponsIcon, LogoutIcon, MailIcon, OrdersIcon, RefreshCwIcon, SearchIcon, ShieldIcon, ShoppingBagIcon, TrashIcon, UserIcon, WarningIcon, XIcon } from "@/shared/ui/Icons";
 import { Badge } from "@/shared/ui/Badge";
 import { formatDate, getActionBadgeVariant } from "@/lib/utils";
 import { Notification } from "@/features/notifications/api";
@@ -26,7 +26,7 @@ function getNotificationMeta(notification: Notification) {
 
   if (action.includes("ORDER"))
     return {
-      icon: Icons.ShoppingBag,
+      icon: ShoppingBagIcon,
       bg: "bg-primary/15",
       text: "text-primary",
       ring: "ring-primary/20",
@@ -39,7 +39,7 @@ function getNotificationMeta(notification: Notification) {
     action.includes("OFFER")
   )
     return {
-      icon: Icons.Coupons,
+      icon: CouponsIcon,
       bg: "bg-success/15",
       text: "text-success",
       ring: "ring-success/20",
@@ -51,7 +51,7 @@ function getNotificationMeta(notification: Notification) {
     action.includes("FAIL")
   )
     return {
-      icon: Icons.Warning,
+      icon: WarningIcon,
       bg: "bg-destructive",
       text: "text-white",
       ring: "ring-destructive",
@@ -59,7 +59,7 @@ function getNotificationMeta(notification: Notification) {
     };
   if (type === "ROLE")
     return {
-      icon: Icons.Shield,
+      icon: ShieldIcon,
       bg: "bg-violet-500/15",
       text: "text-violet-600",
       ring: "ring-violet-500/20",
@@ -71,14 +71,14 @@ function getNotificationMeta(notification: Notification) {
     action.includes("ANNOUNCE")
   )
     return {
-      icon: Icons.AiSpark,
+      icon: AiSparkIcon,
       bg: "bg-primary/10 ",
       text: "text-primary",
       ring: "ring-primary/20",
       dot: "bg-primary",
     };
   return {
-    icon: Icons.Bell,
+    icon: BellIcon,
     bg: "bg-primary/10",
     text: "text-primary",
     ring: "ring-primary/20",
@@ -191,7 +191,7 @@ function NotificationCard({
           {notification.message}
         </p>
         <p className="flex items-center gap-1.5 mt-1.5 text-[11px] text-muted-foreground/50 font-medium">
-          <Icons.Clock className="w-3 h-3" />
+          <ClockIcon className="w-3 h-3" />
           {formatDate(notification.createdAt)}
         </p>
       </div>
@@ -202,7 +202,7 @@ function NotificationCard({
             title={tButtons("markRead")}
             className="h-7 w-7 flex items-center justify-center rounded-lg text-success hover:text-success hover:bg-success/10 transition-all"
           >
-            <Icons.Check className="w-3.5 h-3.5" />
+            <CheckIcon className="w-3.5 h-3.5" />
           </button>
         )}
         <button
@@ -210,7 +210,7 @@ function NotificationCard({
           title={tButtons("delete")}
           className="h-7 w-7 flex items-center justify-center rounded-lg text-destructive hover:text-destructive/80 hover:bg-destructive/10 transition-all"
         >
-          <Icons.Trash className="w-3.5 h-3.5" />
+          <TrashIcon className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
@@ -352,20 +352,20 @@ export default function UserNotificationsPage() {
   const navTop = [
     {
       href: `/${locale}/account`,
-      icon: Icons.User,
+      icon: UserIcon,
       label: tProfile("tabs.profile"),
       iconClassname: "text-primary",
     },
     {
       href: `/${locale}/account`,
-      icon: Icons.Orders,
+      icon: OrdersIcon,
       label: tProfile("sections.recent_orders"),
       iconClassname: "text-success",
       badge: 0,
     },
     {
       href: `/${locale}/notifications`,
-      icon: Icons.Bell,
+      icon: BellIcon,
       label: t("title"),
       badge: unreadCount,
       active: true,
@@ -377,7 +377,7 @@ export default function UserNotificationsPage() {
   const navBottom = [
     {
       href: `/${locale}/contact`,
-      icon: Icons.Mail,
+      icon: MailIcon,
       label: locale === "ar" ? "الدعم والمساعدة" : "Support",
     },
   ];
@@ -435,7 +435,7 @@ export default function UserNotificationsPage() {
                 onClick={() => logout()}
                 className="group cursor-pointer flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 text-destructive/80 hover:text-destructive hover:bg-destructive/10 w-full text-start"
               >
-                <Icons.Logout className="w-4 h-4 shrink-0 text-destructive/60 group-hover:text-destructive" />
+                <LogoutIcon className="w-4 h-4 shrink-0 text-destructive/60 group-hover:text-destructive" />
                 {tProfile("actions.logout")}
               </Button>
             </div>
@@ -450,7 +450,7 @@ export default function UserNotificationsPage() {
                 <div className="flex items-center gap-3">
                   <div className="relative shrink-0">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.05)]">
-                      <Icons.Bell className="w-4 h-4 text-primary" />
+                      <BellIcon className="w-4 h-4 text-primary" />
                     </div>
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -inset-e-1 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-black shadow-sm">
@@ -480,7 +480,7 @@ export default function UserNotificationsPage() {
                       !user && "opacity-40 cursor-not-allowed",
                     )}
                   >
-                    <Icons.RefreshCw
+                    <RefreshCwIcon
                       className={cn(
                         "w-3.5 h-3.5 text-primary",
                         (isLoading || isRefreshing) && "animate-spin",
@@ -492,7 +492,7 @@ export default function UserNotificationsPage() {
                       onClick={handleMarkAllAsRead}
                       className="flex items-center gap-1.5 h-8 px-3.5 rounded-xl text-[12px] font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-sm"
                     >
-                      <Icons.Check className="w-3.5 h-3.5" />
+                      <CheckIcon className="w-3.5 h-3.5" />
                       <span className="hidden sm:inline">
                         {t("markAllAsRead")}
                       </span>
@@ -539,7 +539,7 @@ export default function UserNotificationsPage() {
                 {/* Search */}
                 <div className="relative flex-1">
                   <span className="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground/60">
-                    <Icons.Search className="w-3.5 h-3.5" />
+                    <SearchIcon className="w-3.5 h-3.5" />
                   </span>
                   <input
                     type="text"
@@ -553,7 +553,7 @@ export default function UserNotificationsPage() {
                       onClick={() => setSearchQuery("")}
                       className="absolute ltr:right-2 rtl:left-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-muted-foreground/75"
                     >
-                      <Icons.X className="w-3 h-3" />
+                      <XIcon className="w-3 h-3" />
                     </button>
                   )}
                 </div>
@@ -584,7 +584,7 @@ export default function UserNotificationsPage() {
                   <div className="relative mb-6">
                     <div className="absolute -inset-8 rounded-full bg-primary/5 blur-2xl" />
                     <div className="relative w-16 h-16 rounded-2xl bg-muted/60 border border-border flex items-center justify-center">
-                      <Icons.User className="w-7 h-7 text-muted-foreground/45" />
+                      <UserIcon className="w-7 h-7 text-muted-foreground/45" />
                     </div>
                   </div>
                   <h3 className="text-[15px] font-semibold mb-1 text-warning">
@@ -608,7 +608,7 @@ export default function UserNotificationsPage() {
                   <div className="relative mb-6">
                     <div className="absolute -inset-8 rounded-full bg-primary/5 blur-2xl" />
                     <div className="relative w-16 h-16 rounded-2xl bg-muted/60 border border-border flex items-center justify-center">
-                      <Icons.Bell className="w-7 h-7 text-muted-foreground/45" />
+                      <BellIcon className="w-7 h-7 text-muted-foreground/45" />
                     </div>
                   </div>
                   <h3 className="text-[15px] font-semibold mb-1 text-foreground">

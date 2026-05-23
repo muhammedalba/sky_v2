@@ -10,7 +10,7 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
 import { Switch } from '@/shared/ui/Switch';
-import { Icons } from '@/shared/ui/Icons';
+import { AiSparkIcon, CalendarIcon, CheckIcon, CouponsIcon, OrdersIcon, PlusIcon, SearchIcon, ShieldIcon, TagIcon, UsersIcon } from "@/shared/ui/Icons";
 import { SearchableMultiSelect } from '@/shared/ui/form/SearchableMultiSelect';
 import { SearchOption } from '@/shared/ui/form/SearchableSelect';
 
@@ -115,7 +115,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
         subtitle={t('subtitle')}
         action={{
           label: t('couponList'),
-          icon: <Icons.Coupons className="w-4 h-4" />,
+          icon: <CouponsIcon className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/coupons`),
           disabled: createMutation.isPending || updateMutation.isPending,
           className: "bg-muted text-foreground hover:bg-muted/80 shadow-none border border-border/40"
@@ -127,7 +127,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
         <div className="bg-background/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border/40 shadow-sm space-y-8">
           <div className="flex items-center gap-4 border-b border-border/40 pb-4">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Icons.Coupons className="w-5 h-5 text-primary" />
+              <CouponsIcon className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">
@@ -146,7 +146,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                 disabled={createMutation.isPending || updateMutation.isPending}
                 aria-readonly={createMutation.isPending || updateMutation.isPending}
                 label={t('fields.name')}
-                icon={Icons.Tag}
+                icon={TagIcon}
                 aria-placeholder={t('fields.name')}
                 placeholder="e.g. SUMMER50"
                 error={form.formState.errors.name?.message}
@@ -173,7 +173,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                   type="number"
                   placeholder="0"
                   label={t('fields.discount')}
-                  icon={Icons.AiSpark}
+                  icon={AiSparkIcon}
                   error={form.formState.errors.discount?.message}
                   className="px-7.5"
                 />
@@ -189,7 +189,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                 {...form.register('expires')}
                 type="date"
                 label={t('fields.expires')}
-                icon={Icons.Calendar}
+                icon={CalendarIcon}
                 error={form.formState.errors.expires?.message}
               />
             </div>
@@ -200,7 +200,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
         <div className="relative z-20 bg-background/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border/40 shadow-sm space-y-8">
           <div className="flex items-center gap-4 border-b border-border/40 pb-4">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-              <Icons.Plus className="w-5 h-5 text-purple-500" />
+              <PlusIcon className="w-5 h-5 text-purple-500" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">
@@ -236,7 +236,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
               <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                 <SearchableMultiSelect
                   label={t('fields.applyItems')}
-                  icon={Icons.Search}
+                  icon={SearchIcon}
                   placeholder={t(`fields.options.${applyTo}`)}
                   selectedOptions={selectedItems}
                   onSelect={(opt) => {
@@ -268,7 +268,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
         <div className="relative z-10 bg-background/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border/40 shadow-sm space-y-8">
           <div className="flex items-center gap-4 border-b border-border/40 pb-4">
             <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <Icons.Shield className="w-5 h-5 text-orange-500" />
+              <ShieldIcon className="w-5 h-5 text-orange-500" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">
@@ -287,7 +287,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                 type="number"
                 placeholder="Unlimited"
                 label={t('fields.maxUsage')}
-                icon={Icons.Users}
+                icon={UsersIcon}
                 error={form.formState.errors.maxUsage?.message}
               />
             </div>
@@ -295,7 +295,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
             {initialData && (
               <div className="space-y-2">
                 <label className="text-sm font-bold text-foreground/80 px-1 flex items-center gap-2">
-                  <Icons.Check className="w-3.5 h-3.5 text-orange-500" />
+                  <CheckIcon className="w-3.5 h-3.5 text-orange-500" />
                   {t('fields.usageCount')}
                 </label>
                 <div className="h-12 bg-muted/20 border border-border/40 rounded-xl flex items-center px-4 font-bold text-primary">
@@ -310,7 +310,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                 type="number"
                 placeholder="0"
                 label={t('fields.minOrderAmount')}
-                icon={Icons.Orders}
+                icon={OrdersIcon}
                 error={form.formState.errors.minOrderAmount?.message}
               />
             </div>
@@ -321,7 +321,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                 type="number"
                 placeholder="Unlimited"
                 label={t('fields.maxOrderAmount')}
-                icon={Icons.Orders}
+                icon={OrdersIcon}
                 error={form.formState.errors.maxOrderAmount?.message}
               />
             </div>
@@ -380,7 +380,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
             disabled={createMutation.isPending || updateMutation.isPending}
             className="w-full sm:w-auto h-12 px-10 font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 gap-2"
           >
-            <Icons.Check className="w-5 h-5" />
+            <CheckIcon className="w-5 h-5" />
             {initialData ? tButtons('save') : tButtons('create')}
           </Button>
         </div>

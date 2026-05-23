@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import ErrorMessage from "./ErrorMessage";
-import { Icons } from "./Icons";
+import { AiSparkIcon } from "./Icons";
 import { Tooltip } from "./Tooltip";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -47,9 +47,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     const IconComponent = icon;
-    const [isFocused, setIsFocused] = React.useState(false);
+    // const [isFocused, setIsFocused] = React.useState(false);
     // Determine if label should float
-    const shouldFloat = isFocused || (value && value.length > 0);
+    // const shouldFloat = isFocused || (value && value.length > 0);
 
     return (
       <div className={cn("w-full  ", inputWrapperClass)}>
@@ -61,11 +61,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             value={value}
             onFocus={(e) => {
-              setIsFocused(true);
+              // setIsFocused(true);
               props.onFocus?.(e);
             }}
             onBlur={(e) => {
-              setIsFocused(false);
+              // setIsFocused(false);
               props.onBlur?.(e);
             }}
             className={cn(
@@ -116,7 +116,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                       : "text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg p-1.5",
                   )}
                 >
-                  <Icons.AiSpark className="h-4.5 w-4.5 " />
+                  <AiSparkIcon className="h-4.5 w-4.5 " />
                 </button>
               </Tooltip>
             </div>

@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useMemo } from "react";
 import { useNotificationStore } from "@/store/notification-store";
-import { Icons } from "@/shared/ui/Icons";
+import { BellIcon } from "@/shared/ui/Icons";
 import { Button } from "@/shared/ui/Button";
 import { Dropdown } from "@/shared/ui/CustomDropdown";
 import { useLocale, useTranslations } from "next-intl";
@@ -67,7 +67,7 @@ const NotificationBell = () => {
       aria-label={t("title")}
       title={t("title")}
     >
-      <Icons.Bell className="h-4 w-4" />
+      <BellIcon className="h-4 w-4" />
       {unreadCount > 0 && (
         <span className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground ring-2 ring-background">
           {unreadCount > 9 ? "9+" : unreadCount}
@@ -97,7 +97,7 @@ const NotificationBell = () => {
       <div className="max-h-[300px] overflow-y-auto bg-card">
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-            <Icons.Bell className="h-8 w-8 text-muted-foreground/30 mb-2" />
+            <BellIcon className="h-8 w-8 text-muted-foreground/30 mb-2" />
             <p className="text-sm font-medium text-muted-foreground">
               {t("empty")}
             </p>

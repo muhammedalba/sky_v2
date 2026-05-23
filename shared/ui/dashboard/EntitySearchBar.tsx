@@ -1,6 +1,6 @@
 'use client';
 
-import { Icons } from '@/shared/ui/Icons';
+import { SearchIcon } from "@/shared/ui/Icons";
 import { Input } from '@/shared/ui/Input';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
@@ -51,7 +51,7 @@ export default function EntitySearchBar({
       )}
     >
       <div className="relative flex-1 group">
-        <Icons.Search className="absolute inset-s-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+        <SearchIcon className="absolute inset-s-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
         <Input
           placeholder={placeholder}
           value={searchTerm}

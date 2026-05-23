@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { SubCategoryFormValues, subCategorySchema } from '@/features/categories/category.schema';
 import { SearchableSelect, SearchOption } from '@/shared/ui/form/SearchableSelect';
-import { Icons } from '@/shared/ui/Icons';
+import { CategoriesIcon, EditIcon } from "@/shared/ui/Icons";
 import { useToast } from '@/shared/hooks/useToast';
 
 interface SubCategoryFormProps {
@@ -105,7 +105,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
             showAiAction
             dir='ltr'
             aiActionTooltip={t('aiTranslateImprove')}
-            icon={Icons.Edit}
+            icon={EditIcon}
           />
         </div>
 
@@ -118,13 +118,13 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
             disabled={updateMutation.isPending}
             showAiAction
             aiActionTooltip={t('aiTranslateImprove')}
-            icon={Icons.Edit}
+            icon={EditIcon}
           />
         </div>
       </div>
 
       <SearchableSelect
-        icon={Icons.Categories}
+        icon={CategoriesIcon}
         iconColor="text-amber-500"
         label={t('searchPlaceholder')}
         value={watchedCategory || ''}

@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 // السحر هنا: نستخدم usePathname الخاصة بـ next-intl والتي تتجاهل لغة الرابط تلقائياً
 import { Link, usePathname } from '@/navigation';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/shared/ui/Icons';
+import { DashboardIcon, HomeIcon, MessageSquareQuoteIcon, ShoppingCartIcon, StoreIcon, UserIcon } from "@/shared/ui/Icons";
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { checkUserPermission } from '@/lib/auth';
 
@@ -159,11 +159,11 @@ export default function MobileBottomNav() {
   const navItems = useMemo<NavItem[]>(
     () => [
       // 💡 ملاحظة: إذا كانت صفحتك الرئيسية مسارها الفعلي هو /home، قم بتغيير href إلى /home لمنع إعادة التحميل
-      { key: 'home', href: '/', icon: Icons.Home },
-      { key: 'store', href: '/products', icon: Icons.Store },
-      { key: 'quote', href: '/request-quote', icon: Icons.MessageSquareQuote, isCTA: true },
-      { key: 'dashboard-or-cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? Icons.Dashboard : Icons.ShoppingCart },
-      { key: 'account-or-login', href: is_auth ? '/account' : '/login', icon: Icons.User },
+      { key: 'home', href: '/', icon: HomeIcon },
+      { key: 'store', href: '/products', icon: StoreIcon },
+      { key: 'quote', href: '/request-quote', icon: MessageSquareQuoteIcon, isCTA: true },
+      { key: 'dashboard-or-cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? DashboardIcon : ShoppingCartIcon },
+      { key: 'account-or-login', href: is_auth ? '/account' : '/login', icon: UserIcon },
     ],
     [is_Admin, is_auth]
   );

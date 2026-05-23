@@ -9,7 +9,7 @@ import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
 import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
 import { Badge } from '@/shared/ui/Badge';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon, InfinityIcon, PlusIcon, RestoreIcon, StarIcon, TrashIcon } from "@/shared/ui/Icons";
 import { truncate } from '@/lib/utils';
 import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Product } from '@/types';
@@ -148,7 +148,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
           </Link>
           <div className="flex items-center gap-0.5 mt-1">
             {[...Array(5)].map((_, i) => (
-              <Icons.Star
+              <StarIcon
                 key={i}
                 className={`w-3 h-3 ${i < Math.round(product.ratingsAverage || 0) ? 'text-amber-400' : 'text-zinc-200'}`}
               />
@@ -218,7 +218,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         if (product.isUnlimitedStock) {
           return (<>
             <Badge variant="default" className="rounded-full  p-1.5 font-bold text-xs border-indigo-500/20 text-primary bg-indigo-50/50 dark:bg-indigo-500/10 dark:text-indigo-400 gap-1.5 flex items-center w-fit group/badge hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all duration-300">
-              <Icons.Infinity className="w-4 h-4 group-hover/badge:rotate-12 transition-transform duration-500" />
+              <InfinityIcon className="w-4 h-4 group-hover/badge:rotate-12 transition-transform duration-500" />
               {t('filters.unlimitedStock')}
             </Badge>
           </>
@@ -258,7 +258,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     isLoading={restoreProductPending}
                     disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
                   >
-                    <Icons.Restore className="h-4 w-4" />
+                    <RestoreIcon className="h-4 w-4" />
                   </Button>
                 </Tooltip>
               </Can>
@@ -273,7 +273,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     isLoading={hardDeleteProductPending}
                     disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
                   >
-                    <Icons.Trash className="h-4 w-4" />
+                    <TrashIcon className="h-4 w-4" />
                   </Button>
                 </Tooltip>
               </Can>
@@ -289,7 +289,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     onClick={() => router.push(`/${locale}/dashboard/products/${product.slug}/edit`)}
                     disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
                   >
-                    <Icons.Edit className="h-4 w-4" />
+                    <EditIcon className="h-4 w-4" />
                   </Button>
                 </Tooltip>
               </Can>
@@ -304,7 +304,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
                     isLoading={deleteProductPending}
                     disabled={deleteProductPending || isLoading || updateProductPending || restoreProductPending || hardDeleteProductPending}
                   >
-                    <Icons.Trash className="h-4 w-4" />
+                    <TrashIcon className="h-4 w-4" />
                   </Button>
                 </Tooltip>
               </Can>
@@ -322,7 +322,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         subtitle={t('productList')}
         action={{
           label: t('createProduct'),
-          icon: <Icons.Plus className="w-5 h-5" />,
+          icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => router.push(`/${locale}/dashboard/products/create`),
           permission: Permissions.CREATE_PRODUCT
         }}

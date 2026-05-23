@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { Button } from '@/shared/ui/Button';
-import { cn } from '@/lib/utils';
-import Badge from '../Badge';
-import { Icons } from '../Icons';
-import Can from '@/components/auth/Can';
+import { ReactNode } from "react";
+import { Button } from "@/shared/ui/Button";
+import { cn } from "@/lib/utils";
+import Badge from "../Badge";
+import { Icons, ProductsIcon } from "../Icons";
+import Can from "@/components/auth/Can";
 
 interface EntityPageHeaderProps {
   title: ReactNode;
@@ -30,12 +30,13 @@ export default function EntityPageHeader({
   totalResults,
 }: EntityPageHeaderProps) {
   const renderActionButton = () => (
-    <Button variant="default"
+    <Button
+      variant="default"
       onClick={action!.onClick}
       disabled={action!.disabled}
       className={cn(
         "h-11 px-6 font-bold flex flex-1 sm:flex-0 items-center gap-2.5 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95",
-        action!.className
+        action!.className,
       )}
     >
       {action!.icon}
@@ -44,7 +45,12 @@ export default function EntityPageHeader({
   );
 
   return (
-    <div className={cn("flex  items-center flex-wrap justify-between gap-6", className)}>
+    <div
+      className={cn(
+        "flex  items-center flex-wrap justify-between gap-6",
+        className,
+      )}
+    >
       <div className="space-y-1">
         <h1 className="text-4xl font-extrabold tracking-tight title-gradient">
           {title}
@@ -55,21 +61,23 @@ export default function EntityPageHeader({
           </p>
         )}
         <div className="text-sm font-medium text-muted-foreground group/badge">
-          {totalResults && <Badge variant="success" className="gap-1.5 flex items-center w-fit ">
-            <Icons.Products className="w-4 h-4 group-hover/badge:rotate-18 transition-transform duration-500" />
-            {totalResults}
-          </Badge>}
+          {totalResults && (
+            <Badge
+              variant="success"
+              className="gap-1.5 flex items-center w-fit "
+            >
+              <ProductsIcon className="w-4 h-4 group-hover/badge:rotate-18 transition-transform duration-500" />
+              {totalResults}
+            </Badge>
+          )}
         </div>
       </div>
-      {action && (
-        action.permission ? (
-          <Can permission={action.permission}>
-            {renderActionButton()}
-          </Can>
+      {action &&
+        (action.permission ? (
+          <Can permission={action.permission}>{renderActionButton()}</Can>
         ) : (
           renderActionButton()
-        )
-      )}
+        ))}
     </div>
   );
 }

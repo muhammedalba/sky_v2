@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Icons } from "@/shared/ui/Icons";
+import { XIcon } from "@/shared/ui/Icons";
 import { cn } from "@/lib/utils";
 
 const SheetContext = React.createContext<{
@@ -77,7 +77,7 @@ const SheetContent = React.forwardRef<
           className="absolute inset-e-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
           onClick={() => context.onOpenChange(false)}
         >
-          <Icons.X className="size-5" />
+          <XIcon className="size-5" />
           <span className="sr-only">Close</span>
         </button>
       </div>

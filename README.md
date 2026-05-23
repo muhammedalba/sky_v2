@@ -45,11 +45,13 @@ sky_v2/
 The project uses a **Modular API Layer**. All endpoints are configurable via `.env` to ensure zero code modification when moving environments.
 
 ### Authentication Endpoints
+
 - `POST` Login: `${NEXT_PUBLIC_ENDPOINT_AUTH_LOGIN}`
 - `POST` Register: `${NEXT_PUBLIC_ENDPOINT_AUTH_REGISTER}`
 - `GET` Profile: `${NEXT_PUBLIC_ENDPOINT_AUTH_ME}`
 
 ### Core Modules
+
 - **Products**: Manage catalog, inventory, and statistics.
 - **Orders**: Real-time order tracking and management.
 - **Categories**: Organize products and view department stats.
@@ -61,13 +63,13 @@ The project uses a **Modular API Layer**. All endpoints are configurable via `.e
 
 Configuration is managed entirely through environment variables. Copy `.env.example` to `.env` before starting.
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `NEXT_PUBLIC_API_URL` | Base API URL | - |
-| `NEXT_PUBLIC_APP_NAME` | Website Name | Sky Galaxy |
-| `NEXT_PUBLIC_DEFAULT_LOCALE`| Default Language | en |
-| `NEXT_PUBLIC_DEFAULT_CURRENCY`| Formatting Currency | USD |
-| `NEXT_PUBLIC_ENDPOINT_*` | API Route paths | (Configurable) |
+| Variable                       | Description         | Default        |
+| :----------------------------- | :------------------ | :------------- |
+| `NEXT_PUBLIC_API_URL`          | Base API URL        | -              |
+| `NEXT_PUBLIC_APP_NAME`         | Website Name        | Sky Galaxy     |
+| `NEXT_PUBLIC_DEFAULT_LOCALE`   | Default Language    | en             |
+| `NEXT_PUBLIC_DEFAULT_CURRENCY` | Formatting Currency | USD            |
+| `NEXT_PUBLIC_ENDPOINT_*`       | API Route paths     | (Configurable) |
 
 ---
 
@@ -78,18 +80,20 @@ Configuration is managed entirely through environment variables. Copy `.env.exam
 - **Data Fetching**: [TanStack Query v5](https://tanstack.com/query)
 - **i18n**: [next-intl](https://next-intl-docs.vercel.app/)
 - **Logic/Forms**: React Hook Form + Zod
-- **Icons**: Custom SVG managed through `Icons.tsx`
+- **Icons**: Custom SVG managed through `tsx`
 
 ---
 
 ## � Getting Started
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Configure environment**:
+
    ```bash
    cp .env.example .env
    # Update your NEXT_PUBLIC_API_URL and other variables
@@ -107,7 +111,7 @@ Configuration is managed entirely through environment variables. Copy `.env.exam
 - **Guest**: Can only access `home`, `login`, and `signup`.
 - **Authenticated User**: Can access `home` and `profile`.
 - **Admin/Manager**: Has full access to the `dashboard` and management tools.
-- *Any unauthorized attempt to access `/dashboard` will redirect the user to `/login` or `/home` based on their auth status.*
+- _Any unauthorized attempt to access `/dashboard` will redirect the user to `/login` or `/home` based on their auth status._
 
 ---
 

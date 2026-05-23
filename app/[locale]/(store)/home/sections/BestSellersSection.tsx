@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/shared/ui/Button";
-import { Icons } from "@/shared/ui/Icons";
+import { ChevronRightIcon, PackageIcon, ShoppingCartIcon, StarIcon } from "@/shared/ui/Icons";
 import { Card } from "@/shared/ui/Card";
 import { useState, useRef, useEffect } from "react";
 import { useProducts } from "@/features/products/hooks/useProducts";
@@ -85,7 +85,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                 className="h-12 px-8 rounded-xl font-black gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
               >
                 {t("best_sellers.view_all")}
-                <Icons.ChevronRight className="w-5 h-5 rtl:rotate-180" />
+                <ChevronRightIcon className="w-5 h-5 rtl:rotate-180" />
               </Button>
             </Link>
           </div>
@@ -97,7 +97,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                 <ScrollReveal key={item._id} direction="up" delay={i * 100}>
                   <Card className="group flex flex-col bg-card hover:shadow-2xl hover:border-primary/50 transition-all duration-500 rounded-3xl overflow-hidden border-border/50 h-full relative cursor-pointer">
                     <button type="button" onClick={() => {}} title='add to wishlist' aria-label='add to wishlist' className="absolute top-4 left-4 z-20 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center border border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
-                      <Icons.Star className="w-4 h-4" />
+                      <StarIcon className="w-4 h-4" />
                     </button>
 
                     <div className="aspect-square bg-secondary relative overflow-hidden flex items-center justify-center p-8">
@@ -111,12 +111,12 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                           loading="lazy"
                         />
                       ) : (
-                        <Icons.Package className="w-24 h-24 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
+                        <PackageIcon className="w-24 h-24 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
                       )}
                       <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
                         <Link href={`/products/${item._id}`}>
                           <Button className="w-full bg-foreground text-background hover:bg-primary font-black shadow-xl">
-                            <Icons.ShoppingCart className="w-4 h-4 ml-2" />{" "}
+                            <ShoppingCartIcon className="w-4 h-4 ml-2" />{" "}
                             {t("common.add_to_cart")}
                           </Button>
                         </Link>
@@ -142,7 +142,7 @@ export default function BestSellersSection({ locale }: { locale: string }) {
                         <div className="flex flex-col gap-1">
                           <div className="flex text-warning">
                             {[1, 2, 3, 4, 5].map((s) => (
-                              <Icons.Star key={s} className="w-3 h-3 fill-current" />
+                              <StarIcon key={s} className="w-3 h-3 fill-current" />
                             ))}
                           </div>
                           <span className="text-xs text-muted-foreground font-medium">

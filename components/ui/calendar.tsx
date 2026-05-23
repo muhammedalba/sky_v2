@@ -6,7 +6,7 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/shared/ui/Icons"
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@/shared/ui/Icons";
 
 function Calendar({
   className,
@@ -135,13 +135,13 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <Icons.ChevronLeft className={cn("size-4", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
             )
           }
 
           if (orientation === "right") {
             return (
-              <Icons.ChevronRight
+              <ChevronRightIcon
                 className={cn("size-4", className)}
                 {...props}
               />
@@ -149,7 +149,7 @@ function Calendar({
           }
 
           return (
-            <Icons.ChevronDown className={cn("size-4", className)} {...props} />
+            <ChevronDownIcon className={cn("size-4", className)} {...props} />
           )
         },
         DayButton: CalendarDayButton,

@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
-import { Icons } from '@/shared/ui/Icons';
+import { MailIcon, MessageCircleIcon } from "@/shared/ui/Icons";
 import { SettingsInput } from '../../settings.schema';
 
 export default function ContactSection() {
@@ -16,7 +16,7 @@ export default function ContactSection() {
     <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
       <CardHeader className="bg-muted/20 border-b border-border/50">
         <CardTitle className="text-xl flex items-center gap-2 title-gradient">
-          <Icons.MessageCircle className="w-5 h-5 text-success" /> {t('contact.title')}
+          <MessageCircleIcon className="w-5 h-5 text-success" /> {t('contact.title')}
         </CardTitle>
         <CardDescription>{t('contact.desc')}</CardDescription>
       </CardHeader>
@@ -25,14 +25,14 @@ export default function ContactSection() {
           <Input
             {...register('contactInfo.email')}
             label="Email"
-            icon={Icons.Mail}
+            icon={MailIcon}
             error={errors.contactInfo?.email?.message}
             className="rounded-xl h-11"
           />
           <Input
             {...register('contactInfo.phones.0')}
             label="Phone"
-            icon={Icons.MessageCircle}
+            icon={MessageCircleIcon}
             error={errors.contactInfo?.phones?.[0]?.message}
             className="rounded-xl h-11"
           />

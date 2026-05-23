@@ -11,7 +11,7 @@ import { Input } from '@/shared/ui/Input';
 import { useCreateCategory, useUpdateCategory } from '@/features/categories/hooks/useCategories';
 import { useToast } from '@/shared/hooks/useToast';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
-import { Icons } from '@/shared/ui/Icons';
+import { EditIcon } from "@/shared/ui/Icons";
 
 interface CategoryFormProps {
   editingCategory: Category | null;
@@ -83,7 +83,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
         <Input
           showAiAction
           aiActionTooltip={t('aiTranslateImprove')}
-          icon={Icons.Edit}
+          icon={EditIcon}
           label={t('fields.name') + (' (English)')}
           {...register('name.en')}
           error={errors.name?.en?.message}
@@ -99,7 +99,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           label={t('fields.name') + (' (Arabic)')}
           showAiAction
           aiActionTooltip={t('aiTranslateImprove')}
-          icon={Icons.Edit}
+          icon={EditIcon}
           {...register('name.ar')}
           error={errors.name?.ar?.message}
           disabled={createMutation.isPending || updateMutation.isPending}

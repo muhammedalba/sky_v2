@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import GalleryUpload from './GalleryUpload';
-import { Icons } from '@/shared/ui/Icons';
+import { EyeIcon } from "@/shared/ui/Icons";
 
 interface ProductMediaPanelProps {
   // Cover
@@ -45,7 +45,7 @@ export function ProductMediaPanel({
   return (
     <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
       <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <Icons.Eye className="w-5 h-5 text-muted-foreground" />
+        <EyeIcon className="w-5 h-5 text-muted-foreground" />
         <div>
           <h3 className="font-bold text-sm">{t('coverImage')}</h3>
         </div>

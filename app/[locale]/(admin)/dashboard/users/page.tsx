@@ -7,7 +7,7 @@ import {
   useUpdateUser,
 } from "@/features/users/hooks/useUsers";
 import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
-import { Icons } from "@/shared/ui/Icons";
+import { CheckIcon, EditIcon, MailIcon, OrdersIcon, PhoneIcon, PlusIcon, TrashIcon, UsersIcon, XIcon } from "@/shared/ui/Icons";
 import { Badge } from "@/shared/ui/Badge";
 import { Button } from "@/shared/ui/Button";
 import { Switch } from "@/shared/ui/Switch";
@@ -196,7 +196,7 @@ export default function UsersPage() {
                   href={`tel:${user.phone}`}
                   className="text-success hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border"
                 >
-                  <Icons.Phone className="w-4 h-4" />
+                  <PhoneIcon className="w-4 h-4" />
                 </a>
               </Tooltip>
             )}
@@ -206,7 +206,7 @@ export default function UsersPage() {
                   href={`mailto:${user.email}`}
                   className="text-warning/80 hover:text-primary transition-colors p-1.5 rounded-md hover:bg-muted/50 border border-transparent hover:border-border"
                 >
-                  <Icons.Mail className="w-4 h-4" />
+                  <MailIcon className="w-4 h-4" />
                 </a>
               </Tooltip>
             )}
@@ -269,7 +269,7 @@ export default function UsersPage() {
         render: (user: User) => (
           <div className="flex flex-col items-center justify-center gap-1 group/orders">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-primary/5 border border-primary/10 group-hover/orders:bg-primary/10 group-hover/orders:border-primary/20 transition-all duration-300">
-              <Icons.Orders className="w-4 h-4 text-primary opacity-70" />
+              <OrdersIcon className="w-4 h-4 text-primary opacity-70" />
               <span className="text-sm font-black text-primary">
                 {user.totalOrders || 0}
               </span>
@@ -334,7 +334,7 @@ export default function UsersPage() {
                       updateMutation.isPending
                     }
                   >
-                    <Icons.Edit className="h-4 w-4 text-primary" />
+                    <EditIcon className="h-4 w-4 text-primary" />
                   </Button>
                 </Tooltip>
               </Can>
@@ -353,7 +353,7 @@ export default function UsersPage() {
                     }
                     isLoading={deleteMutation.isPending}
                   >
-                    <Icons.Trash className="h-4 w-4 text-destructive" />
+                    <TrashIcon className="h-4 w-4 text-destructive" />
                   </Button>
                 </Tooltip>
               </Can>
@@ -382,14 +382,14 @@ export default function UsersPage() {
         id: "active",
         label: t("fields.active"),
         value: "active",
-        icon: Icons.Check,
+        icon: CheckIcon,
         activeClass: "bg-success text-white shadow-md shadow-green-500/20",
       },
       {
         id: "inactive",
         label: t("fields.inactive"),
         value: "inactive",
-        icon: Icons.X,
+        icon: XIcon,
         activeClass: "bg-zinc-500 text-white shadow-md shadow-zinc-500/20",
       },
     ],
@@ -416,7 +416,7 @@ export default function UsersPage() {
         })}
         action={{
           label: t("createUser"),
-          icon: <Icons.Plus className="w-4 h-4" />,
+          icon: <PlusIcon className="w-4 h-4" />,
           onClick: () => router.push(`/${locale}/dashboard/users/create`),
           disabled: isAnyMutationPending,
           permission: Permissions.CREATE_USER,
@@ -461,7 +461,7 @@ export default function UsersPage() {
         emptyState={{
           title: t("emptyState.title"),
           description: t("emptyState.description"),
-          icon: <Icons.Users className="h-10 w-10 text-muted-foreground/40" />,
+          icon: <UsersIcon className="h-10 w-10 text-muted-foreground/40" />,
         }}
       />
 

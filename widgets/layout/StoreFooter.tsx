@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/navigation';
 import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { Icons } from '@/shared/ui/Icons';
+import { FacebookIcon, LinkedInBrandIcon, MailIcon, MapPinIcon, MessageCircleIcon, MetaBrandIcon, PhoneIcon, TikTokBrandIcon, XIcon, YoutubeIcon } from "@/shared/ui/Icons";
 
 // Custom premium inline icons for highlights
 const TruckIcon = () => (
@@ -119,37 +119,37 @@ export default function StoreFooter() {
             <div className="flex flex-wrap items-center gap-2.5 mt-2">
                {socialLinks.facebook && (
                  <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" title="Facebook" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.Facebook className="w-4 h-4" />
+                   <FacebookIcon className="w-4 h-4" />
                  </a>
                )}
                {socialLinks.instagram && (
                  <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" title="Instagram" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.MetaBrand className="w-4 h-4" />
+                   <MetaBrandIcon className="w-4 h-4" />
                  </a>
                )}
                {socialLinks.twitter && (
                  <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" title="X (Twitter)" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.X className="w-4 h-4" />
+                   <XIcon className="w-4 h-4" />
                  </a>
                )}
                {socialLinks.linkedin && (
                  <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.LinkedInBrand className="w-4 h-4" />
+                   <LinkedInBrandIcon className="w-4 h-4" />
                  </a>
                )}
                {socialLinks.youtube && (
                  <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" title="YouTube" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.Youtube className="w-4 h-4" />
+                   <YoutubeIcon className="w-4 h-4" />
                  </a>
                )}
                {socialLinks.tiktok && (
                  <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" title="TikTok" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.TikTokBrand className="w-4 h-4" />
+                   <TikTokBrandIcon className="w-4 h-4" />
                  </a>
                )}
                {socialLinks.whatsapp && (
                  <a href={`https://wa.me/${socialLinks.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" title="WhatsApp" className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/10 hover:text-primary transition-all duration-300">
-                   <Icons.MessageCircle className="w-4 h-4" />
+                   <MessageCircleIcon className="w-4 h-4" />
                  </a>
                )}
             </div>
@@ -190,7 +190,7 @@ export default function StoreFooter() {
                {settings.contactInfo?.phones?.[0] && (
                  <li className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group">
                    <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors">
-                     <Icons.Phone className="w-3.5 h-3.5 text-primary" />
+                     <PhoneIcon className="w-3.5 h-3.5 text-primary" />
                    </div>
                    <span>{settings.contactInfo.phones[0]}</span>
                  </li>
@@ -198,7 +198,7 @@ export default function StoreFooter() {
                {settings.contactInfo?.email && (
                  <li className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group min-w-0">
                    <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0">
-                     <Icons.Mail className="w-3.5 h-3.5 text-primary" />
+                     <MailIcon className="w-3.5 h-3.5 text-primary" />
                    </div>
                    <span className="truncate">{settings.contactInfo.email}</span>
                  </li>
@@ -206,7 +206,7 @@ export default function StoreFooter() {
                {settings.contactInfo?.address?.[locale as 'ar' | 'en'] && (
                  <li className="flex items-start gap-3 text-xs sm:text-sm text-muted-foreground group">
                    <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0 mt-0.5">
-                     <Icons.MapPin className="w-3.5 h-3.5 text-primary" />
+                     <MapPinIcon className="w-3.5 h-3.5 text-primary" />
                    </div>
                    <span className="leading-tight">{settings.contactInfo.address[locale as 'ar' | 'en']}</span>
                  </li>
