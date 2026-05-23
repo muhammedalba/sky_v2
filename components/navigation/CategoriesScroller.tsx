@@ -187,7 +187,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
           href={`/products?category=${category._id}`}
           onClick={handleClick}
           className={cn(
-            "shrink-0 flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-all",
+            "shrink-0 flex items-center hover:text-primary hover:bg-primary/10 border border-border/20 hover:border-primary/30 text-xs font-medium  gap-2 px-4 py-1 rounded-full whitespace-nowrap active:scale-95 transition-all select-none",
             open
               ? "text-primary bg-primary/8"
               : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
@@ -210,10 +210,10 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
           href={`/products?category=${category._id}`}
           onClick={handleClick}
           className={cn(
-            "shrink-0 flex items-center gap-2 px-4 py-1 rounded-full whitespace-nowrap active:scale-95 transition-all select-none",
+            "shrink-0 flex items-center hover:text-primary hover:bg-primary/10 border border-border/20 hover:border-primary/30 text-xs font-medium  gap-2 px-4 py-1 rounded-full whitespace-nowrap active:scale-95 transition-all select-none",
             open
               ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-muted/60 hover:bg-primary/10 border border-border/40 hover:border-primary/30 text-sm font-semibold text-foreground/80 hover:text-primary",
+              : "bg-muted/10  text-foreground/80 ",
           )}
         >
           {category.image && (
@@ -246,7 +246,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
             "fixed mt-1 min-w-[200px] max-w-[280px]",
             "bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl",
             "p-1.5 z-100000",
-            "animate-in fade-in zoom-in-95 duration-150 inset-s-0",
+            "animate-in fade-in zoom-in-95 duration-300 inset-s-0",
           )}
           style={{
             top: position.top,

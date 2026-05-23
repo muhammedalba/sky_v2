@@ -116,7 +116,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
     ));
 
     return (
-      <div className="flex whitespace-nowrap animate-promo-marquee">
+      <div className="flex whitespace-nowrap animate-marquee ">
         {/* النسخة الأولى */}
         <div className="flex shrink-0 items-center justify-around min-w-full">
           {items}
@@ -147,7 +147,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
 
   // ─── المحتوى الداخلي ─────────────────────────
   const innerContent = (
-    <div className="w-full h-full relative flex items-center justify-center overflow-hidden mask-image-fade">
+   <div className="w-full h-full relative flex items-center justify-center overflow-hidden mask-image-fade"> 
       {marqueeItems}
     </div>
   );

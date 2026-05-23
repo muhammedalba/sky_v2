@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { ReactNode } from "react";
 import MobileBottomNavLoader from "@/components/navigation/MobileBottomNavLoader";
 import StoreNavbarLoader from "@/components/navigation/StoreNavbarLoader";
@@ -107,7 +109,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
 
   return (
     <NextIntlClientProvider messages={storeMessages}>
-      <div className="min-h-screen flex flex-col bg-background font-sans antialiased pt-(--promo-banner-height,0px) transition-[padding-top] duration-300 ease-in-out">
+      <div className="min-h-screen overflow-x-hidden flex flex-col bg-background font-sans antialiased pt-(--promo-banner-height,0px) transition-[padding-top]">
         {/* Top promo banner */}
         <TopPromoBanner banner={promoBanner} />
 

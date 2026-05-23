@@ -114,30 +114,32 @@
     }
   }
 
-  /* Custom Animations added to Theme */
+  /* Custom Animations added to Theme use in top  promo marquee & brands */
   --animate-badge-pop: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   --animate-marquee: marquee 30s linear infinite;
-  --animate-promo-marquee: promo-marquee-ltr 60s linear infinite;
+  --animate-promo-marquee: marquee 40s linear infinite;
 
   @keyframes badge-pop {
-    0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
-
-  @keyframes promo-marquee-ltr {
-    from { transform: translateX(0%); }
-    to { transform: translateX(-50%); }
-  }
-
-  @keyframes promo-marquee-rtl {
-    from { transform: translateX(0%); }
-    to { transform: translateX(50%); }
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
 }
 
@@ -336,9 +338,12 @@ input::-ms-clear {
 
 /* ─── Homepage Utilities & Custom Animations ───────────────────────── */
 
-/* Marquee RTL Override */
+/* Marquee RTL Override for Top Promo Banner Animations*/
 [dir="rtl"] .animate-marquee {
   animation-direction: reverse;
+}
+.animate-marquee:hover {
+  animation-play-state: paused !important;
 }
 .mask-image-fade {
   mask-image: linear-gradient(
@@ -364,12 +369,4 @@ input::-ms-clear {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* ─── Top Promo Banner Animations ──────────────────────────────────── */
-[dir="rtl"] .animate-promo-marquee {
-  animation-name: promo-marquee-rtl;
-}
-.animate-promo-marquee:hover {
-  animation-play-state: paused;
 }
