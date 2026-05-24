@@ -13,8 +13,8 @@ export default function EditProductPage({ params }: { params: Promise<{ locale: 
       <div className="space-y-8 animate-pulse">
         <Skeleton className="h-12 w-1/3 rounded-xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <Skeleton className="lg:col-span-2 h-[400px] rounded-2xl" />
-          <Skeleton className="h-[300px] rounded-2xl" />
+          <Skeleton className="lg:col-span-2 h-100 rounded-2xl" />
+          <Skeleton className="h-75 rounded-2xl" />
         </div>
       </div>
     );

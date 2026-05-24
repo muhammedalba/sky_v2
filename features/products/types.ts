@@ -3,6 +3,12 @@ import { Category, SubCategory } from '@/features/categories/types';
 import { Brand } from '@/features/brands/types';
 import { Supplier } from '@/features/suppliers/types';
 
+
+export interface ProductAttributeValue {
+  value: string | number;
+  unit?: string;
+}
+
 export interface ProductVariant {
   _id: string;
   productId: string | Product;
@@ -12,7 +18,7 @@ export interface ProductVariant {
   priceAfterDiscount?: number;
   stock: number;
   sold?: number;
-  attributes: Record<string, unknown>;
+  attributes: Record<string, ProductAttributeValue>;
   components?: Record<string, unknown>[];
   label?: string;
   image?: string;

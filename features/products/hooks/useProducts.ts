@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useLocale } from 'next-intl';
-import { Product, ApiResponse, ProductWithVariants } from '@/types';
+import { Product, ProductWithVariants } from '@/types';
 
 export interface UseProductsParams {
   page?: number;
@@ -37,7 +37,7 @@ export function useProducts(params?: UseProductsParams, options?: { enabled?: bo
   });
 }
 
-export function useProduct(id: string, options: { all_langs: true }): UseQueryResult<ProductWithVariants, Error>;
+export function useProduct(id: string, options?: { all_langs: boolean }): UseQueryResult<ProductWithVariants, Error>;
 export function useProduct(id: string, options?: { all_langs?: false }): UseQueryResult<Product, Error>;
 export function useProduct(id: string, options?: { all_langs?: boolean }): UseQueryResult<any, Error> {
   const all_langs = options?.all_langs ?? false;
@@ -82,7 +82,7 @@ export function useUpdateProduct() {
       const response = await productsApi.update(id, data);
       return response.data as unknown as ProductWithVariants;
     },
-    onSuccess: async () => {
+    onSuccess: async (updatedProduct: ProductWithVariants) => {
       // 1. تحديث قائمة المنتجات (الكاش المكون من عنصرين)
       await queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length === 3,
@@ -94,6 +94,20 @@ export function useUpdateProduct() {
         predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length >= 4,
         refetchType: 'none', // صمت تام: امسح البيانات ولكن لا ترسل أي طلب GET الآن
       });
+
+      // 3. Trigger Next.js ISR revalidation for page tags (product and products)
+      try {
+        const slug = (updatedProduct as unknown as any)?.slug;
+        if (slug) {
+          await fetch('/api/revalidate-product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug }),
+          });
+        }
+      } catch (err) {
+        console.error('[useUpdateProduct] failed to revalidate next tags', err);
+      }
     },
     onError: (error: Error) => {
       console.error("Backend Error:", error);

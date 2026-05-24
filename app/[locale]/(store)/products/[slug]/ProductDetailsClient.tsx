@@ -11,7 +11,7 @@ import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 
 import { useTrans } from '@/shared/hooks/useTrans';
 import { useToast } from '@/shared/hooks/useToast';
-import { Product, ProductVariant } from '@/types';
+import { Product, ProductVariant, ProductWithVariants } from '@/types';
 
 // تحديث واجهة البيانات لتطابق شكل الباك إيند الجديد
 interface ProductResponse {
@@ -29,7 +29,7 @@ interface CartItem {
     [key: string]: unknown;
 }
 
-export default function ProductDetailsClient({ params, initialData }: { params: Promise<{ locale: string; slug: string }>, initialData: ProductResponse | null }) {
+export default function ProductDetailsClient({ params, initialData }: { params: Promise<{ locale: string; slug: string }>, initialData: ProductWithVariants | null }) {
     const { slug, locale } = use(params);
     const getTrans = useTrans();
     const toast = useToast();
@@ -43,13 +43,11 @@ export default function ProductDetailsClient({ params, initialData }: { params: 
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
 
     // --- Fetch Data ---
-    const { data: fetchResponse, isLoading, error } = useProduct(slug, {
-        initialData: initialData ? { data: initialData } : undefined
-    });
+    const { data: fetchResponse, isLoading, error } = useProduct(slug);
     
     // استخراج المنتج والمتغيرات بناءً على الشكل الجديد للبيانات
-    const payload = fetchResponse?.data || initialData;
-    const product = payload?.product;
+    const payload = fetchResponse || initialData;
+    const product = payload?.product ||{} as Product;
     const variants = payload?.variants || [];
 
     const hasVariants = variants.length > 0;
@@ -142,8 +140,8 @@ export default function ProductDetailsClient({ params, initialData }: { params: 
     // معالجة النصوص بناءً على هيكل البيانات (سواء كانت Object للغات أو String مباشر)
     const title = typeof product.title === 'string' ? product.title : getTrans(product.title) || 'Product';
     const description = typeof product.description === 'string' ? product.description : getTrans(product.description);
-    const categoryName = product.category?.name || '';
-    const brandName = product.brand?.name || '';
+    const categoryName = typeof product.category === 'object' ? getTrans(product.category?.name) : '';
+    const brandName = typeof product.brand === 'object' ? getTrans(product.brand?.name) : '';
     
     const allImages = [product.imageCover, ...(product.images || [])].filter(Boolean) as string[];
     const currentDisplayImage = selectedVariant?.image || selectedImage || product.imageCover || '';
