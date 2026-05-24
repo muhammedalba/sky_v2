@@ -139,8 +139,8 @@ export default function CategoriesSection() {
 
                           <div className="flex items-center justify-between mt-2">
                             <span className="text-white/70 font-medium text-sm flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
-                              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                              {cat.productsCount || 0} {t("best_sellers.badge")}
+                              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                              {cat.productsCount || 10}+ {t("customer_favorite.featured")}
                             </span>
 
                             <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm transform group-hover:scale-110">

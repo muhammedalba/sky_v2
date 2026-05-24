@@ -25,9 +25,9 @@ export default function TrustedBy() {
 
     // use 6 groups instead of 7 (even number).
     // because the animation moves by 50%, the even number ensures that the movement ends at the beginning of a complete group, preventing interruption (Seamless Loop).
-    return [1, 2, 3, 4, 5, 6].map((group, index) => (
+    return  Array.from({ length: 6 }, (_, index) => (
       <div
-        key={group}
+        key={index}
         className="flex gap-5 shrink-0 items-center"
         // 3.Accessibility: hide repeated groups from screen readers
         aria-hidden={index > 0 ? "true" : "false"}
@@ -35,7 +35,7 @@ export default function TrustedBy() {
         {brands.map((brand) => (
           <div
             key={brand._id}
-            className="flex items-center justify-center min-w-[120px]"
+            className="flex items-center justify-center min-w-30"
           >
             {brand.image ? (
               <Image
@@ -43,7 +43,7 @@ export default function TrustedBy() {
                 alt={getTrans(brand.name)}
                 width={150}
                 height={48}
-                className="h-12 object-contain max-w-[150px]"
+                className="h-12 object-contain max-w-37.5"
                 loading="lazy"
               />
             ) : (
@@ -55,7 +55,7 @@ export default function TrustedBy() {
                     alt={getTrans(brand.name)}
                     width={150}
                     height={48}
-                    className="h-12 object-contain max-w-[150px]"
+                    className="h-12 object-contain max-w-37.5"
                     loading="lazy"
                   />
                 </span>

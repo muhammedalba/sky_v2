@@ -4,9 +4,11 @@
     "tagline": "For Insulation & Construction Trade"
   },
   "common": {
-    "currency": "SAR",
     "add_to_cart": "Add to Cart",
-    "view_all": "View All"
+    "add_to_wishlist": "Add to Wishlist",
+    "view_all": "View All",
+    "details": "Details",
+    "quick_view": "Quick View"
   },
   "actions": {
     "quick_quote": "Quick Quote",
@@ -54,9 +56,9 @@
       }
     }
   },
-  "best_sellers": {
-    "badge": "Best Seller",
-    "title": "Best Selling Products",
+  "customer_favorite": {
+    "featured": "Featured",
+    "title": "Customer Favorite Products",
     "description": "Carefully selected products that meet the highest technical specifications for major projects.",
     "view_all": "Shop All Products",
     "reviews_label": "Excellent Reviews"
