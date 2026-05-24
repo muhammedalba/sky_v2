@@ -156,7 +156,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
     <div
       role="banner"
       aria-label={t('bannerAriaLabel')}
-      className="fixed top-0 inset-x-0 z-50 h-10 bg-primary/90  backdrop-blur-xl  font-black text-white tracking-tight flex items-center justify-between overflow-hidden select-none shadow-xs"
+      className="fixed group top-0 inset-x-0 z-50 h-10 bg-primary/90  backdrop-blur-xl  font-black text-white tracking-tight flex items-center justify-between overflow-hidden select-none shadow-xs"
     >
       {bannerLink ? (
         <Link href={bannerLink} className="flex-1 h-full flex items-center cursor-pointer">
@@ -169,7 +169,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
       <button
         type="button"
         onClick={handleClose}
-        className="absolute inset-e-2 top-1 z-50 p-1.5 rounded-full bg-destructive text-white hover:bg-destructive/90 cursor-pointer transition-all backdrop-blur-xs"
+        className="scale-0 group-hover:scale-100 absolute inset-e-2 top-1 z-50 p-1.5 rounded-full bg-destructive text-white hover:bg-destructive/90 cursor-pointer transition-all backdrop-blur-xs"
         aria-label={t('dismissAria')}
       >
         <XIcon className="h-3.5 w-3.5" aria-hidden="true" />

@@ -79,7 +79,7 @@ const ProductCard = ({ item, t }: Props) => {
   }, []);
 
   return (
-    <Card className="group flex flex-col bg-accent/40 hover:shadow-xl transition-all duration-500 rounded-4xl overflow-hidden border-border/50 h-full relative cursor-pointer hover:scale-[1.01]">
+    <Card className="group flex flex-col bg-accent/40 hover:shadow-xl transition-all duration-500 rounded-4xl overflow-hidden border-border/50 h-full relative hover:scale-[1.01]">
       <div className="aspect-square relative overflow-hidden flex items-center justify-center">
         <div
           dir={"ltr"}
@@ -132,13 +132,13 @@ const ProductCard = ({ item, t }: Props) => {
       </div>
       
       {/* product details */}
-      <div className="pt-3 flex flex-col grow justify-between">
+      <div className=" flex flex-col grow justify-between">
         <div className="w-full px-6 flex-1 bg-background flex-col flex justify-between">
           {/* category badges */}
           <div className="border-b border-border/40 flex flex-wrap items-center pb-3 gap-2">
             <Badge
               variant="default"
-              className="text-xs bg-primary/5 text-primary/70 uppercase tracking-wider w-fit"
+              className="text-xs mt-3 bg-primary/5 text-primary/70 uppercase tracking-wider w-fit"
             >
               {categoryName}
             </Badge>
@@ -195,7 +195,7 @@ const ProductCard = ({ item, t }: Props) => {
           <div className="pt-4 flex items-center justify-between gap-2">
             <Link
               href={`/products/${item.slug}`}
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-700 group-hover:gap-2.5 transition-all"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-700 hover:text-primary hover:scale-105 group-hover:gap-2.5 transition-all"
             >
               {t("common.details")}
               <ArrowLeftIcon size={16} />

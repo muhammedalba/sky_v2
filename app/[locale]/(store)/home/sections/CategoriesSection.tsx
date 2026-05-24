@@ -43,6 +43,7 @@ export default function CategoriesSection() {
               <h2 className="text-4xl md:text-5xl font-black title-gradient">
                 {t("categories.title")}
               </h2>
+               <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 me-auto" />
               <p className="text-lg text-muted-foreground font-medium max-w-2xl">
                 {t("categories.description")}
               </p>
@@ -121,7 +122,7 @@ export default function CategoriesSection() {
                       href={`/products?category=${cat._id}`}
                       className="block h-full group"
                     >
-                      <GlowCard className="h-full min-h-[250px] md:min-h-0 w-full rounded-3xl bg-card border border-border/50 shadow-md hover:shadow-xl transition-all duration-500">
+                      <GlowCard className="h-full min-h-62.5 md:min-h-0 w-full rounded-3xl bg-card border border-border/50 shadow-md hover:shadow-xl transition-all duration-500">
                         {/* Background Image Layer */}
                         <div
                           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"

@@ -2,74 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { BrandsIcon, CalendarIcon, PackageIcon, UsersIcon } from "@/shared/ui/Icons";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useMemo } from "react";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
-
-// CountUp component optimized for high performance
-const CountUp = ({
-  end,
-  duration = 2000,
-}: {
-  end: number;
-  duration?: number;
-}) => {
-  const countRef = useRef<HTMLSpanElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  // 1. Intersection Observer remains the same, but disconnects properly
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect(); // Disconnect immediately once visible to save memory
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (countRef.current) observer.observe(countRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // 2. Use requestAnimationFrame and direct DOM updates instead of setInterval/useState
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let startTime: number | null = null;
-    let animationFrameId: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = timestamp - startTime;
-      
-      // Calculate current value based on progress and duration
-      const percentage = Math.min(progress / duration, 1);
-      const currentCount = Math.floor(end * percentage);
-
-      // Update the DOM directly bypassing React's render cycle
-      if (countRef.current) {
-        countRef.current.textContent = currentCount.toString();
-      }
-
-      if (progress < duration) {
-        animationFrameId = requestAnimationFrame(animate);
-      } else {
-        // Ensure the final number is exact
-        if (countRef.current) {
-          countRef.current.textContent = end.toString();
-        }
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [end, duration, isVisible]);
-
-  // Render static 0 initially, JS will update it smoothly
-  return <span ref={countRef}>0</span>;
-};
+import CountUp from "@/components/CountUp";
 
 export default function StatsBar() {
   const t = useTranslations("home");

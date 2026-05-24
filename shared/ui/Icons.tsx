@@ -365,11 +365,55 @@ export const ShoppingCartIcon = ({ className }: IconProps) => (
   );
 
 export const MetaBrandIcon = ({ className }: IconProps) => (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12.016 12C9.531 12 8 13.535 8 15.485c0 1.954 1.531 3.485 4.016 3.485 2.484 0 4.015-1.531 4.015-3.485C16.031 13.535 14.5 12 12.016 12zM21.5 12c0-3.594-2.906-6.5-6.5-6.5-2.266 0-4.25 1.141-5.406 2.875C8.422 6.641 6.438 5.5 4.188 5.5c-3.594 0-6.5 2.906-6.5 6.5S.594 18.5 4.188 18.5c2.266 0 4.25-1.141 5.406-2.875 1.156 1.734 3.14 2.875 5.406 2.875 3.594 0 6.5-2.906 6.5-6.5zM4.188 16.273c-2.359 0-4.273-1.914-4.273-4.273s1.914-4.273 4.273-4.273c2.203 0 4.031 1.656 4.25 3.797H6.281v1.906h2.156c-.219 2.125-2.047 3.797-4.25 3.797zm7.828-5.727c-1.391 0-2.609.953-3.141 2.227-.328.75-.328 1.625 0 2.391.532 1.274 1.75 2.227 3.141 2.227s2.609-.953 3.141-2.227c.328-.766.328-1.641 0-2.391-.532-1.274-1.75-2.227-3.141-2.227zm8.484 5.727c-2.203 0-4.031-1.672-4.25-3.797h2.156v-1.906h-2.156c.219-2.141 2.047-3.797 4.25-3.797 2.359 0 4.273 1.914 4.273 4.273s-1.914 4.273-4.273 4.273z" />
-    </svg>
-  );
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6.5 15C4.5 15 3 13.5 3 11.5C3 9.5 4.5 8 6.5 8C8.2 8 9.3 9.1 10.5 11L12 13L13.5 11C14.7 9.1 15.8 8 17.5 8C19.5 8 21 9.5 21 11.5C21 13.5 19.5 15 17.5 15C15.8 15 14.7 13.9 13.5 12L12 10L10.5 12C9.3 13.9 8.2 15 6.5 15Z" />
+  </svg>
+);
+export const InstagramIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.8}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    {/* Outer rounded square */}
+    <rect
+      x="3"
+      y="3"
+      width="18"
+      height="18"
+      rx="5"
+      ry="5"
+    />
 
+    {/* Camera lens */}
+    <circle
+      cx="12"
+      cy="12"
+      r="4"
+    />
+
+    {/* Small top-right dot */}
+    <circle
+      cx="17.2"
+      cy="6.8"
+      r="1"
+      fill="currentColor"
+      stroke="none"
+    />
+  </svg>
+);
 export const TikTokBrandIcon = ({ className }: IconProps) => (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor">
       <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.43-2.95 5.82-1.8 1.37-4.21 1.83-6.42 1.25-2.26-.59-4.22-2.19-5.18-4.32-.97-2.13-.88-4.66.27-6.7 1.15-2.03 3.32-3.46 5.6-3.82.72-.11 1.45-.14 2.18-.11V13c-.31-.02-.63-.03-.94-.03-1.64 0-3.32.76-4.26 2.11-.94 1.34-1.07 3.19-.34 4.67.72 1.48 2.39 2.45 4.04 2.46 1.63.02 3.25-.87 4.07-2.28.65-1.11.83-2.43.83-3.71-.01-5.38.01-10.76-.02-16.14.01-.02.02-.04.04-.06z" />
@@ -465,7 +509,11 @@ export const TruckIcon = ({ className }: IconProps) => (
       <path strokeLinecap="round" strokeLinejoin="round" d="M8 14H5V7h10v7h-3m4-4h3l3 3v4h-3M6 18a2 2 0 11-4 0 2 2 0 014 0zm14 0a2 2 0 11-4 0 2 2 0 014 0z" />
     </svg>
   );
-
+export const HeadphoneIcon = ({ className }: IconProps) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+  </svg>
+);
 export const MessageSquareQuoteIcon = ({ className }: IconProps) => (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -513,10 +561,22 @@ export const WhatsAppIcon = ({ className }: IconProps) => (
   );
 
 export const DollarSignIcon = ({ className }: IconProps) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3 1.343 3 3-1.343 3-3 3m0-12c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3m0-3v3m0 12v3" />
-    </svg>
-  );
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    {/* Vertical line */}
+    <path d="M12 2V22" />
+
+    {/* Dollar curve */}
+    <path d="M17 7C17 5.343 14.761 4 12 4C9.239 4 7 5.343 7 7C7 8.657 9.239 10 12 10C14.761 10 17 11.343 17 13C17 14.657 14.761 16 12 16C9.239 16 7 14.657 7 13" />
+  </svg>
+);
 
 export const LayoutIcon = ({ className }: IconProps) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

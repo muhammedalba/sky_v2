@@ -8,6 +8,7 @@ import { useProducts } from "@/features/products/hooks/useProducts";
 import { Product } from "@/types";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import ProductCard from "@/components/ProductCard";
+import Badge from "@/shared/ui/Badge";
 
 // 1. استخراج مصفوفة التحميل خارج المكون لتجنب إعادة إنشائها في كل ريندر
 const SKELETON_ITEMS = [1, 2, 3, 4];
@@ -35,12 +36,13 @@ export default function BestSellersSection() {
         <ScrollReveal animation="slide-up">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 md:gap-8 mb-12 md:mb-16">
             <div className="space-y-4 w-full">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black tracking-widest uppercase">
+              <Badge variant="success" className="px-3 py-1 text-xs font-black tracking-widest uppercase">
                 {t("customer_favorite.featured")}
-              </div>
+              </Badge>
               <h2 className="text-4xl md:text-5xl font-black title-gradient tracking-tight">
                 {t("customer_favorite.title")}
               </h2>
+               <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 me-auto" />
               <p className="text-lg text-muted-foreground font-medium max-w-2xl">
                 {t("customer_favorite.description")}
               </p>

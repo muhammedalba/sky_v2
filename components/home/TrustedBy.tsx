@@ -70,7 +70,7 @@ export default function TrustedBy() {
   if (isLoading || brands.length === 0) return null;
 
   return (
-    <section className="py-16 sm:py-24 border-t border-border/30 bg-muted/5 overflow-hidden relative z-10">
+    <section className="py-16 sm:py-24  bg-background overflow-hidden relative z-10">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal animation="slide-up"  className="flex flex-col items-center gap-8">

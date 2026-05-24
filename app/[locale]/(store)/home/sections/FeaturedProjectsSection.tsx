@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card } from "@/shared/ui/Card";
 import { ChevronRightIcon, PackageIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import Badge from "@/shared/ui/Badge";
 
 
 
@@ -31,12 +32,13 @@ export default function FeaturedProjectsSection() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-8 mb-16 text-center md:text-start">
             <div className="space-y-4">
-              <p className="text-warning font-black text-sm tracking-[0.2em] uppercase">
+              <Badge variant="warning" className=" text-sm hover:bg-warning/20 hover:text-warning uppercase">
                 {t("projects.badge")}
-              </p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight">
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight title-gradient">
                 {t("projects.title")}
               </h2>
+               <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 me-auto" />
             </div>
             <Link
               href="/projects"
@@ -67,22 +69,22 @@ export default function FeaturedProjectsSection() {
             ].map((project, i) => (
               <ScrollReveal key={i} delay={i * 100}>
                 <Card className="p-4 border-white/10 shadow-sm hover:shadow-2xl hover:border-primary/50 transition-all duration-500 rounded-4xl overflow-hidden group bg-white/5 backdrop-blur-md cursor-pointer">
-                  <div className="aspect-video bg-white/5 rounded-3xl mb-6 relative overflow-hidden flex items-center justify-center">
-                    <PackageIcon className="w-16 h-16 text-white/20 group-hover:scale-110 transition-transform duration-700" />
+                  <div className="aspect-video bg-accent rounded-3xl mb-6 relative overflow-hidden flex items-center justify-center">
+                    <PackageIcon className="w-16 h-16 text-foreground/20 group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                   <div className="px-4 pb-4 text-center md:text-start">
-                    <h3 className="text-xl font-black text-white mb-2">
+                    <h3 className="text-xl font-black text-foreground mb-2">
                       {project.name}
                     </h3>
-                    <p className="text-white/60 text-sm font-medium mb-6">
+                    <p className="text-muted-foreground text-sm font-medium mb-6">
                       {project.desc}
                     </p>
                     <div className="flex items-center justify-between border-t border-white/10 pt-4">
                       <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/20 px-3 py-1 rounded-full">
                         {project.year}
                       </span>
-                      <ChevronRightIcon className="w-5 h-5 text-white/50 group-hover:text-primary transition-colors rtl:rotate-180" />
+                      <ChevronRightIcon className="w-5 h-5 text-muted-foreground/50 group-hover:text-primary transition-colors rtl:rotate-180" />
                     </div>
                   </div>
                 </Card>
