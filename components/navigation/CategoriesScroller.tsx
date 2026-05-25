@@ -26,7 +26,6 @@ export interface CategoryItem {
 interface CategoriesScrollerProps {
   categories: CategoryItem[];
   className?: string;
-  variant?: "desktop" | "mobile";
 }
 
 // ─── Scroll Arrow Button ──────────────────────────────────────────────────────
@@ -45,8 +44,8 @@ const ScrollArrow = memo(function ScrollArrow({
   if (!visible) return null;
 
   const isStart = direction === "start";
-  // في اللغة العربية (RTL): سهم البداية يجب أن يشير لليمين والنهاية لليسار.
-  // في اللغة الإنجليزية (LTR): سهم البداية يشير لليسار والنهاية لليمين.
+  // in RTL languages, the "start" direction corresponds to the right side and the "end" direction corresponds to the left side. Therefore, we determine which arrow to show based on the combination of the direction and the isRtl flag. The logic is as follows:
+  // in RTL languages, the "start" arrow should point to the right and the "end" arrow should point to the left.
   const showLeftArrow = isRtl ? !isStart : isStart;
 
   return (
@@ -54,7 +53,7 @@ const ScrollArrow = memo(function ScrollArrow({
       onClick={onClick}
       aria-label={`Scroll ${direction}`}
       className={cn(
-        "absolute top-1/2 -translate-y-1/2 z-10",
+        "absolute top-1/2 -translate-y-1/2 z-10 cursor-pointer opacity-0 group-hover/scroller:opacity-100 transition-opacity",
         "w-8 h-8 rounded-full",
         "bg-background/80 backdrop-blur-sm border border-border/60",
         "shadow-md hover:shadow-lg",
@@ -78,10 +77,9 @@ const ScrollArrow = memo(function ScrollArrow({
 
 const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
   category,
-  variant,
+
 }: {
   category: CategoryItem;
-  variant: "desktop" | "mobile";
 }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -110,13 +108,13 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
     const nextPosition =
       locale === "ar"
         ? {
-            top: rect.bottom + 4,
+            top: rect.bottom + 3,
             left: "auto" as const,
-            right: window.innerWidth - rect.right,
+            right: window.innerWidth - rect.right ,
           }
         : {
-            top: rect.bottom + 4,
-            left: rect.left,
+            top: rect.bottom + 3,
+            left: rect.left ,
             right: "auto" as const,
           };
 
@@ -173,7 +171,6 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
     [hasSubs, updatePosition],
   );
 
-  const isDesktop = variant === "desktop";
 
   return (
     <div
@@ -182,30 +179,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
       onMouseLeave={handleLeave}
       ref={triggerRef}
     >
-      {isDesktop ? (
-        <Link
-          href={`/products?category=${category._id}`}
-          onClick={handleClick}
-          className={cn(
-            "shrink-0 flex items-center hover:text-primary hover:bg-primary/10 border border-border/20 hover:border-primary/30 text-xs font-medium  gap-2 px-4 py-1 rounded-full whitespace-nowrap active:scale-95 transition-all select-none",
-            open
-              ? "text-primary bg-primary/8"
-              : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
-          )}
-        >
-          {category.name}
-          {hasSubs && (
-            <ChevronRight
-              size={12}
-              strokeWidth={2}
-              className={cn(
-                "transition-transform duration-200",
-                open && "rotate-90",
-              )}
-            />
-          )}
-        </Link>
-      ) : (
+      
         <Link
           href={`/products?category=${category._id}`}
           onClick={handleClick}
@@ -238,12 +212,12 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
             />
           )}
         </Link>
-      )}
+     
 
       {open && hasSubs && (
         <div
           className={cn(
-            "fixed mt-1 min-w-[200px] max-w-[280px]",
+            "fixed mt-1 min-w-50 max-w-70",
             "bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl",
             "p-1.5 z-100000",
             "animate-in fade-in zoom-in-95 duration-300 inset-s-0",
@@ -298,7 +272,6 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
 function CategoriesScroller({
   categories,
   className,
-  variant = "mobile",
 }: CategoriesScrollerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const locale = useLocale();
@@ -306,7 +279,6 @@ function CategoriesScroller({
   const [canScrollStart, setCanScrollStart] = useState(false);
   const [canScrollEnd, setCanScrollEnd] = useState(false);
 
-  // تم تصحيح المعادلة هنا لتكون متوافقة 100% مع اللغتين بدون الحاجة لشروط منعكسة
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -314,14 +286,14 @@ function CategoriesScroller({
     const { scrollLeft, scrollWidth, clientWidth } = el;
     const maxScroll = scrollWidth - clientWidth;
 
-    // إذا لم يكن هناك تمرير من الأساس، قم بإخفاء الأسهم
+    // if maxScroll is 0 or negative, it means the content fits within the container and there's no need to scroll
     if (maxScroll <= 0) {
       setCanScrollStart(false);
       setCanScrollEnd(false);
       return;
     }
 
-    // باستخدام Math.abs نضمن أن القيمة السالبة للتمرير في اللغة العربية يتم قراءتها كمسافة صحيحة
+    // absScroll is used to handle potential negative scrollLeft values in RTL contexts, ensuring consistent behavior across different browsers and languages. The thresholds (2 pixels) are used to account for minor discrepancies in scroll values that can occur due to rounding or browser-specific implementations, providing a more reliable way to determine if the user can scroll further in either direction.
     const absScroll = Math.abs(Math.round(scrollLeft));
 
     setCanScrollStart(absScroll > 2);
@@ -334,7 +306,7 @@ function CategoriesScroller({
 
     let frame: number;
 
-    // تشغيل أول فحص بعد الـ render
+    // scheduling the initial check in the next animation frame ensures that the DOM has fully rendered and all styles have been applied, providing accurate measurements of the scrollable area. This is particularly important if the content or layout is dynamic, as it allows the component to correctly determine whether scrolling is possible right after it mounts.
     frame = requestAnimationFrame(updateScrollState);
 
     el.addEventListener("scroll", updateScrollState, { passive: true });
@@ -382,13 +354,13 @@ function CategoriesScroller({
         direction="start"
         onClick={() => scroll("start")}
         visible={canScrollStart}
-        isRtl={isRtl} // تمرير حالة اللغة لعكس الأيقونة
+        isRtl={isRtl} // added isRtl prop to handle arrow direction in RTL languages
       />
       <ScrollArrow
         direction="end"
         onClick={() => scroll("end")}
         visible={canScrollEnd}
-        isRtl={isRtl} // تمرير حالة اللغة لعكس الأيقونة
+        isRtl={isRtl} // added isRtl prop to handle arrow direction in RTL languages
       />
 
       {/* Gradient fades */}
@@ -409,7 +381,7 @@ function CategoriesScroller({
           <CategoryItemWithDropdown
             key={cat._id}
             category={cat}
-            variant={variant}
+            
           />
         ))}
       </div>

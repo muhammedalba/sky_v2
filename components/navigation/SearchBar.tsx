@@ -5,7 +5,7 @@ import { useRouter } from "@/navigation";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { SearchIcon, XIcon } from "@/shared/ui/Icons";
+import { SearchIcon } from "@/shared/ui/Icons";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 
 interface SearchBarProps {
@@ -24,7 +24,8 @@ export default function SearchBar({
   const t = useTranslations("store.nav");
   const debouncedQuery = useDebounce(query, 400);
   const pathname = usePathname();
-  const isProductsPage = pathname.startsWith("/products");
+  const isProductsPage = pathname.includes("/products");
+ 
   // Sync state with URL search query changes during render to avoid cascading effects
   const currentSearch = searchParams?.get("search") || "";
   const [prevSearch, setPrevSearch] = useState(currentSearch);
@@ -64,7 +65,7 @@ export default function SearchBar({
   }, [debouncedQuery, router, searchParams, useLiveSearch]);
   if (!isProductsPage) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e:  React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const params = new URLSearchParams(searchParams?.toString() || "");
     if (query.trim()) {
@@ -101,18 +102,7 @@ export default function SearchBar({
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none min-w-0"
           autoComplete="off"
         />
-        {query && (
-          <button
-            type="button"
-            onClick={() => {
-              setQuery("");
-              // Focus back to input if desired, but here we just clear
-            }}
-            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
-          >
-            <XIcon className="size-4" />
-          </button>
-        )}
+        
       </div>
     </form>
   );

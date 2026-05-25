@@ -9,10 +9,6 @@ import type { CategoryItem } from './CategoriesScroller';
  * Each navbar handles its own responsive visibility (md:hidden / hidden md:block).
  */
 
-const MobileTopBar = dynamic(() => import('./MobileTopBar'), {
-  ssr: false,
-  loading: () => null,
-});
 
 const DesktopNavbar = dynamic(() => import('./DesktopNavbar'), {
   ssr: false,
@@ -25,9 +21,7 @@ interface StoreNavbarLoaderProps {
 
 export default function StoreNavbarLoader({ categories }: StoreNavbarLoaderProps) {
   return (
-    <>
-      <MobileTopBar categories={categories} />
       <DesktopNavbar categories={categories} />
-    </>
+
   );
 }

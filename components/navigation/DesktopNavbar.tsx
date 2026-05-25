@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, memo } from 'react';
+import { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/navigation';
 import { useCartStore } from '@/store/cart-store';
@@ -9,12 +9,13 @@ import CategoriesScroller, { type CategoryItem } from './CategoriesScroller';
 import SearchBar from './SearchBar';
 import UserAccountMenu from '@/widgets/layout/UserAccountMenu';
 import TopbarActions from '@/widgets/layout/topbar/TopbarActions';
-import { DashboardIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
+import { DashboardIcon, MenuIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
 import { checkUserPermission } from '@/lib/auth';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { env } from '@/lib/env';
+import SideDrawer from './SideDrawer';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -28,7 +29,7 @@ const APP_NAME = env.APP_NAME;
 
 // ─── Cart Icon with Badge ─────────────────────────────────────────────────────
 
-const CartButton = memo(({ is_Admin, cartItemCount }: { is_Admin: boolean, cartItemCount: number }) => {
+const CartButton = memo(({ is_Admin, cartItemCount, className }: { is_Admin: boolean, cartItemCount: number, className?: string }) => {
   const t = useTranslations('store.nav');
 
   const label = is_Admin
@@ -39,14 +40,14 @@ const CartButton = memo(({ is_Admin, cartItemCount }: { is_Admin: boolean, cartI
     <Link
       href={`/${is_Admin ? "dashboard" : "cart"}`}
       title={label}
-      className="relative flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-accent/50 transition-all duration-300 group"
+      className={cn("relative flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-accent/50 transition-all duration-300 group", className)}
       aria-label={`${label} (${cartItemCount})`}
     >
       <div className="relative">
         {is_Admin ? (
-          <DashboardIcon className="size-5 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
+          <DashboardIcon className="size-4 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
         ) : (
-          <ShoppingCartIcon className="size-5 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
+          <ShoppingCartIcon className="size-4 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
         )}
 
         {cartItemCount > 0 && !is_Admin && (
@@ -68,8 +69,9 @@ CartButton.displayName = 'CartButton';
 
 function DesktopNavbar({ categories }: DesktopNavbarProps) {
   const t = useTranslations('store.nav');
-  const pathname = usePathname();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
   const { user } = useAuth();
   // Admin check is derived from the server-verified user object — no localStorage needed
   const is_Admin = checkUserPermission(user ?? null, 'access_dashboard');
@@ -79,7 +81,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   );
   const locale = useLocale();
   const settings = useSettings();
-
+  const siteName = settings.siteName?.[locale as 'ar' | 'en'] || 'Sky Galaxy';
   // تحسين مراقب التمرير لمنع التكرار
   useEffect(() => {
     const handleScroll = () => {
@@ -96,52 +98,63 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
     { label: t('products'), href: `/products` },
     { label: t('contact'), href: `/contact` },
   ], [t]);
-
-  return (
+// استخدام useCallback لمنع إعادة إنشاء الدوال في كل دورة تصيير
+  const openDrawer = useCallback(() => setDrawerOpen(true), []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  return (<>
     <header
       id="desktop-navbar"
       className={cn(
-        'hidden md:block fixed top-(--promo-banner-height,0px) z-40 inset-x-0 transition-all duration-500 ease-in-out',
+        'block fixed top-(--promo-banner-height,0px) z-40 inset-x-0 transition-all duration-500 ease-in-out',
         scrolled
           ? 'bg-background/70 backdrop-blur-2xl border-b border-border/60 shadow-sm'
           : 'bg-transparent '
       )}
     >
+        {/* desktop navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         {/* Main Row */}
         <div className="flex items-center gap-8 h-14 justify-between">
+       
           {/* Logo */}
           <Link
             href={`/home`}
-            className="flex items-center  shrink-0 group"
+            className="flex  items-center  shrink-0 group"
           >
             <ImageWithFallback
               src={settings.logo || "/assets/images/auth-logo.png"}
-              alt={`${settings.siteName?.[locale as 'ar' | 'en'] || APP_NAME} Logo`}
+              alt={`${siteName || APP_NAME} Logo`}
               width={40}
               height={40}
               className="object-contain mb-3"
             />
-            <span className="text-md font-extrabold tracking-tight title-gradient">
-              {settings.siteName?.[locale as 'ar' | 'en'] || APP_NAME}
+            <span className="hidden sm:flex text-md font-extrabold tracking-tight title-gradient">
+              {siteName || APP_NAME}
             </span>
           </Link>
 
           {/* Search */}
-          <SearchBar className="max-w-xl" />
-
+          <SearchBar useLiveSearch={true} className="hidden md:block w-1/6 " />
           {/* Actions */}
           <div className="flex items-center gap-1 shrink-0">
-
             {/* Language */}
             <TopbarActions />
-
-      
             {/* Cart */}
-            <CartButton is_Admin={is_Admin} cartItemCount={cartItemCount} />
-
+            <CartButton   className="hidden sm:block " is_Admin={is_Admin} cartItemCount={cartItemCount} />
             {/* User */}
-            <UserAccountMenu iconOnly={true} dir="top" className="m-0" locale={locale} />
+            <UserAccountMenu iconOnly={true} dir="top" className="hidden sm:block m-0" locale={locale} />
+          
+           {/* Menu Button */}
+          <button
+            onClick={openDrawer}
+            className={cn(
+              'sm:hidden shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300',
+              'bg-muted/50 hover:bg-accent text-foreground/70 active:scale-90 shadow-sm border border-border/20'
+            )}
+            aria-label="Open menu"
+          >
+            <MenuIcon className='size-5' />
+          </button>
           </div>
         </div>
 
@@ -150,7 +163,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-6 h-10">
               {/* Page Links */}
-              <nav className="flex items-center gap-1 shrink-0">
+              <nav className="hidden sm:flex items-center gap-1 shrink-0">
                 {navLinks.map((link) => {
                   const isActive =
                     link.href === '/home'
@@ -176,13 +189,13 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
 
               {/* Divider */}
               {categories.length > 0 && (
-                <div className="w-px h-6 bg-border/40 shrink-0" />
+                <div className="hidden sm:flex w-px h-6 bg-border/40 shrink-0" />
               )}
 
               {/* Categories */}
               {categories.length > 0 && (
                 <div className="flex-1 min-w-0 ">
-                  <CategoriesScroller categories={categories} variant="desktop" className="py-0" />
+                  <CategoriesScroller categories={categories}  className="py-0" />
                 </div>
               )}
             </div>
@@ -192,7 +205,13 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
       </div>
 
     </header>
-  );
+   {/* Side Drawer */}
+      <SideDrawer 
+        isOpen={drawerOpen}
+        onClose={closeDrawer}
+        categories={categories}
+      />
+ </>);
 }
 
 // تغليف المكون الرئيسي بـ memo

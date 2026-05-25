@@ -45,10 +45,10 @@ const BottomNavItem = memo(function BottomNavItem({
       >
         <button
           className={cn(
-            'relative flex h-[62px] w-[62px]',
+            'relative flex h-15.5 w-15.5',
             'items-center justify-center',
             '-translate-y-6',
-            'rounded-[24px]',
+            'rounded-3xl',
             'bg-linear-to-br from-primary to-primary/80',
             'border border-white/20',
             'shadow-[0_10px_30px_rgba(var(--primary-rgb),0.4)]',
@@ -60,14 +60,14 @@ const BottomNavItem = memo(function BottomNavItem({
         >
           <div
             className={cn(
-              'absolute inset-0 rounded-[24px]',
+              'absolute inset-0 rounded-3xl',
               'bg-primary/40 blur-xl mix-blend-screen'
             )}
           />
 
           <div className="relative z-10 flex flex-col items-center justify-center">
             <Icon
-              className="size-6 text-white drop-shadow-md"
+              className="size-5 text-white drop-shadow-md"
             />
             <span className=" text-[10px] font-bold text-white tracking-wide">
               {label}
@@ -96,13 +96,12 @@ const BottomNavItem = memo(function BottomNavItem({
           'relative z-10 flex flex-col items-center justify-center gap-1',
           'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
           'will-change-transform',
-          isActive ? '-translate-y-1.5' : 'translate-y-0'
         )}
       >
         <div className="relative flex items-center justify-center ">
           <div
             className={cn(
-              'absolute inset-0 rounded-full blur-md',
+              'absolute inset-0  rounded-full blur-md',
               'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
               isActive ? 'scale-150 opacity-100 bg-primary/20' : 'scale-0 opacity-0'
             )}
@@ -111,7 +110,7 @@ const BottomNavItem = memo(function BottomNavItem({
           <Icon
             className={cn(
               'relative z-10 transition-colors duration-300 group-hover:text-primary',
-              'size-[22px]',
+              'size-5',
               isActive ? 'text-primary' : 'text-muted-foreground/70'
             )}
           />
@@ -126,17 +125,7 @@ const BottomNavItem = memo(function BottomNavItem({
               : 'text-muted-foreground/70 opacity-0 scale-75 absolute -bottom-4 pointer-events-none'
           )}
         >
-          {label}
         </span>
-
-        <div
-          className={cn(
-            'absolute bottom-[-12px]',
-            'h-[4px] rounded-full bg-primary',
-            'transition-all duration-500 ease-[cubic-bezier(0.34,1.15,0.64,1)]',
-            isActive ? 'w-[16px] opacity-100' : 'w-0 opacity-0'
-          )}
-        />
       </div>
     </Link>
   );
@@ -158,8 +147,7 @@ export default function MobileBottomNav() {
 
   const navItems = useMemo<NavItem[]>(
     () => [
-      // 💡 ملاحظة: إذا كانت صفحتك الرئيسية مسارها الفعلي هو /home، قم بتغيير href إلى /home لمنع إعادة التحميل
-      { key: 'home', href: '/', icon: HomeIcon },
+      { key: 'home', href: '/home', icon: HomeIcon },
       { key: 'store', href: '/products', icon: StoreIcon },
       { key: 'quote', href: '/request-quote', icon: MessageSquareQuoteIcon, isCTA: true },
       { key: 'dashboard-or-cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? DashboardIcon : ShoppingCartIcon },
@@ -172,7 +160,7 @@ export default function MobileBottomNav() {
     () => ({
       home: t('home'),
       store: t('products'),
-      quote: 'عرض سعر',
+      quote: t('quote'),
       cart: is_Admin ? t('admin') : t('cart'),
       account: is_auth ? t('account') : t('login'),
     }),
@@ -181,10 +169,6 @@ export default function MobileBottomNav() {
 
   // تحديث ذكي لتحديد الصفحة النشطة وتجاوز مشكلة الرئيسية
   const activeIndex = navItems.findIndex((item) => {
-    // إذا كان الرابط هو الرئيسية، نتحقق من / أو /home 
-    if (item.href === '/' || item.href === '/home') {
-      return pathname === '/' || pathname === '/home';
-    }
     return pathname.startsWith(item.href);
   });
 
@@ -192,32 +176,20 @@ export default function MobileBottomNav() {
   const hideBubble = activeIndex === -1 || navItems[activeIndex]?.isCTA;
 
   return (
-    <>
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @keyframes navEntry {
-          0% { transform: translateY(120px) scale(0.95); opacity: 0; }
-          100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .animate-nav-entry {
-          animation: navEntry 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-      `}} />
-
       <div
         className={cn(
-          'fixed inset-x-0 bottom-6 z-100',
-          'flex justify-center px-4 md:hidden',
-          'pointer-events-none'
-        )}
+          'fixed inset-x-0 bottom-0 pb-2 px-3 z-100',
+          'flex justify-center  sm:hidden',
+          'pointer-events-none backdrop-blur-sm bg-background/10'
+        )} 
       >
         <nav
           className={cn(
             'animate-nav-entry pointer-events-auto relative',
-            'flex h-[76px] w-full max-w-[420px]',
+            'flex h-19 w-full ',
             'items-center justify-between px-2',
-            'bg-transparent',
-            'backdrop-blur-sm bg-background/40',
+            // 'bg-transparent',
+            ' bg-background',
             'rounded-full',
             'shadow-2xl shadow-muted-foreground/30',
             'overflow-visible'
@@ -268,6 +240,5 @@ export default function MobileBottomNav() {
           </div>
         </nav>
       </div>
-    </>
   );
 }

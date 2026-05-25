@@ -165,7 +165,7 @@ const ProductCard = ({ item, t }: Props) => {
         {/* footer */}
         <div className="w-full p-6 pt-0 bg-accent/70">
           {/* price and rating */}
-          <div className="border-t border-border/40 pt-4 flex items-end justify-between">
+          <div className="border-t border-border/40 pt-2 flex items-end justify-between">
             <div className="text-md font-black text-primary tracking-tight">
               {formatCurrency(item.priceRange?.min || 0)}
             </div>
