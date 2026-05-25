@@ -17,7 +17,10 @@ import { Tooltip } from "@/shared/ui/Tooltip";
 import { ArrowLeftIcon } from "lucide-react";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
-import { memo, useMemo, useCallback } from "react";
+import { memo, useMemo, useCallback, useState } from "react";
+import { useAddToCart } from "@/features/cart/hooks/useCart";
+import QuickAddModal from "@/components/QuickAddModal";
+
 
 interface Props {
   item: Product;
@@ -30,6 +33,29 @@ const STARS_ARRAY = [1, 2, 3, 4, 5];
 const ProductCard = ({ item, t }: Props) => {
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
+
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const { mutate: addToCart, isPending: adding } = useAddToCart();
+
+  const handleAddToCartClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if the product has variants (using variantCount)
+    if (item.variantCount && item.variantCount > 0) {
+      setIsQuickAddOpen(true);
+    } else {
+      // Add immediately. Since there are no variants, get the first variant ID from the variants array if populated,
+      // or fallback to an empty string (the backend will handle missing variant or use a default one)
+      const variantId = item.variants && item.variants.length > 0 ? item.variants[0]._id : "";
+      addToCart({
+        productId: item._id,
+        variantId,
+        quantity: 1,
+        product: item,
+      });
+    }
+  }, [item, addToCart]);
 
   // 2. تجميع منطق الماركي والمصفوفة في useMemo واحد وتقليل الـ overhead
   const marqueeContent = useMemo(() => {
@@ -205,6 +231,8 @@ const ProductCard = ({ item, t }: Props) => {
                 variant={"default"}
                 size="sm"
                 className="w-full hover:bg-background/80 hover:text-primary font-black hover:border-primary border border-border shadow-sm hover:shadow-lg"
+                onClick={handleAddToCartClick}
+                isLoading={adding}
               >
                 <ShoppingCartIcon className="w-4 h-4" />
                 {t("common.add_to_cart")}
@@ -213,6 +241,16 @@ const ProductCard = ({ item, t }: Props) => {
           </div>
         </div>
       </div>
+
+      {/* Quick Add Modal for variants selection */}
+      {isQuickAddOpen && (
+        <QuickAddModal
+          isOpen={isQuickAddOpen}
+          onClose={() => setIsQuickAddOpen(false)}
+          product={item}
+          t={t}
+        />
+      )}
     </Card>
   );
 };

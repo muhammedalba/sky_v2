@@ -13,7 +13,7 @@ import Badge from "@/shared/ui/Badge";
 // 1. استخراج مصفوفة التحميل خارج المكون لتجنب إعادة إنشائها في كل ريندر
 const SKELETON_ITEMS = [1, 2, 3, 4];
 
-export default function BestSellersSection() {
+export default function FeaturedProductsSection() {
   const t = useTranslations("home");
   const {
     data: productsData,

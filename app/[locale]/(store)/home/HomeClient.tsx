@@ -16,8 +16,8 @@ const CategoriesSection = dynamic(
     loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
   },
 );
-const BestSellersSection = dynamic(
-  () => import("./sections/BestSellersSection"),
+const FeaturedProductsSection = dynamic(
+  () => import("./sections/FeaturedProductsSection"),
   {
     loading: () => <div className="h-96 animate-pulse bg-background" />,
   },
@@ -63,7 +63,7 @@ export default function HomeClient() {
       <CategoriesSection  />
 
       {/* 4. BEST SELLERS (Below the Fold - Dynamic Import) */}
-      <BestSellersSection  />
+      <FeaturedProductsSection  />
 
       {/* 5. PROMO BANNER (Below the Fold - Dynamic Import) */}
       <PromoBannerSection />

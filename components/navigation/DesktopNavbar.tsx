@@ -31,18 +31,14 @@ const APP_NAME = env.APP_NAME;
 
 const CartButton = memo(({ is_Admin, cartItemCount, className }: { is_Admin: boolean, cartItemCount: number, className?: string }) => {
   const t = useTranslations('store.nav');
+  const openCartDrawer = useCartStore((state) => state.openCartDrawer);
 
   const label = is_Admin
     ? (t.has('admin') ? t('admin') : 'Admin Panel')
     : (t.has('cart') ? t('cart') : 'Cart');
 
-  return (
-    <Link
-      href={`/${is_Admin ? "dashboard" : "cart"}`}
-      title={label}
-      className={cn("relative flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-accent/50 transition-all duration-300 group", className)}
-      aria-label={`${label} (${cartItemCount})`}
-    >
+  const content = (
+    <>
       <div className="relative">
         {is_Admin ? (
           <DashboardIcon className="size-4 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
@@ -51,7 +47,7 @@ const CartButton = memo(({ is_Admin, cartItemCount, className }: { is_Admin: boo
         )}
 
         {cartItemCount > 0 && !is_Admin && (
-          <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold text-white bg-primary rounded-full ring-2 ring-background animate-badge-pop shadow-sm">
+          <span className="absolute -top-3  -right-4 min-w-4.5 h-4.5 px-1 flex items-center justify-center text-[10px] font-bold text-white bg-primary rounded-full  animate-badge-pop shadow-sm">
             {cartItemCount > 99 ? '99+' : cartItemCount}
           </span>
         )}
@@ -59,7 +55,28 @@ const CartButton = memo(({ is_Admin, cartItemCount, className }: { is_Admin: boo
       <span className="text-sm font-semibold text-foreground/70 group-hover:text-foreground hidden xl:inline transition-colors duration-300">
         {label}
       </span>
-    </Link>
+    </>
+  );
+
+  const wrapperClass = cn("relative flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-accent/50 transition-all duration-300 group", className);
+
+  if (is_Admin) {
+    return (
+      <Link href="/dashboard" title={label} className={wrapperClass} aria-label={`${label} (${cartItemCount})`}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button 
+      onClick={openCartDrawer} 
+      title={label} 
+      className={wrapperClass} 
+      aria-label={`${label} (${cartItemCount})`}
+    >
+      {content}
+    </button>
   );
 });
 
@@ -77,8 +94,9 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   const is_Admin = checkUserPermission(user ?? null, 'access_dashboard');
 
   const cartItemCount = useCartStore((state) =>
-    state.items.reduce((total, item) => total + item.quantity, 0)
+    state.items.reduce((sum, item) => sum + item.quantity, 0)
   );
+
   const locale = useLocale();
   const settings = useSettings();
   const siteName = settings.siteName?.[locale as 'ar' | 'en'] || 'Sky Galaxy';
@@ -140,7 +158,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             {/* Language */}
             <TopbarActions />
             {/* Cart */}
-            <CartButton   className="hidden sm:block " is_Admin={is_Admin} cartItemCount={cartItemCount} />
+            <CartButton   className="hidden sm:block " is_Admin={is_Admin} cartItemCount={Number(cartItemCount)} />
             {/* User */}
             <UserAccountMenu iconOnly={true} dir="top" className="hidden sm:block m-0" locale={locale} />
           

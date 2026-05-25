@@ -15,6 +15,7 @@ import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { Permissions } from "@/features/roles/types";
 import MaintenanceGuard from "@/components/MaintenanceGuard";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
+import CartDrawer from "@/features/cart/components/CartDrawer";
 
 /**
  * Enterprise SEO Engine
@@ -100,6 +101,7 @@ export default async function RootLayout({
     messages: allMessages.messages,
     maintenance: allMessages.maintenance,
     notifications: allMessages.notifications,
+    cart: allMessages.cart,
   };
 
   // Use fallback settings if API fails
@@ -155,6 +157,7 @@ export default async function RootLayout({
             {/* Performance Monitoring */}
             <PerformanceMonitor debugMode={finalSettings.debugMode ?? false} />
             {children}
+            <CartDrawer />
             {/* JSON-LD Structured Data for SEO Rich Snippets */}
             <script
               type="application/ld+json"
