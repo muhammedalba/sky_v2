@@ -3,13 +3,7 @@
     "name": "Sky Galaxy",
     "tagline": "For Insulation & Construction Trade"
   },
-  "common": {
-    "add_to_cart": "Add to Cart",
-    "add_to_wishlist": "Add to Wishlist",
-    "view_all": "View All",
-    "details": "Details",
-    "quick_view": "Quick View"
-  },
+  
   "actions": {
     "quick_quote": "Quick Quote",
     "shop_now": "Shop Now"

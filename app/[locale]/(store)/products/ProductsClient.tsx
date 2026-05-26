@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import ProductCard from "@/features/products/components/storefront/ProductCard";
+// import ProductCard from "@/features/products/components/storefront/ProductCard";
 import { Input } from "@/shared/ui/Input";
 import { Button } from "@/shared/ui/Button";
 import { Skeleton } from "@/shared/ui/Skeleton";
@@ -35,18 +35,23 @@ import {
   Award,
   Filter,
 } from "lucide-react";
+import ProductCard from "@/components/ProductCard";
 
 export default function ProductsClient() {
   const locale = useLocale();
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
-
+ const commonT = useTranslations("common.buttons");
   const searchParams = useSearchParams();
 
   // ─── Filter States ──────────────────────────────────────
   const [page, setPage] = useState(1);
-  const [localSearch, setLocalSearch] = useState(() => searchParams?.get("search") || "");
-  const [selectedCategory, setSelectedCategory] = useState(() => searchParams?.get("category") || "");
+  const [localSearch, setLocalSearch] = useState(
+    () => searchParams?.get("search") || "",
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    () => searchParams?.get("category") || "",
+  );
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>("");
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
@@ -713,7 +718,9 @@ export default function ProductsClient() {
                             : "hover:bg-muted text-muted-foreground"
                         }`}
                       >
-                        {locale === "ar" ? "كل الأقسام الفرعية" : "All Subcategories"}
+                        {locale === "ar"
+                          ? "كل الأقسام الفرعية"
+                          : "All Subcategories"}
                       </button>
                       {subCategoriesList.map((sub) => {
                         const subName = getTrans(sub.name);
@@ -848,8 +855,8 @@ export default function ProductsClient() {
                     {mainCatalogData.data.map((product: Product) => (
                       <ProductCard
                         key={product._id}
-                        product={product}
-                        locale={locale}
+                        item={product}
+                        commonT={commonT}
                       />
                     ))}
                   </div>
@@ -915,12 +922,8 @@ export default function ProductsClient() {
 
             {/* Grid display */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {bestSellersList.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                  locale={locale}
-                />
+              {bestSellersList.map((item) => (
+                <ProductCard key={item._id} item={item} commonT={commonT} />
               ))}
             </div>
           </div>
@@ -982,11 +985,7 @@ export default function ProductsClient() {
               {/* Col-span-6 (Right side, containing the remaining 2 products in standard luxury grids) */}
               <div className="md:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {featuredList.slice(1, 3).map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    locale={locale}
-                  />
+                   <ProductCard key={product._id} item={product} commonT={commonT} />
                 ))}
               </div>
             </div>
@@ -1122,7 +1121,9 @@ export default function ProductsClient() {
                           : "hover:bg-muted text-muted-foreground"
                       }`}
                     >
-                      {locale === "ar" ? "كل الأقسام الفرعية" : "All Subcategories"}
+                      {locale === "ar"
+                        ? "كل الأقسام الفرعية"
+                        : "All Subcategories"}
                     </button>
                     {subCategoriesList.map((sub) => {
                       const subName = getTrans(sub.name);

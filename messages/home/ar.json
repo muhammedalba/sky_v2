@@ -3,13 +3,7 @@
     "name": "مجرة السماء",
     "tagline": "للعوازل ومواد البناء"
   },
-  "common": {
-    "add_to_cart": "أضف للسلة",
-    "add_to_wishlist": "أضف للمفضلة",
-    "view_all": "عرض الكل",
-    "details": "التفاصيل",
-    "quick_view": "عرض سريع"
-  },
+  
   "actions": {
     "quick_quote": "طلب تسعيرة سريع",
     "shop_now": "تسوق الآن"

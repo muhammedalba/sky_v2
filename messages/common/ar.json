@@ -21,7 +21,14 @@
     "clearAll": "مسح الكل",
     "applyFilters": "تطبيق الفلاتر",
     "markRead": "تحديد كمقروء",
-    "actions": "الإجراءات"
+    "actions": "الإجراءات",
+    "add_to_cart": "أضف للسلة",
+    "add_to_wishlist": "أضف للمفضلة",
+    "view_all": "عرض الكل",
+    "details": "التفاصيل",
+    "quick_view": "عرض سريع",
+    "select": " حدد خيار ",
+    "featured": "مميز"
   },
   "errors": {
     "required": "هذا الحقل مطلوب",

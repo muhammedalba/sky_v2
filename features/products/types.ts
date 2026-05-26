@@ -37,7 +37,7 @@ export interface Product {
     ar: string[];
   };
   stockSummary?: number;
-  variantCount?: number;
+  variantCount: number;
   priceRange?: {
     min: number;
     max: number;

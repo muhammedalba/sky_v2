@@ -15,6 +15,7 @@ const SKELETON_ITEMS = [1, 2, 3, 4];
 
 export default function FeaturedProductsSection() {
   const t = useTranslations("home");
+  const commonT = useTranslations("common.buttons");
   const {
     data: productsData,
     isLoading,
@@ -76,7 +77,7 @@ export default function FeaturedProductsSection() {
                   animation="slide-up" 
                   delay={i * 100}
                 >
-                  <ProductCard item={item} t={t} />
+                  <ProductCard item={item} commonT={commonT} />
                 </ScrollReveal>
               ))}
         </div>

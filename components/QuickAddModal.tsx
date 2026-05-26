@@ -126,8 +126,8 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
   if (!isOpen) return null;
 
   // --- Display Values ---
-  const title = typeof product.title === "string" ? product.title : getTrans(product.title) || "Product";
-  const description = typeof product.description === "string" ? product.description : getTrans(product.description);
+  const title = getTrans(product.title);
+  const description = getTrans(product.description);
   const categoryName = typeof product.category === "object" && product.category && "name" in product.category
     ? getTrans(product.category.name)
     : "";
@@ -200,14 +200,14 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
         </div>
 
         {/* Product details & selection */}
-        <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto">
-          <div className="space-y-6">
+        <div className="w-full md:w-1/2  flex flex-col justify-between overflow-y-auto">
+          <div className="space-y-6  p-6 md:p-8 pb-0">
             
             {/* Header info */}
             <div className="space-y-2">
               <div className="flex flex-wrap gap-2">
                 {brandName && (
-                  <Badge variant="default" className="text-[10px] uppercase font-bold tracking-wider">
+                  <Badge variant="success" className="text-[10px] uppercase font-bold tracking-wider">
                     {brandName}
                   </Badge>
                 )}
@@ -217,7 +217,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
                   </Badge>
                 )}
               </div>
-              <h2 className="text-2xl font-black text-foreground/90 leading-snug line-clamp-2">
+              <h2 className="text-2xl font-black title-gradient leading-snug line-clamp-2">
                 {title}
               </h2>
               {description && (
@@ -229,11 +229,11 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
 
             {/* Price display */}
             <div className="flex items-end gap-3 p-4 rounded-2xl bg-accent/40 border border-border/20 w-fit">
-              <span className="text-3xl font-black text-primary tracking-tight">
+              <span className="text-lg font-black text-primary tracking-tight">
                 {formatCurrency(displayPrice)}
               </span>
               {hasDiscount && (
-                <span className="text-lg font-semibold text-muted-foreground line-through mb-0.5">
+                <span className="text-lg font-semibold text-muted-foreground/70 line-through mb-0.5">
                   {formatCurrency(oldPrice)}
                 </span>
               )}
@@ -295,7 +295,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
           </div>
 
           {/* Action area */}
-          <div className="pt-6 border-t border-border/30 mt-6 space-y-4">
+          <div className="p-6 pt-0 md:p-8 border-t border-border/30  space-y-4 bg-accent/40">
             
             {/* Stock status */}
             <div className={`flex items-center gap-2 text-xs font-bold ${isOutOfStock ? "text-destructive" : "text-success"}`}>
@@ -309,10 +309,10 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
                 : `Only ${currentStock} left`}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 ">
               
               {/* Quantity selector */}
-              <div className="flex items-center border border-border/60 rounded-xl h-11 bg-background p-1 w-28 shrink-0">
+              <div className="flex items-center border border-border/60 rounded-xl h-11 bg-accent/40 p-1 w-28 shrink-0">
                 <button
                   className="w-8 h-full flex items-center justify-center hover:bg-accent rounded-lg transition-colors cursor-pointer disabled:opacity-30"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -339,10 +339,10 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
                 className="flex-1 h-11 rounded-xl text-sm font-bold shadow-md hover:-translate-y-0.5 transition-all gap-2"
               >
                 <ShoppingBag className="w-4 h-4" />
-                {isOutOfStock ? t("common.out_of_stock") || "Out of Stock" : t("common.add_to_cart") || "Add to Cart"}
+                {isOutOfStock ? commonT("buttons.out_of_stock") || "Out of Stock" : commonT("buttons.add_to_cart") || "Add to Cart"}
               </Button>
             </div>
-          </div>
+          </div> 
         </div>
 
       </div>

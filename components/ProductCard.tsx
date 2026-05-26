@@ -21,48 +21,53 @@ import { memo, useMemo, useCallback, useState } from "react";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import QuickAddModal from "@/components/QuickAddModal";
 
-
 interface Props {
   item: Product;
-  t: (key: string) => string;
+  commonT: (key: string) => string;
 }
 
 // 1. إخراج الثوابت خارج المكون لتجنب إعادة إنشائها في الذاكرة
 const STARS_ARRAY = [1, 2, 3, 4, 5];
 
-const ProductCard = ({ item, t }: Props) => {
+const ProductCard = ({ item, commonT }: Props) => {
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
 
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const { mutate: addToCart, isPending: adding } = useAddToCart();
 
-  const handleAddToCartClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleAddToCartClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    // Check if the product has variants (using variantCount)
-    if (item.variantCount && item.variantCount > 0) {
-      setIsQuickAddOpen(true);
-    } else {
-      // Add immediately. Since there are no variants, get the first variant ID from the variants array if populated,
-      // or fallback to an empty string (the backend will handle missing variant or use a default one)
-      const variantId = item.variants && item.variants.length > 0 ? item.variants[0]._id : "";
-      addToCart({
-        productId: item._id,
-        variantId,
-        quantity: 1,
-        product: item,
-      });
-    }
-  }, [item, addToCart]);
+      // Check if the product has variants (using variantCount)
+      if (item.variantCount > 1) {
+        setIsQuickAddOpen(true);
+      } else {
+        // Add immediately. Since there are no variants, get the first variant ID from the variants array if populated,
+        // or fallback to an empty string (the backend will handle missing variant or use a default one)
+        const variantId =
+          item.variants && item.variants.length > 0 ? item.variants[0]._id : "";
+        addToCart({
+          productId: item._id,
+          variantId,
+          quantity: 1,
+          product: item,
+        });
+      }
+    },
+    [item, addToCart],
+  );
 
   // 2. تجميع منطق الماركي والمصفوفة في useMemo واحد وتقليل الـ overhead
   const marqueeContent = useMemo(() => {
     // تجهيز المصفوفة مباشرة
-    const uses = Array.isArray(item.uses) 
-      ? item.uses 
-      : item.uses ? [item.uses] : [];
+    const uses = Array.isArray(item?.uses)
+      ? item?.uses
+      : item?.uses
+        ? [item?.uses]
+        : [];
 
     if (!uses.length) return null;
 
@@ -91,18 +96,25 @@ const ProductCard = ({ item, t }: Props) => {
 
   // 3. تجهيز اسم التصنيف مسبقاً لتنظيف الـ JSX ومنع العمليات المنطقية داخله
   const categoryName = useMemo(() => {
-    if (typeof item.category === "object" && item.category && "name" in item.category) {
+    if (
+      typeof item.category === "object" &&
+      item.category &&
+      "name" in item.category
+    ) {
       return getTrans(item.category.name);
     }
     return "";
   }, [item.category, getTrans]);
 
   // 4. استخدام useCallback لمنع إعادة إنشاء دالة الحدث
-  const handleWishlistClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Logic for wishlist here
-  }, []);
+  const handleWishlistClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Logic for wishlist here
+    },
+    [],
+  );
 
   return (
     <Card className="group flex flex-col bg-accent/40 hover:shadow-xl transition-all duration-500 rounded-4xl overflow-hidden border-border/50 h-full relative hover:scale-[1.01]">
@@ -118,7 +130,7 @@ const ProductCard = ({ item, t }: Props) => {
             aria-label="add to wishlist"
             className="cursor-pointer border border-border/50 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-primary/70 hover:text-primary-foreground transition-colors duration-300"
           >
-            <Tooltip position="inset" content={t("common.add_to_wishlist")}>
+            <Tooltip position="inset" content={commonT("add_to_wishlist")}>
               <HeartIcon className="w-4 h-4" />
             </Tooltip>
           </button>
@@ -128,7 +140,7 @@ const ProductCard = ({ item, t }: Props) => {
             aria-label="quick view"
             className="cursor-pointer border border-border/50 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-primary/70 hover:text-primary-foreground transition-colors duration-300"
           >
-            <Tooltip position="inset" content={t("common.quick_view")}>
+            <Tooltip position="inset" content={commonT("quick_view")}>
               <EyeIcon className="w-5 h-5" />
             </Tooltip>
           </Link>
@@ -139,7 +151,7 @@ const ProductCard = ({ item, t }: Props) => {
             variant={"warning"}
             className="text-[10px] bg-warning text-warning-foreground font-black tracking-wider uppercase px-2.5 py-1 rounded-md shadow-sm"
           >
-            {item.isFeatured ? t("customer_favorite.featured") : " "}
+            {item.isFeatured ? commonT("featured") : " "}
           </Badge>
         </div>
 
@@ -156,7 +168,7 @@ const ProductCard = ({ item, t }: Props) => {
           <PackageIcon className="w-24 h-24 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
         )}
       </div>
-      
+
       {/* product details */}
       <div className=" flex flex-col grow justify-between">
         <div className="w-full px-6 flex-1 bg-background flex-col flex justify-between">
@@ -169,7 +181,7 @@ const ProductCard = ({ item, t }: Props) => {
               {categoryName}
             </Badge>
           </div>
-          
+
           {/* product title */}
           <h3 className="text-lg font-semibold text-foreground/90 my-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
             {truncate(getTrans(item.title), 30)}
@@ -187,7 +199,7 @@ const ProductCard = ({ item, t }: Props) => {
             </div>
           )}
         </div>
-        
+
         {/* footer */}
         <div className="w-full p-6 pt-0 bg-accent/70">
           {/* price and rating */}
@@ -195,7 +207,7 @@ const ProductCard = ({ item, t }: Props) => {
             <div className="text-md font-black text-primary tracking-tight">
               {formatCurrency(item.priceRange?.min || 0)}
             </div>
-            
+
             {/* star rating */}
             <div className="flex flex-col items-end gap-1">
               <div className="flex gap-0.5">
@@ -212,18 +224,20 @@ const ProductCard = ({ item, t }: Props) => {
                 ))}
               </div>
               <span className="text-[10px] text-muted-foreground font-semibold">
-                {item.ratingsQuantity ? `${item.ratingsQuantity} reviews` : "0 reviews"}
+                {item.ratingsQuantity
+                  ? `${item.ratingsQuantity} reviews`
+                  : "0 reviews"}
               </span>
             </div>
           </div>
-          
+
           {/* buy button */}
           <div className="pt-4 flex items-center justify-between gap-2">
             <Link
               href={`/products/${item.slug}`}
               className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-700 hover:text-primary hover:scale-105 group-hover:gap-2.5 transition-all"
             >
-              {t("common.details")}
+              {commonT("details")}
               <ArrowLeftIcon size={16} />
             </Link>
             <span className="block w-full">
@@ -235,7 +249,9 @@ const ProductCard = ({ item, t }: Props) => {
                 isLoading={adding}
               >
                 <ShoppingCartIcon className="w-4 h-4" />
-                {t("common.add_to_cart")}
+                {item?.variantCount > 1
+                  ? commonT("select")
+                  : commonT("add_to_cart")}
               </Button>
             </span>
           </div>
@@ -248,7 +264,7 @@ const ProductCard = ({ item, t }: Props) => {
           isOpen={isQuickAddOpen}
           onClose={() => setIsQuickAddOpen(false)}
           product={item}
-          t={t}
+          t={commonT}
         />
       )}
     </Card>
