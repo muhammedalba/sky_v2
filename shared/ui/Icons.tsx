@@ -632,9 +632,25 @@ export const RotateCcwIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+export const ArrowLeftIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m12 19-7-7 7-7" />
+    <path d="M19 12H5" />
+  </svg>
+);
+
+export const ArrowRightIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
+  </svg>
+);
+
 export const Icons = {
   AlertCircle: AlertCircleIcon,
   RotateCcw: RotateCcwIcon,
+  ArrowLeft: ArrowLeftIcon,
+  ArrowRight: ArrowRightIcon,
   Home: HomeIcon,
   Dashboard: DashboardIcon,
   Products: ProductsIcon,

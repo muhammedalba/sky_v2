@@ -26,17 +26,17 @@ export default async function DashboardLayoutWrapper({
   const token = cookieStore.get("access_token")?.value;
   const user = token ? getServerUserFromToken(token) : null;
   if (!token || !user) {
-    redirect(`/${locale}/login`);
+    redirect(`/login`);
   }
   // Permission-based check
   // Note: JWT payload has user.level which checkUserPermission uses.
   const isAllowed = checkUserPermission(
-    user as unknown as User,
+    user as User,
     Permissions.ACCESS_DASHBOARD,
   );
 
   if (!isAllowed) {
-    redirect(`/${locale}/home`);
+    redirect(`/home`);
   }
 
   // Fetch all messages on the server and filter for the client dashboard sub-tree
@@ -70,6 +70,7 @@ export default async function DashboardLayoutWrapper({
     locations: allMessages.locations,
     suppliers: allMessages.suppliers,
     profile: allMessages.profile,
+    store: allMessages.store,
   };
 
   return (

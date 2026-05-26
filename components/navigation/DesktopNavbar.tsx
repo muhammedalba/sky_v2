@@ -38,8 +38,7 @@ const CartButton = memo(({ is_Admin, cartItemCount, className }: { is_Admin: boo
     : (t.has('cart') ? t('cart') : 'Cart');
 
   const content = (
-    <>
-      <div className="relative">
+      <div className="relative cursor-pointer">
         {is_Admin ? (
           <DashboardIcon className="size-4 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
         ) : (
@@ -52,10 +51,6 @@ const CartButton = memo(({ is_Admin, cartItemCount, className }: { is_Admin: boo
           </span>
         )}
       </div>
-      <span className="text-sm font-semibold text-foreground/70 group-hover:text-foreground hidden xl:inline transition-colors duration-300">
-        {label}
-      </span>
-    </>
   );
 
   const wrapperClass = cn("relative flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-accent/50 transition-all duration-300 group", className);

@@ -61,7 +61,7 @@ export const getServerUserFromToken = (token: string): Partial<User> | null => {
         description: "",
         permissions: payload.permissions || [],
         isSystemDefined: false,
-      } as unknown as Role,
+      } as Role,
     };
   } catch {
     return null;
