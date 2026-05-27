@@ -217,7 +217,7 @@ export default function AuthNavbar() {
           </div>
 
           <div className=" border-t border-border/50 bg-accent/10">
-            <UserAccountMenu locale={locale} />
+            <UserAccountMenu />
           </div>
         </div>
       </div>

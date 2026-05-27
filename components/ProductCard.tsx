@@ -18,6 +18,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { memo, useMemo, useCallback, useState } from "react";
+import { useLocale } from "next-intl";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import QuickAddModal from "@/components/QuickAddModal";
 
@@ -60,14 +61,23 @@ const ProductCard = ({ item, commonT }: Props) => {
     [item, addToCart],
   );
 
+  const locale = useLocale();
+
   // 2. تجميع منطق الماركي والمصفوفة في useMemo واحد وتقليل الـ overhead
   const marqueeContent = useMemo(() => {
-    // تجهيز المصفوفة مباشرة
-    const uses = Array.isArray(item?.uses)
-      ? item?.uses
-      : item?.uses
-        ? [item?.uses]
-        : [];
+    // استخراج مصفوفة الاستخدامات بناءً على اللغة الحالية
+    // item.uses يمكن أن يكون { en: string[], ar: string[] } أو string[] أو undefined
+    let uses: string[] = [];
+    if (item?.uses) {
+      if (Array.isArray(item.uses)) {
+        // حالة قديمة: مصفوفة مباشرة
+        uses = item.uses as string[];
+      } else if (typeof item.uses === 'object' && ('en' in item.uses || 'ar' in item.uses)) {
+        // حالة all_langs=true: كائن { en: string[], ar: string[] }
+        const localizedUses = item.uses as { en?: string[]; ar?: string[] };
+        uses = localizedUses[locale as 'en' | 'ar'] ?? localizedUses.en ?? localizedUses.ar ?? [];
+      }
+    }
 
     if (!uses.length) return null;
 
@@ -92,7 +102,7 @@ const ProductCard = ({ item, commonT }: Props) => {
         ))}
       </div>
     ));
-  }, [item.uses]);
+  }, [item.uses, locale]);
 
   // 3. تجهيز اسم التصنيف مسبقاً لتنظيف الـ JSX ومنع العمليات المنطقية داخله
   const categoryName = useMemo(() => {

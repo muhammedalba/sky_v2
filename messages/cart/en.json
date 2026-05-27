@@ -19,6 +19,29 @@
     "remove": "Remove",
     "quantity": "Quantity",
     "stock_available": "In Stock",
-    "out_of_stock": "Out of Stock"
+    "out_of_stock": "Out of Stock",
+    "always_in_stock": "Always In Stock",
+    "in_stock": "In Stock",
+    "only_left": "Only {stock} left",
+    "product_unavailable": "Product no longer available",
+    "unit_price": "Unit Price",
+    "update_quantity": "Update Quantity"
+  },
+  "misc": {
+    "products": "Products",
+    "price_qty_subtotal": "Price × Qty = Subtotal",
+    "continue_shopping": "Continue Shopping",
+    "clear_cart": "Clear Cart",
+    "loading_cart": "Loading your cart…",
+    "product_type_single": "product type",
+    "product_type_plural": "product types",
+    "item_count_single": "item",
+    "item_count_plural": "items",
+    "tax_included": "Tax included",
+    "secure_pay": "Secure Pay",
+    "fast_ship": "Fast Ship",
+    "number_of_products": "Number of Products",
+    "view_cart": "View Cart",
+    "home": "Home"
   }
 }

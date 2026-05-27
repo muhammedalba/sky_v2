@@ -86,6 +86,8 @@
     "maintenance": "Maintenance Mode",
     "maintenanceDesc": "Temporarily disable the storefront.",
     "maintenanceMsg": "Maintenance Message",
+    "inventoryAlerts": "Cart Alerts",
+    "inventoryAlertsDesc": "Enable low stock alerts when adding items to cart.",
     "registration": "Allow Registration",
     "registrationDesc": "Allow new customer signups.",
     "debug": "Debug Mode",

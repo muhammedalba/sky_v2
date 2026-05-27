@@ -86,6 +86,8 @@
     "maintenance": "وضع الصيانة",
     "maintenanceDesc": "تعطيل الواجهة الأمامية للمتجر مؤقتاً.",
     "maintenanceMsg": "رسالة الصيانة",
+    "inventoryAlerts": "تنبيهات السلة",
+    "inventoryAlertsDesc": "تفعيل تنبيهات نقص المخزون عند إضافة منتجات للسلة.",
     "registration": "السماح بالتسجيل",
     "registrationDesc": "السماح بتسجيل عملاء جدد.",
     "debug": "وضع التصحيح",

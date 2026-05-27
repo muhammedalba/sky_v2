@@ -155,7 +155,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             {/* Cart */}
             <CartButton   className="hidden sm:block " is_Admin={is_Admin} cartItemCount={Number(cartItemCount)} />
             {/* User */}
-            <UserAccountMenu iconOnly={true} dir="top" className="hidden sm:block m-0" locale={locale} />
+            <UserAccountMenu iconOnly={true} dir="top" className="hidden sm:block m-0" />
           
            {/* Menu Button */}
           <button

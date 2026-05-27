@@ -235,7 +235,7 @@ export default function SideDrawer({
         </div>
 
         {/* Footer */}
-        <UserAccountMenu locale={locale} />
+        <UserAccountMenu />
       </div>
     </div>
   );

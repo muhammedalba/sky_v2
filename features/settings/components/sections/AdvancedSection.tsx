@@ -59,6 +59,7 @@ export default function AdvancedSection() {
   const allowRegistration = useWatch({ control, name: "allowRegistration" });
   const autoBackup = useWatch({ control, name: "autoBackup" });
   const debugMode = useWatch({ control, name: "debugMode" });
+  const inventoryAlertsEnabled = useWatch({ control, name: "inventoryAlertsEnabled" });
 
   const toggles = useMemo(
     () => [
@@ -92,8 +93,16 @@ export default function AdvancedSection() {
         value: debugMode,
         permission: Permissions.UPDATE_DEBUG,
       },
+      {
+        id: "inventoryAlertsEnabled",
+        name: t("advanced.inventoryAlerts") || "تنبيهات السلة",
+        desc: t("advanced.inventoryAlertsDesc") || "تفعيل تنبيهات نقص المخزون عند إضافة منتجات للسلة",
+        icon: AlertTriangleIcon,
+        value: inventoryAlertsEnabled,
+        permission: Permissions.UPDATE_SETTINGS,
+      },
     ],
-    [t, maintenanceMode, allowRegistration, autoBackup, debugMode],
+    [t, maintenanceMode, allowRegistration, autoBackup, debugMode, inventoryAlertsEnabled],
   );
 
   const filteredNavigation = useMemo(() => {

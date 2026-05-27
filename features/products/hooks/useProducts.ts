@@ -30,7 +30,8 @@ export function useProducts(params?: UseProductsParams, options?: { enabled?: bo
   return useQuery({
     queryKey: ['products', locale, params],
     queryFn: async () => {
-      const response = await productsApi.getAll(params);
+      const finalParams = { ...params, all_langs: params?.all_langs ?? true };
+      const response = await productsApi.getAll(finalParams);
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
@@ -40,7 +41,7 @@ export function useProducts(params?: UseProductsParams, options?: { enabled?: bo
 export function useProduct(id: string, options?: { all_langs: boolean }): UseQueryResult<ProductWithVariants, Error>;
 export function useProduct(id: string, options?: { all_langs?: false }): UseQueryResult<Product, Error>;
 export function useProduct(id: string, options?: { all_langs?: boolean }): UseQueryResult<any, Error> {
-  const all_langs = options?.all_langs ?? false;
+  const all_langs = options?.all_langs ?? true;
   const locale = useLocale();
   return useQuery({
     queryKey: ['products', id, locale, { all_langs }],

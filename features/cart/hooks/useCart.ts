@@ -1,30 +1,31 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/shared/hooks/useToast';
-import { cartApi } from '@/features/cart/api';
-import { useMe } from '@/features/auth/hooks/useAuth';
-import { useCartStore } from '@/store/cart-store';
-import { Product } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/shared/hooks/useToast";
+import { cartApi } from "@/features/cart/api";
+import { useMe } from "@/features/auth/hooks/useAuth";
+import { useCartStore } from "@/store/cart-store";
+import { Product } from "@/types";
+import { useLocale } from "next-intl";
 
 // ─── Server cart (authenticated users) ──────────────────────────────────────
 
 /**
  * Custom hook to fetch and manage the server-side cart for authenticated users.
- * 
+ *
  * Uses React Query to fetch the cart data from the backend API.
  * The query is only enabled if the user is authenticated.
- * 
+ *
  * @returns The query result object containing cart data, loading state, and error.
  */
 export function useCart() {
   const { data: user } = useMe();
+  const locale = useLocale();
 
   return useQuery({
-    queryKey: ['cart'],
+    queryKey: ["cart", locale],
     queryFn: async () => {
       const response = await cartApi.getCart();
-      console.log(response);
       return response?.data ?? null;
     },
     enabled: !!user,
@@ -36,13 +37,13 @@ export function useCart() {
 
 /**
  * Custom hook providing a mutation to add an item to the cart.
- * 
+ *
  * - For authenticated users: Sends a request to the backend API.
  * - For guest users: Adds the item to the local Zustand store (persisted via localStorage).
- * 
+ *
  * Upon success, it invalidates the cart query (if authenticated), displays a success toast,
  * and opens the cart drawer.
- * 
+ *
  * @returns The mutation result object for the add-to-cart operation.
  */
 export function useAddToCart() {
@@ -62,7 +63,7 @@ export function useAddToCart() {
       // Guest: save to Zustand store (persisted in localStorage) — no backend call
       if (!user) {
         if (!data.product) {
-          throw new Error('Product object is required for guest cart');
+          throw new Error("Product object is required for guest cart");
         }
         addLocalItem(data.product, data.variantId, data.quantity);
         return null;
@@ -78,13 +79,13 @@ export function useAddToCart() {
     },
     onSuccess: async () => {
       if (user) {
-        await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        await queryClient.invalidateQueries({ queryKey: ["cart"] });
       }
-      toast.success('Added to cart');
+      toast.success("Added to cart");
       openCartDrawer();
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to add to cart');
+      toast.error(error.message || "Failed to add to cart");
     },
   });
 }
@@ -93,10 +94,10 @@ export function useAddToCart() {
 
 /**
  * Custom hook providing a mutation to update the quantity of an existing cart item.
- * 
+ *
  * Sends an update request to the backend API. Upon success, it invalidates the
  * cart query to trigger a background refetch, ensuring the UI remains synchronized.
- * 
+ *
  * @returns The mutation result object for updating the cart item's quantity.
  */
 export function useUpdateCartQuantity() {
@@ -104,15 +105,19 @@ export function useUpdateCartQuantity() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: async (data: { productId: string; variantId: string; quantity: number }) => {
+    mutationFn: async (data: {
+      productId: string;
+      variantId: string;
+      quantity: number;
+    }) => {
       const response = await cartApi.updateQuantity(data);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update quantity');
+      toast.error(error.message || "Failed to update quantity");
     },
   });
 }
@@ -121,10 +126,10 @@ export function useUpdateCartQuantity() {
 
 /**
  * Custom hook providing a mutation to remove an item from the cart.
- * 
+ *
  * Sends a delete request to the backend API using the product ID. Upon success,
  * it invalidates the cart query to refresh the cart state and displays a success toast.
- * 
+ *
  * @returns The mutation result object for the remove operation.
  */
 export function useRemoveFromCart() {
@@ -137,11 +142,11 @@ export function useRemoveFromCart() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      toast.success('Removed from cart');
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Removed from cart");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to remove from cart');
+      toast.error(error.message || "Failed to remove from cart");
     },
   });
 }
@@ -150,10 +155,10 @@ export function useRemoveFromCart() {
 
 /**
  * Custom hook providing a mutation to completely clear the user's cart.
- * 
+ *
  * Sends a delete request to the backend API to remove all items. Upon success,
  * it invalidates the cart query and displays a success toast.
- * 
+ *
  * @returns The mutation result object for the clear operation.
  */
 export function useClearCart() {
@@ -166,11 +171,11 @@ export function useClearCart() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      toast.success('Cart cleared');
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Cart cleared");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to clear cart');
+      toast.error(error.message || "Failed to clear cart");
     },
   });
 }
@@ -178,11 +183,11 @@ export function useClearCart() {
 // ─── Sync Guest Cart to Backend ────────────────────────────────────────────────
 /**
  * Utility function to synchronize the guest's local cart with the backend.
- * 
+ *
  * Retrieves all items currently stored in the local Zustand store and sends them
  * to the backend in a single bulk request. If the synchronization is successful,
  * the local cart is cleared to prevent duplicate items.
- * 
+ *
  * @async
  * @returns A promise that resolves when the synchronization is complete.
  */
@@ -193,15 +198,15 @@ export const syncGuestCart = async () => {
   try {
     // Send all items to backend in a single request
     await cartApi.syncCart(
-      localItems.map(item => ({
+      localItems.map((item) => ({
         productId: item.productId,
         variantId: item.variantId,
         quantity: item.quantity,
-      }))
+      })),
     );
     // Clear local cart after successful sync
     useCartStore.getState().clearCart();
   } catch (error) {
-    console.error('Failed to sync guest cart', error);
+    console.error("Failed to sync guest cart", error);
   }
 };

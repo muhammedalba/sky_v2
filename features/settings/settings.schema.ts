@@ -94,6 +94,7 @@ export const settingsSchema = z.object({
   googleMapsApiKey: z.string().default(''),
   minOrderAmount: z.coerce.number().min(0).default(0),
   debugMode: z.boolean().default(false),
+  inventoryAlertsEnabled: z.boolean().default(true),
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;

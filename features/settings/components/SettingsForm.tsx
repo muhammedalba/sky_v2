@@ -77,6 +77,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   googleMapsApiKey: '',
   minOrderAmount: 0,
   debugMode: false,
+  inventoryAlertsEnabled: true,
   logo: undefined,
   favicon: undefined,
 };
@@ -112,6 +113,7 @@ export default function SettingsForm() {
 
   // Axis 5: تثبيت مرجع onSubmit
   const onSubmit: SubmitHandler<SettingsInput> = useCallback(async (data) => {
+
     try {
       const formData = new FormData();
 
@@ -128,7 +130,8 @@ export default function SettingsForm() {
       const primitiveFields: (keyof SettingsInput)[] = [
         'currencyCode', 'currencySymbol', 'googleAnalyticsId', 'freeShippingThreshold',
         'vatRate', 'taxesIncluded', 'maintenanceMode', 'allowRegistration',
-        'autoBackup', 'googleMapsApiKey', 'minOrderAmount', 'debugMode', 'exchangeRate'
+        'autoBackup', 'googleMapsApiKey', 'minOrderAmount', 'debugMode', 'exchangeRate',
+        'inventoryAlertsEnabled'
       ];
       primitiveFields.forEach(field => {
         const value = data[field];

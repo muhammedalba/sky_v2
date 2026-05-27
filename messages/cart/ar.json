@@ -19,6 +19,29 @@
     "remove": "حذف",
     "quantity": "الكمية",
     "stock_available": "متوفر في المخزون",
-    "out_of_stock": "غير متوفر"
+    "out_of_stock": "نفد المخزون",
+    "always_in_stock": "متوفر دائمًا",
+    "in_stock": "متوفر",
+    "only_left": "باقي {stock} فقط",
+    "product_unavailable": "المنتج غير متاح حاليًا",
+    "unit_price": "سعر الوحدة",
+    "update_quantity": "تحديث الكمية"
+  },
+  "misc": {
+    "products": "المنتجات",
+    "price_qty_subtotal": "السعر × الكمية = الإجمالي",
+    "continue_shopping": "مواصلة التسوق",
+    "clear_cart": "تفريغ السلة",
+    "loading_cart": "جارٍ تحميل السلة…",
+    "product_type_single": "نوع منتج",
+    "product_type_plural": "أنواع منتجات",
+    "item_count_single": "منتج",
+    "item_count_plural": "منتجات",
+    "tax_included": "شامل الضريبة",
+    "secure_pay": "دفع آمن",
+    "fast_ship": "شحن سريع",
+    "number_of_products": "عدد المنتجات",
+    "view_cart": "عرض السلة",
+    "home": "الرئيسية"
   }
 }
