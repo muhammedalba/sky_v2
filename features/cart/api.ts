@@ -7,7 +7,11 @@ export const cartApi = {
   getCart: () => apiClient.get(ENDPOINTS.BASE),
   addItem: (data: { productId: string; variantId: string; quantity: number }) => 
     apiClient.post(ENDPOINTS.ADD, data),
+  updateQuantity: (data: { productId: string; variantId: string; quantity: number }) => 
+    apiClient.patch(`${ENDPOINTS.BASE}/update-quantity`, data),
   removeItem: (productId: string) => 
     apiClient.delete(`${ENDPOINTS.REMOVE}/${productId}`),
   clearCart: () => apiClient.delete(ENDPOINTS.CLEAR),
+  syncCart: (items: any[]) => 
+    apiClient.post(`${ENDPOINTS.BASE}/sync`, { items }),
 };

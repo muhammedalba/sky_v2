@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart-store";
-import { useCart, useRemoveFromCart } from "@/features/cart/hooks/useCart";
+import { useCart, useRemoveFromCart, useUpdateCartQuantity } from "@/features/cart/hooks/useCart";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -48,6 +48,33 @@ const getAttributeLabel = (key: string, isAr: boolean) => {
   return isAr ? key : key.charAt(0).toUpperCase() + key.slice(1);
 };
 
+const resolveItemData = (item: any) => {
+  const populatedVariant =
+    item.variant && typeof item.variant === "object" ? item.variant : null;
+
+  const guestVariant = item.product?.variants?.find(
+    (v: any) => v._id === item.variantId,
+  );
+
+  const price =
+    item.price ??
+    populatedVariant?.price ??
+    populatedVariant?.priceAfterDiscount ??
+    guestVariant?.priceAfterDiscount ??
+    guestVariant?.price ??
+    item.product?.priceRange?.min ??
+    0;
+
+  const stock = populatedVariant?.stock ?? guestVariant?.stock ?? null;
+  const sku = populatedVariant?.sku ?? guestVariant?.sku ?? null;
+  const attributes = populatedVariant?.attributes ?? guestVariant?.attributes ?? null;
+  const image = populatedVariant?.image ?? item.product?.imageCover ?? "";
+  const isUnlimitedStock = item.product?.isUnlimitedStock ?? false;
+  const isActive = item.product?.isActive ?? true;
+
+  return { price, stock, sku, attributes, image, isUnlimitedStock, isActive };
+};
+
 export default function CartDrawer() {
   const { isCartDrawerOpen, closeCartDrawer } = useCartStore();
   const locale = useLocale();
@@ -63,24 +90,14 @@ export default function CartDrawer() {
   const updateGuestQuantity = useCartStore((state) => state.updateQuantity);
   const removeGuestItem = useCartStore((state) => state.removeItem);
   const { mutate: removeServerItem } = useRemoveFromCart();
+  const { mutate: updateServerQuantity } = useUpdateCartQuantity();
 
   // Use server cart if logged in, otherwise guest cart
   const cartItems = user ? serverCart?.items || [] : guestCartItems;
 
   // Subtotal calculation
   const subtotal = cartItems.reduce((acc: number, item: any) => {
-    // If it's the server cart, price comes directly. If guest, price comes from product/variant
-    const price =
-      item.price ||
-      item.product?.variants?.find(
-        (v: { _id: string }) => v._id === item.variantId,
-      )?.priceAfterDiscount ||
-      item.product?.variants?.find(
-        (v: { _id: string }) => v._id === item.variantId,
-      )?.price ||
-      item.product?.priceRange?.min ||
-      0;
-
+    const { price } = resolveItemData(item);
     return acc + price * item.quantity;
   }, 0);
 
@@ -103,8 +120,7 @@ export default function CartDrawer() {
     if (!user) {
       updateGuestQuantity(productId, variantId, newQty);
     } else {
-      // Backend quantity update API goes here if it exists.
-      // If it doesn't exist, we might need to add it or ignore for now.
+      updateServerQuantity({ productId, variantId, quantity: newQty });
     }
   };
 
@@ -201,16 +217,8 @@ export default function CartDrawer() {
                   typeof product.title === "string"
                     ? product.title
                     : getTrans(product.title);
-                const image = item.variant?.image || product.imageCover || "";
-
-                const price =
-                  item.price ||
-                  product.variants?.find((v: any) => v._id === item.variantId)
-                    ?.priceAfterDiscount ||
-                  product.variants?.find((v: any) => v._id === item.variantId)
-                    ?.price ||
-                  product.priceRange?.min ||
-                  0;
+                
+                const { price, attributes, image } = resolveItemData(item);
 
                 return (
                   <div
@@ -235,23 +243,16 @@ export default function CartDrawer() {
                           <button
                             type="button"
                             onClick={() =>
-                              handleRemove(item.productId, item.variantId)
+                              handleRemove(item.productId || product._id, item.variantId || item.variant?._id)
                             }
                             className="p-1.5 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                           >
                             <TrashIcon className="w-4 h-4 " />
                           </button>
                         </div>
-                        {item.variantId &&
-                          product.variants?.find(
-                            (v: any) => v._id === item.variantId,
-                          )?.attributes && (
+                        {attributes && (
                             <div className="flex flex-wrap gap-1.5 mt-1.5">
-                              {Object.entries(
-                                product.variants.find(
-                                  (v: any) => v._id === item.variantId,
-                                ).attributes,
-                              ).map(([key, val]: any) => {
+                              {Object.entries(attributes).map(([key, val]: any) => {
                                 const displayKey = getAttributeLabel(key, isAr);
                                 return (
                                   <span
@@ -276,47 +277,40 @@ export default function CartDrawer() {
                           {formatCurrency(price)}
                         </span>
 
-                        {!user && ( // Only show quantity controls for guest cart currently, until backend supports qty updates
-                          <div className="flex items-center gap-3 bg-accent/40 rounded-lg p-1 border border-border/50">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleUpdateQuantity(
-                                  item.productId,
-                                  item.variantId,
-                                  item.quantity,
-                                  -1,
-                                )
-                              }
-                              disabled={item.quantity <= 1}
-                              className="w-6 h-6 cursor-pointer flex items-center justify-center hover:bg-background rounded shadow-sm disabled:opacity-30 transition-all"
-                            >
-                              <MinusIcon className="w-3 h-3 " />
-                            </button>
-                            <span className="text-xs font-bold w-4 text-center">
-                              {item.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleUpdateQuantity(
-                                  item.productId,
-                                  item.variantId,
-                                  item.quantity,
-                                  1,
-                                )
-                              }
-                              className="w-6 h-6 cursor-pointer flex items-center justify-center hover:bg-background rounded shadow-sm transition-all"
-                            >
-                              <PlusIcon className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )}
-                        {user && (
-                          <span className="text-xs font-bold text-muted-foreground px-2">
-                            Qty: {item.quantity}
+                        <div className="flex items-center gap-3 bg-accent/40 rounded-lg p-1 border border-border/50">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.productId || product._id,
+                                item.variantId || item.variant?._id,
+                                item.quantity,
+                                -1,
+                              )
+                            }
+                            disabled={item.quantity <= 1}
+                            className="w-6 h-6 cursor-pointer flex items-center justify-center hover:bg-background rounded shadow-sm disabled:opacity-30 transition-all"
+                          >
+                            <MinusIcon className="w-3 h-3 " />
+                          </button>
+                          <span className="text-xs font-bold w-4 text-center">
+                            {item.quantity}
                           </span>
-                        )}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.productId || product._id,
+                                item.variantId || item.variant?._id,
+                                item.quantity,
+                                1,
+                              )
+                            }
+                            className="w-6 h-6 cursor-pointer flex items-center justify-center hover:bg-background rounded shadow-sm transition-all"
+                          >
+                            <PlusIcon className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
