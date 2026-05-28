@@ -190,6 +190,24 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       console.error(error);
     }
   };
+  const onInvalidSubmit = () => {
+    toast.error(
+      locale === 'ar'
+        ? 'يرجى تصحيح الأخطاء في الحقول المطلوبة وملء البيانات بشكل صحيح.'
+        : 'Please correct the errors in the required fields and fill in all data correctly.'
+    );
+
+    setTimeout(() => {
+      const firstErrorEl = document.querySelector('.border-destructive, [aria-invalid="true"]');
+      if (firstErrorEl) {
+        firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (firstErrorEl instanceof HTMLElement) {
+          firstErrorEl.focus();
+        }
+      }
+    }, 100);
+  };
+
   // ─────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────
@@ -208,7 +226,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       <div className="mt-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <form
           id="create-product-form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit, onInvalidSubmit)}
           className="grid grid-cols-1 lg:grid-cols-3 gap-8"
         >
           {/* ═══ LEFT COLUMN ═══ */}

@@ -283,5 +283,14 @@
       "orderUpdate": "Order Update",
       "newNotification": "New Notification"
     }
+  },
+   "stocks": {
+    "stock_available": "Stock available",
+    "out_of_stock": "Out of stock",
+    "always_in_stock": "Always in stock",
+    "in_stock": "In stock",
+    "only_left": "Only {stock} left",
+    "product_unavailable": "Product unavailable"
+
   }
 }

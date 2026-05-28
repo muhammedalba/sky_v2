@@ -8,13 +8,13 @@ export function StockBadge({
   stock: number | null;
   isUnlimitedStock: boolean;
 }) {
-  const t = useTranslations("cart");
+  const t = useTranslations("common.stocks");
   // Unlimited stock → always available regardless of the numeric stock value
   if (isUnlimitedStock || stock === null) {
     return (
-      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success bg-success/10 px-2.5 py-1 rounded-full">
+      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success/80 bg-success/5 px-2.5 py-1 rounded-full">
         <CheckCircle2 className="w-3.5 h-3.5" />
-        {t("item.in_stock")}
+        {t("in_stock")}
       </span>
     );
   }
@@ -23,7 +23,7 @@ export function StockBadge({
     return (
       <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-destructive bg-destructive/10 px-2.5 py-1 rounded-full">
         <AlertCircle className="w-3.5 h-3.5" />
-        {t("item.out_of_stock")}
+        {t("out_of_stock")}
       </span>
     );
   }
@@ -31,14 +31,14 @@ export function StockBadge({
     return (
       <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-500 bg-orange-500/10 px-2.5 py-1 rounded-full">
         <AlertCircle className="w-3.5 h-3.5" />
-        {t("item.only_left", { stock })}
+        {t("only_left", { stock })}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success bg-success/10 px-2.5 py-1 rounded-full">
+    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success/80 bg-success/5 px-2.5 py-1 rounded-full">
       <CheckCircle2 className="w-3.5 h-3.5" />
-      {t("item.in_stock")}
+      {t("in_stock")}
     </span>
   );
 }

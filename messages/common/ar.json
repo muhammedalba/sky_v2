@@ -283,5 +283,15 @@
       "orderUpdate": "تحديث حالة الطلب",
       "newNotification": "إشعار جديد"
     }
+  },
+  "stocks": {
+    "stock_available": "متوفر في المخزون",
+    "out_of_stock": "نفد المخزون",
+    "always_in_stock": "متوفر دائمًا",
+    "in_stock": "متوفر",
+    "only_left": "باقي {stock} فقط",
+    "product_unavailable": "المنتج غير متاح حاليًا"
+
   }
+
 }

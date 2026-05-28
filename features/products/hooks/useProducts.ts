@@ -111,12 +111,10 @@ export function useUpdateProduct() {
           query.queryKey[0] === "products" && query.queryKey.length === 3,
       });
 
-      // 2. 🔴 الحل السحري: مسح كاش أي منتج مفرد (الكاش المكون من 3 عناصر أو أكثر)
-      // هذا سيمسح الـ Slug القديم، والـ Slug الجديد، وأي شيء يخص صفحة التعديل بصمت!
-      await queryClient.invalidateQueries({
+      // 2. 🔴 الحل السحري: إزالة كاش أي منتج مفرد تماماً من الذاكرة لمنع استخدام البيانات القديمة عند إعادة فتح صفحة التعديل
+      queryClient.removeQueries({
         predicate: (query) =>
           query.queryKey[0] === "products" && query.queryKey.length >= 4,
-        refetchType: "none", // صمت تام: امسح البيانات ولكن لا ترسل أي طلب GET الآن
       });
 
       // 3. Trigger Next.js ISR revalidation for page tags (product and products)

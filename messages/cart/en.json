@@ -18,11 +18,6 @@
   "item": {
     "remove": "Remove",
     "quantity": "Quantity",
-    "stock_available": "In Stock",
-    "out_of_stock": "Out of Stock",
-    "always_in_stock": "Always In Stock",
-    "in_stock": "In Stock",
-    "only_left": "Only {stock} left",
     "product_unavailable": "Product no longer available",
     "unit_price": "Unit Price",
     "update_quantity": "Update Quantity"

@@ -243,18 +243,23 @@ export default function EditProductForm({ locale, initialData, initialVariants =
           return !allowed.has(strVal);
         });
 
-        if ((nameRemoved || valueRemoved) && v._id) {
+        // Rule 3: variant is missing a required attribute name that has been added
+        const missingRequiredAttr = Array.from(newAttrNames).some((name) => !(name in (v.attributes || {})));
+
+        if ((nameRemoved || valueRemoved || missingRequiredAttr) && v._id) {
           invalidatedIds.push(v._id);
         } else {
           stillValidExisting.push(v);
         }
       });
 
-      // Auto-mark invalidated variants for deletion (deduplicated)
+      // Auto-mark invalidated variants for deletion (deduplicated and reversible)
+      setDeletedVariantIds((prev) => {
+        const noLongerInvalidated = autoDeletedVariantIds.filter((id) => !invalidatedIds.includes(id));
+        const filtered = prev.filter((id) => !noLongerInvalidated.includes(id));
+        return [...new Set([...filtered, ...invalidatedIds])];
+      });
       setAutoDeletedVariantIds(invalidatedIds);
-      if (invalidatedIds.length > 0) {
-        setDeletedVariantIds((prev) => [...new Set([...prev, ...invalidatedIds])]);
-      }
 
       // Generate new combos only against STILL-VALID existing variants
       const combos = cartesian(newAttrs);
@@ -275,7 +280,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
         }),
       );
     },
-    [existingVariants],
+    [existingVariants, autoDeletedVariantIds],
   );
 
   const markForDelete = (id: string) => setDeletedVariantIds((prev) => [...prev, id]);
@@ -293,6 +298,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   useEffect(() => {
     const changed = existingVariants.filter((v) => {
       if (!v._id) return false;
+      if (deletedVariantIds.includes(v._id)) return false; // Skip deleted variants from update
       const orig = originalVariants.find((o) => o._id === v._id);
       if (!orig) return false;
       return (
@@ -417,6 +423,24 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     }
   };
 
+  const onInvalidSubmit = () => {
+    toast.error(
+      locale === 'ar'
+        ? 'يرجى تصحيح الأخطاء في الحقول المطلوبة وملء البيانات بشكل صحيح.'
+        : 'Please correct the errors in the required fields and fill in all data correctly.'
+    );
+
+    setTimeout(() => {
+      const firstErrorEl = document.querySelector('.border-destructive, [aria-invalid="true"]');
+      if (firstErrorEl) {
+        firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (firstErrorEl instanceof HTMLElement) {
+          firstErrorEl.focus();
+        }
+      }
+    }, 100);
+  };
+
   // ─────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────
@@ -435,7 +459,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       <div className="mt-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <form
           id="edit-product-form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit, onInvalidSubmit)}
           className="grid grid-cols-1 lg:grid-cols-3 gap-8"
         >
           {/* ═══ LEFT COLUMN ═══ */}
