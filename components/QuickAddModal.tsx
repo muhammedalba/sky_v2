@@ -38,7 +38,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
   // Memoize variants to ensure stable references
   const variants = useMemo(() => product?.variants || [], [product]);
   const hasVariants = variants.length > 0;
-
+   console.log(product?.variants)
   // --- States ---
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -50,7 +50,8 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
       const firstAvailable = variants.find((v) => v.isActive && v.stock > 0) || variants[0];
       if (firstAvailable?.attributes) {
         Object.keys(firstAvailable.attributes).forEach((key) => {
-          initialSelections[key] = String(firstAvailable.attributes[key].value);
+          const attrData = firstAvailable.attributes[key];
+          initialSelections[key] = typeof attrData === 'object' && attrData !== null ? String(attrData.value) : String(attrData);
         });
       }
     }
@@ -65,7 +66,9 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
       if (!v.attributes) return false;
       return Object.entries(selectedAttributes).every(([attrName, selectedValue]) => {
         const variantAttr = v.attributes?.[attrName];
-        return String(variantAttr?.value) === String(selectedValue);
+        if (variantAttr === undefined || variantAttr === null) return false;
+        const val = typeof variantAttr === 'object' ? String(variantAttr.value) : String(variantAttr);
+        return val === String(selectedValue);
       });
     }) || null;
   }, [hasVariants, variants, selectedAttributes]);
@@ -246,8 +249,10 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
                   const optionsMap = new Map();
                   variants.forEach((v) => {
                     const attrData = v.attributes?.[attr.name];
-                    if (attrData && attrData.value) {
-                      optionsMap.set(String(attrData.value), attrData.unit || "");
+                    if (attrData !== undefined && attrData !== null) {
+                      const val = typeof attrData === 'object' ? String(attrData.value) : String(attrData);
+                      const unit = typeof attrData === 'object' ? attrData.unit : "";
+                      optionsMap.set(val, unit || "");
                     }
                   });
 
@@ -264,11 +269,13 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
                           const unit = optionsMap.get(val);
 
                           const isAvailable = variants.some(
-                            (v) =>
-                              String(v.attributes[attr.name]?.value) === val &&
-                              (v.stock > 0 || product.isUnlimitedStock)
+                            (v) => {
+                              const attrData = v.attributes?.[attr.name];
+                              if (attrData === undefined || attrData === null) return false;
+                              const attrVal = typeof attrData === 'object' ? String(attrData.value) : String(attrData);
+                              return attrVal === val && (v.stock > 0 || product.isUnlimitedStock);
+                            }
                           );
-
                           return (
                             <button
                               key={val}

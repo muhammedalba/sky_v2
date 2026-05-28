@@ -1,8 +1,13 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { useLocale } from 'next-intl';
-import { Product, ProductWithVariants } from '@/types';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
+import { useLocale } from "next-intl";
+import { Product, ProductWithVariants } from "@/types";
 
 export interface UseProductsParams {
   page?: number;
@@ -25,28 +30,39 @@ export interface UseProductsParams {
   [key: string]: any;
 }
 
-export function useProducts(params?: UseProductsParams, options?: { enabled?: boolean }) {
+export function useProducts(
+  params?: UseProductsParams,
+  options?: { enabled?: boolean },
+) {
   const locale = useLocale();
   return useQuery({
-    queryKey: ['products', locale, params],
+    queryKey: ["products", locale, params],
     queryFn: async () => {
-      const finalParams = { ...params, all_langs: params?.all_langs ?? true };
-      const response = await productsApi.getAll(finalParams);
+      const response = await productsApi.getAll(params);
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
   });
 }
 
-export function useProduct(id: string, options?: { all_langs: boolean }): UseQueryResult<ProductWithVariants, Error>;
-export function useProduct(id: string, options?: { all_langs?: false }): UseQueryResult<Product, Error>;
-export function useProduct(id: string, options?: { all_langs?: boolean }): UseQueryResult<any, Error> {
-  const all_langs = options?.all_langs ?? true;
+export function useProduct(
+  id: string,
+  options?: { all_langs: boolean },
+): UseQueryResult<ProductWithVariants, Error>;
+export function useProduct(
+  id: string,
+  options?: { all_langs?: false },
+): UseQueryResult<Product, Error>;
+export function useProduct(
+  id: string,
+  options?: { all_langs?: boolean },
+): UseQueryResult<any, Error> {
+  const all_langs = options?.all_langs ?? false;
   const locale = useLocale();
   return useQuery({
-    queryKey: ['products', id, locale, { all_langs }],
+    queryKey: ["products", id, locale, { all_langs }],
     queryFn: async () => {
-      const params = all_langs ? { all_langs: 'true' } : undefined;
+      const params = all_langs ? { all_langs: "true" } : undefined;
       const response = await productsApi.getOne(id, params);
       return response.data;
     },
@@ -55,11 +71,10 @@ export function useProduct(id: string, options?: { all_langs?: boolean }): UseQu
   });
 }
 
-import { productsApi } from '@/features/products/api';
+import { productsApi } from "@/features/products/api";
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
-
 
   return useMutation({
     mutationFn: async (data: Partial<Product> | FormData) => {
@@ -67,11 +82,11 @@ export function useCreateProduct() {
       return response;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (error: Error) => {
       console.log("Backend Error:", error);
-    }
+    },
   });
 }
 
@@ -79,45 +94,52 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<Product> | FormData }): Promise<ProductWithVariants> => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<Product> | FormData;
+    }): Promise<ProductWithVariants> => {
       const response = await productsApi.update(id, data);
       return response.data as unknown as ProductWithVariants;
     },
     onSuccess: async (updatedProduct: ProductWithVariants) => {
       // 1. تحديث قائمة المنتجات (الكاش المكون من عنصرين)
       await queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length === 3,
+        predicate: (query) =>
+          query.queryKey[0] === "products" && query.queryKey.length === 3,
       });
 
       // 2. 🔴 الحل السحري: مسح كاش أي منتج مفرد (الكاش المكون من 3 عناصر أو أكثر)
       // هذا سيمسح الـ Slug القديم، والـ Slug الجديد، وأي شيء يخص صفحة التعديل بصمت!
       await queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'products' && query.queryKey.length >= 4,
-        refetchType: 'none', // صمت تام: امسح البيانات ولكن لا ترسل أي طلب GET الآن
+        predicate: (query) =>
+          query.queryKey[0] === "products" && query.queryKey.length >= 4,
+        refetchType: "none", // صمت تام: امسح البيانات ولكن لا ترسل أي طلب GET الآن
       });
 
       // 3. Trigger Next.js ISR revalidation for page tags (product and products)
       try {
         const slug = (updatedProduct as unknown as any)?.slug;
         if (slug) {
-          await fetch('/api/revalidate-product', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          await fetch("/api/revalidate-product", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ slug }),
           });
         }
       } catch (err) {
-        console.error('[useUpdateProduct] failed to revalidate next tags', err);
+        console.error("[useUpdateProduct] failed to revalidate next tags", err);
       }
     },
     onError: (error: Error) => {
       console.error("Backend Error:", error);
-    }
+    },
   });
 }
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
-
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -125,15 +147,13 @@ export function useDeleteProduct() {
       return response;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-
   });
 }
 
 export function useRestoreProduct() {
   const queryClient = useQueryClient();
-
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -141,15 +161,13 @@ export function useRestoreProduct() {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-
   });
 }
 
 export function useHardDeleteProduct() {
   const queryClient = useQueryClient();
-
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -157,8 +175,7 @@ export function useHardDeleteProduct() {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-
   });
 }

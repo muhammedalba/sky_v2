@@ -56,3 +56,37 @@ export const ATTRIBUTE_NAME_OPTIONS = Object.keys(ATTRIBUTE_CONFIG) as (keyof ty
 export type AllowedAttributeName = keyof typeof ATTRIBUTE_CONFIG;
 export type WeightUnit = (typeof WEIGHT_UNITS)[number]['value'];
 export type VolumeUnit = (typeof VOLUME_UNITS)[number]['value'];
+
+export const attributeTranslations: Record<string, { ar: string; en: string }> = {
+  weight: { ar: "الوزن", en: "Weight" },
+  الوزن: { ar: "الوزن", en: "Weight" },
+  
+  volume: { ar: "الحجم", en: "Volume" },
+  الحجم: { ar: "الحجم", en: "Volume" },
+  السعة: { ar: "الحجم", en: "Volume" },
+
+  thickness: { ar: "السمك", en: "Thickness" },
+  السمك: { ar: "السمك", en: "Thickness" },
+
+  length: { ar: "الطول", en: "Length" },
+  الطول: { ar: "الطول", en: "Length" },
+
+  color: { ar: "اللون", en: "Color" },
+  اللون: { ar: "اللون", en: "Color" },
+
+  packaging_type: { ar: "نوع التغليف", en: "Packaging Type" },
+  "نوع التغليف": { ar: "نوع التغليف", en: "Packaging Type" },
+
+  dimensions: { ar: "الأبعاد", en: "Dimensions" },
+  الأبعاد: { ar: "الأبعاد", en: "Dimensions" },
+
+  components_kit: { ar: "مكونات الطقم", en: "Components Kit" },
+  "مكونات الطقم": { ar: "مكونات الطقم", en: "Components Kit" },
+};
+
+export const getAttributeLabel = (key: string, isAr: boolean) => {
+  const normKey = key.trim().toLowerCase();
+  const entry = attributeTranslations[normKey];
+  if (entry) return isAr ? entry.ar : entry.en;
+  return isAr ? key : key.charAt(0).toUpperCase() + key.slice(1);
+};

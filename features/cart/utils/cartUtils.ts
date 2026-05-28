@@ -1,69 +1,28 @@
-export const attributeTranslations: Record<string, { ar: string; en: string }> = {
-  color: { ar: "اللون", en: "Color" },
-  اللون: { ar: "اللون", en: "Color" },
-  size: { ar: "المقاس", en: "Size" },
-  المقاس: { ar: "المقاس", en: "Size" },
-  الحجم: { ar: "المقاس", en: "Size" },
-  weight: { ar: "الوزن", en: "Weight" },
-  الوزن: { ar: "الوزن", en: "Weight" },
-  material: { ar: "المادة", en: "Material" },
-  المادة: { ar: "المادة", en: "Material" },
-  storage: { ar: "السعة", en: "Storage" },
-  السعة: { ar: "السعة", en: "Storage" },
-  memory: { ar: "الذاكرة", en: "Memory" },
-  الذاكرة: { ar: "الذاكرة", en: "Memory" },
-};
+import { Product, ProductVariant } from "@/types";
 
-export const getAttributeLabel = (key: string, isAr: boolean) => {
-  const normKey = key.trim().toLowerCase();
-  const entry = attributeTranslations[normKey];
-  if (entry) return isAr ? entry.ar : entry.en;
-  return isAr ? key : key.charAt(0).toUpperCase() + key.slice(1);
-};
+export type CartVariant = ProductVariant;
 
-export type CartVariant = {
-  _id?: string;
-  price?: number;
-  priceAfterDiscount?: number;
-  stock?: number;
-  sku?: string;
-  attributes?: Record<string, { value: string | number; unit?: string }>;
-  image?: string;
-};
-
-export type CartProduct = {
-  _id: string;
-  slug?: string;
-  title: string | Record<string, string>;
-  imageCover?: string;
-  isActive?: boolean;
-  isUnlimitedStock?: boolean;
-  category?: { name: string | Record<string, string> };
-  variants?: CartVariant[];
-  priceRange?: { min: number };
-  comparePrice?: number;
-};
+export type CartProduct = Product;
 
 export type CartItem = {
   productId?: string;
   variantId?: string;
   quantity: number;
-  price?: number;
+  unitPrice?: number;
   product: CartProduct;
   variant?: CartVariant;
 };
 
-export const resolveItemData = (item: CartItem | any) => {
+export const resolveItemData = (item: CartItem) => {
   // Server cart returns item.variant as a populated object
   const populatedVariant: CartVariant | null =
     item.variant && typeof item.variant === "object" ? item.variant : null;
 
   const guestVariant = item.product?.variants?.find(
-    (v: any) => v._id === item.variantId,
+    (v: ProductVariant) => v._id === item.variantId,
   );
 
-  const price =
-    item.price ??
+  const price =item.unitPrice??
     populatedVariant?.price ??
     populatedVariant?.priceAfterDiscount ??
     guestVariant?.priceAfterDiscount ??

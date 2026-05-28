@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react"; // إضافة خطافات الأداء والحالة
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart-store";
@@ -11,74 +11,85 @@ import {
 } from "@/features/cart/hooks/useCart";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { useTrans } from "@/shared/hooks/useTrans";
+// تم إزالة useTrans لأنه لم يكن مستخدماً في هذا المكون لتخفيف الاستيرادات
 import { Button } from "@/shared/ui/Button";
-import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { createPortal } from "react-dom";
 import {
-  MinusIcon,
-  PlusIcon,
-  TrashIcon,
   XIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
   ShoppingBagIcon,
-  OrdersIcon,
   ShoppingCartIcon,
 } from "@/shared/ui/Icons";
-import { CartItemCard } from "@/app/[locale]/(store)/cart/page";
 
-import { resolveItemData } from "@/features/cart/utils/cartUtils";
+import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
+import { CartItemCard } from "./CartItemCard";
 
+/* ------------------------------------------------------------------ */
+/* Drawer Component                                                   */
+/* ------------------------------------------------------------------ */
 export default function CartDrawer() {
   const { isCartDrawerOpen, closeCartDrawer } = useCartStore();
   const locale = useLocale();
   const t = useTranslations("cart");
   const formatCurrency = useFormatCurrency();
-  const getTrans = useTrans();
   const { data: user } = useMe();
   const isAr = locale === "ar";
+
+  // تحسين: إضافة حالة (mounted) لتجنب أخطاء Hydration Mismatch مع createPortal
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // --- Data Fetching ---
   const { data: serverCart } = useCart();
   const guestCartItems = useCartStore((state) => state.items);
   const updateGuestQuantity = useCartStore((state) => state.updateQuantity);
   const removeGuestItem = useCartStore((state) => state.removeItem);
-  const { mutate: removeServerItem, isPending: isRemoving } =
-    useRemoveFromCart();
-  const { mutate: updateServerQuantity, isPending: isUpdatingQuantity } =
-    useUpdateCartQuantity();
+  
+  const { mutate: removeServerItem, isPending: isRemoving } = useRemoveFromCart();
+  const { mutate: updateServerQuantity, isPending: isUpdatingQuantity } = useUpdateCartQuantity();
 
-  // Use server cart if logged in, otherwise guest cart
-  const cartItems = user ? serverCart?.items || [] : guestCartItems;
+  // تجميع حالة التحميل لمنع التفاعلات المزدوجة أثناء معالجة البيانات
+  const isCartUpdating = isRemoving || isUpdatingQuantity;
 
-  // Subtotal calculation
-  const subtotal = cartItems.reduce((acc: number, item: any) => {
-    const { price } = resolveItemData(item);
-    return acc + price * item.quantity;
-  }, 0);
+  // تحسين: استخدام useMemo لمنع إعادة إنشاء المصفوفة مع كل تصيير
+  const cartItems = useMemo(() => {
+    return user ? serverCart?.items || [] : guestCartItems || [];
+  }, [user, serverCart?.items, guestCartItems]);
+
+  // تحسين: حساب الإجمالي الفرعي فقط عندما تتغير عناصر السلة
+  const subtotal = useMemo(() => {
+    return cartItems.reduce((acc: number, item: CartItem) => {
+      const { price } = resolveItemData(item);
+      // تحصين: ضمان أن السعر والكمية أرقام صالحة لتجنب NaN
+      return acc + (price || 0) * (item.quantity || 1);
+    }, 0);
+  }, [cartItems]);
 
   // --- Handlers ---
-  const handleRemove = (productId: string, variantId?: string) => {
+  // تحسين: استخدام useCallback لمنع إعادة تصيير مكونات الأبناء
+  const handleRemove = useCallback((productId: string, variantId?: string) => {
+    if (!productId) return; // تحصين أمني
     if (user) {
-      removeServerItem(productId); // Assuming backend removes by productId for now
+      removeServerItem(productId);
     } else {
       removeGuestItem(productId, variantId);
     }
-  };
+  }, [user, removeServerItem, removeGuestItem]);
 
-  const handleUpdateQuantity = (
-    productId: string,
-    variantId: string,
-    newQty: number,
-  ) => {
-    const safeQty = Math.max(1, newQty);
+  const handleUpdateQuantity = useCallback((productId: string, variantId: string, newQty: number) => {
+    if (!productId) return; // تحصين أمني
+    const safeQty = Math.max(1, Number(newQty) || 1); // ضمان كمية صحيحة وموجبة
+    
     if (!user) {
       updateGuestQuantity(productId, variantId, safeQty);
     } else {
       updateServerQuantity({ productId, variantId, quantity: safeQty });
     }
-  };
+  }, [user, updateGuestQuantity, updateServerQuantity]);
 
   // --- Close on Esc ---
   useEffect(() => {
@@ -103,7 +114,8 @@ export default function CartDrawer() {
     };
   }, [isCartDrawerOpen]);
 
-  if (!isCartDrawerOpen) return null;
+  // تحسين: نمنع التصيير تماماً إذا لم يكن المكون راكباً (Mounted) أو الدرج مغلقاً
+  if (!isMounted || !isCartDrawerOpen) return null;
 
   const drawerContent = (
     <div className="fixed inset-0 z-50 flex" aria-modal="true" role="dialog">
@@ -138,7 +150,8 @@ export default function CartDrawer() {
           <button
             onClick={closeCartDrawer}
             type="button"
-            className="p-2 cursor-pointer hover:bg-accent rounded-full transition-colors"
+            className="p-2 cursor-pointer hover:bg-accent rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-label="Close cart"
           >
             <XIcon className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -157,22 +170,30 @@ export default function CartDrawer() {
               <Link
                 href={"/products"}
                 onClick={closeCartDrawer}
-                className="mt-4 rounded-xl bg-primary text-white px-4 py-2 text-sm cursor-pointer hover:bg-accent hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300  hover:scale-102 hover:shadow-lg"
+                className="mt-4 rounded-xl bg-primary text-white px-4 py-2 text-sm cursor-pointer hover:bg-primary/90 hover:ring-1 hover:ring-primary transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
               >
                 {t("empty.cta")}
               </Link>
             </div>
           ) : (
             <div className="space-y-6">
-              {cartItems.map((item: any, idx: number) => {
-
+              {cartItems.map((item: CartItem, idx: number) => {
+                // تحسين: توليد مفتاح فريد وأكثر أماناً لتجنب مشاكل التصيير أثناء الحذف
+                const uniqueKey = [
+                  item.product?._id || item.productId,
+                  item.variant?._id || item.variantId,
+                  idx,
+                ]
+                  .filter(Boolean)
+                  .join("-");
+                
                 return (
                   <CartItemCard
-                    key={item.variant?._id || item.product?._id || idx}
+                    key={uniqueKey}
                     item={item}
                     idx={idx}
                     isAr={isAr}
-                    isRemoving={isRemoving || isUpdatingQuantity}
+                    isRemoving={isCartUpdating}
                     isCompact={true}
                     formatCurrency={formatCurrency}
                     onRemove={handleRemove}
@@ -186,14 +207,14 @@ export default function CartDrawer() {
 
         {/* Footer */}
         {cartItems.length > 0 && (
-          <div className="p-6 border-t border-border/50 bg-accent/40 space-y-2">
+          <div className="p-6 border-t border-border/50 bg-accent/40 space-y-4">
             <div className="flex items-center justify-between font-black text-md">
               <span>{t("summary.subtotal")} : </span>
               <span className="text-primary">{formatCurrency(subtotal)}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Link href="/cart" onClick={closeCartDrawer}>
+              <Link href="/cart" onClick={closeCartDrawer} className="block">
                 <Button
                   variant="outline"
                   className="w-full h-12 rounded-xl font-bold border-2 hover:bg-accent"
@@ -201,8 +222,11 @@ export default function CartDrawer() {
                   {t("misc.view_cart")}
                 </Button>
               </Link>
-              <Link href="/checkout" onClick={closeCartDrawer}>
-                <Button className="w-full h-12 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20">
+              <Link href="/checkout" onClick={closeCartDrawer} className="block">
+                <Button 
+                  className="w-full h-12 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20"
+                  disabled={isCartUpdating} // تحصين: منع الانتقال للدفع إذا كانت السلة قيد التحديث
+                >
                   {t("summary.checkout")}
                   {isAr ? (
                     <ArrowLeftIcon className="w-4 h-4" />
@@ -218,7 +242,5 @@ export default function CartDrawer() {
     </div>
   );
 
-  // Return via portal if client-side
-  if (typeof document === "undefined") return null;
   return createPortal(drawerContent, document.body);
 }
