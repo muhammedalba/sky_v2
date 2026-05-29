@@ -441,7 +441,10 @@ export default function CheckoutPage() {
   const { mutate: bankTransfer, isPending: bankTransferring } = useBankTransferOrder();
 
   const previewResult = previewData?.data ?? previewData;
-  const shippingOptions: ShippingOption[] = previewResult?.shippingOptions ?? [];
+  const shippingOptions: ShippingOption[] = useMemo(
+    () => previewResult?.shippingOptions ?? [],
+    [previewResult]
+  );
   const selectedPayment: PaymentMethod | undefined = paymentMethods.find(
     (m: PaymentMethod) => m._id === selectedPaymentId
   );
@@ -472,7 +475,7 @@ export default function CheckoutPage() {
         productId: (item.product?._id || item.productId) as string,
         variantId: (item.variant?._id || item.variantId) as string,
         quantity: item.quantity,
-        weight: (item.variant as any)?.weight ?? (item.product as any)?.weight ?? 0.5,
+        weight: (item.variant as { weight?: number } | undefined)?.weight ?? (item.product as { weight?: number } | undefined)?.weight ?? 0.5,
         price: price || 0,
       };
     });
@@ -500,7 +503,7 @@ export default function CheckoutPage() {
         productId: (item.product?._id || item.productId) as string,
         variantId: (item.variant?._id || item.variantId) as string,
         quantity: item.quantity,
-        weight: (item.variant as any)?.weight ?? (item.product as any)?.weight ?? 0.5,
+        weight: (item.variant as { weight?: number } | undefined)?.weight ?? (item.product as { weight?: number } | undefined)?.weight ?? 0.5,
         price: price || 0,
       };
     });
@@ -831,7 +834,7 @@ export default function CheckoutPage() {
                         {isAr ? "لا توجد خيارات شحن متاحة للمدينة المختارة" : "No shipping options available for this city"}
                       </p>
                       <button
-                        onClick={triggerPreview}
+                        onClick={() => triggerPreview()}
                         className="mt-3 text-sm text-primary font-semibold hover:underline"
                       >
                         {isAr ? "إعادة المحاولة" : "Retry"}
