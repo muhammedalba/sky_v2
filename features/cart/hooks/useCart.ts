@@ -6,7 +6,7 @@ import { cartApi } from "@/features/cart/api";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useCartStore } from "@/store/cart-store";
 import { Product } from "@/types";
-import { useLocale } from "next-intl";
+import { useSettings } from "@/app/providers/SettingsProvider";
 
 // ─── Server cart (authenticated users) ──────────────────────────────────────
 
@@ -20,16 +20,15 @@ import { useLocale } from "next-intl";
  */
 export function useCart() {
   const { data: user } = useMe();
-  const locale = useLocale();
 
   return useQuery({
-    queryKey: ["cart", locale],
+    queryKey: ["cart"],
     queryFn: async () => {
       const response = await cartApi.getCart();
       return response?.data ?? null;
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5,
+   
   });
 }
 
@@ -50,6 +49,7 @@ export function useAddToCart() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { data: user } = useMe();
+  const settings = useSettings();
   const addLocalItem = useCartStore((state) => state.addItem);
   const openCartDrawer = useCartStore((state) => state.openCartDrawer);
 
@@ -62,6 +62,9 @@ export function useAddToCart() {
     }) => {
       // Guest: save to Zustand store (persisted in localStorage) — no backend call
       if (!user) {
+        if (!settings?.features?.guestCheckout) {
+          throw new Error("GUEST_CHECKOUT_DISABLED");
+        }
         if (!data.product) {
           throw new Error("Product object is required for guest cart");
         }
@@ -79,13 +82,25 @@ export function useAddToCart() {
     },
     onSuccess: async () => {
       if (user) {
-        await queryClient.invalidateQueries({ queryKey: ["cart"] });
+        await queryClient.invalidateQueries({
+          queryKey: ["cart"],
+          refetchType: "all",
+        });
       }
       toast.success("Added to cart");
       openCartDrawer();
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to add to cart");
+      if (error.message === "GUEST_CHECKOUT_DISABLED") {
+        const isAr = typeof window !== 'undefined' && window.location.pathname.split('/')[1] === 'ar';
+        toast.error(
+          isAr
+            ? "الشراء كزائر معطل حالياً. يرجى تسجيل الدخول للإضافة إلى السلة."
+            : "Guest checkout is currently disabled. Please login to add items to your cart."
+        );
+      } else {
+        toast.error(error.message || "Failed to add to cart");
+      }
     },
   });
 }
@@ -103,7 +118,7 @@ export function useAddToCart() {
 export function useUpdateCartQuantity() {
   const queryClient = useQueryClient();
   const toast = useToast();
-
+  
   return useMutation({
     mutationFn: async (data: {
       productId: string;
@@ -114,7 +129,10 @@ export function useUpdateCartQuantity() {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["cart"],
+        refetchType: "all",
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update quantity");
@@ -135,14 +153,16 @@ export function useUpdateCartQuantity() {
 export function useRemoveFromCart() {
   const queryClient = useQueryClient();
   const toast = useToast();
-
   return useMutation({
     mutationFn: async (productId: string) => {
       const response = await cartApi.removeItem(productId);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["cart"],
+        refetchType: "all",
+      });
       toast.success("Removed from cart");
     },
     onError: (error: Error) => {
@@ -164,14 +184,16 @@ export function useRemoveFromCart() {
 export function useClearCart() {
   const queryClient = useQueryClient();
   const toast = useToast();
-
   return useMutation({
     mutationFn: async () => {
       const response = await cartApi.clearCart();
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["cart"],
+        refetchType: "all",
+      });
       toast.success("Cart cleared");
     },
     onError: (error: Error) => {
@@ -210,3 +232,39 @@ export const syncGuestCart = async () => {
     console.error("Failed to sync guest cart", error);
   }
 };
+
+// ─── Coupon Validation (pre-checkout) ──────────────────────────────────────
+
+export interface CouponValidationResult {
+  discountAmount: number;
+  totalPrice: number;
+  totalPriceAfterDiscount?: number;
+  couponDetails: {
+    couponCode: string;
+    discountAmount: number;
+    CouponId: string;
+  } | null;
+}
+
+/**
+ * Hook to validate a coupon code against the current cart subtotal.
+ * Does NOT consume the coupon — that happens at checkout.
+ * Only works for authenticated users (guests cannot use coupons).
+ */
+export function useCouponValidation() {
+  const toast = useToast();
+
+  return useMutation({
+    mutationFn: async (data: {
+      code: string;
+      orderAmount: number;
+    }): Promise<CouponValidationResult> => {
+      const response = await cartApi.validateCoupon(data);
+      return response.data as CouponValidationResult;
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Invalid coupon code");
+    },
+  });
+}
+

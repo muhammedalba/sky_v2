@@ -16,6 +16,7 @@ import { useSettings } from '@/app/providers/SettingsProvider';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { env } from '@/lib/env';
 import SideDrawer from './SideDrawer';
+import { useCart } from '@/features/cart/hooks/useCart';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -88,9 +89,15 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   // Admin check is derived from the server-verified user object — no localStorage needed
   const is_Admin = checkUserPermission(user ?? null, 'access_dashboard');
 
-  const cartItemCount = useCartStore((state) =>
-    state.items.reduce((sum, item) => sum + item.quantity, 0)
-  );
+  const { data: serverCart } = useCart();
+  const guestCartItems = useCartStore((state) => state.items);
+
+  const cartItemCount = useMemo(() => {
+    if (user) {
+      return serverCart?.items?.reduce((sum: number, item: { quantity: number }) => sum + (item.quantity || 0), 0) ?? 0;
+    }
+    return guestCartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }, [user, serverCart?.items, guestCartItems]);
 
   const locale = useLocale();
   const settings = useSettings();

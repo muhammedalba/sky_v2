@@ -65,6 +65,8 @@ export interface StoreSettings {
   features: FeatureFlags;
   gateways: Gateways;
   debugMode: boolean;
+  hasCustomShippingRates?: boolean;
+  hasCustomTaxes?: boolean;
   
   // Legacy support for common fields
   supportPhone?: string;

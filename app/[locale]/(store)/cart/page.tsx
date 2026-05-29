@@ -114,13 +114,28 @@ export default function CartPage() {
     );
   }, [serverCart?.totalPrice, cartItems]);
 
+  const hasCustomSettings = useMemo(() => {
+    return !!(settings?.hasCustomShippingRates || settings?.hasCustomTaxes);
+  }, [settings?.hasCustomShippingRates, settings?.hasCustomTaxes]);
+
   const vatRate = settings?.vatRate || 15;
 
   const tax = useMemo(() => {
+    if (hasCustomSettings) return 0;
     return settings?.taxesIncluded ? 0 : subtotal * (vatRate / 100);
-  }, [settings?.taxesIncluded, subtotal, vatRate]);
+  }, [settings?.taxesIncluded, subtotal, vatRate, hasCustomSettings]);
 
-  const totalAmount = useMemo(() => subtotal + tax, [subtotal, tax]);
+  const totalAmount = useMemo(() => {
+    if (hasCustomSettings) return subtotal;
+    return subtotal + tax;
+  }, [subtotal, tax, hasCustomSettings]);
+
+  const checkoutHref = useMemo(() => {
+    if (!user && !settings.features.guestCheckout) {
+      return "/login?redirect=/checkout";
+    }
+    return "/checkout";
+  }, [user, settings.features.guestCheckout]);
 
   const isCartUpdating =
     isRemoving || updateServerQuantityPending || clearServerCartPending;
@@ -321,25 +336,50 @@ export default function CartPage() {
                     </span>
                   </div>
 
-                  {tax > 0 && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground font-medium">
-                        {t("summary.tax")} ({vatRate}%)
-                      </span>
-                      <span className="font-bold text-foreground tabular-nums">
-                        {formatCurrency(tax)}
-                      </span>
-                    </div>
-                  )}
+                  {hasCustomSettings ? (
+                    <>
+                      {/* Tax row */}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">
+                          {t("summary.tax")}
+                        </span>
+                        <span className="font-semibold text-muted-foreground text-xs bg-accent px-2.5 py-1 rounded-lg border border-border/40">
+                          {t("summary.calculated_at_checkout")}
+                        </span>
+                      </div>
+                      {/* Shipping row */}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">
+                          {t("summary.shipping")}
+                        </span>
+                        <span className="font-semibold text-muted-foreground text-xs bg-accent px-2.5 py-1 rounded-lg border border-border/40">
+                          {t("summary.calculated_at_checkout")}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {tax > 0 && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground font-medium">
+                            {t("summary.tax")} ({vatRate}%)
+                          </span>
+                          <span className="font-bold text-foreground tabular-nums">
+                            {formatCurrency(tax)}
+                          </span>
+                        </div>
+                      )}
 
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground font-medium">
-                      {t("summary.shipping")}
-                    </span>
-                    <span className="font-bold text-success bg-success/10 px-2 py-0.5 rounded-lg text-xs">
-                      {t("summary.free")}
-                    </span>
-                  </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">
+                          {t("summary.shipping")}
+                        </span>
+                        <span className="font-bold text-success bg-success/10 px-2 py-0.5 rounded-lg text-xs">
+                          {t("summary.free")}
+                        </span>
+                      </div>
+                    </>
+                  )}
 
                   <div className="h-px bg-border/60 my-1" />
 
@@ -358,11 +398,19 @@ export default function CartPage() {
                       )}
                     </div>
                   </div>
+
+                  {hasCustomSettings && (
+                    <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 p-3 rounded-2xl text-xs font-bold text-center mt-2 leading-relaxed">
+                      {isAr
+                        ? "ملاحظة: سيتم حساب الشحن والضريبة في صفحة الدفع"
+                        : "Note: Shipping and tax will be calculated at the checkout page"}
+                    </div>
+                  )}
                 </div>
 
                 {/* CTA */}
                 <div className="px-6 pb-6 space-y-3">
-                  <Link href="/checkout" className="block">
+                  <Link href={checkoutHref} className="block">
                     <Button
                       className="w-full h-14 rounded-2xl text-base font-bold shadow-lg shadow-primary/20 gap-3 group"
                       disabled={isCartUpdating || cartItems.length === 0} // تحصين: منع الانتقال للدفع إذا كانت السلة فارغة أو قيد التحديث

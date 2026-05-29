@@ -28,7 +28,10 @@ export default function LoginForm({ locale }: { locale: string }) {
     toast.success(t('loginSuccess'));
     // Determine redirect based on server-provided role/permissions (no localStorage)
     const canAccessDashboard = checkUserPermission(userData, 'access_dashboard');
-    if (canAccessDashboard) {
+    const redirectParam = searchParams?.get('redirect');
+    if (redirectParam) {
+      router.push(redirectParam);
+    } else if (canAccessDashboard) {
       router.push(`/${locale}/dashboard`);
     } else {
       router.push(`/${locale}/home`);
@@ -38,6 +41,7 @@ export default function LoginForm({ locale }: { locale: string }) {
   const successMessage =
     searchParams?.get('signup') === 'success' ? t('signupSuccess') :
       searchParams?.get('reset') === 'success' ? t('resetSuccess') :
+       searchParams?.get('redirect')==="/checkout" ? t('loginSuccess') :
         null;
 
   return (

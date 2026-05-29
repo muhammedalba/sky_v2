@@ -11,6 +11,7 @@ import {
 } from "@/features/cart/hooks/useCart";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import { useSettings } from "@/app/providers/SettingsProvider";
 // تم إزالة useTrans لأنه لم يكن مستخدماً في هذا المكون لتخفيف الاستيرادات
 import { Button } from "@/shared/ui/Button";
 import { createPortal } from "react-dom";
@@ -34,6 +35,7 @@ export default function CartDrawer() {
   const t = useTranslations("cart");
   const formatCurrency = useFormatCurrency();
   const { data: user } = useMe();
+  const settings = useSettings();
   const isAr = locale === "ar";
 
   // تحسين: إضافة حالة (mounted) لتجنب أخطاء Hydration Mismatch مع createPortal
@@ -90,6 +92,13 @@ export default function CartDrawer() {
       updateServerQuantity({ productId, variantId, quantity: safeQty });
     }
   }, [user, updateGuestQuantity, updateServerQuantity]);
+
+  const checkoutHref = useMemo(() => {
+    if (!user && !settings.features.guestCheckout) {
+      return "/login?redirect=/checkout";
+    }
+    return "/checkout";
+  }, [user, settings.features.guestCheckout]);
 
   // --- Close on Esc ---
   useEffect(() => {
@@ -222,7 +231,7 @@ export default function CartDrawer() {
                   {t("misc.view_cart")}
                 </Button>
               </Link>
-              <Link href="/checkout" onClick={closeCartDrawer} className="block">
+              <Link href={checkoutHref} onClick={closeCartDrawer} className="block">
                 <Button 
                   className="w-full h-12 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20"
                   disabled={isCartUpdating} // تحصين: منع الانتقال للدفع إذا كانت السلة قيد التحديث

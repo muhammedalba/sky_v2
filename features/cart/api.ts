@@ -14,4 +14,7 @@ export const cartApi = {
   clearCart: () => apiClient.delete(ENDPOINTS.CLEAR),
   syncCart: (items: any[]) => 
     apiClient.post(`${ENDPOINTS.BASE}/sync`, { items }),
+  validateCoupon: (data: { code: string; orderAmount: number }) =>
+    apiClient.post(`${ENDPOINTS.BASE}/validate-coupon`, data),
 };
+

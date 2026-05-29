@@ -50,6 +50,7 @@ const ProductCard = ({ item, commonT }: Props) => {
         // or fallback to an empty string (the backend will handle missing variant or use a default one)
         const variantId =
           item.variants && item.variants.length > 0 ? item.variants[0]._id : "";
+
         addToCart({
           productId: item._id,
           variantId,

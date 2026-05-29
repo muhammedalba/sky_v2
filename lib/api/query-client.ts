@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 
 /**
  * Browser-safe QueryClient singleton.
@@ -24,7 +24,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined;
 
 export function getQueryClient() {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     // Server: always a fresh instance so data is never shared between requests/users
     return makeQueryClient();
   }
@@ -37,4 +37,3 @@ export function getQueryClient() {
 // Legacy named export — kept for backward-compat with any direct import
 // (e.g. useServerNotifications.ts). Points to browser singleton at runtime.
 export const queryClient = getQueryClient();
-
