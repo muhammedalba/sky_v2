@@ -37,5 +37,21 @@
     "number_of_products": "عدد المنتجات",
     "view_cart": "عرض السلة",
     "home": "الرئيسية"
+  },
+  "messages": {
+    "login_to_apply_coupon": "يجب تسجيل الدخول لتطبيق الكوبون",
+    "couponApplied": "تم تطبيق الكوبون بنجاح"
+  },
+  "coupon": {
+    "discount": "خصم الكوبون",
+    "applied": "تم تطبيق الكوبون: {code}",
+    "saved": "وفرت {amount}",
+    "have_coupon": "هل لديك كود خصم؟",
+    "enter_code": "أدخل الكود هنا",
+    "label": "كود الخصم",
+    "apply": "تطبيق الكوبون"
+  },
+  "shipping": {
+    "not_available": "مع الاسف الشحن غير متاح حاليا"
   }
 }

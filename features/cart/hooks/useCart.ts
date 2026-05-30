@@ -260,11 +260,11 @@ export function useCouponValidation() {
       orderAmount: number;
     }): Promise<CouponValidationResult> => {
       const response = await cartApi.validateCoupon(data);
-      return response.data as CouponValidationResult;
+      return response?.data as CouponValidationResult;
     },
     onError: (error: any) => {
       console.log("error",error);
-      console.log("error",error.response.data.message);
+      console.log("error message",error.response.data.message);
       
       
       toast.error(error.message || "Invalid coupon code");

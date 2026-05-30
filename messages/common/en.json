@@ -54,6 +54,7 @@
     "showingResults": "Showing {count} results",
     "available": "Available",
     "unavailable": "Unavailable",
+    "guest_checkout_disabled": "Guest checkout is currently disabled. Please login to add items to your cart.",
     "updateSuccess": "Updated successfully"
   },
   "tabs": {

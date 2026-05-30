@@ -37,5 +37,22 @@
     "number_of_products": "Number of Products",
     "view_cart": "View Cart",
     "home": "Home"
+  },
+  "messages": {
+    "login_to_apply_coupon": "You must be logged in to apply the coupon",
+    "couponApplied": "Coupon applied successfully"
+  },
+  "coupon": {
+    "discount": "Coupon Discount",
+    "applied": "Coupon Applied: {code}",
+    "saved": "You saved {amount}",
+    "have_coupon": "Have a coupon?",
+    "enter_code": "Enter code here",
+    "label": "Coupon code",
+    "apply": "Apply Coupon"
+  },
+  "shipping": {
+    "not_available": "Unfortunately, shipping is not available at the moment"
   }
 }
+
