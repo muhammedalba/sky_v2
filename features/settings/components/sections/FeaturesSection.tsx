@@ -74,7 +74,7 @@ export default function FeaturesSection() {
               </div>
               <Switch
                 checked={!!toggle.value}
-                onCheckedChange={(checked) => setValue(`features.${toggle.id as keyof typeof features}` as any, checked, { shouldDirty: true })}
+                onCheckedChange={(checked) => setValue(`features.${toggle.id}` as keyof SettingsInput, checked, { shouldDirty: true })}
               />
             </div>
           ))}

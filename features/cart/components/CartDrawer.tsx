@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react"; // إضافة خطافات الأداء والحالة
+import { useEffect, useSyncExternalStore, useMemo, useCallback } from "react"; // إضافة خطافات الأداء والحالة
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart-store";
@@ -30,76 +30,29 @@ import { CartItemCard } from "./CartItemCard";
 /* Drawer Component                                                   */
 /* ------------------------------------------------------------------ */
 export default function CartDrawer() {
-  const { isCartDrawerOpen, closeCartDrawer } = useCartStore();
+  //  hooks
   const locale = useLocale();
   const t = useTranslations("cart");
   const formatCurrency = useFormatCurrency();
-  const { data: user } = useMe();
-  const settings = useSettings();
+  // direction
   const isAr = locale === "ar";
-
-  // تحسين: إضافة حالة (mounted) لتجنب أخطاء Hydration Mismatch مع createPortal
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
+  
   // --- Data Fetching ---
+  const settings = useSettings();
+  const { data: user } = useMe();
   const { data: serverCart } = useCart();
+  // cart hooks
+  const { mutate: removeServerItem, isPending: isRemoving } = useRemoveFromCart();
+  const { mutate: updateServerQuantity, isPending: isUpdatingQuantity } = useUpdateCartQuantity();
+  // is cart updating
+  const isCartUpdating = isRemoving || isUpdatingQuantity;
+
+  // cart store
   const guestCartItems = useCartStore((state) => state.items);
+  const { isCartDrawerOpen, closeCartDrawer } = useCartStore();
   const updateGuestQuantity = useCartStore((state) => state.updateQuantity);
   const removeGuestItem = useCartStore((state) => state.removeItem);
   
-  const { mutate: removeServerItem, isPending: isRemoving } = useRemoveFromCart();
-  const { mutate: updateServerQuantity, isPending: isUpdatingQuantity } = useUpdateCartQuantity();
-
-  // تجميع حالة التحميل لمنع التفاعلات المزدوجة أثناء معالجة البيانات
-  const isCartUpdating = isRemoving || isUpdatingQuantity;
-
-  // تحسين: استخدام useMemo لمنع إعادة إنشاء المصفوفة مع كل تصيير
-  const cartItems = useMemo(() => {
-    return user ? serverCart?.items || [] : guestCartItems || [];
-  }, [user, serverCart?.items, guestCartItems]);
-
-  // تحسين: حساب الإجمالي الفرعي فقط عندما تتغير عناصر السلة
-  const subtotal = useMemo(() => {
-    return cartItems.reduce((acc: number, item: CartItem) => {
-      const { price } = resolveItemData(item);
-      // تحصين: ضمان أن السعر والكمية أرقام صالحة لتجنب NaN
-      return acc + (price || 0) * (item.quantity || 1);
-    }, 0);
-  }, [cartItems]);
-
-  // --- Handlers ---
-  // تحسين: استخدام useCallback لمنع إعادة تصيير مكونات الأبناء
-  const handleRemove = useCallback((productId: string, variantId?: string) => {
-    if (!productId) return; // تحصين أمني
-    if (user) {
-      removeServerItem(productId);
-    } else {
-      removeGuestItem(productId, variantId);
-    }
-  }, [user, removeServerItem, removeGuestItem]);
-
-  const handleUpdateQuantity = useCallback((productId: string, variantId: string, newQty: number) => {
-    if (!productId) return; // تحصين أمني
-    const safeQty = Math.max(1, Number(newQty) || 1); // ضمان كمية صحيحة وموجبة
-    
-    if (!user) {
-      updateGuestQuantity(productId, variantId, safeQty);
-    } else {
-      updateServerQuantity({ productId, variantId, quantity: safeQty });
-    }
-  }, [user, updateGuestQuantity, updateServerQuantity]);
-
-  const checkoutHref = useMemo(() => {
-    if (!user && !settings.features.guestCheckout) {
-      return "/login?redirect=/checkout";
-    }
-    return "/checkout";
-  }, [user, settings.features.guestCheckout]);
-
   // --- Close on Esc ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -123,9 +76,67 @@ export default function CartDrawer() {
     };
   }, [isCartDrawerOpen]);
 
-  // تحسين: نمنع التصيير تماماً إذا لم يكن المكون راكباً (Mounted) أو الدرج مغلقاً
+
+// Improvement: useSyncExternalStore to avoid Hydration Mismatch issues with createPortal
+// Instead of useState + useEffect to prevent cascading renders
+const isMounted = useSyncExternalStore(
+  () => () => {}, // subscribe: no external subscriptions
+  () => true,     // getSnapshot (client): component is mounted
+  () => false     // getServerSnapshot: always false during SSR
+);
+
+
+  // get cart items if user is logged in or guest
+  const cartItems = useMemo(() => {
+    return user ? serverCart?.items || [] : guestCartItems || [];
+  }, [user, serverCart?.items, guestCartItems]);
+
+  // calculate subtotal
+  const subtotal = useMemo(() => {
+    return cartItems.reduce((acc: number, item: CartItem) => {
+      // get price of item
+      const { price } = resolveItemData(item);
+      // check if price is valid
+      return acc + (price || 0) * (item.quantity || 1);
+    }, 0);
+  }, [cartItems]);
+
+  // --- Handlers ---
+  // remove item from cart
+  const handleRemove = useCallback((productId: string, variantId?: string) => {
+    if (!productId) return; 
+    if (user) {
+      removeServerItem(productId);
+    } else {
+      removeGuestItem(productId, variantId);
+    }
+  }, [user, removeServerItem, removeGuestItem]);
+
+  // update item quantity in cart
+  const handleUpdateQuantity = useCallback((productId: string, variantId: string, newQty: number) => {
+    if (!productId) return; 
+    const safeQty = Math.max(1, Number(newQty) || 1); 
+    if (!user) {
+      updateGuestQuantity(productId, variantId, safeQty);
+    } else {
+      updateServerQuantity({ productId, variantId, quantity: safeQty });
+    }
+  }, [user, updateGuestQuantity, updateServerQuantity]);
+
+  //if user not logged in and guest checkout is disabled, redirect to login page
+  const checkoutHref = useMemo(() => {
+    if (!user && !settings.features.guestCheckout) {
+      return "/login?redirect=/checkout";
+    }
+    return "/checkout";
+  }, [user, settings.features.guestCheckout]);
+
+
+
+  // prevent rendering if not mounted or drawer is closed
   if (!isMounted || !isCartDrawerOpen) return null;
 
+  // drawer content
   const drawerContent = (
     <div className="fixed inset-0 z-50 flex" aria-modal="true" role="dialog">
       {/* Backdrop */}
@@ -187,7 +198,7 @@ export default function CartDrawer() {
           ) : (
             <div className="space-y-6">
               {cartItems.map((item: CartItem, idx: number) => {
-                // تحسين: توليد مفتاح فريد وأكثر أماناً لتجنب مشاكل التصيير أثناء الحذف
+                // generate unique key for each item
                 const uniqueKey = [
                   item.product?._id || item.productId,
                   item.variant?._id || item.variantId,
@@ -234,7 +245,7 @@ export default function CartDrawer() {
               <Link href={checkoutHref} onClick={closeCartDrawer} className="block">
                 <Button 
                   className="w-full h-12 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20"
-                  disabled={isCartUpdating} // تحصين: منع الانتقال للدفع إذا كانت السلة قيد التحديث
+                  disabled={isCartUpdating} 
                 >
                   {t("summary.checkout")}
                   {isAr ? (
@@ -251,5 +262,6 @@ export default function CartDrawer() {
     </div>
   );
 
+  // render drawer content
   return createPortal(drawerContent, document.body);
 }

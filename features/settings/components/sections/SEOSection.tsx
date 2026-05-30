@@ -28,6 +28,7 @@ export default function SEOSection() {
               label="Meta Title (AR)"
               error={errors.metaTitle?.ar?.message}
               className="rounded-xl h-11"
+              
             />
             <Input
               {...register('metaTitle.en')}

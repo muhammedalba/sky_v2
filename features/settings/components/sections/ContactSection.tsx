@@ -43,11 +43,13 @@ export default function ContactSection() {
                 {...register('contactInfo.address.ar')}
                 label="العنوان (بالعربية)"
                 className="rounded-xl min-h-[80px]"
+              error={errors.contactInfo?.address?.ar?.message}
               />
               <Textarea
                 {...register('contactInfo.address.en')}
                 label="Address (English)"
                 className="rounded-xl min-h-[80px]"
+                error={errors.contactInfo?.address?.en?.message}
               />
             </div>
           </div>
@@ -60,12 +62,14 @@ export default function ContactSection() {
                 label="أيام العمل (بالعربية)"
                 className="rounded-xl h-11"
                 placeholder="مثال: من الإثنين إلى الجمعة"
+                error={errors.contactInfo?.workingDays?.ar?.message}
               />
               <Input
                 {...register('contactInfo.workingDays.en')}
                 label="Working Days (English)"
                 className="rounded-xl h-11"
                 placeholder="Example: Monday - Friday"
+                error={errors.contactInfo?.workingDays?.en?.message}
               />
             </div>
           </div>
@@ -78,12 +82,14 @@ export default function ContactSection() {
                 label="ساعات العمل (بالعربية)"
                 className="rounded-xl h-11"
                 placeholder="مثال: 09:00 ص - 06:00 م"
+                error={errors.contactInfo?.workingHours?.ar?.message}
               />
               <Input
                 {...register('contactInfo.workingHours.en')}
                 label="Working Hours (English)"
                 className="rounded-xl h-11"
                 placeholder="Example: 09:00 AM - 06:00 PM"
+                error={errors.contactInfo?.workingHours?.en?.message}
               />
             </div>
           </div>

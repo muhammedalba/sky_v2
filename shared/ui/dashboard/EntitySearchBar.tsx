@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import { SearchIcon } from "@/shared/ui/Icons";
-import { Input } from '@/shared/ui/Input';
-import { cn } from '@/lib/utils';
-import { useState, useEffect, useRef } from 'react';
-import { useDebounce } from '@/shared/hooks/use-debounce';
+import { Input } from "@/shared/ui/Input";
+import { cn } from "@/lib/utils";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useDebounce } from "@/shared/hooks/use-debounce";
 
 interface EntitySearchBarProps {
   placeholder?: string;
@@ -16,38 +16,56 @@ interface EntitySearchBarProps {
 }
 
 export default function EntitySearchBar({
-  placeholder = 'Search...',
-  defaultValue,
+  placeholder = "Search...",
+  defaultValue = "",
   onSearch,
   debounceMs = 500,
   className,
-  disabled = false
+  disabled = false,
 }: EntitySearchBarProps) {
-  const [searchTerm, setSearchTerm] = useState(defaultValue || '');
+  // Track both the input value and the last seen defaultValue in a single state.
+  // When defaultValue changes from the parent/URL, we detect it during render
+  // and reset searchTerm in the same pass — the React-idiomatic "derived state"
+  // pattern (replaces useState + useEffect, and avoids ref access during render).
+  const [{ searchTerm, prevDefault }, setSearchState] = useState({
+    searchTerm: defaultValue || "",
+    prevDefault: defaultValue,
+  });
+
+  // If the parent passed a new defaultValue, update searchTerm in the same render.
+  // Calling setState during render is only safe when guarded by a changed-value check.
+  if (prevDefault !== defaultValue) {
+    setSearchState({
+      searchTerm: defaultValue || "",
+      prevDefault: defaultValue,
+    });
+  }
+
+  const setSearchTerm = useCallback(
+    (value: string) =>
+      setSearchState((s) => ({ ...s, searchTerm: value })),
+    [setSearchState],
+  );
+
   const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
 
-  // نستخدم Ref لمنع البحث التلقائي عند فتح الصفحة لأول مرة
+  // disable search on first render
   const isMounted = useRef(false);
-
-  // Sync internal state with external defaultValue (e.g. from URL/Parent)
-  useEffect(() => {
-    setSearchTerm(prev => prev !== (defaultValue || '') ? (defaultValue || '') : prev);
-  }, [defaultValue]);
 
   useEffect(() => {
     if (isMounted.current) {
       onSearch(debouncedSearchTerm);
+      isMounted.current = false;
     } else {
       isMounted.current = true;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, onSearch]);
 
   return (
     <div
       className={cn(
-        'flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl',
-        className
+        "flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl",
+        className,
       )}
     >
       <div className="relative flex-1 group">

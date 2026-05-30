@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useSyncExternalStore } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip 
@@ -30,13 +30,17 @@ export function AreaTrendChart({
   className,
   showGrid = true,
 }: AreaTrendChartProps) {
-  const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+// Improvement: useSyncExternalStore to avoid Hydration Mismatch issues with createPortal
+// Instead of useState + useEffect to prevent cascading renders
+const isMounted = useSyncExternalStore(
+  () => () => {}, // subscribe: no external subscriptions
+  () => true,     // getSnapshot (client): component is mounted
+  () => false     // getServerSnapshot: always false during SSR
+);
+
 
   useEffect(() => {
     const el = containerRef.current;

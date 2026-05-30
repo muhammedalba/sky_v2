@@ -233,6 +233,7 @@
       "estimatedDays": "Estimated Delivery Time",
       "supportsCOD": "Cash on Delivery",
       "isActive": "Status",
+      "freeShippingThreshold": "Free Shipping Threshold",
       "actions": "Actions"
     }
   },

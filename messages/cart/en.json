@@ -9,7 +9,7 @@
     "title": "Order Summary",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
-    "tax": "Tax (15%)",
+    "tax": "Tax",
     "total": "Total Amount",
     "checkout": "Proceed to Checkout",
     "free": "Free",
@@ -24,7 +24,6 @@
   },
   "misc": {
     "products": "Products",
-    "price_qty_subtotal": "Price × Qty = Subtotal",
     "continue_shopping": "Continue Shopping",
     "clear_cart": "Clear Cart",
     "loading_cart": "Loading your cart…",

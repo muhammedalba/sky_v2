@@ -17,5 +17,5 @@ export const subCategorySchema = z.object({
   category: z.string().min(1, 'Parent category is required'),
 });
 
-export type CategoryInput = z.infer<typeof categorySchema>;
 export type SubCategoryFormValues = z.infer<typeof subCategorySchema>;
+export type CategoryInput = z.infer<typeof categorySchema>;

@@ -1,12 +1,12 @@
 'use client';
 
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { useCategories } from '@/features/categories/hooks/useCategories';
 import { useCreateSubCategory, useUpdateSubCategory } from '@/features/categories/hooks/useSubCategories';
-import { Category, LocalizedString, SubCategory } from '@/types';
+import { LocalizedString, SubCategory } from '@/types';
 import { useTranslations } from 'next-intl';
 import { useTrans } from '@/shared/hooks/useTrans';
 import { useState } from 'react';

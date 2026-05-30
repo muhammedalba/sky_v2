@@ -48,7 +48,7 @@ export default function PaymentsSection() {
               </div>
               <Switch
                 checked={!!gateway.value}
-                onCheckedChange={(checked) => setValue(gateway.id as any, checked, { shouldDirty: true })}
+                onCheckedChange={(checked) => setValue(gateway.id as keyof SettingsInput, checked, { shouldDirty: true })}
               />
             </div>
           ))}

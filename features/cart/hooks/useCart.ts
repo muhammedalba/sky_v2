@@ -262,7 +262,11 @@ export function useCouponValidation() {
       const response = await cartApi.validateCoupon(data);
       return response.data as CouponValidationResult;
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
+      console.log("error",error);
+      console.log("error",error.response.data.message);
+      
+      
       toast.error(error.message || "Invalid coupon code");
     },
   });

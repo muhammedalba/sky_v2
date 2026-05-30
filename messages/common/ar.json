@@ -233,6 +233,7 @@
       "estimatedDays": "مدة التوصيل المتوقعة",
       "supportsCOD": "الدفع عند الاستلام",
       "isActive": "الحالة",
+      "freeShippingThreshold": "الحد الأدنى للطلب للحصول على شحن مجاني",
       "actions": "إجراءات"
     }
   },

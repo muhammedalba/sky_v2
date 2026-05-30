@@ -49,8 +49,8 @@ const SETTINGS_DEFAULTS: SettingsInput = {
     email: '',
     phones: [],
     address: { ar: '', en: '' },
-    workingDays: { ar: '', en: '' },
-    workingHours: { ar: '', en: '' },
+    workingDays: { ar: 'من الاثنين الى الجمعة', en: 'from Monday to Friday' },
+    workingHours: { ar: 'من 8 صباحا الى 6 مساء', en: 'from 8 AM to 6 PM' },
   },
   gateways: {
     stripe: false,
@@ -96,7 +96,8 @@ export default function SettingsForm() {
     defaultValues: SETTINGS_DEFAULTS,
   });
 
-  const { handleSubmit, reset, register, formState: { isSubmitting } } = methods;
+  const { handleSubmit, reset, register, formState: { errors, isSubmitting } } = methods;
+console.log("errors: ",errors);
 
   // Axis 4: Explicitly Register Image Fields (Always tracked regardless of active section)
   useEffect(() => {

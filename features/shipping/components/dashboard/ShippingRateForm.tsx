@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,8 +11,6 @@ import { ShippingRate } from '../../types';
 import { useCreateShippingRate, useUpdateShippingRate } from '../../hooks/useShippingRates';
 import { useShippingProviders } from '../../hooks/useShippingProviders';
 import { useToast } from '@/shared/hooks/useToast';
-import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
 import { Select } from '@/shared/ui/Select';
 import { useCountries, useRegions, useCities } from '@/features/locations/hooks/useLocations';
 
@@ -28,6 +25,7 @@ const formSchema = z.object({
   estimatedDays: z.string().optional(),
   supportsCOD: z.boolean(),
   isActive: z.boolean(),
+  freeShippingThreshold: z.coerce.number().min(0, 'سعر الشحن المجاني غير صحيح'),
 });
 
 type ShippingRateFormData = z.infer<typeof formSchema>;
@@ -44,7 +42,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
   const { success: toastSuccess, error: toastError } = useToast();
 
   const { data: providersResponse } = useShippingProviders({ limit: 100 });
-  const providers = Array.isArray(providersResponse) ? providersResponse : (providersResponse as any)?.data || [];
+  const providers = Array.isArray(providersResponse) ? providersResponse : (providersResponse)?.data || [];
 
   const {
     register,
@@ -65,6 +63,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
       estimatedDays: editingRate?.estimatedDays || '',
       supportsCOD: editingRate?.supportsCOD ?? false,
       isActive: editingRate?.isActive ?? true,
+      freeShippingThreshold: editingRate?.freeShippingThreshold || 0,
     },
   });
 
@@ -187,8 +186,16 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
           {...register('additionalKgPrice')}
           error={errors.additionalKgPrice?.message}
         />
-      </div>
 
+      </div>
+         <Input
+          label={t('fields.freeShippingThreshold')}
+          type="number"
+          step="0.01"
+          min={0}
+          {...register('freeShippingThreshold')}
+          error={errors.freeShippingThreshold?.message}
+        />
       <div className="space-y-2">
         <Input
           label={t('fields.estimatedDays')}

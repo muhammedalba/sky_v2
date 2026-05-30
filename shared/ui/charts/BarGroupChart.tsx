@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useSyncExternalStore } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, Legend 
@@ -32,13 +32,17 @@ export function BarGroupChart({
   showGrid = true,
   tooltipFormatter,
 }: BarGroupChartProps) {
-  const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+// Improvement: useSyncExternalStore to avoid Hydration Mismatch issues with createPortal
+// Instead of useState + useEffect to prevent cascading renders
+const isMounted = useSyncExternalStore(
+  () => () => {}, // subscribe: no external subscriptions
+  () => true,     // getSnapshot (client): component is mounted
+  () => false     // getServerSnapshot: always false during SSR
+);
+
 
   useEffect(() => {
     const el = containerRef.current;

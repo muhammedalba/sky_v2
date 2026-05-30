@@ -23,6 +23,7 @@ export interface ShippingRate {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  freeShippingThreshold?: number;
 }
 
 export interface CreateShippingProviderDto {
@@ -32,5 +33,5 @@ export interface CreateShippingProviderDto {
   trackingUrl?: string;
   isActive?: boolean;
 }
-
+// We intentionally keep this interface for semantic meaning in DTOs
 export interface UpdateShippingProviderDto extends Partial<CreateShippingProviderDto> {}
