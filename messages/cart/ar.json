@@ -20,6 +20,7 @@
     "quantity": "الكمية",
     "product_unavailable": "المنتج غير متاح حاليًا",
     "unit_price": "سعر الوحدة",
+    "out_of_stock": "نفذ من المخزون",
     "update_quantity": "تحديث الكمية"
   },
   "misc": {

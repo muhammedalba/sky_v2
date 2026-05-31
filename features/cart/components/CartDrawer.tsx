@@ -138,7 +138,7 @@ const isMounted = useSyncExternalStore(
 
   // drawer content
   const drawerContent = (
-    <div className="fixed inset-0 z-50 flex" aria-modal="true" role="dialog">
+    <div className="fixed inset-0 z-50 flex " aria-modal="true" role="dialog">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-300"
@@ -227,9 +227,9 @@ const isMounted = useSyncExternalStore(
 
         {/* Footer */}
         {cartItems.length > 0 && (
-          <div className="p-6 border-t border-border/50 bg-accent/40 space-y-4">
+          <div className="p-6 border-t border-border/50 bg-accent/40 space-y-4 pb-28 sm:pb-6">
             <div className="flex items-center justify-between font-black text-md">
-              <span>{t("summary.subtotal")} : </span>
+              <span>{t("summary.subtotal")} : </span> 
               <span className="text-primary">{formatCurrency(subtotal)}</span>
             </div>
 

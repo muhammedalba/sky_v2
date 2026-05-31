@@ -262,7 +262,7 @@ export default function ProductDetailsClient({ params, initialData }: { params: 
                                                         
                                                         // التحقق من توفر الكمية لهذا الخيار
                                                         const isAvailable = variants.some((v: any) => 
-                                                            String(v.attributes[attr.name]?.value) === val && (v.stock > 0 || product.isUnlimitedStock)
+                                                            String(v.attributes?.[attr.name]?.value) === val && (v.stock > 0 || product.isUnlimitedStock)
                                                         );
 
                                                         return (

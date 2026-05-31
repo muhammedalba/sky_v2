@@ -109,7 +109,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
 
   return (
     <NextIntlClientProvider messages={storeMessages}>
-      <div className="min-h-screen overflow-x-hidden flex flex-col bg-background font-sans antialiased pt-(--promo-banner-height,0px) transition-[padding-top]">
+      <div className="min-h-screen pb-20 sm:pb-0 overflow-x-hidden flex flex-col bg-background font-sans antialiased pt-(--promo-banner-height,0px) transition-[padding-top]">
         {/* Top promo banner */}
         <TopPromoBanner banner={promoBanner} />
 

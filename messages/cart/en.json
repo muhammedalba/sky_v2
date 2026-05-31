@@ -20,6 +20,7 @@
     "quantity": "Quantity",
     "product_unavailable": "Product no longer available",
     "unit_price": "Unit Price",
+    "out_of_stock": "Out of Stock",
     "update_quantity": "Update Quantity"
   },
   "misc": {

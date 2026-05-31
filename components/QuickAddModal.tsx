@@ -156,7 +156,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-4xl bg-background rounded-3xl overflow-hidden border border-border/50 shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-in zoom-in-95 duration-200">
+      <div className="relative w-full  max-w-4xl bg-background rounded-3xl overflow-hidden border border-border/50 shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-in zoom-in-95 duration-200">
         
         {/* Close Button */}
         <button
@@ -244,7 +244,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
 
             {/* Variants attributes selector */}
             {hasVariants && product.allowedAttributes && (
-              <div className="space-y-4 pt-4 border-t border-border/30">
+              <div className="space-y-4 pt-4  pb-4 border-t border-border/30">
                 {product.allowedAttributes.map((attr) => {
                   const optionsMap = new Map();
                   variants.forEach((v) => {
@@ -259,7 +259,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
                   const uniqueValues = Array.from(optionsMap.keys());
 
                   return (
-                    <div key={attr.name} className="space-y-2">
+                    <div key={attr.name} className="space-y-2 ">
                       <span className="text-xs font-bold uppercase tracking-wider text-foreground/70">
                         {attr.name}
                       </span>
@@ -302,7 +302,7 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
           </div>
 
           {/* Action area */}
-          <div className="p-6 pt-0 md:p-8 border-t border-border/30  space-y-4 bg-accent/40">
+          <div className="p-6 pt-2 md:p-8 border-t border-border/30  space-y-4 bg-accent/40 pb-20 sm:pb-6">
             
             {/* Stock status */}
             <div className={`flex items-center gap-2 text-xs font-bold ${isOutOfStock ? "text-destructive" : "text-success"}`}>
