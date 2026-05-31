@@ -60,12 +60,13 @@ export default function AdminNotificationsPage() {
           try {
             const data = await deleteMutation.mutateAsync(id);
             toast.success(data.message || "Notification deleted globally");
-          } catch (error) {
-            const err = error as AxiosError<{ message?: string }>;
-            toast.error(
-              err?.response?.data?.message || "Failed to delete notification",
-            );
-          }
+          } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Failed to delete notification";
+            toast.error(errorMessage);
+          } 
         },
       });
     },

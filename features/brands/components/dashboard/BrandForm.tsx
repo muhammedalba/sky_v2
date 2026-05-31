@@ -65,9 +65,9 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
       }
       onSuccess();
 
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || t('messages.error'), data.name.en);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : t('messages.error');
+      toast.error(msg, data.name.en);
     }
   };
 

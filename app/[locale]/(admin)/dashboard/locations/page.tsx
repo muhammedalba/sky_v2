@@ -105,8 +105,9 @@ export default function LocationsDashboardPage() {
         await updateCityMutation.mutateAsync(payload);
       }
       toast.success(tCommon('messages.updateSuccess'));
-    } catch (error) {
-      toast.error(tCommon('errors.updateFailed'));
+    }  catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : tCommon('errors.updateFailed');
+      toast.error(errorMessage);
     }
   }, [updateCountryMutation, updateRegionMutation, updateCityMutation, toast, tCommon]);
 

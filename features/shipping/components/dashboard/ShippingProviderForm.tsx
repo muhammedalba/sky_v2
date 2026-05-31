@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { Switch } from '@/shared/ui/Switch';
-import { ShippingProvider } from '../../types';
+import { CreateShippingProviderDto, ShippingProvider } from '../../types';
 import { useCreateShippingProvider, useUpdateShippingProvider } from '../../hooks/useShippingProviders';
 import { useToast } from '@/shared/hooks/useToast';
 import { EditIcon } from "@/shared/ui/Icons";
@@ -29,7 +29,7 @@ interface ShippingProviderFormProps {
 }
 
 export default function ShippingProviderForm({ editingProvider, onSuccess, onCancel }: ShippingProviderFormProps) {
-  const t = useTranslations('shipping');
+  // const t = useTranslations('shipping');
   const tCommon = useTranslations('buttons');
   const { success: toastSuccess, error: toastError } = useToast();
 
@@ -63,9 +63,9 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateShippingProviderDto) => {
     try {
-      const payload: any = {
+      const payload: CreateShippingProviderDto = {
         name: data.name,
         code: data.code,
         trackingUrl: data.trackingUrl || '',
@@ -77,15 +77,16 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
       }
 
       if (editingProvider) {
-        await updateProvider({ id: editingProvider._id, data: payload as any });
+        await updateProvider({ id: editingProvider._id, data: payload  });
         toastSuccess('تم التحديث بنجاح');
       } else {
-        await createProvider(payload as any);
+        await createProvider(payload);
         toastSuccess('تمت الإضافة بنجاح');
       }
       onSuccess?.();
-    } catch (error: any) {
-      toastError(error.message || 'حدث خطأ غير متوقع');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toastError(msg);
     }
   };
 

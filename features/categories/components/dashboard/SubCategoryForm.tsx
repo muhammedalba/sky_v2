@@ -87,9 +87,9 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
         toast.success(t('messages.createSuccess'), data.name.en);
       }
       onSuccess();
-    } catch (error: any) {
-      toast.error(error?.message || t('messages.error'), data.name.en);
-      console.error(error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : t('messages.error');
+      toast.error(msg, data.name.en);
     }
   };
 

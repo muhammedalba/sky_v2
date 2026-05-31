@@ -252,22 +252,13 @@ export interface CouponValidationResult {
  * Only works for authenticated users (guests cannot use coupons).
  */
 export function useCouponValidation() {
-  const toast = useToast();
-
   return useMutation({
     mutationFn: async (data: {
       code: string;
       orderAmount: number;
     }): Promise<CouponValidationResult> => {
       const response = await cartApi.validateCoupon(data);
-      return response?.data as CouponValidationResult;
-    },
-    onError: (error: any) => {
-      console.log("error",error);
-      console.log("error message",error.response.data.message);
-      
-      
-      toast.error(error.message || "Invalid coupon code");
+      return response?.data;
     },
   });
 }

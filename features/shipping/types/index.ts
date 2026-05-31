@@ -29,7 +29,7 @@ export interface ShippingRate {
 export interface CreateShippingProviderDto {
   name: string;
   code: string;
-  logo?: string;
+  logo?: File;
   trackingUrl?: string;
   isActive?: boolean;
 }

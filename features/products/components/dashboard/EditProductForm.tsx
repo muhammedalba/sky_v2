@@ -417,9 +417,9 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       await updateMutation.mutateAsync({ id: initialData._id, data: formData });
       toast.success(tMessages('updateSuccess') || 'Product updated successfully');
       router.push(`/dashboard/products`);
-    } catch (error: any) {
-      toast.error(error?.message || tMessages('updateError') || 'Error while updating product');
-      console.error(error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : tMessages('updateError') || 'Error while updating product';
+      toast.error(msg);
     }
   };
 

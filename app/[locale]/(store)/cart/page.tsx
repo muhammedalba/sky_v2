@@ -223,10 +223,10 @@ export default function CartPage() {
       });
       setAppliedCoupon(res);
       toast.success(t("messages.couponApplied"));
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || error?.message || "something went wrong",
-      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "something went wrong";
+      toast.error(errorMessage);
     }
   };
 

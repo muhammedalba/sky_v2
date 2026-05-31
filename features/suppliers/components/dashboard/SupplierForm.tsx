@@ -87,9 +87,9 @@ export default function SupplierForm({ editingSupplier, mode }: SupplierFormProp
       }
       router.push(`/${locale}/dashboard/suppliers`);
 
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || t('messages.error'));
+    } catch (error: unknown) {
+     const msg = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toast.error(msg);
     }
   };
   // 

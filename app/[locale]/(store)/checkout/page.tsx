@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import {
   useCountries,
@@ -28,7 +27,6 @@ import {
   CreditCard,
   Truck,
   MapPin,
-  User,
   ShieldCheck,
   Lock,
   CheckCircle2,
@@ -39,8 +37,9 @@ import {
   Loader2,
   Package,
   AlertCircle,
-  BadgeCheck,
 } from "lucide-react";
+import { useShippingRates } from "@/features/shipping/hooks/useShippingRates";
+import { useGetTaxByCountry, useTaxes } from "@/features/taxes/hooks/useTaxes";
 
 /* ─────────────────────── Types ─────────────────────────────────── */
 interface ShippingOption {
@@ -85,13 +84,7 @@ const PAYMENT_LABELS_AR: Record<string, string> = {
 };
 
 /* ─────────────────────── Step Indicator ─────────────────────────── */
-function StepIndicator({
-  current,
-  isAr,
-}: {
-  current: number;
-  isAr: boolean;
-}) {
+function StepIndicator({ current, isAr }: { current: number; isAr: boolean }) {
   const steps = isAr
     ? ["معلومات التوصيل", "الشحن والدفع", "مراجعة وتأكيد"]
     : ["Shipping Info", "Shipping & Payment", "Review & Confirm"];
@@ -106,13 +99,25 @@ function StepIndicator({
             <div className="flex flex-col items-center gap-1.5 relative">
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 shadow-md
-                  ${isDone ? "bg-success text-white scale-90" : isActive ? "bg-primary text-primary-foreground scale-110 shadow-primary/30" : "bg-muted text-muted-foreground"}`}
+                  ${
+                    isDone
+                      ? "bg-success text-white scale-90"
+                      : isActive
+                        ? "bg-primary text-primary-foreground scale-110 shadow-primary/30"
+                        : "bg-muted text-muted-foreground"
+                  }`}
               >
                 {isDone ? <CheckCircle2 className="w-5 h-5" /> : i + 1}
               </div>
               <span
                 className={`text-[10px] font-semibold whitespace-nowrap text-center leading-tight transition-colors
-                  ${isActive ? "text-primary" : isDone ? "text-success" : "text-muted-foreground"}`}
+                  ${
+                    isActive
+                      ? "text-primary"
+                      : isDone
+                        ? "text-success"
+                        : "text-muted-foreground"
+                  }`}
               >
                 {step}
               </span>
@@ -163,7 +168,9 @@ function SelectField({
           disabled={disabled || isLoading}
           className="w-full h-12 px-4 pr-10 bg-card border border-border/60 rounded-xl text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <option value="">{isLoading ? "جارٍ التحميل..." : placeholder}</option>
+          <option value="">
+            {isLoading ? "جارٍ التحميل..." : placeholder}
+          </option>
           {options.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
@@ -212,7 +219,11 @@ function InputField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={`w-full h-12 px-4 bg-card border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-muted-foreground/50
-          ${error ? "border-destructive focus:border-destructive" : "border-border/60 focus:border-primary"}`}
+          ${
+            error
+              ? "border-destructive focus:border-destructive"
+              : "border-border/60 focus:border-primary"
+          }`}
       />
       {error && (
         <p className="text-xs text-destructive flex items-center gap-1">
@@ -265,7 +276,12 @@ function OrderSummaryCard({
             <div key={idx} className="flex items-center gap-3">
               <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/40 shrink-0 bg-accent/30">
                 {image ? (
-                  <Image src={image} alt={title as string} fill className="object-cover" />
+                  <Image
+                    src={image}
+                    alt={title as string}
+                    fill
+                    className="object-cover"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Package className="w-5 h-5 text-muted-foreground/40" />
@@ -276,8 +292,12 @@ function OrderSummaryCard({
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{title as string}</p>
-                <p className="text-xs text-muted-foreground">× {item.quantity}</p>
+                <p className="text-sm font-semibold text-foreground truncate">
+                  {title as string}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  × {item.quantity}
+                </p>
               </div>
               <span className="text-sm font-bold text-foreground tabular-nums shrink-0">
                 {formatCurrency((price || 0) * (item.quantity || 1))}
@@ -290,7 +310,9 @@ function OrderSummaryCard({
       {/* Totals */}
       <div className="px-5 py-4 space-y-2.5">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">{isAr ? "المجموع الفرعي" : "Subtotal"}</span>
+          <span className="text-muted-foreground">
+            {isAr ? "المجموع الفرعي" : "Subtotal"}
+          </span>
           <span className="font-semibold">{formatCurrency(subtotal)}</span>
         </div>
 
@@ -298,12 +320,18 @@ function OrderSummaryCard({
           <>
             {preview.summary.shippingCost > 0 ? (
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{isAr ? "الشحن" : "Shipping"}</span>
-                <span className="font-semibold">{formatCurrency(preview.summary.shippingCost)}</span>
+                <span className="text-muted-foreground">
+                  {isAr ? "الشحن" : "Shipping"}
+                </span>
+                <span className="font-semibold">
+                  {formatCurrency(preview.summary.shippingCost)}
+                </span>
               </div>
             ) : (
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{isAr ? "الشحن" : "Shipping"}</span>
+                <span className="text-muted-foreground">
+                  {isAr ? "الشحن" : "Shipping"}
+                </span>
                 <span className="font-bold text-success text-xs bg-success/10 px-2 py-0.5 rounded-lg">
                   {isAr ? "مجاني" : "Free"}
                 </span>
@@ -312,15 +340,23 @@ function OrderSummaryCard({
             {preview.summary.taxAmount > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">
-                  {isAr ? `الضريبة (${preview.summary.taxPercentage}%)` : `Tax (${preview.summary.taxPercentage}%)`}
+                  {isAr
+                    ? `الضريبة (${preview.summary.taxPercentage}%)`
+                    : `Tax (${preview.summary.taxPercentage}%)`}
                 </span>
-                <span className="font-semibold">{formatCurrency(preview.summary.taxAmount)}</span>
+                <span className="font-semibold">
+                  {formatCurrency(preview.summary.taxAmount)}
+                </span>
               </div>
             )}
             {preview.summary.paymentFees > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{isAr ? "رسوم الدفع" : "Payment Fees"}</span>
-                <span className="font-semibold">{formatCurrency(preview.summary.paymentFees)}</span>
+                <span className="text-muted-foreground">
+                  {isAr ? "رسوم الدفع" : "Payment Fees"}
+                </span>
+                <span className="font-semibold">
+                  {formatCurrency(preview.summary.paymentFees)}
+                </span>
               </div>
             )}
             {preview.summary.discount > 0 && (
@@ -329,12 +365,16 @@ function OrderSummaryCard({
                   <Tag className="w-3.5 h-3.5" />
                   {isAr ? "خصم الكوبون" : "Coupon Discount"}
                 </span>
-                <span className="font-bold text-success">-{formatCurrency(preview.summary.discount)}</span>
+                <span className="font-bold text-success">
+                  -{formatCurrency(preview.summary.discount)}
+                </span>
               </div>
             )}
             <div className="h-px bg-border/60 my-2" />
             <div className="flex justify-between items-center">
-              <span className="font-black text-base text-foreground">{isAr ? "الإجمالي" : "Total"}</span>
+              <span className="font-black text-base text-foreground">
+                {isAr ? "الإجمالي" : "Total"}
+              </span>
               <span className="text-2xl font-black text-primary tabular-nums">
                 {formatCurrency(preview.summary.total)}
               </span>
@@ -343,14 +383,18 @@ function OrderSummaryCard({
         ) : (
           <>
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{isAr ? "الشحن" : "Shipping"}</span>
+              <span className="text-muted-foreground">
+                {isAr ? "الشحن" : "Shipping"}
+              </span>
               <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
                 {isAr ? "يحسب لاحقاً" : "Calculated next"}
               </span>
             </div>
             <div className="h-px bg-border/60 my-2" />
             <div className="flex justify-between items-center">
-              <span className="font-black text-base text-foreground">{isAr ? "الإجمالي" : "Total"}</span>
+              <span className="font-black text-base text-foreground">
+                {isAr ? "الإجمالي" : "Total"}
+              </span>
               <span className="text-2xl font-black text-primary tabular-nums">
                 {formatCurrency(subtotal)}
               </span>
@@ -364,8 +408,12 @@ function OrderSummaryCard({
         <div className="flex items-center gap-3 bg-muted/40 rounded-2xl p-3 border border-border/30">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
           <div>
-            <p className="text-xs font-bold text-foreground">{isAr ? "دفع آمن ومشفر" : "Secure & Encrypted"}</p>
-            <p className="text-[10px] text-muted-foreground">SSL / 256-bit encryption</p>
+            <p className="text-xs font-bold text-foreground">
+              {isAr ? "دفع آمن ومشفر" : "Secure & Encrypted"}
+            </p>
+            <p className="text-[10px] text-muted-foreground">
+              SSL / 256-bit encryption
+            </p>
           </div>
           <Lock className="w-4 h-4 text-muted-foreground ms-auto" />
         </div>
@@ -380,17 +428,18 @@ export default function CheckoutPage() {
   const isAr = locale === "ar";
   const router = useRouter();
   const formatCurrency = useFormatCurrency();
-  const settings = useSettings();
-  const getTrans = useTrans();
-  const { data: user } = useMe();
   const toast = useToast();
+  const getTrans = useTrans();
+  // data
+  const settings = useSettings();
+  const { data: user } = useMe();
 
   /* ─── Cart Data ───────────────────────────────────────────────── */
   const { data: serverCart } = useCart();
   const guestCartItems = useCartStore((s) => s.items);
   const cartItems: CartItem[] = useMemo(
     () => (user ? serverCart?.items || [] : guestCartItems || []),
-    [user, serverCart?.items, guestCartItems]
+    [user, serverCart?.items, guestCartItems],
   );
 
   const subtotal = useMemo(
@@ -400,7 +449,7 @@ export default function CheckoutPage() {
         const { price } = resolveItemData(item);
         return acc + (price || 0) * (item.quantity || 1);
       }, 0),
-    [serverCart?.totalPrice, cartItems]
+    [serverCart?.totalPrice, cartItems],
   );
 
   /* ─── Step ────────────────────────────────────────────────────── */
@@ -426,28 +475,65 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [couponError, setCouponError] = useState<string | null>(null);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  // ======> check if has custom Taxes or Shipping Rates <======
+  // has Custom Shipping Rates
+  const hasCustomShippingRates = useMemo(() => {
+    return !!settings?.hasCustomShippingRates;
+  }, [settings]);
+
+  const enableCoupons = useMemo(() => {
+    return !!settings?.features?.coupons;
+  }, [settings]);
+  //  has Custom Taxes
+  const hasCustomTaxes = useMemo(() => {
+    return !!settings?.hasCustomTaxes;
+  }, [settings]);
 
   /* ─── Locations ────────────────────────────────────────────────── */
   const { data: countries = [], isLoading: loadingCountries } = useCountries();
-  const { data: regions = [], isLoading: loadingRegions } = useRegions(countryId || null);
-  const { data: cities = [], isLoading: loadingCities } = useCities(regionId || null);
+  const { data: regions = [], isLoading: loadingRegions } = useRegions(
+    countryId || null,
+  );
+  const { data: cities = [], isLoading: loadingCities } = useCities(
+    regionId || null,
+  );
+  // fetch shipping rates
+  const { data: shippingRates = [], isLoading: loadingShippingRates } =
+    useShippingRates({country: '6a0709145a8915b402f4c610', region: '6a0709195a8915b402f4c6e2', city: '6a0709195a8915b402f4c6f1'});
+    console.log("shippingRates", shippingRates);
+    
+  // fetch tax rates
+  const { data: taxRates = [], isLoading: loadingTaxRates } = useGetTaxByCountry(countryId);
 
   /* ─── Payment Methods ──────────────────────────────────────────── */
   const { data: paymentMethods = [] } = useActivePaymentMethods();
 
   /* ─── Checkout Preview ─────────────────────────────────────────── */
-  const { mutate: fetchPreview, data: previewData, isPending: previewLoading } = useCheckoutPreview();
+  const {
+    mutate: fetchPreview,
+    data: previewData,
+    isPending: previewLoading,
+  } = useCheckoutPreview();
+
   const { mutate: placeOrder, isPending: placingOrder } = usePlaceOrder();
-  const { mutate: bankTransfer, isPending: bankTransferring } = useBankTransferOrder();
+  const { mutate: bankTransfer, isPending: bankTransferring } =
+    useBankTransferOrder();
 
   const previewResult = previewData?.data ?? previewData;
+
   const shippingOptions: ShippingOption[] = useMemo(
     () => previewResult?.shippingOptions ?? [],
-    [previewResult]
+    [previewResult],
   );
   const selectedPayment: PaymentMethod | undefined = paymentMethods.find(
-    (m: PaymentMethod) => m._id === selectedPaymentId
+    (m: PaymentMethod) => m._id === selectedPaymentId,
   );
+
+  // تحقق ما إذا كانت شركة التوصيل المحددة تدعم الدفع عند الاستلام
+  const selectedShippingOption = shippingOptions.find(
+    (opt) => opt.providerId === selectedShippingId,
+  );
+  const isCODSupportedByCarrier = selectedShippingOption?.supportsCOD ?? false;
 
   /* ─── Reset downstream on location change ─────────────────────── */
   useEffect(() => {
@@ -464,34 +550,50 @@ export default function CheckoutPage() {
     if (step === 1 && cityId && selectedPaymentId) {
       triggerPreview();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, cityId, selectedPaymentId, selectedShippingId, appliedCoupon]);
 
-  const triggerPreview = useCallback((overrideCoupon?: string | null) => {
-    if (!cityId || !selectedPaymentId) return;
-    const items = cartItems.map((item: CartItem) => {
-      const { price } = resolveItemData(item);
-      return {
-        productId: (item.product?._id || item.productId) as string,
-        variantId: (item.variant?._id || item.variantId) as string,
-        quantity: item.quantity,
-        weight: (item.variant as { weight?: number } | undefined)?.weight ?? (item.product as { weight?: number } | undefined)?.weight ?? 0.5,
-        price: price || 0,
-      };
-    });
+  const triggerPreview = useCallback(
+    (overrideCoupon?: string | null) => {
+      if (!cityId || !selectedPaymentId) return;
+      const items = cartItems.map((item: CartItem) => {
+        const { price } = resolveItemData(item);
+        return {
+          productId: (item.product?._id || item.productId) as string,
+          variantId: (item.variant?._id || item.variantId) as string,
+          quantity: item.quantity,
+          weight:
+            (item.variant as { weight?: number } | undefined)?.weight ??
+            (item.product as { weight?: number } | undefined)?.weight ??
+            0.5,
+          price: price || 0,
+        };
+      });
 
-    const couponToSend = overrideCoupon === null
-      ? undefined
-      : (overrideCoupon !== undefined ? overrideCoupon : (appliedCoupon || undefined));
+      const couponToSend =
+        overrideCoupon === null
+          ? undefined
+          : overrideCoupon !== undefined
+            ? overrideCoupon
+            : appliedCoupon || undefined;
 
-    fetchPreview({
+      fetchPreview({
+        cityId,
+        items,
+        paymentMethodId: selectedPaymentId,
+        shippingProviderId: selectedShippingId || "auto",
+        couponCode: couponToSend,
+      });
+    },
+    [
       cityId,
-      items,
-      paymentMethodId: selectedPaymentId,
-      shippingProviderId: selectedShippingId || "auto",
-      couponCode: couponToSend,
-    });
-  }, [cityId, selectedPaymentId, selectedShippingId, appliedCoupon, cartItems, fetchPreview]);
+      selectedPaymentId,
+      selectedShippingId,
+      appliedCoupon,
+      cartItems,
+      fetchPreview,
+    ],
+  );
 
   const handleApplyCoupon = useCallback(() => {
     if (!couponInput.trim()) return;
@@ -503,7 +605,10 @@ export default function CheckoutPage() {
         productId: (item.product?._id || item.productId) as string,
         variantId: (item.variant?._id || item.variantId) as string,
         quantity: item.quantity,
-        weight: (item.variant as { weight?: number } | undefined)?.weight ?? (item.product as { weight?: number } | undefined)?.weight ?? 0.5,
+        weight:
+          (item.variant as { weight?: number } | undefined)?.weight ??
+          (item.product as { weight?: number } | undefined)?.weight ??
+          0.5,
         price: price || 0,
       };
     });
@@ -522,19 +627,37 @@ export default function CheckoutPage() {
           if (result?.summary?.discount > 0) {
             setAppliedCoupon(couponInput);
             setCouponError(null);
-            toast.success(isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!");
+            toast.success(
+              isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!",
+            );
           } else {
-            setCouponError(isAr ? "هذا الكوبون لم يقدم أي خصم" : "This coupon did not apply any discount");
+            setCouponError(
+              isAr
+                ? "هذا الكوبون لم يقدم أي خصم"
+                : "This coupon did not apply any discount",
+            );
           }
         },
         onError: (err: any) => {
-          const errMsg = err.response?.data?.message || err.message || (isAr ? "كوبون غير صالح" : "Invalid coupon");
+          const errMsg =
+            err.response?.data?.message ||
+            err.message ||
+            (isAr ? "كوبون غير صالح" : "Invalid coupon");
           setCouponError(errMsg);
           toast.error(errMsg);
         },
-      }
+      },
     );
-  }, [couponInput, cityId, selectedPaymentId, selectedShippingId, cartItems, fetchPreview, isAr, toast]);
+  }, [
+    couponInput,
+    cityId,
+    selectedPaymentId,
+    selectedShippingId,
+    cartItems,
+    fetchPreview,
+    isAr,
+    toast,
+  ]);
 
   const handleRemoveCoupon = useCallback(() => {
     setCouponInput("");
@@ -542,7 +665,9 @@ export default function CheckoutPage() {
     setCouponError(null);
 
     triggerPreview(null);
-    toast.success(isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully");
+    toast.success(
+      isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully",
+    );
   }, [triggerPreview, isAr, toast]);
 
   /* ─── Auto-select first shipping & first payment ──────────────── */
@@ -634,10 +759,25 @@ export default function CheckoutPage() {
       });
     }
   }, [
-    firstName, lastName, phone, selectedCountry, selectedCity, cityId,
-    street, building, postalCode, additionalInfo, cartItems, selectedPayment,
-    selectedPaymentId, selectedShippingId, appliedCoupon, notes, receiptFile,
-    placeOrder, bankTransfer,
+    firstName,
+    lastName,
+    phone,
+    selectedCountry,
+    selectedCity,
+    cityId,
+    street,
+    building,
+    postalCode,
+    additionalInfo,
+    cartItems,
+    selectedPayment,
+    selectedPaymentId,
+    selectedShippingId,
+    appliedCoupon,
+    notes,
+    receiptFile,
+    placeOrder,
+    bankTransfer,
   ]);
 
   const isSubmitting = placingOrder || bankTransferring;
@@ -660,7 +800,9 @@ export default function CheckoutPage() {
             {isAr ? "إتمام الطلب" : "Checkout"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {isAr ? "أكمل بياناتك لتأكيد طلبك" : "Complete your details to confirm your order"}
+            {isAr
+              ? "أكمل بياناتك لتأكيد طلبك"
+              : "Complete your details to confirm your order"}
           </p>
         </div>
 
@@ -671,7 +813,6 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* ── Left: Steps ── */}
           <div className="lg:col-span-7 space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
-
             {/* ════ STEP 0: Shipping Address ════ */}
             {step === 0 && (
               <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
@@ -720,7 +861,7 @@ export default function CheckoutPage() {
                     onChange={setCountryId}
                     options={countries.map((c: any) => ({
                       value: c._id,
-                      label: isAr ? (c.name?.ar || c.name) : (c.name?.en || c.name),
+                      label: isAr ? c.name?.ar || c.name : c.name?.en || c.name,
                     }))}
                     placeholder={isAr ? "اختر الدولة" : "Select country"}
                     isLoading={loadingCountries}
@@ -734,7 +875,7 @@ export default function CheckoutPage() {
                     onChange={setRegionId}
                     options={regions.map((r: any) => ({
                       value: r._id,
-                      label: isAr ? (r.name?.ar || r.name) : (r.name?.en || r.name),
+                      label: isAr ? r.name?.ar || r.name : r.name?.en || r.name,
                     }))}
                     placeholder={isAr ? "اختر المنطقة" : "Select region"}
                     disabled={!countryId}
@@ -749,7 +890,7 @@ export default function CheckoutPage() {
                     onChange={setCityId}
                     options={cities.map((c: any) => ({
                       value: c._id,
-                      label: isAr ? (c.name?.ar || c.name) : (c.name?.en || c.name),
+                      label: isAr ? c.name?.ar || c.name : c.name?.en || c.name,
                     }))}
                     placeholder={isAr ? "اختر المدينة" : "Select city"}
                     disabled={!regionId}
@@ -762,7 +903,9 @@ export default function CheckoutPage() {
                     label={isAr ? "الشارع" : "Street"}
                     value={street}
                     onChange={setStreet}
-                    placeholder={isAr ? "اسم الشارع والرقم" : "Street name and number"}
+                    placeholder={
+                      isAr ? "اسم الشارع والرقم" : "Street name and number"
+                    }
                     required
                   />
 
@@ -790,7 +933,11 @@ export default function CheckoutPage() {
                     <textarea
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      placeholder={isAr ? "ملاحظات للسائق أو أي تعليمات خاصة..." : "Notes for the driver or special instructions..."}
+                      placeholder={
+                        isAr
+                          ? "ملاحظات للسائق أو أي تعليمات خاصة..."
+                          : "Notes for the driver or special instructions..."
+                      }
                       rows={3}
                       className="w-full px-4 py-3 bg-card border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-none transition-all placeholder:text-muted-foreground/50"
                     />
@@ -804,14 +951,18 @@ export default function CheckoutPage() {
                   className="mt-8 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {isAr ? "التالي: الشحن والدفع" : "Next: Shipping & Payment"}
-                  {isAr ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+                  {isAr ? (
+                    <ArrowLeft className="w-5 h-5" />
+                  ) : (
+                    <ArrowRight className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             )}
 
             {/* ════ STEP 1: Shipping + Payment ════ */}
             {step === 1 && (
-              <div className="space-y-5">
+              <div className="space-y-5 animate-in fade-in duration-300">
                 {/* Shipping Options */}
                 <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
                   <div className="flex items-center gap-3 mb-6">
@@ -823,69 +974,54 @@ export default function CheckoutPage() {
                     </h2>
                   </div>
 
-                  {previewLoading ? (
+                  {previewLoading && !shippingOptions.length ? (
                     <div className="flex items-center gap-3 py-8 justify-center text-muted-foreground">
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      <span className="text-sm">{isAr ? "جارٍ حساب الشحن..." : "Calculating shipping..."}</span>
-                    </div>
-                  ) : shippingOptions.length === 0 ? (
-                    <div className="py-8 text-center">
-                      <p className="text-sm text-muted-foreground">
-                        {isAr ? "لا توجد خيارات شحن متاحة للمدينة المختارة" : "No shipping options available for this city"}
-                      </p>
-                      <button
-                        onClick={() => triggerPreview()}
-                        className="mt-3 text-sm text-primary font-semibold hover:underline"
-                      >
-                        {isAr ? "إعادة المحاولة" : "Retry"}
-                      </button>
+                      <span className="text-sm">
+                        {isAr
+                          ? "جارٍ حساب الشحن..."
+                          : "Calculating shipping..."}
+                      </span>
                     </div>
                   ) : (
-                    <div className="space-y-3">
-                      {shippingOptions.map((opt: ShippingOption) => (
+                    <div className="grid gap-4">
+                      {shippingOptions.map((option) => (
                         <label
-                          key={opt.providerId}
-                          className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all
-                            ${selectedShippingId === opt.providerId
-                              ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
-                              : "border-border/50 hover:border-border"
-                            }`}
+                          key={option.providerId}
+                          className={`relative flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
+                            selectedShippingId === option.providerId
+                              ? "border-primary bg-primary/5 ring-1 ring-primary"
+                              : "border-border/60 hover:border-primary/50"
+                          }`}
                         >
-                          <input
-                            type="radio"
-                            name="shipping"
-                            value={opt.providerId}
-                            checked={selectedShippingId === opt.providerId}
-                            onChange={() => setSelectedShippingId(opt.providerId)}
-                            className="sr-only"
-                          />
-                          <div
-                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors
-                              ${selectedShippingId === opt.providerId ? "border-primary" : "border-muted-foreground/40"}`}
-                          >
-                            {selectedShippingId === opt.providerId && (
-                              <div className="w-2.5 h-2.5 rounded-full bg-primary" />
-                            )}
+                          <div className="flex items-center gap-4">
+                            <input
+                              type="radio"
+                              name="shippingProvider"
+                              value={option.providerId}
+                              checked={selectedShippingId === option.providerId}
+                              onChange={() =>
+                                setSelectedShippingId(option.providerId)
+                              }
+                              className="w-4 h-4 text-primary focus:ring-primary/50"
+                            />
+                            <div>
+                              <p className="font-semibold text-sm">
+                                {option.providerName}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {isAr ? "المدة المتوقعة:" : "Est. Delivery:"}{" "}
+                                {option.estimatedDays} {isAr ? "أيام" : "days"}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex-1">
-                            <p className="font-bold text-foreground text-sm">{opt.providerName}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {isAr
-                                ? `${opt.estimatedDays} أيام عمل`
-                                : `${opt.estimatedDays} business days`}
-                            </p>
-                          </div>
-                          <div className="text-end shrink-0">
-                            {opt.totalShippingCost === 0 ? (
-                              <span className="text-success font-bold text-sm">
-                                {isAr ? "مجاني" : "Free"}
-                              </span>
-                            ) : (
-                              <span className="font-bold text-foreground">
-                                {formatCurrency(opt.totalShippingCost)}
-                              </span>
-                            )}
-                          </div>
+                          <span className="font-bold text-sm">
+                            {option.totalShippingCost > 0
+                              ? formatCurrency(option.totalShippingCost)
+                              : isAr
+                                ? "مجاني"
+                                : "Free"}
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -903,337 +1039,242 @@ export default function CheckoutPage() {
                     </h2>
                   </div>
 
-                  <div className="space-y-3">
-                    {paymentMethods.map((method: PaymentMethod) => (
-                      <label
-                        key={method._id}
-                        className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all
-                          ${selectedPaymentId === method._id
-                            ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
-                            : "border-border/50 hover:border-border"
-                          }`}
-                      >
-                        <input
-                          type="radio"
-                          name="payment"
-                          value={method._id}
-                          checked={selectedPaymentId === method._id}
-                          onChange={() => setSelectedPaymentId(method._id)}
-                          className="sr-only"
-                        />
-                        <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors
-                            ${selectedPaymentId === method._id ? "border-primary" : "border-muted-foreground/40"}`}
-                        >
-                          {selectedPaymentId === method._id && (
-                            <div className="w-2.5 h-2.5 rounded-full bg-primary" />
-                          )}
-                        </div>
-                        <span className="text-xl shrink-0">
-                          {PAYMENT_ICONS[method.code] ?? "💳"}
-                        </span>
-                        <div className="flex-1">
-                          <p className="font-bold text-foreground text-sm">
-                            {isAr
-                              ? PAYMENT_LABELS_AR[method.code] ?? method.name
-                              : method.name}
-                          </p>
-                          {method.fees > 0 && (
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {isAr ? `رسوم إضافية: ` : `Additional fee: `}
-                              {formatCurrency(method.fees)}
-                            </p>
-                          )}
-                        </div>
-                        {selectedPaymentId === method._id && (
-                          <BadgeCheck className="w-5 h-5 text-primary shrink-0" />
-                        )}
-                      </label>
-                    ))}
-                  </div>
+                  <div className="grid gap-4">
+                    {paymentMethods.map((method) => {
+                      const isCOD = method.code.toLowerCase() === "cod";
+                      // تعطيل الدفع عند الاستلام اذا كانت شركة الشحن لا تدعمه
+                      const disabled = isCOD && !isCODSupportedByCarrier;
 
-                  {/* Bank transfer receipt upload */}
-                  {(selectedPayment?.code === "bank_transfer" ||
-                    selectedPayment?.code === "bankTransfer" ||
-                    selectedPayment?.code === "banktransfer") && (
-                    <div className="mt-5 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl space-y-3">
-                      <p className="text-sm font-bold text-amber-700 dark:text-amber-400">
-                        {isAr ? "📎 يرجى رفع إيصال التحويل البنكي" : "📎 Please upload your bank transfer receipt"}
-                      </p>
-                      <label className="flex flex-col items-center gap-3 cursor-pointer">
-                        <div
-                          className={`w-full border-2 border-dashed rounded-2xl p-5 flex flex-col items-center gap-2 transition-colors
-                            ${receiptFile ? "border-success bg-success/5" : "border-border hover:border-primary/50"}`}
+                      return (
+                        <label
+                          key={method._id}
+                          className={`relative flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
+                            disabled
+                              ? "opacity-50 cursor-not-allowed bg-muted/20"
+                              : selectedPaymentId === method._id
+                                ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                : "border-border/60 hover:border-primary/50"
+                          }`}
                         >
-                          {receiptFile ? (
-                            <>
-                              <CheckCircle2 className="w-8 h-8 text-success" />
-                              <p className="text-sm font-bold text-success">{receiptFile.name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {(receiptFile.size / 1024).toFixed(0)} KB
+                          <div className="flex items-center gap-4">
+                            <input
+                              type="radio"
+                              name="paymentMethod"
+                              value={method._id}
+                              disabled={disabled}
+                              checked={selectedPaymentId === method._id}
+                              onChange={() => setSelectedPaymentId(method._id)}
+                              className="w-4 h-4 text-primary focus:ring-primary/50"
+                            />
+                            <div className="text-xl">
+                              {PAYMENT_ICONS[method.code.toLowerCase()] || "💳"}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-sm">
+                                {isAr
+                                  ? PAYMENT_LABELS_AR[
+                                      method.code.toLowerCase()
+                                    ] || method.name
+                                  : method.name}
                               </p>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-8 h-8 text-muted-foreground/50" />
-                              <p className="text-sm font-semibold text-muted-foreground">
-                                {isAr ? "انقر لرفع الإيصال" : "Click to upload receipt"}
-                              </p>
-                              <p className="text-xs text-muted-foreground/60">PNG, JPEG, WEBP (Max 1MB)</p>
-                            </>
+                              {disabled && (
+                                <p className="text-xs text-destructive mt-1">
+                                  {isAr
+                                    ? "شركة الشحن لا تدعم الدفع عند الاستلام"
+                                    : "Carrier does not support COD"}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          {method.fees > 0 && (
+                            <span className="text-xs text-muted-foreground">
+                              +{formatCurrency(method.fees)}
+                            </span>
                           )}
-                        </div>
-                        <input
-                          type="file"
-                          accept="image/png,image/jpeg,image/webp"
-                          className="sr-only"
-                          onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)}
-                        />
-                      </label>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Coupon Box */}
+                <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2.5 bg-primary/10 rounded-2xl">
+                      <Tag className="w-5 h-5 text-primary" />
                     </div>
+                    <h2 className="text-xl font-black text-foreground">
+                      {isAr ? "كود الخصم" : "Coupon Code"}
+                    </h2>
+                  </div>
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      placeholder={isAr ? "أدخل الكوبون" : "Enter coupon"}
+                      disabled={!!appliedCoupon || previewLoading}
+                      className="flex-1 h-12 px-4 bg-background border border-border/60 rounded-xl text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
+                    />
+                    {appliedCoupon ? (
+                      <button
+                        onClick={handleRemoveCoupon}
+                        className="h-12 px-6 bg-destructive text-destructive-foreground rounded-xl font-bold text-sm hover:bg-destructive/90 transition-all"
+                      >
+                        {isAr ? "إزالة" : "Remove"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={!couponInput || previewLoading}
+                        className="h-12 px-6 bg-primary text-primary-foreground rounded-xl font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-all"
+                      >
+                        {isAr ? "تطبيق" : "Apply"}
+                      </button>
+                    )}
+                  </div>
+                  {couponError && (
+                    <p className="text-xs text-destructive mt-2 flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5" /> {couponError}
+                    </p>
                   )}
                 </div>
 
-                {/* Coupon (only for authenticated users) */}
-                {user && settings.features.coupons && (
-                  <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className="p-2.5 bg-primary/10 rounded-2xl">
-                        <Tag className="w-5 h-5 text-primary" />
-                      </div>
-                      <h2 className="text-xl font-black text-foreground">
-                        {isAr ? "كوبون الخصم" : "Discount Coupon"}
-                      </h2>
-                    </div>
-
-                    {appliedCoupon ? (
-                      <div className="flex items-center justify-between p-4 bg-success/10 border border-success/20 rounded-2xl">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-5 h-5 text-success animate-bounce" />
-                          <div>
-                            <p className="text-sm font-bold text-foreground">
-                              {isAr ? `الكوبون المطبق: ${appliedCoupon}` : `Applied Coupon: ${appliedCoupon}`}
-                            </p>
-                            {previewResult?.summary?.discount > 0 && (
-                              <p className="text-xs text-success font-semibold mt-0.5">
-                                {isAr
-                                  ? `تم تطبيق خصم بقيمة -${formatCurrency(previewResult.summary.discount)}`
-                                  : `Discount of -${formatCurrency(previewResult.summary.discount)} applied`}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <button
-                          onClick={handleRemoveCoupon}
-                          disabled={previewLoading}
-                          className="px-4 h-9 bg-destructive/15 text-destructive hover:bg-destructive/25 text-xs font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-                        >
-                          {isAr ? "إزالة الكوبون" : "Remove"}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <div className="flex gap-3">
-                          <input
-                            type="text"
-                            value={couponInput}
-                            onChange={(e) => {
-                              setCouponInput(e.target.value.toUpperCase());
-                              if (couponError) setCouponError(null);
-                            }}
-                            placeholder={isAr ? "أدخل رمز الكوبون" : "Enter coupon code"}
-                            className="flex-1 h-12 px-4 bg-background border border-border/60 rounded-xl text-sm tracking-widest font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all uppercase placeholder:font-normal placeholder:tracking-normal"
-                          />
-                          <button
-                            onClick={handleApplyCoupon}
-                            disabled={!couponInput.trim() || previewLoading}
-                            className="h-12 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-                          >
-                            {previewLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                            {isAr ? "تطبيق" : "Apply"}
-                          </button>
-                        </div>
-                        {couponError && (
-                          <div className="flex items-center gap-2 text-destructive text-xs font-bold animate-in fade-in slide-in-from-top-1 duration-200">
-                            <AlertCircle className="w-4 h-4" />
-                            <span>{couponError}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-4 mt-8">
                   <button
                     onClick={() => setStep(0)}
-                    className="flex-none h-12 px-6 bg-muted text-foreground rounded-2xl font-semibold text-sm hover:bg-muted/80 transition-all flex items-center gap-2"
+                    className="w-1/3 h-14 bg-muted text-foreground rounded-2xl font-bold text-base hover:bg-muted/80 transition-all"
                   >
-                    {isAr ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
                     {isAr ? "رجوع" : "Back"}
                   </button>
                   <button
                     onClick={() => setStep(2)}
-                    disabled={!step1Valid}
-                    className="flex-1 h-12 bg-primary text-primary-foreground rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
+                    disabled={!step1Valid || previewLoading}
+                    className="flex-1 h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isAr ? "التالي: المراجعة" : "Next: Review"}
-                    {isAr ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                    {isAr ? "مراجعة الطلب" : "Review Order"}
+                    {isAr ? (
+                      <ArrowLeft className="w-5 h-5" />
+                    ) : (
+                      <ArrowRight className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
             )}
 
             {/* ════ STEP 2: Review & Confirm ════ */}
-            {step === 2 && (
-              <div className="space-y-5">
-                {/* Address review */}
+            {step === 1 && (
+              <div className="space-y-5 animate-in fade-in duration-300">
                 <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-xl">
-                        <MapPin className="w-4 h-4 text-primary" />
-                      </div>
-                      <h3 className="font-black text-foreground">{isAr ? "عنوان التوصيل" : "Delivery Address"}</h3>
+                  <h2 className="text-xl font-black text-foreground mb-4">
+                    {isAr ? "مراجعة البيانات" : "Review Details"}
+                  </h2>
+                  <div className="space-y-4 text-sm bg-muted/20 p-4 rounded-xl border border-border/40">
+                    <div className="flex justify-between border-b border-border/40 pb-3">
+                      <span className="text-muted-foreground">
+                        {isAr ? "الاسم" : "Name"}
+                      </span>
+                      <span className="font-semibold">
+                        {firstName} {lastName}
+                      </span>
                     </div>
-                    <button
-                      onClick={() => setStep(0)}
-                      className="text-xs text-primary font-bold hover:underline"
-                    >
-                      {isAr ? "تعديل" : "Edit"}
-                    </button>
+                    <div className="flex justify-between border-b border-border/40 pb-3">
+                      <span className="text-muted-foreground">
+                        {isAr ? "العنوان" : "Address"}
+                      </span>
+                      <span className="font-semibold text-end">
+                        {street}, {selectedCity?.name?.ar || selectedCity?.name}
+                        , {selectedCountry?.name?.ar || selectedCountry?.name}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-b border-border/40 pb-3">
+                      <span className="text-muted-foreground">
+                        {isAr ? "طريقة الشحن" : "Shipping"}
+                      </span>
+                      <span className="font-semibold">
+                        {selectedShippingOption?.providerName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        {isAr ? "طريقة الدفع" : "Payment"}
+                      </span>
+                      <span className="font-semibold">
+                        {isAr
+                          ? PAYMENT_LABELS_AR[
+                              selectedPayment?.code.toLowerCase() || ""
+                            ] || selectedPayment?.name
+                          : selectedPayment?.name}
+                      </span>
+                    </div>
                   </div>
-                  <div className="bg-muted/30 rounded-2xl p-4 space-y-1.5 text-sm">
-                    <p className="font-bold text-foreground">{firstName} {lastName}</p>
-                    <p className="text-muted-foreground">{phone}</p>
-                    <p className="text-muted-foreground">
-                      {street}{building ? `, ${building}` : ""}, {selectedCity?.name?.ar ?? selectedCity?.name}
-                    </p>
-                    <p className="text-muted-foreground">
-                      {selectedCountry?.name?.ar ?? selectedCountry?.name}
-                      {postalCode ? ` - ${postalCode}` : ""}
-                    </p>
-                    {notes && (
-                      <p className="text-muted-foreground/70 italic text-xs pt-1 border-t border-border/30">
-                        {notes}
+                </div>
+
+                {/* Upload Receipt for Bank Transfer */}
+                {(selectedPayment?.code === "bank_transfer" ||
+                  selectedPayment?.code === "bankTransfer" ||
+                  selectedPayment?.code === "banktransfer") && (
+                  <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
+                    <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                      <Upload className="w-5 h-5 text-primary" />
+                      {isAr ? "إرفاق إيصال التحويل" : "Upload Transfer Receipt"}
+                    </h2>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        setReceiptFile(e.target.files?.[0] || null)
+                      }
+                      className="block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                    />
+                    {!receiptFile && (
+                      <p className="text-xs text-destructive mt-2">
+                        {isAr
+                          ? "* يرجى إرفاق صورة الإيصال لإتمام الطلب"
+                          : "* Receipt image is required to complete order"}
                       </p>
                     )}
                   </div>
-                </div>
-
-                {/* Shipping & Payment review */}
-                <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-xl">
-                        <CreditCard className="w-4 h-4 text-primary" />
-                      </div>
-                      <h3 className="font-black text-foreground">{isAr ? "الشحن والدفع" : "Shipping & Payment"}</h3>
-                    </div>
-                    <button
-                      onClick={() => setStep(1)}
-                      className="text-xs text-primary font-bold hover:underline"
-                    >
-                      {isAr ? "تعديل" : "Edit"}
-                    </button>
-                  </div>
-                  <div className="space-y-3">
-                    {previewResult?.delivery && (
-                      <div className="flex items-center gap-3 bg-muted/30 rounded-2xl p-3.5">
-                        <Truck className="w-4 h-4 text-primary shrink-0" />
-                        <div>
-                          <p className="text-sm font-bold">{previewResult.delivery.providerName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {isAr ? `${previewResult.delivery.estimatedDays} أيام عمل` : `${previewResult.delivery.estimatedDays} business days`}
-                          </p>
-                        </div>
-                        <span className="ms-auto font-bold text-sm">
-                          {previewResult.summary.shippingCost === 0
-                            ? <span className="text-success">{isAr ? "مجاني" : "Free"}</span>
-                            : formatCurrency(previewResult.summary.shippingCost)}
-                        </span>
-                      </div>
-                    )}
-                    {selectedPayment && (
-                      <div className="flex items-center gap-3 bg-muted/30 rounded-2xl p-3.5">
-                        <span className="text-xl">{PAYMENT_ICONS[selectedPayment.code] ?? "💳"}</span>
-                        <div>
-                          <p className="text-sm font-bold">
-                            {isAr ? PAYMENT_LABELS_AR[selectedPayment.code] ?? selectedPayment.name : selectedPayment.name}
-                          </p>
-                          {selectedPayment.fees > 0 && (
-                            <p className="text-xs text-muted-foreground">
-                              {isAr ? "رسوم:" : "Fees:"} {formatCurrency(selectedPayment.fees)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Bank transfer warning */}
-                {(selectedPayment?.code === "bank_transfer" ||
-                  selectedPayment?.code === "bankTransfer" ||
-                  selectedPayment?.code === "banktransfer") && !receiptFile && (
-                  <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                    <p className="text-sm text-amber-700 dark:text-amber-400 font-medium">
-                      {isAr
-                        ? "يرجى العودة ورفع إيصال التحويل البنكي قبل تأكيد الطلب"
-                        : "Please go back and upload the bank transfer receipt before confirming"}
-                    </p>
-                  </div>
                 )}
 
-                {/* CTA */}
-                <div className="flex gap-3">
+                <div className="flex gap-4 mt-8">
                   <button
                     onClick={() => setStep(1)}
-                    className="flex-none h-14 px-6 bg-muted text-foreground rounded-2xl font-semibold hover:bg-muted/80 transition-all flex items-center gap-2"
+                    disabled={isSubmitting}
+                    className="w-1/3 h-14 bg-muted text-foreground rounded-2xl font-bold text-base hover:bg-muted/80 transition-all disabled:opacity-50"
                   >
-                    {isAr ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
                     {isAr ? "رجوع" : "Back"}
                   </button>
                   <button
                     onClick={handlePlaceOrder}
                     disabled={
                       isSubmitting ||
-                      ((selectedPayment?.code === "bank_transfer" ||
-                        selectedPayment?.code === "bankTransfer" ||
-                        selectedPayment?.code === "banktransfer") && !receiptFile)
+                      (selectedPayment?.code.toLowerCase().includes("bank") &&
+                        !receiptFile)
                     }
-                    className="flex-1 h-14 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-2xl font-black text-base flex items-center justify-center gap-3 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/35 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="flex-1 h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        {isAr ? "جارٍ تقديم الطلب..." : "Placing order..."}
-                      </>
+                      <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
-                      <>
-                        <ShieldCheck className="w-5 h-5" />
-                        {isAr ? "تأكيد الطلب" : "Place Order"}
-                      </>
+                      <CheckCircle2 className="w-5 h-5" />
                     )}
+                    {isSubmitting
+                      ? isAr
+                        ? "جارٍ التأكيد..."
+                        : "Confirming..."
+                      : isAr
+                        ? "تأكيد الطلب"
+                        : "Confirm Order"}
                   </button>
                 </div>
-
-                <p className="text-center text-xs text-muted-foreground">
-                  {isAr
-                    ? "بالنقر على تأكيد الطلب، أنت توافق على "
-                    : "By clicking Place Order, you agree to our "}
-                  <Link href="/terms" className="text-primary hover:underline font-semibold">
-                    {isAr ? "الشروط والأحكام" : "Terms & Conditions"}
-                  </Link>
-                </p>
               </div>
             )}
           </div>
 
-          {/* ── Right: Order Summary ── */}
-          <div className="lg:col-span-5 animate-in fade-in slide-in-from-right-4 duration-600">
+          {/* ── Right: Summary ── */}
+          <div className="lg:col-span-5 relative z-10">
             <OrderSummaryCard
               cartItems={cartItems}
               subtotal={subtotal}

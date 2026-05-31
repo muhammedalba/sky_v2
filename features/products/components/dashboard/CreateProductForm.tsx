@@ -185,9 +185,9 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       await createMutation.mutateAsync(formData);
       toast.success(tMessages('createSuccess') || 'Product created successfully');
       router.push(`/${locale}/dashboard/products`);
-    } catch (error: any) {
-      toast.error(error?.message || tMessages('createError') || 'Error while creating product');
-      console.error(error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : tMessages('createError') || 'Error while creating product';
+      toast.error(msg);
     }
   };
   const onInvalidSubmit = () => {
@@ -231,7 +231,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
         >
           {/* ═══ LEFT COLUMN ═══ */}
           <div className="lg:col-span-2 space-y-6">
-            <ProductBasicInfo register={register} errors={errors as any} tError={tError} watch={watch} setValue={setValue} />
+            <ProductBasicInfo register={register} errors={errors} tError={tError} watch={watch} setValue={setValue} />
 
             <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
               

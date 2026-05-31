@@ -21,13 +21,28 @@ export const taxKeys = {
   list: (params: any) => [...taxKeys.lists(), params] as const,
 };
 
-export const useTaxes = (params?: { page?: number; limit?: number; search?: string; isActive?: boolean }) => {
+export const useTaxes = (params?: Record<string, unknown>) => {
   return useQuery({
     queryKey: taxKeys.list(params),
+    
     queryFn: async () => {
-      const response = await api.get<any, ApiResponse<Tax[]>>('/taxes', { params });
+      console.log(params);
+      console.log(taxKeys.list(params));
+      
+      const response = await api.get<any, ApiResponse<Tax[]>>('/taxes', {params} );
       return response;
     },
+  });
+};
+export const useGetTaxByCountry = (countryId: string) => {
+  return useQuery({
+    queryKey: ['taxes', 'active', countryId],
+    queryFn: async () => {
+      const response = await api.get<any, ApiResponse<Tax>>(`/taxes/country/${countryId}`);
+      return response.data;
+      
+    },
+    enabled: !!countryId || countryId === '',
   });
 };
 
