@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { locationsApi, paymentsApi, checkoutApi, orderApi, CheckoutPreviewPayload } from "../api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { locationsApi, paymentsApi, checkoutApi } from "../api";
 import { useToast } from "@/shared/hooks/useToast";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
@@ -56,13 +56,68 @@ export function useActivePaymentMethods() {
   });
 }
 
-// ─── Checkout preview ─────────────────────────────────────────────────────────
+// ─── Checkout Orchestrator Hooks ──────────────────────────────────────────────
 
-export function useCheckoutPreview() {
-  return useMutation({
-    mutationFn: async (payload: CheckoutPreviewPayload) => {
-      const res = await checkoutApi.preview(payload);
+export function useCheckoutSummary() {
+  return useQuery({
+    queryKey: ["checkout", "summary"],
+    queryFn: async () => {
+      const res = await checkoutApi.getSummary();
       return res.data;
+    },
+    // Don't cache checkout summary as it changes based on user interactions
+    staleTime: 0,
+  });
+}
+
+export function useSetAddress() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (address: any) => {
+      const res = await checkoutApi.setAddress(address);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
+    },
+  });
+}
+
+export function useSetShippingMethod() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (shippingProviderId: string) => {
+      const res = await checkoutApi.setShippingMethod(shippingProviderId);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
+    },
+  });
+}
+
+export function useSetPaymentMethod() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (paymentMethodId: string) => {
+      const res = await checkoutApi.setPaymentMethod(paymentMethodId);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
+    },
+  });
+}
+
+export function useApplyCoupon() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (couponCode: string) => {
+      const res = await checkoutApi.applyCoupon(couponCode);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
     },
   });
 }
@@ -75,8 +130,8 @@ export function usePlaceOrder() {
   const locale = useLocale();
 
   return useMutation({
-    mutationFn: async (data: Record<string, unknown>) => {
-      const res = await orderApi.placeOrder(data);
+    mutationFn: async (data: FormData) => {
+      const res = await checkoutApi.placeOrder(data);
       return res.data;
     },
     onSuccess: (data) => {
@@ -90,31 +145,6 @@ export function usePlaceOrder() {
     },
     onError: (error: Error) => {
       toast.error(error.message || (locale === "ar" ? "فشل تقديم الطلب" : "Failed to place order"));
-    },
-  });
-}
-
-export function useBankTransferOrder() {
-  const toast = useToast();
-  const router = useRouter();
-  const locale = useLocale();
-
-  return useMutation({
-    mutationFn: async (data: FormData) => {
-      const res = await orderApi.payByBankTransfer(data);
-      return res.data;
-    },
-    onSuccess: (data) => {
-      const orderId = data?.data?._id ?? data?._id;
-      toast.success(locale === "ar" ? "تم تقديم طلبك! سيتم مراجعة التحويل." : "Order submitted! Transfer will be reviewed.");
-      if (orderId) {
-        router.push(`/${locale}/account/orders/${orderId}`);
-      } else {
-        router.push(`/${locale}/account/orders`);
-      }
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || (locale === "ar" ? "فشل إرسال الطلب" : "Failed to submit order"));
     },
   });
 }

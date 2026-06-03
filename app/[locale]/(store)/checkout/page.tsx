@@ -9,9 +9,12 @@ import {
   useRegions,
   useCities,
   useActivePaymentMethods,
-  useCheckoutPreview,
+  useCheckoutSummary,
+  useSetAddress,
+  useSetShippingMethod,
+  useSetPaymentMethod,
+  useApplyCoupon,
   usePlaceOrder,
-  useBankTransferOrder,
 } from "@/features/checkout/hooks/useCheckout";
 import { useCart } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
@@ -318,7 +321,7 @@ function OrderSummaryCard({
 
         {preview ? (
           <>
-            {preview.summary.shippingCost > 0 ? (
+            {preview?.summary?.shippingCost > 0 ? (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">
                   {isAr ? "الشحن" : "Shipping"}
@@ -337,7 +340,7 @@ function OrderSummaryCard({
                 </span>
               </div>
             )}
-            {preview.summary.taxAmount > 0 && (
+            {preview?.summary?.taxAmount > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">
                   {isAr
@@ -345,28 +348,28 @@ function OrderSummaryCard({
                     : `Tax (${preview.summary.taxPercentage}%)`}
                 </span>
                 <span className="font-semibold">
-                  {formatCurrency(preview.summary.taxAmount)}
+                  {formatCurrency(preview?.summary?.taxAmount)}
                 </span>
               </div>
             )}
-            {preview.summary.paymentFees > 0 && (
+            {preview?.summary?.paymentFees > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">
                   {isAr ? "رسوم الدفع" : "Payment Fees"}
                 </span>
                 <span className="font-semibold">
-                  {formatCurrency(preview.summary.paymentFees)}
+                  {formatCurrency(preview?.summary?.paymentFees)}
                 </span>
               </div>
             )}
-            {preview.summary.discount > 0 && (
+            {preview?.summary?.discount > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-success font-semibold flex items-center gap-1">
                   <Tag className="w-3.5 h-3.5" />
                   {isAr ? "خصم الكوبون" : "Coupon Discount"}
                 </span>
                 <span className="font-bold text-success">
-                  -{formatCurrency(preview.summary.discount)}
+                  -{formatCurrency(preview?.summary?.discount)}
                 </span>
               </div>
             )}
@@ -376,7 +379,7 @@ function OrderSummaryCard({
                 {isAr ? "الإجمالي" : "Total"}
               </span>
               <span className="text-2xl font-black text-primary tabular-nums">
-                {formatCurrency(preview.summary.total)}
+                {formatCurrency(preview?.summary?.total)}
               </span>
             </div>
           </>
@@ -508,18 +511,15 @@ export default function CheckoutPage() {
   /* ─── Payment Methods ──────────────────────────────────────────── */
   const { data: paymentMethods = [] } = useActivePaymentMethods();
 
-  /* ─── Checkout Preview ─────────────────────────────────────────── */
-  const {
-    mutate: fetchPreview,
-    data: previewData,
-    isPending: previewLoading,
-  } = useCheckoutPreview();
-
+  /* ─── Checkout Summary ─────────────────────────────────────────── */
+  const { data: summaryData, isLoading: summaryLoading } = useCheckoutSummary();
+  const { mutate: setAddressAsync, isPending: settingAddress } = useSetAddress();
+  const { mutate: setShippingMethodAsync, isPending: settingShipping } = useSetShippingMethod();
+  const { mutate: setPaymentMethodAsync, isPending: settingPayment } = useSetPaymentMethod();
+  const { mutate: applyCouponAsync, isPending: applyingCoupon } = useApplyCoupon();
   const { mutate: placeOrder, isPending: placingOrder } = usePlaceOrder();
-  const { mutate: bankTransfer, isPending: bankTransferring } =
-    useBankTransferOrder();
 
-  const previewResult = previewData?.data ?? previewData;
+  const previewResult = summaryData?.data ?? summaryData;
 
   const shippingOptions: ShippingOption[] = useMemo(
     () => previewResult?.shippingOptions ?? [],
@@ -545,116 +545,71 @@ export default function CheckoutPage() {
     setCityId("");
   }, [regionId]);
 
-  /* ─── Auto-fetch preview when on step 1 ───────────────────────── */
-  useEffect(() => {
-    if (step === 1 && cityId && selectedPaymentId) {
-      triggerPreview();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, cityId, selectedPaymentId, selectedShippingId, appliedCoupon]);
+  /* ─── Change Handlers ───────────────────────────────────────────── */
+  const handleShippingChange = (id: string) => {
+    setSelectedShippingId(id);
+    if (id) setShippingMethodAsync(id);
+  };
 
-  const triggerPreview = useCallback(
-    (overrideCoupon?: string | null) => {
-      if (!cityId || !selectedPaymentId) return;
-      const items = cartItems.map((item: CartItem) => {
-        const { price } = resolveItemData(item);
-        return {
-          productId: (item.product?._id || item.productId) as string,
-          variantId: (item.variant?._id || item.variantId) as string,
-          quantity: item.quantity,
-          weight:
-            (item.variant as { weight?: number } | undefined)?.weight ??
-            (item.product as { weight?: number } | undefined)?.weight ??
-            0.5,
-          price: price || 0,
-        };
-      });
+  const handlePaymentChange = (id: string) => {
+    setSelectedPaymentId(id);
+    if (id) setPaymentMethodAsync(id);
+  };
 
-      const couponToSend =
-        overrideCoupon === null
-          ? undefined
-          : overrideCoupon !== undefined
-            ? overrideCoupon
-            : appliedCoupon || undefined;
-
-      fetchPreview({
-        cityId,
-        items,
-        paymentMethodId: selectedPaymentId,
-        shippingProviderId: selectedShippingId || "auto",
-        couponCode: couponToSend,
-      });
-    },
-    [
+  // When step 0 is submitted
+  const handleAddressSubmit = () => {
+    if (!step0Valid) return;
+    const addressData = {
+      firstName,
+      lastName,
+      phone,
+      countryId,
+      regionId,
       cityId,
-      selectedPaymentId,
-      selectedShippingId,
-      appliedCoupon,
-      cartItems,
-      fetchPreview,
-    ],
-  );
+      street,
+      building,
+      postalCode,
+      additionalInfo,
+    };
+    setAddressAsync(addressData, {
+      onSuccess: () => setStep(1),
+      onError: (err: Error | unknown) => toast.error((err as Error).message || "Failed to set address"),
+    });
+  };
 
   const handleApplyCoupon = useCallback(() => {
     if (!couponInput.trim()) return;
     setCouponError(null);
 
-    const items = cartItems.map((item: CartItem) => {
-      const { price } = resolveItemData(item);
-      return {
-        productId: (item.product?._id || item.productId) as string,
-        variantId: (item.variant?._id || item.variantId) as string,
-        quantity: item.quantity,
-        weight:
-          (item.variant as { weight?: number } | undefined)?.weight ??
-          (item.product as { weight?: number } | undefined)?.weight ??
-          0.5,
-        price: price || 0,
-      };
+    applyCouponAsync(couponInput, {
+      onSuccess: (res: Record<string, unknown> | unknown) => {
+        const result = (res as any)?.data ?? res;
+        if (result?.summary?.discount > 0) {
+          setAppliedCoupon(couponInput);
+          setCouponError(null);
+          toast.success(
+            isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!",
+          );
+        } else {
+          setCouponError(
+            isAr
+              ? "هذا الكوبون لم يقدم أي خصم"
+              : "This coupon did not apply any discount",
+          );
+        }
+      },
+      onError: (err: Error | unknown) => {
+        const errMsg =
+          (err as any).response?.data?.message ||
+          (err as Error).message ||
+          (isAr ? "كوبون غير صالح" : "Invalid coupon");
+        setCouponError(errMsg);
+        toast.error(errMsg);
+      },
     });
-
-    fetchPreview(
-      {
-        cityId,
-        items,
-        paymentMethodId: selectedPaymentId,
-        shippingProviderId: selectedShippingId || "auto",
-        couponCode: couponInput,
-      },
-      {
-        onSuccess: (res) => {
-          const result = res?.data ?? res;
-          if (result?.summary?.discount > 0) {
-            setAppliedCoupon(couponInput);
-            setCouponError(null);
-            toast.success(
-              isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!",
-            );
-          } else {
-            setCouponError(
-              isAr
-                ? "هذا الكوبون لم يقدم أي خصم"
-                : "This coupon did not apply any discount",
-            );
-          }
-        },
-        onError: (err: any) => {
-          const errMsg =
-            err.response?.data?.message ||
-            err.message ||
-            (isAr ? "كوبون غير صالح" : "Invalid coupon");
-          setCouponError(errMsg);
-          toast.error(errMsg);
-        },
-      },
-    );
   }, [
     couponInput,
-    cityId,
-    selectedPaymentId,
-    selectedShippingId,
-    cartItems,
-    fetchPreview,
+    applyCouponAsync,
     isAr,
     toast,
   ]);
@@ -664,24 +619,30 @@ export default function CheckoutPage() {
     setAppliedCoupon("");
     setCouponError(null);
 
-    triggerPreview(null);
-    toast.success(
-      isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully",
-    );
-  }, [triggerPreview, isAr, toast]);
+    applyCouponAsync("", {
+      onSuccess: () => {
+        toast.success(isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully");
+      }
+    });
+  }, [applyCouponAsync, isAr, toast]);
 
-  /* ─── Auto-select first shipping & first payment ──────────────── */
+  /* ─── Auto-select first shipping & first payment ──────────────────── */
   useEffect(() => {
     if (shippingOptions.length > 0 && !selectedShippingId) {
-      setSelectedShippingId(shippingOptions[0].providerId);
+      const firstId = shippingOptions[0].providerId;
+      setSelectedShippingId(firstId);
+      setShippingMethodAsync(firstId); // persist to backend session
     }
-  }, [shippingOptions, selectedShippingId]);
+  }, [shippingOptions, selectedShippingId, setShippingMethodAsync]);
 
   useEffect(() => {
     if (paymentMethods.length > 0 && !selectedPaymentId) {
-      setSelectedPaymentId(paymentMethods[0]._id);
+      const firstId = paymentMethods[0]._id;
+      setSelectedPaymentId(firstId);
+      setPaymentMethodAsync(firstId); // persist to backend session
     }
-  }, [paymentMethods, selectedPaymentId]);
+  }, [paymentMethods, selectedPaymentId, setPaymentMethodAsync]);
+
 
   /* ─── Validation ──────────────────────────────────────────────── */
   const step0Valid =
@@ -708,79 +669,18 @@ export default function CheckoutPage() {
 
   /* ─── Place order handler ──────────────────────────────────────── */
   const handlePlaceOrder = useCallback(() => {
-    const shippingAddress = {
-      firsName: firstName,
-      lastName,
-      phone,
-      country: selectedCountry?.name?.ar ?? selectedCountry?.name ?? "",
-      city: selectedCity?.name?.ar ?? selectedCity?.name ?? "",
-      cityId,
-      street,
-      building,
-      postalCode,
-      additionalInfo,
-    };
-
-    const orderItems = cartItems.map((item: CartItem) => {
-      const { price } = resolveItemData(item);
-      return {
-        product: item.product?._id || item.productId,
-        variant: item.variant?._id || item.variantId,
-        quantity: item.quantity,
-        unitPrice: price,
-      };
-    });
-
-    const isBankTransfer =
-      selectedPayment?.code === "bank_transfer" ||
-      selectedPayment?.code === "bankTransfer" ||
-      selectedPayment?.code === "banktransfer";
-
-    if (isBankTransfer) {
-      const fd = new FormData();
-      if (receiptFile) fd.append("transferReceiptImg", receiptFile);
-      fd.append("shippingAddress", JSON.stringify(shippingAddress));
-      fd.append("items", JSON.stringify(orderItems));
-      fd.append("cityId", cityId);
-      fd.append("paymentMethodId", selectedPaymentId);
-      fd.append("shippingProviderId", selectedShippingId);
-      if (appliedCoupon) fd.append("couponCode", appliedCoupon);
-      if (notes) fd.append("notes", notes);
-      bankTransfer(fd);
-    } else {
-      placeOrder({
-        shippingAddress,
-        items: orderItems,
-        cityId,
-        paymentMethodId: selectedPaymentId,
-        shippingProviderId: selectedShippingId,
-        couponCode: appliedCoupon || undefined,
-        notes: notes || undefined,
-      });
-    }
+    const fd = new FormData();
+    if (receiptFile) fd.append("transferReceiptImg", receiptFile);
+    if (notes) fd.append("notes", notes);
+    
+    placeOrder(fd);
   }, [
-    firstName,
-    lastName,
-    phone,
-    selectedCountry,
-    selectedCity,
-    cityId,
-    street,
-    building,
-    postalCode,
-    additionalInfo,
-    cartItems,
-    selectedPayment,
-    selectedPaymentId,
-    selectedShippingId,
-    appliedCoupon,
     notes,
     receiptFile,
     placeOrder,
-    bankTransfer,
   ]);
 
-  const isSubmitting = placingOrder || bankTransferring;
+  const isSubmitting = placingOrder;
 
   /* ─────────────────────── RENDER ─────────────────────────────── */
   return (
@@ -946,8 +846,8 @@ export default function CheckoutPage() {
 
                 {/* Next btn */}
                 <button
-                  onClick={() => setStep(1)}
-                  disabled={!step0Valid}
+                  onClick={handleAddressSubmit}
+                  disabled={!step0Valid || settingAddress}
                   className="mt-8 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {isAr ? "التالي: الشحن والدفع" : "Next: Shipping & Payment"}
@@ -974,7 +874,7 @@ export default function CheckoutPage() {
                     </h2>
                   </div>
 
-                  {previewLoading && !shippingOptions.length ? (
+                  {summaryLoading && !shippingOptions.length ? (
                     <div className="flex items-center gap-3 py-8 justify-center text-muted-foreground">
                       <Loader2 className="w-5 h-5 animate-spin" />
                       <span className="text-sm">
@@ -1000,9 +900,7 @@ export default function CheckoutPage() {
                               name="shippingProvider"
                               value={option.providerId}
                               checked={selectedShippingId === option.providerId}
-                              onChange={() =>
-                                setSelectedShippingId(option.providerId)
-                              }
+                              onChange={() => handleShippingChange(option.providerId)}
                               className="w-4 h-4 text-primary focus:ring-primary/50"
                             />
                             <div>
@@ -1063,7 +961,7 @@ export default function CheckoutPage() {
                               value={method._id}
                               disabled={disabled}
                               checked={selectedPaymentId === method._id}
-                              onChange={() => setSelectedPaymentId(method._id)}
+                              onChange={() => handlePaymentChange(method._id)}
                               className="w-4 h-4 text-primary focus:ring-primary/50"
                             />
                             <div className="text-xl">
@@ -1113,7 +1011,7 @@ export default function CheckoutPage() {
                       value={couponInput}
                       onChange={(e) => setCouponInput(e.target.value)}
                       placeholder={isAr ? "أدخل الكوبون" : "Enter coupon"}
-                      disabled={!!appliedCoupon || previewLoading}
+                      disabled={!!appliedCoupon || summaryLoading}
                       className="flex-1 h-12 px-4 bg-background border border-border/60 rounded-xl text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
                     />
                     {appliedCoupon ? (
@@ -1126,7 +1024,7 @@ export default function CheckoutPage() {
                     ) : (
                       <button
                         onClick={handleApplyCoupon}
-                        disabled={!couponInput || previewLoading}
+                        disabled={!couponInput || summaryLoading}
                         className="h-12 px-6 bg-primary text-primary-foreground rounded-xl font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-all"
                       >
                         {isAr ? "تطبيق" : "Apply"}
@@ -1149,7 +1047,7 @@ export default function CheckoutPage() {
                   </button>
                   <button
                     onClick={() => setStep(2)}
-                    disabled={!step1Valid || previewLoading}
+                    disabled={!step1Valid || summaryLoading}
                     className="flex-1 h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isAr ? "مراجعة الطلب" : "Review Order"}
@@ -1164,7 +1062,7 @@ export default function CheckoutPage() {
             )}
 
             {/* ════ STEP 2: Review & Confirm ════ */}
-            {step === 1 && (
+            {step === 2 && (
               <div className="space-y-5 animate-in fade-in duration-300">
                 <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
                   <h2 className="text-xl font-black text-foreground mb-4">

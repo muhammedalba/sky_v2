@@ -14,32 +14,18 @@ export const paymentsApi = {
   getActiveMethods: () => apiClient.get('/payments'),
 };
 
-// ─── Checkout ────────────────────────────────────────────────────────────────
-export interface CheckoutPreviewPayload {
-  cityId: string;
-  items: {
-    productId: string;
-    variantId: string;
-    quantity: number;
-    weight: number;
-    price: number;
-  }[];
-  paymentMethodId: string;
-  shippingProviderId: string;
-  couponCode?: string;
-}
-
+// ─── Checkout Orchestrator ──────────────────────────────────────────────────
 export const checkoutApi = {
-  preview: (data: CheckoutPreviewPayload) =>
-    apiClient.post('/checkout/preview', data),
-};
-
-// ─── Orders ──────────────────────────────────────────────────────────────────
-export const orderApi = {
-  placeOrder: (data: FormData | Record<string, unknown>) =>
-    apiClient.post('/order/placeOrder', data),
-  payByBankTransfer: (data: FormData) =>
-    apiClient.post('/order/PaymentByBankTransfer', data, {
+  getSummary: () => apiClient.get('/checkout/summary'),
+  setAddress: (address: any) => apiClient.post('/checkout/address', { address }),
+  setShippingMethod: (shippingProviderId: string) =>
+    apiClient.post('/checkout/shipping-method', { shippingProviderId }),
+  setPaymentMethod: (paymentMethodId: string) =>
+    apiClient.post('/checkout/payment-method', { paymentMethodId }),
+  applyCoupon: (couponCode: string) =>
+    apiClient.post('/checkout/coupon', { couponCode }),
+  placeOrder: (data: FormData) =>
+    apiClient.post('/checkout/place-order', data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
 };
