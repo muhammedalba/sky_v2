@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useCallback } from "react";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { locationsApi, paymentsApi, checkoutApi } from "../api";
+import { locationsApi, checkoutApi } from "../api";
 import { useToast } from "@/shared/hooks/useToast";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
@@ -45,15 +47,86 @@ export function useCities(regionId: string | null) {
 
 // ─── Payment methods ──────────────────────────────────────────────────────────
 
+import { useSettings } from "@/app/providers/SettingsProvider";
+import { useMemo } from "react";
+
+export interface ActivePaymentMethod {
+  _id: string;        // same as code — sent to backend as paymentMethodId
+  code: string;       // "stripe" | "paypal" | "banktransfer" | "cod"
+  name: string;       // English display name
+  nameAr: string;     // Arabic display name
+  description: string;
+  descriptionAr: string;
+  type: "electronic" | "offline";
+  fees: number;
+  color: string;      // Tailwind bg color class for the card accent
+  badge?: string;     // optional badge text
+}
+
+const ALL_METHODS: ActivePaymentMethod[] = [
+  {
+    _id: "stripe",
+    code: "stripe",
+    name: "Credit / Debit Card",
+    nameAr: "بطاقة ائتمان / بطاقة مدى",
+    description: "Pay securely with Visa, Mastercard or Mada via Stripe",
+    descriptionAr: "ادفع بأمان عبر Stripe باستخدام فيزا أو ماستركارد أو مدى",
+    type: "electronic",
+    fees: 0,
+    color: "from-indigo-500/10 to-violet-500/10",
+    badge: "Stripe",
+  },
+  {
+    _id: "paypal",
+    code: "paypal",
+    name: "PayPal",
+    nameAr: "PayPal",
+    description: "Pay with your PayPal account or card via PayPal",
+    descriptionAr: "ادفع عبر حسابك في PayPal أو ببطاقتك الائتمانية",
+    type: "electronic",
+    fees: 0,
+    color: "from-blue-500/10 to-sky-500/10",
+    badge: "PayPal",
+  },
+  {
+    _id: "banktransfer",
+    code: "banktransfer",
+    name: "Bank Transfer",
+    nameAr: "تحويل بنكي",
+    description: "Transfer to our account and upload the receipt",
+    descriptionAr: "حوّل المبلغ لحسابنا البنكي وأرفق إيصال التحويل",
+    type: "offline",
+    fees: 0,
+    color: "from-amber-500/10 to-orange-500/10",
+  },
+  {
+    _id: "cod",
+    code: "cod",
+    name: "Cash on Delivery",
+    nameAr: "الدفع عند الاستلام",
+    description: "Pay with cash when your order arrives",
+    descriptionAr: "ادفع نقداً عند استلام طلبك",
+    type: "offline",
+    fees: 0,
+    color: "from-green-500/10 to-emerald-500/10",
+  },
+];
+
 export function useActivePaymentMethods() {
-  return useQuery({
-    queryKey: ["payments", "active"],
-    queryFn: async () => {
-      const res = await paymentsApi.getActiveMethods();
-      return res.data?.data ?? res.data ?? [];
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  const settings = useSettings();
+
+  const methods = useMemo(() => {
+    const gateways = settings?.gateways ?? {};
+    return ALL_METHODS.filter((m) => {
+      if (m.code === "stripe") return !!gateways.stripe;
+      if (m.code === "paypal") return !!gateways.paypal;
+      if (m.code === "banktransfer") return !!gateways.bankTransfer;
+      if (m.code === "cod") return !!gateways.cod;
+      return false;
+    });
+  }, [settings]);
+
+  return { data: methods, isLoading: false };
 }
 
 // ─── Checkout Orchestrator Hooks ──────────────────────────────────────────────
@@ -73,7 +146,7 @@ export function useCheckoutSummary() {
 export function useSetAddress() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (address: any) => {
+    mutationFn: async (address: Record<string, unknown>) => {
       const res = await checkoutApi.setAddress(address);
       return res.data;
     },
@@ -135,16 +208,85 @@ export function usePlaceOrder() {
       return res.data;
     },
     onSuccess: (data) => {
-      const orderId = data?.data?._id ?? data?._id;
+      const resData = data?.data || data;
+      const orderId = resData?.orderId || resData?._id;
+      const methodCode = resData?.methodCode;
+
       toast.success(locale === "ar" ? "تم تقديم طلبك بنجاح!" : "Order placed successfully!");
-      if (orderId) {
-        router.push(`/${locale}/account/orders/${orderId}`);
+
+      if (methodCode === "paypal" && resData?.approvalUrl) {
+        window.location.href = resData.approvalUrl;
+      } else if (methodCode === "stripe" && resData?.client_secret) {
+        router.push(`/${locale}/checkout/payment?orderId=${orderId}&client_secret=${resData.client_secret}`);
       } else {
-        router.push(`/${locale}/account/orders`);
+        if (orderId) {
+          router.push(`/${locale}/account/orders/${orderId}`);
+        } else {
+          router.push(`/${locale}/account/orders`);
+        }
       }
     },
     onError: (error: Error) => {
       toast.error(error.message || (locale === "ar" ? "فشل تقديم الطلب" : "Failed to place order"));
     },
   });
+}
+
+// ─── Checkout Flow Orchestrator ───────────────────────────────────────────────
+
+export function useCheckoutFlow() {
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const nextStep = useCallback(() => setCurrentStep((p) => Math.min(p + 1, 2)), []);
+  const prevStep = useCallback(() => setCurrentStep((p) => Math.max(p - 1, 0)), []);
+
+  const { mutateAsync: setAddressAsync, isPending: settingAddress } = useSetAddress();
+  const { mutateAsync: setShippingMethodAsync, isPending: settingShipping } = useSetShippingMethod();
+  const { mutateAsync: setPaymentMethodAsync, isPending: settingPayment } = useSetPaymentMethod();
+  const { mutateAsync: applyCouponAsync, isPending: applyingCoupon } = useApplyCoupon();
+  const { mutateAsync: placeOrderAsync, isPending: placingOrder } = usePlaceOrder();
+
+  const submitAddress = async (data: Record<string, unknown>, onSuccess?: () => void, onError?: (err: unknown) => void) => {
+    try {
+      await setAddressAsync(data);
+      if (onSuccess) onSuccess();
+      nextStep();
+    } catch (error) {
+      if (onError) onError(error);
+    }
+  };
+
+  const selectShipping = async (id: string) => {
+    await setShippingMethodAsync(id);
+  };
+
+  const selectPayment = async (id: string) => {
+    await setPaymentMethodAsync(id);
+  };
+
+  const applyCoupon = async (code: string, onSuccess?: (res: unknown) => void, onError?: (err: unknown) => void) => {
+    try {
+      const res = await applyCouponAsync(code);
+      if (onSuccess) onSuccess(res);
+    } catch (error) {
+      if (onError) onError(error);
+    }
+  };
+
+  const placeOrder = async (data: FormData) => {
+    return placeOrderAsync(data);
+  };
+
+  return {
+    currentStep,
+    setCurrentStep,
+    nextStep,
+    prevStep,
+    submitAddress,
+    selectShipping,
+    selectPayment,
+    applyCoupon,
+    placeOrder,
+    isSubmitting: settingAddress || settingShipping || settingPayment || applyingCoupon || placingOrder,
+  };
 }
