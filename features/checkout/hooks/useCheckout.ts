@@ -10,12 +10,19 @@ import { useLocale } from "next-intl";
 
 // ─── Locations hooks ──────────────────────────────────────────────────────────
 
+// Shared type for countries, regions, and cities returned by the locations API
+export interface LocationItem {
+  _id: string;
+  name: string | { ar: string; en: string };
+  [key: string]: unknown;
+}
+
 export function useCountries() {
   return useQuery({
     queryKey: ["locations", "countries"],
     queryFn: async () => {
       const res = await locationsApi.getCountries();
-      return res.data?.data ?? res.data ?? [];
+      return (res.data?.data ?? res.data ?? []) as LocationItem[];
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -38,7 +45,7 @@ export function useCities(regionId: string | null) {
     queryKey: ["locations", "cities", regionId],
     queryFn: async () => {
       const res = await locationsApi.getCities(regionId!);
-      return res.data?.data ?? res.data ?? [];
+      return (res.data?.data ?? res.data ?? []) as LocationItem[];
     },
     enabled: !!regionId,
     staleTime: 5 * 60 * 1000,
@@ -135,7 +142,7 @@ export function useCheckoutSummary() {
   return useQuery({
     queryKey: ["checkout", "summary"],
     queryFn: async () => {
-      const res = await checkoutApi.getSummary();
+      const res = await checkoutApi.getSummary();  
       return res.data;
     },
     // Don't cache checkout summary as it changes based on user interactions
@@ -237,13 +244,17 @@ export function usePlaceOrder() {
 export function useCheckoutFlow() {
   const [currentStep, setCurrentStep] = useState(0);
 
-  const nextStep = useCallback(() => setCurrentStep((p) => Math.min(p + 1, 2)), []);
-  const prevStep = useCallback(() => setCurrentStep((p) => Math.max(p - 1, 0)), []);
-
+  const nextStep = useCallback(() => setCurrentStep((p: number) => Math.min(p + 1, 2)), []);
+  const prevStep = useCallback(() => setCurrentStep((p: number) => Math.max(p - 1, 0)), []);
+  // /checkout/address
   const { mutateAsync: setAddressAsync, isPending: settingAddress } = useSetAddress();
+  // /checkout/shipping-method
   const { mutateAsync: setShippingMethodAsync, isPending: settingShipping } = useSetShippingMethod();
+  // /checkout/payment-method
   const { mutateAsync: setPaymentMethodAsync, isPending: settingPayment } = useSetPaymentMethod();
+  // /checkout/coupon
   const { mutateAsync: applyCouponAsync, isPending: applyingCoupon } = useApplyCoupon();
+  // /checkout/place-order
   const { mutateAsync: placeOrderAsync, isPending: placingOrder } = usePlaceOrder();
 
   const submitAddress = async (data: Record<string, unknown>, onSuccess?: () => void, onError?: (err: unknown) => void) => {

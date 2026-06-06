@@ -239,6 +239,7 @@ export interface CouponValidationResult {
   discountAmount: number;
   totalPrice: number;
   totalPriceAfterDiscount?: number;
+  message?: string;
   couponDetails: {
     couponCode: string;
     discountAmount: number;

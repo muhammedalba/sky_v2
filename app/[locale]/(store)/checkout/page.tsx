@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, startTransition } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CheckoutFormSchema,
@@ -15,10 +15,11 @@ import {
   useActivePaymentMethods,
   useCountries,
   useCities,
+  type LocationItem,
 } from "@/features/checkout/hooks/useCheckout";
 import { useCart } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
-import { resolveItemData } from "@/features/cart/utils/cartUtils";
+import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -33,30 +34,44 @@ import { CheckoutReviewStep } from "@/features/checkout/components/CheckoutRevie
 import { OrderSummaryCard } from "@/features/checkout/components/OrderSummaryCard";
 
 export default function CheckoutPage() {
+  /* ────── Data ─────────────────────────────────────── */
+  // check if user is authenticated
+  const { data: user } = useMe();
+  const isAuth = !!user;
+  // get checkout summary data
+  const { data: previewResult, isLoading: summaryLoading } =
+    useCheckoutSummary();
+  // get payment methods
+  const { data: paymentMethods = [] } = useActivePaymentMethods();
+  // get countries
+  const { data: countries = [] } = useCountries();
+  // get cart items from server
+  const { data: serverCart } = useCart();
+
+  console.log("previewResult", previewResult);
+  /* ─────────────────────────────────────────── HOOKS ──────────────────────────────────────────────── */
   const locale = useLocale();
-  const isAr = locale === "ar";
   const router = useRouter();
-  const formatCurrency = useFormatCurrency();
   const toast = useToast();
   const getTrans = useTrans();
-  const { data: user } = useMe();
+  const formatCurrency = useFormatCurrency();
+  const isAr = locale === "ar";
 
-  /* ─── Cart Data ───────────────────────────────────────────────── */
-  const { data: serverCart } = useCart();
-  const localCart = useCartStore((state) => state.items);
-  const isAuth = !!user;
-  const cartItems = isAuth ? serverCart?.items || [] : localCart;
-  const subtotal = useMemo(
-    () =>
-      serverCart?.totalPrice ??
-      cartItems.reduce((acc: number, item: any) => {
-        const { price } = resolveItemData(item);
-        return acc + (price || 0) * (item.quantity || 1);
-      }, 0),
-    [serverCart?.totalPrice, cartItems]
+  /* ─── Local State for Non-Form Fields ──────────────────────────── */
+  const [selectedShippingId, setSelectedShippingId] = useState("");
+  const [selectedPaymentId, setSelectedPaymentId] = useState("");
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+
+  // shipping options from preview result
+  const shippingOptions = useMemo(
+    () => previewResult?.shippingOptions ?? [],
+    [previewResult],
   );
 
-  /* ─── Checkout Flow Hook ──────────────────────────────────────── */
+  /* ─── Checkout Flow Hook */
   const {
     currentStep,
     nextStep,
@@ -69,6 +84,32 @@ export default function CheckoutPage() {
     isSubmitting,
   } = useCheckoutFlow();
 
+  /* ────── ────── ────── ────── ────── ────── Cart Data ────── ────── ────── ────── ────── ────── ────── ────── */
+  // get cart items from store
+  const localCart = useCartStore((state) => state.items);
+
+  // merge cart items - wrapped in useMemo to stabilize the reference
+  const cartItems = useMemo(
+    () => (isAuth ? serverCart?.items || [] : localCart),
+    [isAuth, serverCart?.items, localCart],
+  );
+
+  // calculate subtotal from items
+  const subtotal = useMemo(
+    () =>
+      // if user is authenticated get total price from server else get from store
+      serverCart?.totalPrice ??
+      cartItems.reduce((acc: number, item: CartItem) => {
+        // resolve item data
+        const { price } = resolveItemData(item);
+        // add item total price to accumulator
+        return acc + (price || 0) * (item.quantity || 1);
+      }, 0),
+    // dependencies
+    [serverCart?.totalPrice, cartItems],
+  );
+  console.log("subtotal", subtotal);
+
   /* ─── Form Setup ──────────────────────────────────────────────── */
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(CheckoutFormSchema),
@@ -76,18 +117,18 @@ export default function CheckoutPage() {
       firstName: "",
       lastName: "",
       phone: "",
-      countryId: "",
-      regionId: "",
-      cityId: "",
-      street: "",
-      building: "",
-      postalCode: "",
+      countryId: previewResult?.session?.address?.countryId ?? "",
+      regionId: previewResult?.session?.address?.regionId ?? "",
+      cityId: previewResult?.session?.address?.cityId ?? "",
+      street: previewResult?.session?.address?.street ?? "",
+      building: previewResult?.session?.address?.building ?? "",
+      postalCode: previewResult?.session?.address?.postalCode ?? "",
       additionalInfo: "",
     },
     mode: "onBlur",
   });
 
-  // Pre-fill user data
+  // Pre-fill user data if authenticated
   useEffect(() => {
     if (user && user.name) {
       const parts = user.name.split(" ");
@@ -97,35 +138,28 @@ export default function CheckoutPage() {
     }
   }, [user, form]);
 
-  /* ─── Checkout Summary & Options ───────────────────────────────── */
-  const { data: summaryData, isLoading: summaryLoading } = useCheckoutSummary();
-  const previewResult = summaryData?.data ?? summaryData;
-  const shippingOptions = useMemo(
-    () => previewResult?.shippingOptions ?? [],
-    [previewResult]
-  );
-  const { data: paymentMethods = [] } = useActivePaymentMethods();
-
-  /* ─── Local State for Non-Form Fields ──────────────────────────── */
-  const [selectedShippingId, setSelectedShippingId] = useState("");
-  const [selectedPaymentId, setSelectedPaymentId] = useState("");
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState("");
-  const [couponError, setCouponError] = useState<string | null>(null);
-  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  // Pre-fill
+  useEffect(() => {
+    if (user && previewResult?.couponDetails?.couponCode) {
+      startTransition(() => {
+        setCouponInput(previewResult?.couponDetails?.couponCode || "");
+        setAppliedCoupon(previewResult?.couponDetails?.couponCode || "");
+      });
+    }
+  }, [user, previewResult?.couponDetails?.couponCode]);
 
   /* ─── Redirect if cart empty ───────────────────────────────────── */
   useEffect(() => {
     if (cartItems.length === 0) {
-      router.replace(`/${locale}/cart`);
+      router.replace(`/cart`);
     }
-  }, [cartItems.length, locale, router]);
+  }, [cartItems.length, router]);
 
   /* ─── Auto-select options ──────────────────────────────────────── */
   useEffect(() => {
     if (currentStep >= 1 && shippingOptions.length > 0 && !selectedShippingId) {
       const firstId = shippingOptions[0].providerId;
-      setSelectedShippingId(firstId);
+      startTransition(() => setSelectedShippingId(firstId));
       selectShipping(firstId);
     }
   }, [currentStep, shippingOptions, selectedShippingId, selectShipping]);
@@ -133,7 +167,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (currentStep >= 1 && paymentMethods.length > 0 && !selectedPaymentId) {
       const firstId = paymentMethods[0]._id;
-      setSelectedPaymentId(firstId);
+      startTransition(() => setSelectedPaymentId(firstId));
       selectPayment(firstId);
     }
   }, [currentStep, paymentMethods, selectedPaymentId, selectPayment]);
@@ -154,29 +188,38 @@ export default function CheckoutPage() {
     setCouponError(null);
     applyCoupon(
       couponInput,
-      (res: any) => {
-        const result = res?.data ?? res;
-        if (result?.summary?.discount > 0) {
+      (res: unknown) => {
+        const raw = res as {
+          data?: { summary?: { discount?: number } };
+          summary?: { discount?: number };
+        } | null;
+        console.log("raw", raw);
+        const result = raw;
+        if ((result?.summary?.discount ?? 0) > 0) {
           setAppliedCoupon(couponInput);
           toast.success(
-            isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!"
+            isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!",
           );
         } else {
           setCouponError(
             isAr
               ? "هذا الكوبون لم يقدم أي خصم"
-              : "This coupon did not apply any discount"
+              : "This coupon did not apply any discount",
           );
         }
       },
-      (err: any) => {
+      (err: unknown) => {
+        const e = err as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        } | null;
         const errMsg =
-          err?.response?.data?.message ||
-          err?.message ||
+          e?.response?.data?.message ||
+          e?.message ||
           (isAr ? "كوبون غير صالح" : "Invalid coupon");
         setCouponError(errMsg);
         toast.error(errMsg);
-      }
+      },
     );
   };
 
@@ -186,7 +229,7 @@ export default function CheckoutPage() {
     setCouponError(null);
     applyCoupon("", () => {
       toast.success(
-        isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully"
+        isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully",
       );
     });
   };
@@ -202,26 +245,27 @@ export default function CheckoutPage() {
   };
 
   /* ─── Resolved Data for Review Step ───────────────────────────── */
-  const countryId = form.watch("countryId");
-  const regionId = form.watch("regionId");
-  const cityId = form.watch("cityId");
-  const { data: countries = [] } = useCountries();
+  const regionId = useWatch({ control: form.control, name: "regionId" });
+  const countryId = useWatch({ control: form.control, name: "countryId" });
+  const cityId = useWatch({ control: form.control, name: "cityId" });
+
   const { data: cities = [] } = useCities(regionId || null);
 
-  const selectedCountry = countries.find((c: any) => c._id === countryId);
-  const selectedCity = cities.find((c: any) => c._id === cityId);
-  const selectedCountryName = isAr
-    ? selectedCountry?.name?.ar || selectedCountry?.name
-    : selectedCountry?.name?.en || selectedCountry?.name;
-  const selectedCityName = isAr
-    ? selectedCity?.name?.ar || selectedCity?.name
-    : selectedCity?.name?.en || selectedCity?.name;
+  const selectedCountry = countries.find(
+    (c: LocationItem) => c._id === countryId,
+  );
+
+  const selectedCity = cities.find((c: LocationItem) => c._id === cityId);
+
+  // using getTrans for translate from ar to en and vice versa
+  const selectedCountryName = getTrans(selectedCountry?.name);
+  const selectedCityName = getTrans(selectedCity?.name);
 
   const selectedShippingOption = shippingOptions.find(
-    (opt: any) => opt.providerId === selectedShippingId
+    (opt: { providerId?: string }) => opt.providerId === selectedShippingId,
   );
   const selectedPayment = paymentMethods.find(
-    (m: any) => m._id === selectedPaymentId
+    (m: { _id: string }) => m._id === selectedPaymentId,
   );
   const isCODSupportedByCarrier = selectedShippingOption?.supportsCOD ?? false;
 

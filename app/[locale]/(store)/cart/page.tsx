@@ -36,6 +36,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useToast } from "@/shared/hooks/useToast";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import { useApplyCoupon } from "@/features/checkout/hooks/useCheckout";
+import ErrorMessage from "@/shared/ui/ErrorMessage";
 
 /* ------------------------------------------------------------------ */
 /* Page                                                              */
@@ -45,6 +47,7 @@ export default function CartPage() {
   const [isCouponOpen, setIsCouponOpen] = useState(false);
   const [appliedCoupon, setAppliedCoupon] =
     useState<CouponValidationResult | null>(null);
+
   const t = useTranslations("cart");
   const locale = useLocale();
   const formatCurrency = useFormatCurrency();
@@ -66,10 +69,9 @@ export default function CartPage() {
     mutate: updateServerQuantity,
     isPending: updateServerQuantityPending,
   } = useUpdateCartQuantity();
-  // apply coupon
-  const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
-    useCouponValidation();
 
+  const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
+    useApplyCoupon();
   // ======> cart states <======
   const guestCartItems = useCartStore((state) => state.items);
   const updateGuestQuantity = useCartStore((state) => state.updateQuantity);
@@ -192,8 +194,7 @@ export default function CartPage() {
 
   // add coupon
   const couponSchema = z.object({
-    code: z.string().min(1, "Coupon code is required"),
-    orderAmount: z.union([z.number(), z.null()]).nullable(),
+    couponCode: z.string().min(1, "Coupon code is required"),
   });
 
   type couponFormValues = z.infer<typeof couponSchema>;
@@ -205,8 +206,7 @@ export default function CartPage() {
   } = useForm<couponFormValues>({
     resolver: zodResolver(couponSchema),
     defaultValues: {
-      code: "",
-      orderAmount: baseTotalAmount,
+      couponCode: "",
     },
   });
 
@@ -217,11 +217,10 @@ export default function CartPage() {
     }
 
     try {
-      const res = await validateCoupon({
-        code: data.code,
-        orderAmount: baseTotalAmount,
-      });
+      const res = await validateCoupon(data.couponCode);
       setAppliedCoupon(res);
+      console.log("res is: ", res);
+
       toast.success(t("messages.couponApplied"));
     } catch (error: unknown) {
       const errorMessage =
@@ -493,7 +492,10 @@ export default function CartPage() {
                           <span className="font-medium text-success flex items-center gap-1.5">
                             {t("coupon.discount")}
                             <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
-                              {appliedCoupon?.couponDetails?.couponCode}
+                              {appliedCoupon?.couponDetails?.couponType ===
+                              "percentage"
+                                ? `${appliedCoupon?.couponDetails?.discount} %`
+                                :formatCurrency(appliedCoupon?.couponDetails?.discount)}
                             </span>
                           </span>
                           <span className="font-bold text-success tabular-nums">
@@ -571,7 +573,7 @@ export default function CartPage() {
                               type="button"
                               onClick={() => {
                                 setAppliedCoupon(null);
-                                setValue("code", "");
+                                setValue("couponCode", "");
                               }}
                               className="p-1.5 hover:bg-destructive/10 rounded-full transition-colors cursor-pointer text-muted-foreground hover:text-destructive"
                               aria-label="Remove coupon"
@@ -622,8 +624,8 @@ export default function CartPage() {
                                   <Input
                                     placeholder={t("coupon.enter_code")}
                                     label={t("coupon.label")}
-                                    {...register("code")}
-                                    error={errors.code?.message}
+                                    {...register("couponCode")}
+                                    error={errors.couponCode?.message}
                                     disabled={validateCouponPending}
                                     className="bg-background"
                                   />
@@ -645,6 +647,12 @@ export default function CartPage() {
 
                     {/* ── Checkout CTA ── */}
                     <div className="px-6 pb-6 space-y-4">
+                      {appliedCoupon?.message && (
+                        <ErrorMessage
+                          message={appliedCoupon?.message}
+                          className=" py-1 px-3  md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning mb-2"
+                        />
+                      )}
                       <Link
                         href={
                           isCartUpdating ||

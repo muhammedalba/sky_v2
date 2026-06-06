@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Package, Tag, ShieldCheck, Lock } from "lucide-react";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
+import ErrorMessage from "@/shared/ui/ErrorMessage";
 
 interface OrderSummaryCardProps {
   cartItems: CartItem[];
@@ -26,7 +27,7 @@ export function OrderSummaryCard({
   return (
     <div className="bg-card border border-border/50 rounded-3xl overflow-hidden shadow-xl shadow-primary/5 sticky top-24">
       {/* Header */}
-      <div className="px-6 py-5 bg-gradient-to-r from-primary/10 to-transparent border-b border-border/40">
+      <div className="px-6 py-5 bg-linear-to-r from-primary/10 to-transparent border-b border-border/40">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/15 rounded-xl">
             <Package className="w-5 h-5 text-primary" />
@@ -176,7 +177,7 @@ export function OrderSummaryCard({
                 {isAr ? "الإجمالي" : "Total"}
               </span>
               <span className="text-2xl font-black text-primary tabular-nums">
-                {formatCurrency(subtotal)}
+                {formatCurrency(preview?.totalPriceAfterDiscount ?? subtotal)}
               </span>
             </div>
           </>
@@ -185,6 +186,12 @@ export function OrderSummaryCard({
 
       {/* Trust badges */}
       <div className="px-5 pb-5">
+        {preview?.message && (
+          <ErrorMessage
+            message={preview?.message}
+            className=" py-1 px-3  md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning mb-2"
+          />
+        )}
         <div className="flex items-center gap-3 bg-muted/40 rounded-2xl p-3 border border-border/30">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
           <div>
