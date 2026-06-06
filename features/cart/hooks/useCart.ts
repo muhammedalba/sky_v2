@@ -244,6 +244,9 @@ export interface CouponValidationResult {
     couponCode: string;
     discountAmount: number;
     CouponId: string;
+    couponType: string;
+    discount: number;
+
   } | null;
 }
 
