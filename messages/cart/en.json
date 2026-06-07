@@ -13,7 +13,8 @@
     "total": "Total Amount",
     "checkout": "Proceed to Checkout",
     "free": "Free",
-    "calculated_at_checkout": "Calculated at checkout"
+    "calculated_at_checkout": "Calculated at checkout",
+    "payment_fees": "Payment Fees"
   },
   "item": {
     "remove": "Remove",
@@ -37,11 +38,13 @@
     "fast_ship": "Fast Ship",
     "number_of_products": "Number of Products",
     "view_cart": "View Cart",
-    "home": "Home"
+    "home": "Home",
+    "secure_encrypted": "Secure & Encrypted"
   },
   "messages": {
     "login_to_apply_coupon": "You must be logged in to apply the coupon",
-    "couponApplied": "Coupon applied successfully"
+    "couponApplied": "Coupon applied successfully",
+    "couponRemoved": "Coupon removed successfully"
   },
   "coupon": {
     "discount": "Coupon Discount",
@@ -54,6 +57,70 @@
   },
   "shipping": {
     "not_available": "Unfortunately, shipping is not available at the moment"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "cart": "Cart",
+    "checkout": "Checkout"
+  },
+  "address": {
+    "title": "Delivery Address",
+    "first_name": "First Name",
+    "first_name_placeholder": "John",
+    "last_name": "Last Name",
+    "last_name_placeholder": "Doe",
+    "phone": "Phone Number",
+    "country": "Country",
+    "select_country": "Select country",
+    "loading": "Loading...",
+    "region": "Region",
+    "select_region": "Select region",
+    "city": "City",
+    "select_city": "Select city",
+    "street": "Street",
+    "street_placeholder": "Street name and number",
+    "building": "Building / Apt",
+    "building_placeholder": "2A",
+    "postal_code": "Postal Code",
+    "additional_info": "Additional Info (Optional)",
+    "additional_info_placeholder": "Landmark, preferred time...",
+    "continue": "Continue"
+  },
+  "shipping_payment": {
+    "shipping_method": "Shipping Method",
+    "calculating_shipping": "Calculating shipping...",
+    "est_delivery": "Est. Delivery:",
+    "days": "days",
+    "free": "Free",
+    "payment_method": "Payment Method",
+    "no_payment_methods": "No payment methods available",
+    "carrier_no_cod": "Carrier does not support COD",
+    "secure_encrypted_payment": "Secure encrypted payment",
+    "upload_receipt": "Upload Transfer Receipt",
+    "upload_receipt_desc": "Please transfer the amount and attach the receipt to complete the order",
+    "remove": "Remove",
+    "click_to_select_receipt": "Click to select receipt image",
+    "required_to_place_order": "* Required to place order",
+    "secure_card_payment_stripe": "Secure Card Payment via Stripe",
+    "stripe_desc": "After confirmation, you'll be redirected to Stripe's secure page. Visa, Mastercard, and Mada supported.",
+    "paypal_desc": "After confirmation, you'll be redirected to PayPal to complete your payment securely.",
+    "back": "Back",
+    "review_order": "Review Order"
+  },
+  "review": {
+    "title": "Review Details",
+    "name": "Name",
+    "address": "Address",
+    "shipping": "Shipping",
+    "payment": "Payment",
+    "back": "Back",
+    "confirming": "Confirming...",
+    "confirm_order": "Confirm Order"
+  },
+  "steps": {
+    "shipping_info": "Shipping Info",
+    "shipping_and_payment": "Shipping & Payment",
+    "review_and_confirm": "Review & Confirm"
   }
 }
 

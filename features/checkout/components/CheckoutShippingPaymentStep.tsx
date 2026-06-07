@@ -1,11 +1,12 @@
 "use client";
 
 import {
-  Truck, CreditCard, Tag, Loader2, AlertCircle,
-  ArrowLeft, ArrowRight, Upload, CheckCircle, Info,
-  Banknote, Wallet, ShieldCheck,
+  Truck, CheckCircle, Upload, AlertCircle, Info, ArrowRight, Loader2,
+  Banknote, Wallet, ShieldCheck, Clock
 } from "lucide-react";
 import { ActivePaymentMethod } from "../hooks/useCheckout";
+import { useTranslations } from "next-intl";
+import { useTrans } from "@/shared/hooks/useTrans";
 
 /* ─── Gateway icons ─────────────────────────────────────────────────────────── */
 
@@ -55,7 +56,7 @@ function getPaymentIcon(code: string) {
     case "cod":
       return <Wallet className="w-5 h-5 text-green-600" />;
     default:
-      return <CreditCard className="w-5 h-5 text-primary" />;
+      return <Banknote className="w-5 h-5 text-primary" />;
   }
 }
 
@@ -86,7 +87,8 @@ interface ShippingOption {
 }
 
 interface CheckoutShippingPaymentStepProps {
-  isAr: boolean;
+  onBack: () => void;
+  onNext: () => void;
   summaryLoading: boolean;
   shippingOptions: ShippingOption[];
   paymentMethods: ActivePaymentMethod[];
@@ -97,23 +99,14 @@ interface CheckoutShippingPaymentStepProps {
   handlePaymentChange: (id: string) => void;
   isCODSupportedByCarrier: boolean;
   formatCurrency: (n: number) => string;
-  couponInput: string;
-  setCouponInput: (val: string) => void;
-  appliedCoupon: string;
-  handleApplyCoupon: () => void;
-  handleRemoveCoupon: () => void;
-  couponError: string | null;
   receiptFile: File | null;
   setReceiptFile: (file: File | null) => void;
-  onBack: () => void;
-  onNext: () => void;
   isValid: boolean;
 }
 
 /* ─── Component ──────────────────────────────────────────────────────────────── */
 
 export function CheckoutShippingPaymentStep({
-  isAr,
   summaryLoading,
   shippingOptions,
   paymentMethods,
@@ -124,12 +117,6 @@ export function CheckoutShippingPaymentStep({
   handlePaymentChange,
   isCODSupportedByCarrier,
   formatCurrency,
-  couponInput,
-  setCouponInput,
-  appliedCoupon,
-  handleApplyCoupon,
-  handleRemoveCoupon,
-  couponError,
   receiptFile,
   setReceiptFile,
   onBack,
@@ -139,6 +126,9 @@ export function CheckoutShippingPaymentStep({
   const selectedCode = selectedPayment?.code ?? "";
   const isBankTransfer = selectedCode === "banktransfer";
   const canProceed = isValid && (!isBankTransfer || !!receiptFile);
+
+  const t = useTranslations("cart");
+  const getTrans = useTrans();
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
@@ -150,7 +140,7 @@ export function CheckoutShippingPaymentStep({
             <Truck className="w-5 h-5 text-primary" />
           </div>
           <h2 className="text-xl font-black text-foreground">
-            {isAr ? "طريقة الشحن" : "Shipping Method"}
+            {t("shipping_payment.shipping_method")}
           </h2>
         </div>
 
@@ -158,7 +148,7 @@ export function CheckoutShippingPaymentStep({
           <div className="flex items-center gap-3 py-8 justify-center text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span className="text-sm">
-              {isAr ? "جارٍ حساب الشحن..." : "Calculating shipping..."}
+              {t("shipping_payment.calculating_shipping")}
             </span>
           </div>
         ) : (
@@ -182,18 +172,21 @@ export function CheckoutShippingPaymentStep({
                     className="w-4 h-4 text-primary focus:ring-primary/50"
                   />
                   <div>
-                    <p className="font-semibold text-sm">{option.providerName}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {isAr ? "المدة المتوقعة:" : "Est. Delivery:"}{" "}
-                      {option.estimatedDays} {isAr ? "أيام" : "days"}
-                    </p>
+                    <div className="font-semibold text-foreground text-sm">{option.providerName}</div>
+                    <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>
+                        {t("shipping_payment.est_delivery")}{" "}
+                        {option.estimatedDays} {t("shipping_payment.days")}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <span className="font-bold text-sm">
+                <div className="font-bold text-foreground shrink-0 text-right">
                   {option.totalShippingCost > 0
                     ? formatCurrency(option.totalShippingCost)
-                    : isAr ? "مجاني" : "Free"}
-                </span>
+                    : t("shipping_payment.free")}
+                </div>
               </label>
             ))}
           </div>
@@ -204,19 +197,20 @@ export function CheckoutShippingPaymentStep({
       <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2.5 bg-primary/10 rounded-2xl">
-            <CreditCard className="w-5 h-5 text-primary" />
+            <Banknote className="w-5 h-5 text-primary" />
           </div>
           <h2 className="text-xl font-black text-foreground">
-            {isAr ? "طريقة الدفع" : "Payment Method"}
+            {t("shipping_payment.payment_method")}
           </h2>
         </div>
 
-        {paymentMethods.length === 0 ? (
-          <div className="flex items-center gap-3 py-6 justify-center text-muted-foreground">
-            <AlertCircle className="w-5 h-5" />
-            <span className="text-sm">
-              {isAr ? "لا توجد طرق دفع متاحة حالياً" : "No payment methods available"}
-            </span>
+        {summaryLoading && !paymentMethods.length ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : paymentMethods.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            {t("shipping_payment.no_payment_methods")}
           </div>
         ) : (
           <div className="grid gap-3">
@@ -236,13 +230,6 @@ export function CheckoutShippingPaymentStep({
                         : "border-border/50 hover:border-primary/40 hover:shadow-sm"
                   }`}
                 >
-                  {/* Gradient bg when selected */}
-                  {isSelected && !disabled && (
-                    <div
-                      className={`absolute inset-0 rounded-2xl bg-linear-to-br ${method.color} opacity-60 pointer-events-none`}
-                    />
-                  )}
-
                   {/* Radio input */}
                   <div className="relative mt-0.5 shrink-0">
                     <input
@@ -270,9 +257,9 @@ export function CheckoutShippingPaymentStep({
                   {/* Text content */}
                   <div className="relative flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-bold text-sm text-foreground">
-                        {isAr ? method.nameAr : method.name}
-                      </p>
+                      <h3 className="font-bold text-base text-foreground">
+                        {getTrans(method.name)}
+                      </h3>
                       {method.badge && (
                         <span
                           className={`text-[10px] font-black px-1.5 py-0.5 rounded-md tracking-wide ${getGatewayBadgeStyle(method.code)}`}
@@ -292,22 +279,20 @@ export function CheckoutShippingPaymentStep({
                         isSelected ? "text-foreground/70" : "text-muted-foreground"
                       }`}
                     >
-                      {isAr ? method.descriptionAr : method.description}
+                      {getTrans(method.description)}
                     </p>
 
                     {disabled && (
                       <p className="text-xs text-destructive mt-1 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
-                        {isAr
-                          ? "شركة الشحن لا تدعم الدفع عند الاستلام"
-                          : "Carrier does not support COD"}
+                        {t("shipping_payment.carrier_no_cod")}
                       </p>
                     )}
 
                     {isSelected && method.type === "electronic" && (
                       <p className="text-[11px] text-primary/80 mt-1.5 flex items-center gap-1 font-medium">
                         <ShieldCheck className="w-3 h-3" />
-                        {isAr ? "مدفوعات آمنة ومشفرة" : "Secure encrypted payment"}
+                        {t("shipping_payment.secure_encrypted_payment")}
                       </p>
                     )}
                   </div>
@@ -323,12 +308,10 @@ export function CheckoutShippingPaymentStep({
         <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-3xl p-6 shadow-lg">
           <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2">
             <Upload className="w-5 h-5 text-amber-500" />
-            {isAr ? "إرفاق إيصال التحويل" : "Upload Transfer Receipt"}
+            {t("shipping_payment.upload_receipt")}
           </h2>
           <p className="text-xs text-muted-foreground mb-4">
-            {isAr
-              ? "يرجى تحويل المبلغ وإرفاق صورة الإيصال لإتمام الطلب"
-              : "Please transfer the amount and attach the receipt to complete the order"}
+            {t("shipping_payment.upload_receipt_desc")}
           </p>
           <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-amber-300 dark:border-amber-700 rounded-2xl p-6 cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-all">
             <input
@@ -348,17 +331,17 @@ export function CheckoutShippingPaymentStep({
                   onClick={(e) => { e.preventDefault(); setReceiptFile(null); }}
                   className="text-xs text-destructive underline"
                 >
-                  {isAr ? "إزالة" : "Remove"}
+                  {t("shipping_payment.remove")}
                 </button>
               </>
             ) : (
               <>
                 <Upload className="w-8 h-8 text-amber-400" />
                 <p className="text-sm text-muted-foreground text-center">
-                  {isAr ? "اضغط لاختيار صورة الإيصال" : "Click to select receipt image"}
+                  {t("shipping_payment.click_to_select_receipt")}
                 </p>
                 <span className="text-xs text-destructive font-semibold">
-                  {isAr ? "* مطلوب لإتمام الطلب" : "* Required to place order"}
+                  {t("shipping_payment.required_to_place_order")}
                 </span>
               </>
             )}
@@ -374,12 +357,10 @@ export function CheckoutShippingPaymentStep({
           </div>
           <div>
             <p className="text-sm font-bold text-foreground mb-0.5">
-              {isAr ? "الدفع الآمن ببطاقة الائتمان عبر Stripe" : "Secure Card Payment via Stripe"}
+              {t("shipping_payment.secure_card_payment_stripe")}
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {isAr
-                ? "بعد تأكيد الطلب، ستُوجَّه إلى صفحة Stripe الآمنة لإدخال بيانات بطاقتك. تدعم فيزا، ماستركارد، ومدى."
-                : "After confirmation, you'll be redirected to Stripe's secure page. Visa, Mastercard, and Mada supported."}
+              {t("shipping_payment.stripe_desc")}
             </p>
           </div>
         </div>
@@ -394,56 +375,12 @@ export function CheckoutShippingPaymentStep({
           <div>
             <p className="text-sm font-bold text-foreground mb-0.5">PayPal</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {isAr
-                ? "بعد تأكيد الطلب، ستُعاد توجيهك إلى موقع PayPal لإتمام الدفع بأمان."
-                : "After confirmation, you'll be redirected to PayPal to complete your payment securely."}
+              {t("shipping_payment.paypal_desc")}
             </p>
           </div>
         </div>
       )}
 
-      {/* ─── Coupon ──────────────────────────────────────────────────── */}
-      <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 bg-primary/10 rounded-2xl">
-            <Tag className="w-5 h-5 text-primary" />
-          </div>
-          <h2 className="text-xl font-black text-foreground">
-            {isAr ? "كود الخصم" : "Coupon Code"}
-          </h2>
-        </div>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={couponInput}
-            onChange={(e) => setCouponInput(e.target.value)}
-            placeholder={isAr ? "أدخل الكوبون" : "Enter coupon"}
-            disabled={!!appliedCoupon || summaryLoading}
-            className="flex-1 h-12 px-4 bg-background border border-border/60 rounded-xl text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
-          />
-          {appliedCoupon ? (
-            <button
-              onClick={handleRemoveCoupon}
-              className="h-12 px-6 bg-destructive text-destructive-foreground rounded-xl font-bold text-sm hover:bg-destructive/90 transition-all"
-            >
-              {isAr ? "إزالة" : "Remove"}
-            </button>
-          ) : (
-            <button
-              onClick={handleApplyCoupon}
-              disabled={!couponInput || summaryLoading}
-              className="h-12 px-6 bg-primary text-primary-foreground rounded-xl font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-all"
-            >
-              {isAr ? "تطبيق" : "Apply"}
-            </button>
-          )}
-        </div>
-        {couponError && (
-          <p className="text-xs text-destructive mt-2 flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" /> {couponError}
-          </p>
-        )}
-      </div>
 
       {/* ─── Navigation ──────────────────────────────────────────────── */}
       <div className="flex gap-4 mt-8">
@@ -451,15 +388,15 @@ export function CheckoutShippingPaymentStep({
           onClick={onBack}
           className="w-1/3 h-14 bg-muted text-foreground rounded-2xl font-bold text-base hover:bg-muted/80 transition-all"
         >
-          {isAr ? "رجوع" : "Back"}
+          {t("shipping_payment.back")}
         </button>
         <button
           onClick={onNext}
           disabled={!canProceed || summaryLoading}
           className="flex-1 h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isAr ? "مراجعة الطلب" : "Review Order"}
-          {isAr ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+          {t("shipping_payment.review_order")}
+          <ArrowRight className="w-5 h-5 rtl:rotate-180" />
         </button>
       </div>
     </div>

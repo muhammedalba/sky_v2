@@ -13,7 +13,8 @@
     "total": "المجموع الإجمالي",
     "checkout": "إتمام الطلب",
     "free": "مجاني",
-    "calculated_at_checkout": "يُحسب عند الدفع"
+    "calculated_at_checkout": "يُحسب عند الدفع",
+    "payment_fees": "رسوم الدفع"
   },
   "item": {
     "remove": "حذف",
@@ -37,11 +38,13 @@
     "fast_ship": "شحن سريع",
     "number_of_products": "عدد المنتجات",
     "view_cart": "عرض السلة",
-    "home": "الرئيسية"
+    "home": "الرئيسية",
+    "secure_encrypted": "دفع آمن ومشفر"
   },
   "messages": {
     "login_to_apply_coupon": "يجب تسجيل الدخول لتطبيق الكوبون",
-    "couponApplied": "تم تطبيق الكوبون بنجاح"
+    "couponApplied": "تم تطبيق الكوبون بنجاح",
+    "couponRemoved": "تم إزالة الكوبون بنجاح"
   },
   "coupon": {
     "discount": "خصم الكوبون",
@@ -54,5 +57,69 @@
   },
   "shipping": {
     "not_available": "مع الاسف الشحن غير متاح حاليا"
+  },
+  "breadcrumb": {
+    "home": "الرئيسية",
+    "cart": "عربة التسوق",
+    "checkout": "إتمام الطلب"
+  },
+  "address": {
+    "title": "عنوان التوصيل",
+    "first_name": "الاسم الأول",
+    "first_name_placeholder": "أحمد",
+    "last_name": "الاسم الأخير",
+    "last_name_placeholder": "محمد",
+    "phone": "رقم الجوال",
+    "country": "الدولة",
+    "select_country": "اختر الدولة",
+    "loading": "جارٍ التحميل...",
+    "region": "المنطقة",
+    "select_region": "اختر المنطقة",
+    "city": "المدينة",
+    "select_city": "اختر المدينة",
+    "street": "الشارع",
+    "street_placeholder": "اسم الشارع ورقمه",
+    "building": "المبنى / الشقة",
+    "building_placeholder": "2أ",
+    "postal_code": "الرمز البريدي",
+    "additional_info": "معلومات إضافية (اختياري)",
+    "additional_info_placeholder": "علامة مميزة، وقت مفضل للتوصيل...",
+    "continue": "متابعة"
+  },
+  "shipping_payment": {
+    "shipping_method": "طريقة الشحن",
+    "calculating_shipping": "جارٍ حساب الشحن...",
+    "est_delivery": "وقت التوصيل المقدر:",
+    "days": "أيام",
+    "free": "مجاناً",
+    "payment_method": "طريقة الدفع",
+    "no_payment_methods": "لا توجد طرق دفع متاحة",
+    "carrier_no_cod": "شركة الشحن لا تدعم الدفع عند الاستلام",
+    "secure_encrypted_payment": "مدفوعات آمنة ومشفرة",
+    "upload_receipt": "إرفاق إيصال التحويل",
+    "upload_receipt_desc": "يرجى تحويل المبلغ وإرفاق صورة الإيصال لإتمام الطلب",
+    "remove": "إزالة",
+    "click_to_select_receipt": "اضغط لاختيار صورة الإيصال",
+    "required_to_place_order": "* مطلوب لإتمام الطلب",
+    "secure_card_payment_stripe": "الدفع الآمن ببطاقة الائتمان عبر Stripe",
+    "stripe_desc": "بعد تأكيد الطلب، ستُوجَّه إلى صفحة Stripe الآمنة لإدخال بيانات بطاقتك. تدعم فيزا، ماستركارد، ومدى.",
+    "paypal_desc": "بعد تأكيد الطلب، ستُعاد توجيهك إلى موقع PayPal لإتمام الدفع بأمان.",
+    "back": "رجوع",
+    "review_order": "مراجعة الطلب"
+  },
+  "review": {
+    "title": "مراجعة البيانات",
+    "name": "الاسم",
+    "address": "العنوان",
+    "shipping": "طريقة الشحن",
+    "payment": "طريقة الدفع",
+    "back": "رجوع",
+    "confirming": "جارٍ التأكيد...",
+    "confirm_order": "تأكيد الطلب"
+  },
+  "steps": {
+    "shipping_info": "معلومات التوصيل",
+    "shipping_and_payment": "الشحن والدفع",
+    "review_and_confirm": "مراجعة وتأكيد"
   }
 }

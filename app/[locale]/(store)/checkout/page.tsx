@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, startTransition } from "react";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +24,6 @@ import { useMe } from "@/features/auth/hooks/useAuth";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
-import { useToast } from "@/shared/hooks/useToast";
 
 // Components
 import { CheckoutStepIndicator } from "@/features/checkout/components/CheckoutStepIndicator";
@@ -50,19 +49,13 @@ export default function CheckoutPage() {
 
   console.log("previewResult", previewResult);
   /* ─────────────────────────────────────────── HOOKS ──────────────────────────────────────────────── */
-  const locale = useLocale();
   const router = useRouter();
-  const toast = useToast();
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
-  const isAr = locale === "ar";
-
+  const t = useTranslations("cart");
   /* ─── Local State for Non-Form Fields ──────────────────────────── */
   const [selectedShippingId, setSelectedShippingId] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState("");
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState("");
-  const [couponError, setCouponError] = useState<string | null>(null);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
   // shipping options from preview result
@@ -79,7 +72,6 @@ export default function CheckoutPage() {
     submitAddress,
     selectShipping,
     selectPayment,
-    applyCoupon,
     placeOrder,
     isSubmitting,
   } = useCheckoutFlow();
@@ -108,7 +100,7 @@ export default function CheckoutPage() {
     // dependencies
     [serverCart?.totalPrice, cartItems],
   );
-  console.log("subtotal", subtotal);
+
 
   /* ─── Form Setup ──────────────────────────────────────────────── */
   const form = useForm<CheckoutFormValues>({
@@ -137,16 +129,6 @@ export default function CheckoutPage() {
       form.setValue("phone", user.phone || "");
     }
   }, [user, form]);
-
-  // Pre-fill
-  useEffect(() => {
-    if (user && previewResult?.couponDetails?.couponCode) {
-      startTransition(() => {
-        setCouponInput(previewResult?.couponDetails?.couponCode || "");
-        setAppliedCoupon(previewResult?.couponDetails?.couponCode || "");
-      });
-    }
-  }, [user, previewResult?.couponDetails?.couponCode]);
 
   /* ─── Redirect if cart empty ───────────────────────────────────── */
   useEffect(() => {
@@ -181,57 +163,6 @@ export default function CheckoutPage() {
   const handlePaymentChange = (id: string) => {
     setSelectedPaymentId(id);
     selectPayment(id);
-  };
-
-  const handleApplyCoupon = () => {
-    if (!couponInput.trim()) return;
-    setCouponError(null);
-    applyCoupon(
-      couponInput,
-      (res: unknown) => {
-        const raw = res as {
-          data?: { summary?: { discount?: number } };
-          summary?: { discount?: number };
-        } | null;
-        console.log("raw", raw);
-        const result = raw;
-        if ((result?.summary?.discount ?? 0) > 0) {
-          setAppliedCoupon(couponInput);
-          toast.success(
-            isAr ? "تم تطبيق الكوبون بنجاح!" : "Coupon applied successfully!",
-          );
-        } else {
-          setCouponError(
-            isAr
-              ? "هذا الكوبون لم يقدم أي خصم"
-              : "This coupon did not apply any discount",
-          );
-        }
-      },
-      (err: unknown) => {
-        const e = err as {
-          response?: { data?: { message?: string } };
-          message?: string;
-        } | null;
-        const errMsg =
-          e?.response?.data?.message ||
-          e?.message ||
-          (isAr ? "كوبون غير صالح" : "Invalid coupon");
-        setCouponError(errMsg);
-        toast.error(errMsg);
-      },
-    );
-  };
-
-  const handleRemoveCoupon = () => {
-    setCouponInput("");
-    setAppliedCoupon("");
-    setCouponError(null);
-    applyCoupon("", () => {
-      toast.success(
-        isAr ? "تم إزالة الكوبون بنجاح" : "Coupon removed successfully",
-      );
-    });
   };
 
   const handlePlaceOrder = () => {
@@ -274,21 +205,20 @@ export default function CheckoutPage() {
       <div className="container mx-auto px-4 sm:px-6">
         <Breadcrumb
           items={[
-            { label: isAr ? "الرئيسية" : "Home", href: `/home` },
-            { label: isAr ? "عربة التسوق" : "Cart", href: `/cart` },
-            { label: isAr ? "إتمام الطلب" : "Checkout" },
+            { label: t("breadcrumb.home"), href: `/home` },
+            { label: t("breadcrumb.cart"), href: `/cart` },
+            { label: t("breadcrumb.checkout") },
           ]}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-8">
           {/* Left: Steps */}
           <div className="lg:col-span-7 space-y-6">
-            <CheckoutStepIndicator currentStep={currentStep} isAr={isAr} />
+            <CheckoutStepIndicator currentStep={currentStep} />
 
             <FormProvider {...form}>
               {currentStep === 0 && (
                 <CheckoutAddressStep
-                  isAr={isAr}
                   onNext={() => submitAddress(form.getValues())}
                   isSubmitting={isSubmitting}
                 />
@@ -296,7 +226,6 @@ export default function CheckoutPage() {
 
               {currentStep === 1 && (
                 <CheckoutShippingPaymentStep
-                  isAr={isAr}
                   summaryLoading={summaryLoading}
                   shippingOptions={shippingOptions}
                   paymentMethods={paymentMethods}
@@ -307,12 +236,6 @@ export default function CheckoutPage() {
                   handlePaymentChange={handlePaymentChange}
                   isCODSupportedByCarrier={isCODSupportedByCarrier}
                   formatCurrency={formatCurrency}
-                  couponInput={couponInput}
-                  setCouponInput={setCouponInput}
-                  appliedCoupon={appliedCoupon}
-                  handleApplyCoupon={handleApplyCoupon}
-                  handleRemoveCoupon={handleRemoveCoupon}
-                  couponError={couponError}
                   receiptFile={receiptFile}
                   setReceiptFile={setReceiptFile}
                   onBack={prevStep}
@@ -323,7 +246,6 @@ export default function CheckoutPage() {
 
               {currentStep === 2 && (
                 <CheckoutReviewStep
-                  isAr={isAr}
                   selectedCityName={selectedCityName}
                   selectedCountryName={selectedCountryName}
                   selectedShippingProviderName={
@@ -344,10 +266,9 @@ export default function CheckoutPage() {
               cartItems={cartItems}
               subtotal={subtotal}
               preview={previewResult}
-              isAr={isAr}
-              formatCurrency={formatCurrency}
-              getTrans={getTrans}
               showPreviewDetails={currentStep > 0}
+              checkoutMode
+            
             />
           </div>
         </div>

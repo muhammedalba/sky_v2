@@ -11,15 +11,15 @@ import {
 } from "@/features/checkout/hooks/useCheckout";
 import { CheckoutFormValues } from "../schemas/checkout.schema";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { useTrans } from "@/shared/hooks/useTrans";
 
 interface CheckoutAddressStepProps {
-  isAr: boolean;
   onNext: () => void;
   isSubmitting: boolean;
 }
 
 export function CheckoutAddressStep({
-  isAr,
   onNext,
   isSubmitting,
 }: CheckoutAddressStepProps) {
@@ -34,6 +34,9 @@ export function CheckoutAddressStep({
 
   const countryId = useWatch({ control, name: "countryId" });
   const regionId = useWatch({ control, name: "regionId" });
+
+  const t = useTranslations("cart");
+  const getTrans = useTrans();
 
   const { data: countries = [], isLoading: loadingCountries } = useCountries();
   const { data: regions = [], isLoading: loadingRegions } = useRegions(
@@ -80,8 +83,8 @@ export function CheckoutAddressStep({
         <div className="p-2.5 bg-primary/10 rounded-2xl">
           <MapPin className="w-5 h-5 text-primary" />
         </div>
-        <h2 className="text-xl font-black text-foreground">
-          {isAr ? "عنوان التوصيل" : "Delivery Address"}
+        <h2 className="text-xl font-bold text-foreground">
+          {t("address.title")}
         </h2>
       </div>
 
@@ -90,9 +93,9 @@ export function CheckoutAddressStep({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label={isAr ? "الاسم الأول" : "First Name"}
-              placeholder={isAr ? "محمد" : "John"}
               {...register("firstName")}
+              label={t("address.first_name")}
+              placeholder={t("address.first_name_placeholder")}
               required
             />
             {errors.firstName && (
@@ -103,9 +106,9 @@ export function CheckoutAddressStep({
           </div>
           <div>
             <Input
-              label={isAr ? "اسم العائلة" : "Last Name"}
-              placeholder={isAr ? "أحمد" : "Doe"}
               {...register("lastName")}
+              label={t("address.last_name")}
+              placeholder={t("address.last_name_placeholder")}
               required
             />
             {errors.lastName && (
@@ -119,7 +122,7 @@ export function CheckoutAddressStep({
         {/* Phone */}
         <div>
           <Input
-            label={isAr ? "رقم الهاتف" : "Phone Number"}
+            label={t("address.phone")}
             placeholder="+966 5X XXX XXXX"
             type="tel"
             {...register("phone")}
@@ -135,23 +138,19 @@ export function CheckoutAddressStep({
         {/* Country */}
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-            {isAr ? "الدولة" : "Country"}
+            {t("address.country")}
             <span className="text-destructive">*</span>
           </label>
           <Select
             {...register("countryId")}
             options={countries.map((c: any) => ({
               value: c._id,
-              label: isAr ? c.name?.ar || c.name : c.name?.en || c.name,
+              label: getTrans(c.name),
             }))}
             label={
               loadingCountries
-                ? isAr
-                  ? "جارٍ التحميل..."
-                  : "Loading..."
-                : isAr
-                  ? "اختر الدولة"
-                  : "Select country"
+                ? t("address.loading")
+                : t("address.select_country")
             }
             disabled={loadingCountries}
             required
@@ -166,23 +165,19 @@ export function CheckoutAddressStep({
         {/* Region */}
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-            {isAr ? "المنطقة" : "Region"}
+            {t("address.region")}
             <span className="text-destructive">*</span>
           </label>
           <Select
             {...register("regionId")}
             options={regions.map((r: any) => ({
               value: r._id,
-              label: isAr ? r.name?.ar || r.name : r.name?.en || r.name,
+              label: getTrans(r.name),
             }))}
             label={
               loadingRegions
-                ? isAr
-                  ? "جارٍ التحميل..."
-                  : "Loading..."
-                : isAr
-                  ? "اختر المنطقة"
-                  : "Select region"
+                ? t("address.loading")
+                : t("address.select_region")
             }
             disabled={!countryId || loadingRegions}
             required
@@ -197,23 +192,19 @@ export function CheckoutAddressStep({
         {/* City */}
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-            {isAr ? "المدينة" : "City"}
+            {t("address.city")}
             <span className="text-destructive">*</span>
           </label>
           <Select
             {...register("cityId")}
             options={cities.map((c: any) => ({
               value: c._id,
-              label: isAr ? c.name?.ar || c.name : c.name?.en || c.name,
+              label: getTrans(c.name),
             }))}
             label={
               loadingCities
-                ? isAr
-                  ? "جارٍ التحميل..."
-                  : "Loading..."
-                : isAr
-                  ? "اختر المدينة"
-                  : "Select city"
+                ? t("address.loading")
+                : t("address.select_city")
             }
             disabled={!regionId || loadingCities}
             required
@@ -228,9 +219,9 @@ export function CheckoutAddressStep({
         {/* Street */}
         <div>
           <Input
-            label={isAr ? "الشارع" : "Street"}
-            placeholder={isAr ? "اسم الشارع والرقم" : "Street name and number"}
             {...register("street")}
+            label={t("address.street")}
+            placeholder={t("address.street_placeholder")}
             required
           />
           {errors.street && (
@@ -243,28 +234,27 @@ export function CheckoutAddressStep({
         {/* Building + Postal */}
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label={isAr ? "المبنى / الشقة" : "Building / Apt"}
-            placeholder={isAr ? "٢أ" : "2A"}
             {...register("building")}
+            label={t("address.building")}
+            placeholder={t("address.building_placeholder")}
           />
           <Input
-            label={isAr ? "الرمز البريدي" : "Postal Code"}
-            placeholder="12345"
             {...register("postalCode")}
+            label={t("address.postal_code")}
+            placeholder="12345"
           />
         </div>
 
         {/* Additional Info */}
         <div>
-          <label className="text-sm font-semibold text-foreground mb-2 block">
-            {isAr ? "معلومات إضافية (اختياري)" : "Additional Info (Optional)"}
+          <label className="text-sm font-semibold text-foreground flex items-center gap-1">
+            {t("address.additional_info")}
           </label>
           <textarea
             {...register("additionalInfo")}
-            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none h-24"
-            placeholder={
-              isAr ? "علامة مميزة، وقت التوصيل المفضل..." : "Landmark, preferred time..."
-            }
+            rows={3}
+            className="flex w-full rounded-2xl border border-input bg-transparent px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            placeholder={t("address.additional_info_placeholder")}
           />
         </div>
 
@@ -276,7 +266,7 @@ export function CheckoutAddressStep({
             className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
           >
             {isSubmitting ? <Loader2 className="animate-spin w-5 h-5" /> : null}
-            {isAr ? "متابعة" : "Continue"}
+            {t("address.continue")}
             <ArrowRight className="w-5 h-5 rtl:rotate-180" />
           </button>
         </div>

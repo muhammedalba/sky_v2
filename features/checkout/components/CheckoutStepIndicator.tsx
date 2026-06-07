@@ -1,17 +1,21 @@
 import { CheckCircle2 } from "lucide-react";
 
+import { useTranslations } from "next-intl";
+
 interface CheckoutStepIndicatorProps {
   currentStep: number;
-  isAr: boolean;
 }
 
 export function CheckoutStepIndicator({
   currentStep,
-  isAr,
 }: CheckoutStepIndicatorProps) {
-  const steps = isAr
-    ? ["معلومات التوصيل", "الشحن والدفع", "مراجعة وتأكيد"]
-    : ["Shipping Info", "Shipping & Payment", "Review & Confirm"];
+  const t = useTranslations("cart");
+
+  const steps = [
+    t("steps.shipping_info"),
+    t("steps.shipping_and_payment"),
+    t("steps.review_and_confirm")
+  ];
 
   return (
     <div className="flex items-center gap-0 mb-10">
