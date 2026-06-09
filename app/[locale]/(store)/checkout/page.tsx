@@ -268,7 +268,6 @@ export default function CheckoutPage() {
               preview={previewResult}
               showPreviewDetails={currentStep > 0}
               checkoutMode
-            
             />
           </div>
         </div>

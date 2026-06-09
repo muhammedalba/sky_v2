@@ -20,12 +20,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useToast } from "@/shared/hooks/useToast";
-import { useApplyCoupon, useCheckoutSummary } from "@/features/checkout/hooks/useCheckout";
+import { useApplyCoupon } from "@/features/checkout/hooks/useCheckout";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 export interface CouponFormValues {
   couponCode: string;
@@ -73,38 +74,6 @@ export function OrderSummaryCard({
   checkoutMode = false,
 }: OrderSummaryCardProps) {
   console.log("preview", preview);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("showPreviewDetails", showPreviewDetails);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // // console.log("cartItems", cartItems);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("subtotal", subtotal);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("externalTotalAmount", externalTotalAmount);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("vatRate", vatRate);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("tax", tax);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("baseTotalAmount", baseTotalAmount);
-  // console.log(
-  //   "=================================================================",
-  // );
-  // console.log("checkoutMode", checkoutMode);
 
   /* ── hooks & state ── */
   const settings = useSettings();
@@ -125,7 +94,7 @@ export function OrderSummaryCard({
   const [appliedCouponLocal, setAppliedCouponLocal] =
     useState<CouponValidationResult | null>(null);
   // preview
-  const p =  preview   as Record<string, unknown> | undefined;
+  const p = preview as Record<string, unknown> | undefined;
   // summary
   const summary = p?.summary as Record<string, unknown> | undefined;
   const parsedDiscountAmount =
@@ -236,7 +205,12 @@ export function OrderSummaryCard({
       </div>
 
       {/* Items mini-list */}
-      <div className="px-5 py-4 border-b border-border/40 max-h-52 overflow-y-auto space-y-3">
+      <div
+        className={cn(
+          "px-5 py-4 max-h-52 overflow-y-auto space-y-3 ",
+          checkoutMode && "border-b border-border/40 ",
+        )}
+      >
         {cartItems.map((item: CartItem, idx: number) => {
           const product = item.product;
           if (!product) return null;
@@ -279,214 +253,111 @@ export function OrderSummaryCard({
 
       {/* Pricing breakdown */}
       <div className="px-6 py-5 space-y-3">
-        {/* Subtotal */}
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">{t("summary.subtotal")}</span>
-          <span className="font-semibold text-foreground tabular-nums">
-            {formatCurrency(subtotal)}
-          </span>
-        </div>
-
         {/* ── Checkout-page preview mode ── */}
-        {checkoutMode && p && showPreviewDetails ? (
-          <>
-            {(summary?.shippingCost as number) > 0 ? (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t("summary.shipping")}
-                </span>
-                <span className="font-semibold">
-                  {formatCurrency(summary?.shippingCost as number)}
-                </span>
-              </div>
-            ) : (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t("summary.shipping")}
-                </span>
-                <span className="font-bold text-success text-xs bg-success/10 px-2 py-0.5 rounded-lg">
-                  {t("summary.free")}
-                </span>
-              </div>
-            )}
-            {(summary?.taxAmount as number) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t("summary.tax")} ({String(summary?.taxPercentage ?? "")}%)
-                </span>
-                <span className="font-semibold">
-                  {formatCurrency(summary?.taxAmount as number)}
-                </span>
-              </div>
-            )}
-            {(summary?.paymentFees as number) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t("summary.payment_fees")}
-                </span>
-                <span className="font-semibold">
-                  {formatCurrency(summary?.paymentFees as number)}
-                </span>
-              </div>
-            )}
-            {(summary?.discount as number) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-success font-semibold flex items-center gap-1">
-                  <Tag className="w-3.5 h-3.5" />
-                  {t("coupon.discount")}
-                </span>
-                <span className="font-bold text-success">
-                  -{formatCurrency(summary?.discount as number)}
-                </span>
-              </div>
-            )}
-            <div className="h-px bg-border/60 my-2" />
-            <div className="flex justify-between items-center">
-              <span className="font-black text-base text-foreground">
-                {t("summary.total")}
-              </span>
-              <span className="text-2xl font-black text-primary tabular-nums">
-                {formatCurrency(summary?.total as number)}
-              </span>
-            </div>
-          </>
-        ) : checkoutMode && p && !showPreviewDetails ? (
-          /* checkout-page fallback (no preview yet) */
-          <>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">
-                {t("summary.shipping")}
-              </span>
-              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-                {t("summary.calculated_at_checkout")}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{t("summary.tax")}</span>
-              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-                {t("summary.calculated_at_checkout")}
-              </span>
-            </div>
-            <div className="h-px bg-border/60 my-2" />
-            <div className="flex justify-between items-center">
-              <span className="font-black text-base text-foreground">
-                {t("summary.total")}
-              </span>
-              <span className="text-2xl font-black text-primary tabular-nums">
-                {formatCurrency(
-                  (p?.totalPriceAfterDiscount as number) ?? subtotal,
-                )}
-              </span>
-            </div>
-          </>
-        ) : (
-          /* ── Cart-page mode ── */
-          <>
-            {/* Tax row */}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{t("summary.tax")}</span>
-              {hasCustomTaxes ? (
-                <span className="text-xs text-muted-foreground bg-accent px-2.5 py-1 rounded-lg border border-border/50">
-                  {t("summary.calculated_at_checkout")}
-                </span>
-              ) : (
-                <span className="text-muted-foreground tabular-nums">
-                  {vatRate}%
-                </span>
-              )}
-            </div>
-
-            {/* Shipping row */}
-            {hasCustomShippingRates ? (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t("summary.shipping")}
-                </span>
-                <span className="text-xs text-muted-foreground bg-accent px-2.5 py-1 rounded-lg border border-border/50">
-                  {t("summary.calculated_at_checkout")}
-                </span>
-              </div>
-            ) : (
-              <>
-                {tax > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {t("summary.tax")} ({vatRate}%)
-                    </span>
-                    <span className="font-semibold text-foreground tabular-nums">
-                      {formatCurrency(tax)}
-                    </span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    {t("summary.shipping")}
-                  </span>
-                  <span className="text-xs font-semibold text-success bg-success/10 px-2.5 py-1 rounded-lg">
-                    {t("summary.free")}
-                  </span>
-                </div>
-              </>
-            )}
-
-            {/* Coupon discount row */}
-            {appliedCoupon && (
-              <div className="flex items-center justify-between text-sm pt-1">
-                <span className="font-medium text-success flex items-center gap-1.5">
-                  {t("coupon.discount")}
-                  <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
-                    {appliedCoupon?.couponDetails?.couponType === "percentage"
-                      ? `${appliedCoupon?.couponDetails?.discount} %`
-                      : formatCurrency(
-                          appliedCoupon?.couponDetails?.discount ?? 0,
-                        )}
-                  </span>
-                </span>
-                <span className="font-bold text-success tabular-nums">
-                  −{formatCurrency(appliedCoupon.discountAmount)}
-                </span>
-              </div>
-            )}
-
-            {/* Divider */}
-            <div className="h-px bg-border/50 my-1" />
-
-            {/* Total */}
-            <div className="flex items-end justify-between">
-              <span className="font-semibold text-foreground text-base">
-                {t("summary.total")}
-              </span>
-              <div className="text-end">
-                {appliedCoupon ? (
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs text-muted-foreground line-through tabular-nums">
-                      {formatCurrency(baseTotalAmount)}
-                    </span>
-                    <span className="text-xl font-black text-success tabular-nums leading-tight">
-                      {formatCurrency(totalAmount)}
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-xl font-black text-primary tabular-nums leading-tight">
-                    {formatCurrency(totalAmount)}
-                  </span>
-                )}
-                {taxesIncluded && !hasCustomTaxes && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    {t("misc.tax_included")}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Shipping unavailable notice */}
-            {!hasCustomShippingRates && (
-              <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 p-3 rounded-xl text-xs font-medium text-center leading-relaxed">
-                {t("shipping.not_available")}
-              </div>
-            )}
-          </>
+        {/* Subtotal */}
+        {checkoutMode && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              {t("summary.subtotal")}
+            </span>
+            <span className="font-semibold text-foreground tabular-nums">
+              {formatCurrency(subtotal)}
+            </span>
+          </div>
         )}
+        {/* shippingCost */}
+        {checkoutMode && (
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">
+              {t("summary.shipping")}
+            </span>
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
+              {(summary?.shippingCost as number) > 0
+                ? formatCurrency(summary?.shippingCost as number)
+                : (summary?.shippingCost as number) === 0
+                  ? t("summary.free")
+                  : t("summary.calculated_at_checkout")}
+            </span>
+          </div>
+        )}
+        {/* tax */}
+        {checkoutMode && (
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">
+              {t("summary.tax")} ({String(summary?.taxPercentage ?? "")}%)
+            </span>
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
+              {(summary?.taxAmount as number) > 0
+                ? formatCurrency(summary?.taxAmount as number)
+                : t("summary.calculated_at_checkout")}
+            </span>
+          </div>
+        )}
+        {/* paymentFees */}
+        {(summary?.paymentFees as number) > 0 && checkoutMode && (
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">
+              {t("summary.payment_fees")}
+            </span>
+            <span className="font-semibold">
+              {formatCurrency(summary?.paymentFees as number)}
+            </span>
+          </div>
+        )}
+        {/* discount */}
+        {(summary?.discountAmount as number) > 0 ||
+          (appliedCoupon && (
+            <div className="flex justify-between text-sm">
+              <span className="text-success font-semibold flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" />
+                {t("coupon.discount")}
+                <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
+                  {appliedCoupon?.couponDetails?.couponType === "percentage"
+                    ? `${appliedCoupon?.couponDetails?.discount} %`
+                    : formatCurrency(
+                        appliedCoupon?.couponDetails?.discount ?? 0,
+                      )}
+                </span>
+              </span>
+              <span className="font-bold text-success tabular-nums">
+                -{" "}
+                {formatCurrency(
+                  (summary?.discountAmount as number) ||
+                    appliedCoupon?.discountAmount,
+                )}
+              </span>
+            </div>
+          ))}
+
+        {/* Divider */}
+        <div className="h-px bg-border/50 my-1" />
+        {/* Total */}
+        <div className="flex items-end justify-between">
+          <span className="font-semibold text-foreground text-base">
+            {t("summary.total")}
+          </span>
+          <div className="text-end">
+            {appliedCoupon ? (
+              <div className="flex flex-col items-end">
+                <span className="text-xs text-muted-foreground line-through tabular-nums">
+                  {formatCurrency(baseTotalAmount)}
+                </span>
+                <span className="text-xl font-black text-success tabular-nums leading-tight">
+                  {formatCurrency(totalAmount)}
+                </span>
+              </div>
+            ) : (
+              <span className="text-xl font-black text-primary tabular-nums leading-tight">
+                {formatCurrency(totalAmount)}
+              </span>
+            )}
+            {taxesIncluded && !hasCustomTaxes && (
+              <p className="text-[10px] text-muted-foreground mt-0.5">
+                {t("misc.tax_included")}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ── Coupon section ── */}
