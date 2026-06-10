@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Tag, ShieldCheck, Lock } from "lucide-react";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
@@ -32,13 +32,15 @@ export interface CouponFormValues {
   couponCode: string;
 }
 
+// ── Defined once at module level — not recreated on every render ──────────────
+const couponSchema = z.object({
+  couponCode: z.string().min(1, "Coupon code is required"),
+});
+
 interface OrderSummaryCardProps {
   // ── items & pricing ──────────────────────────────────────────────
   cartItems: CartItem[];
   subtotal: number;
-  baseTotalAmount?: number;
-  // ── coupon ───────────────────────────────────────────────────────
-  // Coupon state is now managed internally by this component.
 
   // ── checkout CTA ─────────────────────────────────────────────────
   checkoutHref?: string;
@@ -53,14 +55,11 @@ interface OrderSummaryCardProps {
 export function OrderSummaryCard({
   cartItems,
   subtotal,
-  baseTotalAmount = 0,
   checkoutHref = "#",
   isCartUpdating = false,
   preview,
   checkoutMode = false,
 }: OrderSummaryCardProps) {
-  console.log("preview", preview);
-
   /* ── get user & settings ── */
   const settings = useSettings();
   const { data: user } = useMe();
@@ -70,54 +69,56 @@ export function OrderSummaryCard({
   const formatCurrency = useFormatCurrency();
   const getTrans = useTrans();
   const t = useTranslations("cart");
-  // coupon state
+
   const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
     useApplyCoupon();
 
   const [isCouponOpen, setIsCouponOpen] = useState(false);
-  // apply coupon local
   const [appliedCouponLocal, setAppliedCouponLocal] =
     useState<CouponValidationResult | null>(null);
 
-  //if settings enable coupons
-  const enableCoupons = useMemo(() => {
-    return !!settings?.features?.coupons;
-  }, [settings]);
-  // preview
+  // Simple boolean — no useMemo needed for a single property access
+  const enableCoupons = !!settings?.features?.coupons;
+
+  // ── Derived values from server preview ───────────────────────────────────
   const p = preview as Record<string, unknown> | undefined;
-  // summary
   const summary = p?.summary as Record<string, unknown> | undefined;
 
   const parsedDiscountAmount =
-    (summary?.discountAmount as number | undefined) ??
-    (summary?.discount as number | undefined) ??
-    (p?.discountAmount as number | undefined) ??
-    0;
+    (summary?.discountAmount as number | undefined) ?? 0;
+
+  // Extract taxesIncluded from server preview
+  const taxesIncluded = (summary?.taxesIncluded as boolean | undefined) ?? false;
 
   // Extract coupon from server preview if present
-  const serverCoupon = (p?.couponDetails as Record<string, unknown>)?.couponCode
-    ? ({
-        discountAmount: parsedDiscountAmount,
-        couponDetails: p?.couponDetails,
-      } as unknown as CouponValidationResult)
-    : null;
+  const serverCoupon = useMemo(
+    () =>
+      (p?.couponDetails as Record<string, unknown>)?.couponCode
+        ? ({
+            discountAmount: parsedDiscountAmount,
+            couponDetails: p?.couponDetails,
+          } as unknown as CouponValidationResult)
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [p?.couponDetails, parsedDiscountAmount],
+  );
 
   // Use server coupon if available, otherwise fall back to local state coupon
-  const appliedCoupon = serverCoupon || appliedCouponLocal;
+  const appliedCoupon = serverCoupon ?? appliedCouponLocal;
 
   const totalAmount = useMemo(() => {
-    // 1. In checkoutMode (Checkout page), the server is the absolute source of truth (includes exact tax/shipping)
+    // 1. In checkoutMode (Checkout page), the server is the absolute source of truth
     if (checkoutMode && summary?.totalPrice !== undefined) {
       return summary.totalPrice as number;
     }
-    // 2. In Cart mode, use baseTotalAmount (which contains local estimated tax) and subtract discount
-    const discount = (summary?.discountAmount as number) ?? appliedCouponLocal?.discountAmount ?? 0;
-    return Math.max(0, baseTotalAmount - discount);
-  }, [summary, checkoutMode, baseTotalAmount, appliedCouponLocal]);
+    // 2. In Cart mode, use subtotal and subtract discount
+    const discount =
+      (summary?.discountAmount as number) ??
+      appliedCouponLocal?.discountAmount ??
+      0;
+    return Math.max(0, subtotal - discount);
+  }, [summary, checkoutMode, subtotal, appliedCouponLocal]);
 
-  const couponSchema = z.object({
-    couponCode: z.string().min(1, "Coupon code is required"),
-  });
   const {
     register,
     handleSubmit,
@@ -128,43 +129,50 @@ export function OrderSummaryCard({
     defaultValues: { couponCode: "" },
   });
 
-  const onCouponSubmit = handleSubmit(async (data: CouponFormValues) => {
-    if (!user) {
-      toast.warning(t("messages.login_to_apply_coupon"));
-      return;
-    }
-    try {
-      const res = await validateCoupon(data.couponCode);
-      if (!checkoutMode) {
-        const p = res as Record<string, unknown>;
-        const summaryObj = p?.summary as Record<string, unknown> | undefined;
-        const discAmt =
-          (summaryObj?.discountAmount as number | undefined) ??
-          (p?.discountAmount as number | undefined) ??
-          0;
-
-        setAppliedCouponLocal({
-          discountAmount: discAmt,
-          totalPrice:
-            (summaryObj?.subtotal as number | undefined) ??
-            (p?.totalPrice as number | undefined) ??
-            baseTotalAmount,
-          totalPriceAfterDiscount:
-            (summaryObj?.totalPrice as number | undefined) ??
-            (p?.totalPriceAfterDiscount as number | undefined) ??
-            baseTotalAmount - discAmt,
-          couponDetails: p?.couponDetails as Record<string, unknown>,
-        } as CouponValidationResult);
+  const onCouponSubmit = useCallback(
+    handleSubmit(async (data: CouponFormValues) => {
+      if (!user) {
+        toast.warning(t("messages.login_to_apply_coupon"));
+        return;
       }
-      toast.success(t("messages.couponApplied"));
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "something went wrong";
-      toast.error(errorMessage);
-    }
-  });
+      try {
+        const res = await validateCoupon(data.couponCode);
+        if (!checkoutMode) {
+          const resObj = res as Record<string, unknown>;
+          const summaryObj = resObj?.summary as
+            | Record<string, unknown>
+            | undefined;
+          const discAmt =
+            (summaryObj?.discountAmount as number | undefined) ??
+            (resObj?.discountAmount as number | undefined) ??
+            0;
 
-  const onRemoveCoupon = async () => {
+          setAppliedCouponLocal({
+            discountAmount: discAmt,
+            totalPrice:
+              (summaryObj?.subtotal as number | undefined) ??
+              (resObj?.totalPrice as number | undefined) ??
+              subtotal,
+            totalPriceAfterDiscount:
+              (summaryObj?.totalPrice as number | undefined) ??
+              (resObj?.totalPriceAfterDiscount as number | undefined) ??
+              subtotal - discAmt,
+            couponDetails: resObj?.couponDetails as Record<string, unknown>,
+          } as CouponValidationResult);
+        }
+        toast.success(t("messages.couponApplied"));
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "something went wrong";
+        toast.error(errorMessage);
+      }
+    }),
+    // handleSubmit is stable, but we depend on these values
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user, checkoutMode, subtotal, validateCoupon],
+  );
+
+  const onRemoveCoupon = useCallback(async () => {
     try {
       await validateCoupon("");
       if (!checkoutMode) {
@@ -175,9 +183,13 @@ export function OrderSummaryCard({
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [validateCoupon, checkoutMode, setValue, toast, t]);
 
-  const onToggleCoupon = () => setIsCouponOpen(!isCouponOpen);
+  const onToggleCoupon = useCallback(
+    () => setIsCouponOpen((prev) => !prev),
+    [],
+  );
+
   return (
     <div className="bg-card border border-border/50 rounded-3xl overflow-hidden shadow-xl shadow-primary/5 sticky top-24">
       {/* Header */}
@@ -195,13 +207,19 @@ export function OrderSummaryCard({
           checkoutMode && "border-b border-border/40 ",
         )}
       >
-        {cartItems.map((item: CartItem, idx: number) => {
+        {cartItems.map((item: CartItem) => {
           const product = item.product;
           if (!product) return null;
           const { price, image } = resolveItemData(item);
           const title = String(getTrans(product.title));
+          // Prefer a stable product id over array index as the key
+          const key = String(
+            (item as unknown as Record<string, unknown>).productId ??
+              (item as unknown as Record<string, unknown>)._id ??
+              title,
+          );
           return (
-            <div key={idx} className="flex items-center gap-3">
+            <div key={key} className="flex items-center gap-3">
               {image && checkoutMode && (
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/40 shrink-0 bg-accent/30">
                   <ImageWithFallback
@@ -239,7 +257,7 @@ export function OrderSummaryCard({
                 {t("summary.subtotal")}
               </span>
               <span className="font-semibold text-foreground tabular-nums">
-                {formatCurrency(summary?.subtotal as number ?? subtotal)}
+                {formatCurrency((summary?.subtotal as number) ?? subtotal)}
               </span>
             </div>
 
@@ -283,27 +301,25 @@ export function OrderSummaryCard({
         )}
         {/* discount */}
         {((summary?.discountAmount as number) > 0 || !!appliedCoupon) && (
-            <div className="flex justify-between text-sm">
-              <span className="text-success font-semibold flex items-center gap-1">
-                <Tag className="w-3.5 h-3.5" />
-                {t("coupon.discount")}
-                <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
-                  {appliedCoupon?.couponDetails?.couponType === "percentage"
-                    ? `${appliedCoupon?.couponDetails?.discount} %`
-                    : formatCurrency(
-                        appliedCoupon?.couponDetails?.discount ?? 0,
-                      )}
-                </span>
+          <div className="flex justify-between text-sm">
+            <span className="text-success font-semibold flex items-center gap-1">
+              <Tag className="w-3.5 h-3.5" />
+              {t("coupon.discount")}
+              <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
+                {appliedCoupon?.couponDetails?.couponType === "percentage"
+                  ? `${appliedCoupon?.couponDetails?.discount} %`
+                  : formatCurrency(appliedCoupon?.couponDetails?.discount ?? 0)}
               </span>
-              <span className="font-bold text-success tabular-nums">
-                -
-                {formatCurrency(
-                  (summary?.discountAmount as number) ||
-                    appliedCoupon?.discountAmount,
-                )}
-              </span>
-            </div>
-          )}
+            </span>
+            <span className="font-bold text-success tabular-nums">
+              -
+              {formatCurrency(
+                (summary?.discountAmount as number) ||
+                  appliedCoupon?.discountAmount,
+              )}
+            </span>
+          </div>
+        )}
 
         {/* Divider */}
         <div className="h-px bg-border/50 my-1" />
@@ -316,7 +332,11 @@ export function OrderSummaryCard({
             {appliedCoupon ? (
               <div className="flex flex-col items-end">
                 <span className="text-xs text-muted-foreground line-through tabular-nums">
-                  {formatCurrency(subtotal)}
+                  {/* Original price = final total + discount amount (mathematically guaranteed regardless of tax mode) */}
+                  {formatCurrency(
+                    ((summary?.totalPrice as number) ?? totalAmount) +
+                      ((summary?.discountAmount as number) ?? parsedDiscountAmount),
+                  )}
                 </span>
                 <span className="text-xl font-black text-success tabular-nums leading-tight">
                   {formatCurrency(totalAmount)}
@@ -327,11 +347,14 @@ export function OrderSummaryCard({
                 {formatCurrency(totalAmount)}
               </span>
             )}
-            {/* {taxesIncluded && (
-              <p className="text-[10px] text-muted-foreground mt-0.5">
-                {t("misc.tax_included")}
+            {/* Tax inclusion notice — shown whenever server confirms whether tax is included or not */}
+            {summary?.taxAmount !== undefined && (
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {taxesIncluded
+                  ? t("misc.tax_included")
+                  : `+ ${t("summary.tax")} ${summary.taxPercentage}%`}
               </p>
-            )} */}
+            )}
           </div>
         </div>
       </div>

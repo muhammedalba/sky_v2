@@ -115,31 +115,10 @@ export default function CartPage() {
     );
   }, [serverCart?.totalPrice, cartItems]);
 
-  // has Custom Shipping Rates
-  const hasCustomShippingRates = useMemo(() => {
-    return !!settings?.hasCustomShippingRates;
-  }, [settings]);
 
-  //  has Custom Taxes
-  const hasCustomTaxes = useMemo(() => {
-    return !!settings?.hasCustomTaxes;
-  }, [settings]);
 
-  // ======> vat rate <======
-  const vatRate = settings?.vatRate || 15;
 
-  // ======> cart tax <======
-  const tax = useMemo(() => {
-    // if custom tax is enabled, return 0
-    if (hasCustomTaxes) return 0;
-    // otherwise, return the calculated tax from global settings
-    return settings?.taxesIncluded ? 0 : subtotal * (vatRate / 100);
-  }, [settings?.taxesIncluded, subtotal, vatRate, hasCustomTaxes]);
 
-  // ======> cart base total <======
-  const baseTotalAmount = useMemo(() => {
-    return subtotal + tax;
-  }, [subtotal, tax]);
 
   // for guest checkout 
   const checkoutHref = useMemo(() => {
@@ -313,7 +292,6 @@ export default function CartPage() {
                   <OrderSummaryCard
                     cartItems={cartItems}
                     subtotal={subtotal}
-                    baseTotalAmount={baseTotalAmount}
                     checkoutHref={checkoutHref}
                     isCartUpdating={isCartUpdating}
                     preview={previewResult}
