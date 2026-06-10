@@ -138,7 +138,7 @@ export function useActivePaymentMethods() {
 
 // ─── Checkout Orchestrator Hooks ──────────────────────────────────────────────
 
-export function useCheckoutSummary() {
+export function useCheckoutSummary(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["checkout", "summary"],
     queryFn: async () => {
@@ -147,6 +147,7 @@ export function useCheckoutSummary() {
     },
     // Don't cache checkout summary as it changes based on user interactions
     staleTime: 0,
+    ...options,
   });
 }
 

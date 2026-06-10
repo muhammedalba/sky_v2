@@ -23,6 +23,7 @@ import {
 } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { OrderSummaryCard } from "@/features/checkout/components/OrderSummaryCard";
+import { useCheckoutSummary } from "@/features/checkout/hooks/useCheckout";
 
 /* ------------------------------------------------------------------ */
 /* Page                                                              */
@@ -38,6 +39,7 @@ export default function CartPage() {
   const settings = useSettings();
   const { data: user } = useMe();
   const { data: serverCart, isLoading } = useCart();
+  const { data: previewResult } = useCheckoutSummary({ enabled: !!user });
 
   // ======> cart operations <======
   const { mutate: removeServerItem, isPending: isRemoving } =
@@ -311,14 +313,10 @@ export default function CartPage() {
                   <OrderSummaryCard
                     cartItems={cartItems}
                     subtotal={subtotal}
-                    tax={tax}
-                    vatRate={vatRate}
                     baseTotalAmount={baseTotalAmount}
-                    hasCustomTaxes={hasCustomTaxes}
-                    hasCustomShippingRates={hasCustomShippingRates}
-                    taxesIncluded={settings?.taxesIncluded}
                     checkoutHref={checkoutHref}
                     isCartUpdating={isCartUpdating}
+                    preview={previewResult}
                   />
                 </ScrollReveal>
               </div>

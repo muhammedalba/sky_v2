@@ -23,8 +23,8 @@ export const resolveItemData = (item: CartItem) => {
   );
 
   const price =item.unitPrice??
+  populatedVariant?.priceAfterDiscount ??
     populatedVariant?.price ??
-    populatedVariant?.priceAfterDiscount ??
     guestVariant?.priceAfterDiscount ??
     guestVariant?.price ??
     item.product?.priceRange?.min ??

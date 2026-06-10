@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Package, Tag, ShieldCheck, Lock } from "lucide-react";
+import { Tag, ShieldCheck, Lock } from "lucide-react";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { CouponValidationResult } from "@/features/cart/hooks/useCart";
 import ErrorMessage from "@/shared/ui/ErrorMessage";
@@ -27,6 +26,7 @@ import { useTrans } from "@/shared/hooks/useTrans";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 
 export interface CouponFormValues {
   couponCode: string;
@@ -36,14 +36,7 @@ interface OrderSummaryCardProps {
   // ── items & pricing ──────────────────────────────────────────────
   cartItems: CartItem[];
   subtotal: number;
-  tax?: number;
-  vatRate?: number;
   baseTotalAmount?: number;
-  totalAmount?: number;
-  hasCustomTaxes?: boolean;
-  hasCustomShippingRates?: boolean;
-  taxesIncluded?: boolean;
-
   // ── coupon ───────────────────────────────────────────────────────
   // Coupon state is now managed internally by this component.
 
@@ -60,73 +53,67 @@ interface OrderSummaryCardProps {
 export function OrderSummaryCard({
   cartItems,
   subtotal,
-  tax = 0,
-  vatRate = 0,
   baseTotalAmount = 0,
-  totalAmount: externalTotalAmount = 0,
-  hasCustomTaxes = false,
-  hasCustomShippingRates = false,
-  taxesIncluded,
   checkoutHref = "#",
   isCartUpdating = false,
   preview,
-  showPreviewDetails,
   checkoutMode = false,
 }: OrderSummaryCardProps) {
   console.log("preview", preview);
 
-  /* ── hooks & state ── */
+  /* ── get user & settings ── */
   const settings = useSettings();
   const { data: user } = useMe();
-  // get checkout summary data
 
+  /* ── hooks & state ── */
   const toast = useToast();
-  const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
+  const getTrans = useTrans();
   const t = useTranslations("cart");
-  //if settings enable coupons
-  const enableCoupons = useMemo(() => {
-    return !!settings?.features?.coupons;
-  }, [settings]);
   // coupon state
+  const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
+    useApplyCoupon();
+
   const [isCouponOpen, setIsCouponOpen] = useState(false);
   // apply coupon local
   const [appliedCouponLocal, setAppliedCouponLocal] =
     useState<CouponValidationResult | null>(null);
+
+  //if settings enable coupons
+  const enableCoupons = useMemo(() => {
+    return !!settings?.features?.coupons;
+  }, [settings]);
   // preview
   const p = preview as Record<string, unknown> | undefined;
   // summary
   const summary = p?.summary as Record<string, unknown> | undefined;
+
   const parsedDiscountAmount =
+    (summary?.discountAmount as number | undefined) ??
     (summary?.discount as number | undefined) ??
     (p?.discountAmount as number | undefined) ??
     0;
 
-  // In checkout mode, the applied coupon comes from the preview details.
-  // Otherwise, it comes from the local state.
-  const appliedCoupon = checkoutMode
-    ? (p?.couponDetails as Record<string, unknown>)?.couponCode
-      ? ({
-          discountAmount: parsedDiscountAmount,
-          couponDetails: {
-            couponCode: (p?.couponDetails as Record<string, unknown>)
-              ?.couponCode,
-            discount: parsedDiscountAmount,
-            couponType: "fixed",
-          },
-        } as unknown as CouponValidationResult)
-      : null
-    : appliedCouponLocal;
+  // Extract coupon from server preview if present
+  const serverCoupon = (p?.couponDetails as Record<string, unknown>)?.couponCode
+    ? ({
+        discountAmount: parsedDiscountAmount,
+        couponDetails: p?.couponDetails,
+      } as unknown as CouponValidationResult)
+    : null;
 
-  const totalAmount = checkoutMode
-    ? externalTotalAmount
-    : appliedCouponLocal
-      ? (appliedCouponLocal.totalPriceAfterDiscount ??
-        Math.max(0, baseTotalAmount - appliedCouponLocal.discountAmount))
-      : baseTotalAmount;
+  // Use server coupon if available, otherwise fall back to local state coupon
+  const appliedCoupon = serverCoupon || appliedCouponLocal;
 
-  const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
-    useApplyCoupon();
+  const totalAmount = useMemo(() => {
+    // 1. In checkoutMode (Checkout page), the server is the absolute source of truth (includes exact tax/shipping)
+    if (checkoutMode && summary?.totalPrice !== undefined) {
+      return summary.totalPrice as number;
+    }
+    // 2. In Cart mode, use baseTotalAmount (which contains local estimated tax) and subtract discount
+    const discount = (summary?.discountAmount as number) ?? appliedCouponLocal?.discountAmount ?? 0;
+    return Math.max(0, baseTotalAmount - discount);
+  }, [summary, checkoutMode, baseTotalAmount, appliedCouponLocal]);
 
   const couponSchema = z.object({
     couponCode: z.string().min(1, "Coupon code is required"),
@@ -148,13 +135,11 @@ export function OrderSummaryCard({
     }
     try {
       const res = await validateCoupon(data.couponCode);
-      console.log("ressssss", res);
-
       if (!checkoutMode) {
         const p = res as Record<string, unknown>;
         const summaryObj = p?.summary as Record<string, unknown> | undefined;
         const discAmt =
-          (summaryObj?.discount as number | undefined) ??
+          (summaryObj?.discountAmount as number | undefined) ??
           (p?.discountAmount as number | undefined) ??
           0;
 
@@ -165,7 +150,7 @@ export function OrderSummaryCard({
             (p?.totalPrice as number | undefined) ??
             baseTotalAmount,
           totalPriceAfterDiscount:
-            (summaryObj?.total as number | undefined) ??
+            (summaryObj?.totalPrice as number | undefined) ??
             (p?.totalPriceAfterDiscount as number | undefined) ??
             baseTotalAmount - discAmt,
           couponDetails: p?.couponDetails as Record<string, unknown>,
@@ -193,7 +178,6 @@ export function OrderSummaryCard({
   };
 
   const onToggleCoupon = () => setIsCouponOpen(!isCouponOpen);
-
   return (
     <div className="bg-card border border-border/50 rounded-3xl overflow-hidden shadow-xl shadow-primary/5 sticky top-24">
       {/* Header */}
@@ -218,23 +202,16 @@ export function OrderSummaryCard({
           const title = String(getTrans(product.title));
           return (
             <div key={idx} className="flex items-center gap-3">
-              <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/40 shrink-0 bg-accent/30">
-                {image ? (
-                  <Image
+              {image && checkoutMode && (
+                <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/40 shrink-0 bg-accent/30">
+                  <ImageWithFallback
                     src={image}
                     alt={title}
                     fill
                     className="object-cover"
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package className="w-5 h-5 text-muted-foreground/40" />
-                  </div>
-                )}
-                <span className="absolute -top-1 -end-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center text-[10px] text-white font-bold">
-                  {item.quantity}
-                </span>
-              </div>
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">
                   {title}
@@ -254,45 +231,45 @@ export function OrderSummaryCard({
       {/* Pricing breakdown */}
       <div className="px-6 py-5 space-y-3">
         {/* ── Checkout-page preview mode ── */}
-        {/* Subtotal */}
         {checkoutMode && (
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {t("summary.subtotal")}
-            </span>
-            <span className="font-semibold text-foreground tabular-nums">
-              {formatCurrency(subtotal)}
-            </span>
-          </div>
-        )}
-        {/* shippingCost */}
-        {checkoutMode && (
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">
-              {t("summary.shipping")}
-            </span>
-            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-              {(summary?.shippingCost as number) > 0
-                ? formatCurrency(summary?.shippingCost as number)
-                : (summary?.shippingCost as number) === 0
-                  ? t("summary.free")
+          <>
+            {/* Subtotal */}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                {t("summary.subtotal")}
+              </span>
+              <span className="font-semibold text-foreground tabular-nums">
+                {formatCurrency(summary?.subtotal as number ?? subtotal)}
+              </span>
+            </div>
+
+            {/* shippingCost */}
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                {t("summary.shipping")}
+              </span>
+              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
+                {(summary?.shippingCost as number) > 0
+                  ? formatCurrency(summary?.shippingCost as number)
+                  : (summary?.shippingCost as number) === 0
+                    ? t("summary.free")
+                    : t("summary.calculated_at_checkout")}
+              </span>
+            </div>
+            {/* tax */}
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                {t("summary.tax")} ({String(summary?.taxPercentage ?? "")}%)
+              </span>
+              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
+                {(summary?.taxAmount as number) > 0
+                  ? formatCurrency(summary?.taxAmount as number)
                   : t("summary.calculated_at_checkout")}
-            </span>
-          </div>
+              </span>
+            </div>
+          </>
         )}
-        {/* tax */}
-        {checkoutMode && (
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">
-              {t("summary.tax")} ({String(summary?.taxPercentage ?? "")}%)
-            </span>
-            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-              {(summary?.taxAmount as number) > 0
-                ? formatCurrency(summary?.taxAmount as number)
-                : t("summary.calculated_at_checkout")}
-            </span>
-          </div>
-        )}
+
         {/* paymentFees */}
         {(summary?.paymentFees as number) > 0 && checkoutMode && (
           <div className="flex justify-between text-sm">
@@ -305,8 +282,7 @@ export function OrderSummaryCard({
           </div>
         )}
         {/* discount */}
-        {(summary?.discountAmount as number) > 0 ||
-          (appliedCoupon && (
+        {((summary?.discountAmount as number) > 0 || !!appliedCoupon) && (
             <div className="flex justify-between text-sm">
               <span className="text-success font-semibold flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" />
@@ -320,14 +296,14 @@ export function OrderSummaryCard({
                 </span>
               </span>
               <span className="font-bold text-success tabular-nums">
-                -{" "}
+                -
                 {formatCurrency(
                   (summary?.discountAmount as number) ||
                     appliedCoupon?.discountAmount,
                 )}
               </span>
             </div>
-          ))}
+          )}
 
         {/* Divider */}
         <div className="h-px bg-border/50 my-1" />
@@ -340,7 +316,7 @@ export function OrderSummaryCard({
             {appliedCoupon ? (
               <div className="flex flex-col items-end">
                 <span className="text-xs text-muted-foreground line-through tabular-nums">
-                  {formatCurrency(baseTotalAmount)}
+                  {formatCurrency(subtotal)}
                 </span>
                 <span className="text-xl font-black text-success tabular-nums leading-tight">
                   {formatCurrency(totalAmount)}
@@ -351,11 +327,11 @@ export function OrderSummaryCard({
                 {formatCurrency(totalAmount)}
               </span>
             )}
-            {taxesIncluded && !hasCustomTaxes && (
+            {/* {taxesIncluded && (
               <p className="text-[10px] text-muted-foreground mt-0.5">
                 {t("misc.tax_included")}
               </p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -465,22 +441,12 @@ export function OrderSummaryCard({
             />
           )}
           <Link
-            href={
-              isCartUpdating ||
-              cartItems.length === 0 ||
-              !hasCustomShippingRates
-                ? "#"
-                : checkoutHref
-            }
+            href={isCartUpdating || cartItems.length === 0 ? "#" : checkoutHref}
             className="block"
           >
             <Button
               className="w-full h-14 rounded-2xl text-base font-bold tracking-wide gap-2.5 group shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow"
-              disabled={
-                isCartUpdating ||
-                cartItems.length === 0 ||
-                !hasCustomShippingRates
-              }
+              disabled={isCartUpdating || cartItems.length === 0}
             >
               {t("summary.checkout")}
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
