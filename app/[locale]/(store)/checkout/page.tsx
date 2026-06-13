@@ -38,8 +38,9 @@ export default function CheckoutPage() {
   const { data: user } = useMe();
   const isAuth = !!user;
   // get checkout summary data
-  const { data: previewResult, isLoading: summaryLoading } =
-    useCheckoutSummary();
+  const { data: previewResult, isLoading: summaryLoading } = useCheckoutSummary(
+    { enabled: isAuth },
+  );
   // get payment methods
   const { data: paymentMethods = [] } = useActivePaymentMethods();
   // get countries
@@ -100,7 +101,6 @@ export default function CheckoutPage() {
     // dependencies
     [serverCart?.totalPrice, cartItems],
   );
-
 
   /* ─── Form Setup ──────────────────────────────────────────────── */
   const form = useForm<CheckoutFormValues>({
@@ -182,22 +182,38 @@ export default function CheckoutPage() {
 
   const { data: cities = [] } = useCities(regionId || null);
 
-  const selectedCountry = countries.find(
-    (c: LocationItem) => c._id === countryId,
+  // Optimization: Memoize heavy array lookups to prevent recalculation on every form keystroke/re-render
+  const selectedCountry = useMemo(
+    () => countries.find((c: LocationItem) => c._id === countryId),
+    [countries, countryId]
   );
 
-  const selectedCity = cities.find((c: LocationItem) => c._id === cityId);
+  const selectedCity = useMemo(
+    () => cities.find((c: LocationItem) => c._id === cityId),
+    [cities, cityId]
+  );
 
   // using getTrans for translate from ar to en and vice versa
-  const selectedCountryName = getTrans(selectedCountry?.name);
-  const selectedCityName = getTrans(selectedCity?.name);
+  const selectedCountryName = useMemo(
+    () => getTrans(selectedCountry?.name),
+    [getTrans, selectedCountry?.name]
+  );
+  
+  const selectedCityName = useMemo(
+    () => getTrans(selectedCity?.name),
+    [getTrans, selectedCity?.name]
+  );
 
-  const selectedShippingOption = shippingOptions.find(
-    (opt: { providerId?: string }) => opt.providerId === selectedShippingId,
+  const selectedShippingOption = useMemo(
+    () => shippingOptions.find((opt: { providerId?: string }) => opt.providerId === selectedShippingId),
+    [shippingOptions, selectedShippingId]
   );
-  const selectedPayment = paymentMethods.find(
-    (m: { _id: string }) => m._id === selectedPaymentId,
+
+  const selectedPayment = useMemo(
+    () => paymentMethods.find((m: { _id: string }) => m._id === selectedPaymentId),
+    [paymentMethods, selectedPaymentId]
   );
+
   const isCODSupportedByCarrier = selectedShippingOption?.supportsCOD ?? false;
 
   return (
@@ -268,6 +284,7 @@ export default function CheckoutPage() {
               preview={previewResult}
               showPreviewDetails={currentStep > 0}
               checkoutMode
+              isCartUpdating={isSubmitting || summaryLoading}
             />
           </div>
         </div>

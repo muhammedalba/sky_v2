@@ -13,7 +13,7 @@
     "total": "Total Amount",
     "checkout": "Proceed to Checkout",
     "free": "Free",
-    "calculated_at_checkout": "Calculated at checkout",
+    "calculated_at_checkout": "select city",
     "payment_fees": "Payment Fees"
   },
   "item": {
@@ -105,7 +105,12 @@
     "stripe_desc": "After confirmation, you'll be redirected to Stripe's secure page. Visa, Mastercard, and Mada supported.",
     "paypal_desc": "After confirmation, you'll be redirected to PayPal to complete your payment securely.",
     "back": "Back",
-    "review_order": "Review Order"
+    "review_order": "Review Order",
+    "bank_details_title": "Bank Account Information",
+    "bank_name": "Bank Name:",
+    "account_name": "Account Name:",
+    "account_number": "Account Number:",
+    "iban": "IBAN:"
   },
   "review": {
     "title": "Review Details",

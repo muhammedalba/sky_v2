@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { DashboardIcon, LayoutIcon, MessageCircleIcon, OrdersIcon, SearchIcon, SettingsIcon, SunIcon, TruckIcon } from "@/shared/ui/Icons";
+import { DashboardIcon, LayoutIcon, MessageCircleIcon, OrdersIcon, SearchIcon, SettingsIcon, SunIcon, TruckIcon, RefreshCwIcon } from "@/shared/ui/Icons";
 
 interface SettingsSidebarProps {
   activeSection: string;
@@ -20,6 +20,7 @@ export default function SettingsSidebar({ activeSection, onSectionChange }: Sett
     { id: 'social', label: t('sidebar.social'), icon: SunIcon, iconClass: "text-primary" },
     { id: 'contact', label: t('sidebar.contact'), icon: MessageCircleIcon, iconClass: "text-warning/70" },
     { id: 'payments', label: t('sidebar.payments'), icon: OrdersIcon, iconClass: "text-success" },
+    { id: 'bank-transfer', label: t('sidebar.bankTransfer'), icon: RefreshCwIcon, iconClass: "text-primary/80" },
     { id: 'shipping', label: t('sidebar.shipping'), icon: TruckIcon, iconClass: "text-primary" },
     { id: 'features', label: t('sidebar.features'), icon: LayoutIcon, iconClass: "text-warning" },
     { id: 'advanced', label: t('sidebar.advanced'), icon: SettingsIcon, iconClass: "text-foreground/70" },

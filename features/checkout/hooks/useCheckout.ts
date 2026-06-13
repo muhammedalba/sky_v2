@@ -84,6 +84,18 @@ const ALL_METHODS: ActivePaymentMethod[] = [
     badge: "Stripe",
   },
   {
+    _id: "moyasar",
+    code: "moyasar",
+    name: "Credit Card / Apple Pay (Moyasar)",
+    nameAr: "البطاقة الائتمانية / أبل باي (ميسر)",
+    description: "Pay securely using Mada, Visa, MasterCard, or Apple Pay",
+    descriptionAr: "ادفع بأمان عبر مدى، فيزا، ماستركارد، أو أبل باي",
+    type: "electronic",
+    fees: 0,
+    color: "from-teal-500/10 to-emerald-500/10",
+    badge: "Moyasar",
+  },
+  {
     _id: "paypal",
     code: "paypal",
     name: "PayPal",
@@ -125,6 +137,7 @@ export function useActivePaymentMethods() {
   const methods = useMemo(() => {
     const gateways = settings?.gateways ?? {};
     return ALL_METHODS.filter((m) => {
+      if (m.code === "moyasar") return true; // Enabled by default as implemented
       if (m.code === "stripe") return !!gateways.stripe;
       if (m.code === "paypal") return !!gateways.paypal;
       if (m.code === "banktransfer") return !!gateways.bankTransfer;
@@ -222,7 +235,7 @@ export function usePlaceOrder() {
 
       toast.success(locale === "ar" ? "تم تقديم طلبك بنجاح!" : "Order placed successfully!");
 
-      if (methodCode === "paypal" && resData?.approvalUrl) {
+      if ((methodCode === "paypal" || methodCode === "moyasar") && resData?.approvalUrl) {
         window.location.href = resData.approvalUrl;
       } else if (methodCode === "stripe" && resData?.client_secret) {
         router.push(`/${locale}/checkout/payment?orderId=${orderId}&client_secret=${resData.client_secret}`);

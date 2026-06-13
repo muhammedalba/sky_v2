@@ -13,7 +13,8 @@
     "payments": "طرق الدفع",
     "shipping": "الشحن والضرائب",
     "features": "الميزات الإضافية",
-    "advanced": "إعدادات متقدمة"
+    "advanced": "إعدادات متقدمة",
+    "bankTransfer": "التحويل البنكي"
   },
   "messages": {
     "updateSuccess": "تم تحديث الإعدادات بنجاح",
@@ -57,6 +58,18 @@
     "desc": "إدارة طرق الدفع المتاحة.",
     "bankTransfer": "تحويل بنكي",
     "cod": "الدفع عند الاستلام"
+  },
+  "bankTransfer": {
+    "title": "معلومات التحويل البنكي",
+    "desc": "أضف تفاصيل حسابك البنكي ليتم عرضها للعملاء عند اختيار الدفع عبر التحويل.",
+    "bankName": "اسم البنك",
+    "bankNamePlaceholder": "مثال: مصرف الراجحي",
+    "accountName": "اسم صاحب الحساب",
+    "accountNamePlaceholder": "مثال: شركة درب السماء للتجارة",
+    "accountNumber": "رقم الحساب",
+    "accountNumberPlaceholder": "أدخل رقم الحساب المحلي",
+    "iban": "الآيبان (IBAN)",
+    "ibanPlaceholder": "مثال: SA123456..."
   },
   "shipping": {
     "title": "الشحن والضرائب",

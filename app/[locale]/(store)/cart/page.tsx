@@ -161,7 +161,7 @@ export default function CartPage() {
           />
         </ScrollReveal>
         {/* ── Empty State ── */}
-        {cartItems.length === 0 ? (
+        {cartItems.length === 0 && !isLoading ? (
           <div className="flex flex-col items-center justify-center text-center py-24 max-w-md mx-auto gap-6">
             <div className="w-28 h-28 rounded-full bg-accent flex items-center justify-center">
               <ScrollReveal animation="slide-up" delay={100}>

@@ -69,10 +69,9 @@ export function OrderSummaryCard({
   const formatCurrency = useFormatCurrency();
   const getTrans = useTrans();
   const t = useTranslations("cart");
-
+  // state local for coupon
   const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
     useApplyCoupon();
-
   const [isCouponOpen, setIsCouponOpen] = useState(false);
   const [appliedCouponLocal, setAppliedCouponLocal] =
     useState<CouponValidationResult | null>(null);
@@ -84,11 +83,19 @@ export function OrderSummaryCard({
   const p = preview as Record<string, unknown> | undefined;
   const summary = p?.summary as Record<string, unknown> | undefined;
 
+  // Optimization: Extract repeated values ​​once to avoid redundant type assertions in JSX.
   const parsedDiscountAmount =
     (summary?.discountAmount as number | undefined) ?? 0;
+  const summarySubtotal = summary?.subtotal as number | undefined;
+  const summaryShippingCost = summary?.shippingCost as number | undefined;
+  const summaryTaxAmount = summary?.taxAmount as number | undefined;
+  const summaryTaxPercentage = summary?.taxPercentage;
+  const summaryPaymentFees = summary?.paymentFees as number | undefined;
+  const summaryTotalPrice = summary?.totalPrice as number | undefined;
 
   // Extract taxesIncluded from server preview
-  const taxesIncluded = (summary?.taxesIncluded as boolean | undefined) ?? false;
+  const taxesIncluded =
+    (summary?.taxesIncluded as boolean | undefined) ?? false;
 
   // Extract coupon from server preview if present
   const serverCoupon = useMemo(
@@ -99,7 +106,6 @@ export function OrderSummaryCard({
             couponDetails: p?.couponDetails,
           } as unknown as CouponValidationResult)
         : null,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [p?.couponDetails, parsedDiscountAmount],
   );
 
@@ -108,16 +114,22 @@ export function OrderSummaryCard({
 
   const totalAmount = useMemo(() => {
     // 1. In checkoutMode (Checkout page), the server is the absolute source of truth
-    if (checkoutMode && summary?.totalPrice !== undefined) {
-      return summary.totalPrice as number;
+    if (checkoutMode && summaryTotalPrice !== undefined) {
+      return summaryTotalPrice;
     }
     // 2. In Cart mode, use subtotal and subtract discount
     const discount =
-      (summary?.discountAmount as number) ??
-      appliedCouponLocal?.discountAmount ??
-      0;
+      parsedDiscountAmount > 0
+        ? parsedDiscountAmount
+        : (appliedCouponLocal?.discountAmount ?? 0);
     return Math.max(0, subtotal - discount);
-  }, [summary, checkoutMode, subtotal, appliedCouponLocal]);
+  }, [
+    summaryTotalPrice,
+    checkoutMode,
+    subtotal,
+    appliedCouponLocal,
+    parsedDiscountAmount,
+  ]);
 
   const {
     register,
@@ -130,7 +142,7 @@ export function OrderSummaryCard({
   });
 
   const onCouponSubmit = useCallback(
-    handleSubmit(async (data: CouponFormValues) => {
+    async (data: CouponFormValues) => {
       if (!user) {
         toast.warning(t("messages.login_to_apply_coupon"));
         return;
@@ -142,6 +154,7 @@ export function OrderSummaryCard({
           const summaryObj = resObj?.summary as
             | Record<string, unknown>
             | undefined;
+
           const discAmt =
             (summaryObj?.discountAmount as number | undefined) ??
             (resObj?.discountAmount as number | undefined) ??
@@ -166,10 +179,8 @@ export function OrderSummaryCard({
           error instanceof Error ? error.message : "something went wrong";
         toast.error(errorMessage);
       }
-    }),
-    // handleSubmit is stable, but we depend on these values
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, checkoutMode, subtotal, validateCoupon],
+    },
+    [user, checkoutMode, subtotal, validateCoupon, t, toast],
   );
 
   const onRemoveCoupon = useCallback(async () => {
@@ -207,7 +218,7 @@ export function OrderSummaryCard({
           checkoutMode && "border-b border-border/40 ",
         )}
       >
-        {cartItems.map((item: CartItem) => {
+        {cartItems.map((item: CartItem, index: number) => {
           const product = item.product;
           if (!product) return null;
           const { price, image } = resolveItemData(item);
@@ -226,6 +237,7 @@ export function OrderSummaryCard({
                     src={image}
                     alt={title}
                     fill
+                    loading={index > 4 ? "lazy" : "eager"}
                     className="object-cover"
                   />
                 </div>
@@ -257,7 +269,7 @@ export function OrderSummaryCard({
                 {t("summary.subtotal")}
               </span>
               <span className="font-semibold text-foreground tabular-nums">
-                {formatCurrency((summary?.subtotal as number) ?? subtotal)}
+                {formatCurrency(summarySubtotal ?? subtotal)}
               </span>
             </div>
 
@@ -267,9 +279,9 @@ export function OrderSummaryCard({
                 {t("summary.shipping")}
               </span>
               <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-                {(summary?.shippingCost as number) > 0
-                  ? formatCurrency(summary?.shippingCost as number)
-                  : (summary?.shippingCost as number) === 0
+                {(summaryShippingCost ?? 0) > 0
+                  ? formatCurrency(summaryShippingCost!)
+                  : summaryShippingCost === 0
                     ? t("summary.free")
                     : t("summary.calculated_at_checkout")}
               </span>
@@ -277,11 +289,11 @@ export function OrderSummaryCard({
             {/* tax */}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
-                {t("summary.tax")} ({String(summary?.taxPercentage ?? "")}%)
+                {t("summary.tax")} ({String(summaryTaxPercentage ?? "")}%)
               </span>
               <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-                {(summary?.taxAmount as number) > 0
-                  ? formatCurrency(summary?.taxAmount as number)
+                {(summaryTaxAmount ?? 0) > 0
+                  ? formatCurrency(summaryTaxAmount!)
                   : t("summary.calculated_at_checkout")}
               </span>
             </div>
@@ -289,18 +301,19 @@ export function OrderSummaryCard({
         )}
 
         {/* paymentFees */}
-        {(summary?.paymentFees as number) > 0 && checkoutMode && (
+        {(summaryPaymentFees ?? 0) > 0 && checkoutMode && (
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {t("summary.payment_fees")}
             </span>
             <span className="font-semibold">
-              {formatCurrency(summary?.paymentFees as number)}
+              {formatCurrency(summaryPaymentFees!)}
             </span>
           </div>
         )}
+
         {/* discount */}
-        {((summary?.discountAmount as number) > 0 || !!appliedCoupon) && (
+        {(parsedDiscountAmount > 0 || !!appliedCoupon) && (
           <div className="flex justify-between text-sm">
             <span className="text-success font-semibold flex items-center gap-1">
               <Tag className="w-3.5 h-3.5" />
@@ -314,8 +327,7 @@ export function OrderSummaryCard({
             <span className="font-bold text-success tabular-nums">
               -
               {formatCurrency(
-                (summary?.discountAmount as number) ||
-                  appliedCoupon?.discountAmount,
+                parsedDiscountAmount || appliedCoupon?.discountAmount || 0,
               )}
             </span>
           </div>
@@ -334,8 +346,7 @@ export function OrderSummaryCard({
                 <span className="text-xs text-muted-foreground line-through tabular-nums">
                   {/* Original price = final total + discount amount (mathematically guaranteed regardless of tax mode) */}
                   {formatCurrency(
-                    ((summary?.totalPrice as number) ?? totalAmount) +
-                      ((summary?.discountAmount as number) ?? parsedDiscountAmount),
+                    (summaryTotalPrice ?? totalAmount) + parsedDiscountAmount,
                   )}
                 </span>
                 <span className="text-xl font-black text-success tabular-nums leading-tight">
@@ -348,11 +359,11 @@ export function OrderSummaryCard({
               </span>
             )}
             {/* Tax inclusion notice — shown whenever server confirms whether tax is included or not */}
-            {summary?.taxAmount !== undefined && (
+            {summaryTaxAmount !== undefined && checkoutMode && (
               <p className="text-[10px] text-muted-foreground mt-1">
                 {taxesIncluded
                   ? t("misc.tax_included")
-                  : `+ ${t("summary.tax")} ${summary.taxPercentage}%`}
+                  : `+ ${t("summary.tax")} ${summaryTaxPercentage}%`}
               </p>
             )}
           </div>
@@ -383,6 +394,7 @@ export function OrderSummaryCard({
               </div>
               <button
                 type="button"
+                disabled={isCartUpdating}
                 onClick={onRemoveCoupon}
                 className="p-1.5 hover:bg-destructive/10 rounded-full transition-colors cursor-pointer text-muted-foreground hover:text-destructive"
                 aria-label="Remove coupon"
@@ -395,6 +407,7 @@ export function OrderSummaryCard({
               <button
                 type="button"
                 onClick={onToggleCoupon}
+                disabled={isCartUpdating}
                 className="w-full cursor-pointer flex items-center justify-between px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/30 transition-colors focus:outline-none"
               >
                 <span className="flex items-center gap-2">
@@ -427,7 +440,7 @@ export function OrderSummaryCard({
               >
                 <div className="overflow-hidden">
                   <form
-                    onSubmit={onCouponSubmit}
+                    onSubmit={handleSubmit(onCouponSubmit)}
                     className="px-4 pb-4 pt-2 flex flex-col gap-3"
                   >
                     <Input

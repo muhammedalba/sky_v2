@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useMemo, useCallback } from "react";
 import {
   Truck, CheckCircle, Upload, AlertCircle, Info, ArrowRight, Loader2,
   Banknote, Wallet, ShieldCheck, Clock
@@ -7,9 +8,11 @@ import {
 import { ActivePaymentMethod } from "../hooks/useCheckout";
 import { useTranslations } from "next-intl";
 import { useTrans } from "@/shared/hooks/useTrans";
+import { useSettings } from "@/features/settings/hooks/useSettings";
 
 /* ─── Gateway icons ─────────────────────────────────────────────────────────── */
 
+/** مكون أيقونة بوابة Stripe */
 function StripeIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,6 +27,7 @@ function StripeIcon({ className }: { className?: string }) {
   );
 }
 
+/** مكون أيقونة بوابة PayPal */
 function PayPalIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 101 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,6 +49,11 @@ function PayPalIcon({ className }: { className?: string }) {
   );
 }
 
+/**
+ * دالة جلب الأيقونة المناسبة بناءً على كود طريقة الدفع
+ * @param {string} code - كود بوابة الدفع
+ * @returns {JSX.Element} - المكون البصري للأيقونة
+ */
 function getPaymentIcon(code: string) {
   switch (code) {
     case "stripe":
@@ -60,6 +69,11 @@ function getPaymentIcon(code: string) {
   }
 }
 
+/**
+ * دالة جلب تنسيقات شارة (Badge) طريقة الدفع
+ * @param {string} code - كود بوابة الدفع
+ * @returns {string} - أصناف Tailwind CSS
+ */
 function getGatewayBadgeStyle(code: string) {
   switch (code) {
     case "stripe":
@@ -123,17 +137,38 @@ export function CheckoutShippingPaymentStep({
   onNext,
   isValid,
 }: CheckoutShippingPaymentStepProps) {
-  const selectedCode = selectedPayment?.code ?? "";
-  const isBankTransfer = selectedCode === "banktransfer";
-  const canProceed = isValid && (!isBankTransfer || !!receiptFile);
-
   const t = useTranslations("cart");
   const getTrans = useTrans();
+  const { data: settings } = useSettings();
+
+  // ─── 1. تحسين الأداء (Performance Optimization) ─────────────────────────────
+  // نستخدم useMemo لتجنب إعادة حساب هذه القيم إلا إذا تغيرت التبعيات (Dependencies) الخاصة بها.
+  
+  const selectedCode = useMemo(() => selectedPayment?.code ?? "", [selectedPayment]);
+  const isBankTransfer = useMemo(() => selectedCode === "banktransfer", [selectedCode]);
+  
+  // شرط التقدم للخطوة التالية: يجب أن يكون النموذج صالحاً، وإذا كان الدفع تحويلاً بنكياً يجب إرفاق الإيصال
+  const canProceed = useMemo(() => {
+    return isValid && (!isBankTransfer || !!receiptFile);
+  }, [isValid, isBankTransfer, receiptFile]);
+
+  // ─── 2. دوال التعامل مع الأحداث (Event Handlers) المخبأة (Memoized) ───────
+  
+  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    // التحقق الآمن من وجود الملف وتجنب الأخطاء في حال إلغاء المستخدم لعملية الرفع
+    const file = e.target.files?.[0] || null;
+    setReceiptFile(file);
+  }, [setReceiptFile]);
+
+  const handleFileRemove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // منع تفعيل الـ label الأصلي الذي يفتح نافذة اختيار الملفات
+    setReceiptFile(null);
+  }, [setReceiptFile]);
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
 
-      {/* ─── Shipping Options ────────────────────────────────────────── */}
+      {/* ─── خيارات الشحن (Shipping Options) ───────────────────────── */}
       <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2.5 bg-primary/10 rounded-2xl">
@@ -144,7 +179,7 @@ export function CheckoutShippingPaymentStep({
           </h2>
         </div>
 
-        {summaryLoading && !shippingOptions.length ? (
+        {summaryLoading && (!shippingOptions || shippingOptions.length === 0) ? (
           <div className="flex items-center gap-3 py-8 justify-center text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span className="text-sm">
@@ -153,7 +188,8 @@ export function CheckoutShippingPaymentStep({
           </div>
         ) : (
           <div className="grid gap-4">
-            {shippingOptions.map((option) => (
+            {/* استخدام التحقق الآمن ?.map لمنع الانهيار إذا كانت shippingOptions فارغة (undefined) */}
+            {shippingOptions?.map((option) => (
               <label
                 key={option.providerId}
                 className={`relative flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
@@ -168,6 +204,7 @@ export function CheckoutShippingPaymentStep({
                     name="shippingProvider"
                     value={option.providerId}
                     checked={selectedShippingId === option.providerId}
+                    // يتم تمرير الدالة باستخدام كلوجر مباشر لتبسيط الكود، لأنها تعتمد على الـ id الخاص بالعنصر
                     onChange={() => handleShippingChange(option.providerId)}
                     className="w-4 h-4 text-primary focus:ring-primary/50"
                   />
@@ -193,7 +230,7 @@ export function CheckoutShippingPaymentStep({
         )}
       </div>
 
-      {/* ─── Payment Methods ─────────────────────────────────────────── */}
+      {/* ─── طرق الدفع (Payment Methods) ───────────────────────────── */}
       <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2.5 bg-primary/10 rounded-2xl">
@@ -204,17 +241,18 @@ export function CheckoutShippingPaymentStep({
           </h2>
         </div>
 
-        {summaryLoading && !paymentMethods.length ? (
+        {summaryLoading && (!paymentMethods || paymentMethods.length === 0) ? (
           <div className="flex justify-center py-8">
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
-        ) : paymentMethods.length === 0 ? (
+        ) : paymentMethods?.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             {t("shipping_payment.no_payment_methods")}
           </div>
         ) : (
           <div className="grid gap-3">
-            {paymentMethods.map((method) => {
+            {/* استخدام التحقق الآمن ?.map هنا أيضاً */}
+            {paymentMethods?.map((method) => {
               const isCOD = method.code === "cod";
               const disabled = isCOD && !isCODSupportedByCarrier;
               const isSelected = selectedPaymentId === method._id;
@@ -230,7 +268,6 @@ export function CheckoutShippingPaymentStep({
                         : "border-border/50 hover:border-primary/40 hover:shadow-sm"
                   }`}
                 >
-                  {/* Radio input */}
                   <div className="relative mt-0.5 shrink-0">
                     <input
                       type="radio"
@@ -243,7 +280,6 @@ export function CheckoutShippingPaymentStep({
                     />
                   </div>
 
-                  {/* Gateway icon */}
                   <div
                     className={`relative shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
                       isSelected
@@ -254,7 +290,6 @@ export function CheckoutShippingPaymentStep({
                     {getPaymentIcon(method.code)}
                   </div>
 
-                  {/* Text content */}
                   <div className="relative flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-bold text-base text-foreground">
@@ -303,7 +338,7 @@ export function CheckoutShippingPaymentStep({
         )}
       </div>
 
-      {/* ─── Bank Transfer receipt upload ────────────────────────────── */}
+      {/* ─── التحويل البنكي (Bank Transfer) ──────────────────────────── */}
       {isBankTransfer && (
         <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-3xl p-6 shadow-lg">
           <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2">
@@ -313,12 +348,46 @@ export function CheckoutShippingPaymentStep({
           <p className="text-xs text-muted-foreground mb-4">
             {t("shipping_payment.upload_receipt_desc")}
           </p>
+
+          {settings?.bankTransferDetails && (
+            <div className="mb-6 p-4 bg-white dark:bg-black/20 border border-amber-200 dark:border-amber-800 rounded-xl space-y-2">
+              <h3 className="font-semibold text-sm mb-3 text-amber-700 dark:text-amber-400">
+                 {t("shipping_payment.bank_details_title", { fallback: "معلومات الحساب البنكي" })}
+              </h3>
+              {settings.bankTransferDetails.bankName && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t("shipping_payment.bank_name", { fallback: "اسم البنك:" })}</span>
+                  <span className="font-medium">{settings.bankTransferDetails.bankName}</span>
+                </div>
+              )}
+              {settings.bankTransferDetails.accountName && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t("shipping_payment.account_name", { fallback: "اسم الحساب:" })}</span>
+                  <span className="font-medium">{settings.bankTransferDetails.accountName}</span>
+                </div>
+              )}
+              {settings.bankTransferDetails.accountNumber && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t("shipping_payment.account_number", { fallback: "رقم الحساب:" })}</span>
+                  <span className="font-medium" dir="ltr">{settings.bankTransferDetails.accountNumber}</span>
+                </div>
+              )}
+              {settings.bankTransferDetails.iban && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t("shipping_payment.iban", { fallback: "الآيبان:" })}</span>
+                  <span className="font-medium" dir="ltr">{settings.bankTransferDetails.iban}</span>
+                </div>
+              )}
+            </div>
+          )}
+
           <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-amber-300 dark:border-amber-700 rounded-2xl p-6 cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-all">
             <input
               type="file"
               accept="image/*,application/pdf"
               className="sr-only"
-              onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
+              // تم استبدال الدالة المباشرة بدالة مخبأة (Memoized)
+              onChange={handleFileUpload}
             />
             {receiptFile ? (
               <>
@@ -328,7 +397,8 @@ export function CheckoutShippingPaymentStep({
                 </p>
                 <button
                   type="button"
-                  onClick={(e) => { e.preventDefault(); setReceiptFile(null); }}
+                  // تم استبدال الدالة المباشرة بدالة مخبأة (Memoized)
+                  onClick={handleFileRemove}
                   className="text-xs text-destructive underline"
                 >
                   {t("shipping_payment.remove")}
@@ -349,7 +419,7 @@ export function CheckoutShippingPaymentStep({
         </div>
       )}
 
-      {/* ─── Stripe notice ───────────────────────────────────────────── */}
+      {/* ─── ملاحظات بوابات الدفع (Stripe / PayPal) ────────────────────── */}
       {selectedCode === "stripe" && (
         <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 rounded-3xl p-5 flex items-start gap-4">
           <div className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
@@ -366,7 +436,22 @@ export function CheckoutShippingPaymentStep({
         </div>
       )}
 
-      {/* ─── PayPal notice ───────────────────────────────────────────── */}
+      {selectedCode === "moyasar" && (
+        <div className="bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/50 rounded-3xl p-5 flex items-start gap-4">
+          <div className="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-foreground mb-0.5">
+              {t("shipping_payment.secure_card_payment_moyasar") || "Secure Payment (Moyasar)"}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t("shipping_payment.moyasar_desc") || "You will be redirected securely to complete your payment using Mada, Visa, MasterCard, or Apple Pay."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {selectedCode === "paypal" && (
         <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 rounded-3xl p-5 flex items-start gap-4">
           <div className="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0">
@@ -381,8 +466,7 @@ export function CheckoutShippingPaymentStep({
         </div>
       )}
 
-
-      {/* ─── Navigation ──────────────────────────────────────────────── */}
+      {/* ─── أزرار التنقل (Navigation Buttons) ───────────────────────── */}
       <div className="flex gap-4 mt-8">
         <button
           onClick={onBack}

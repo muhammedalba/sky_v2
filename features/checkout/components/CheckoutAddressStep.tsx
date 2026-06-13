@@ -8,11 +8,14 @@ import {
   useCountries,
   useRegions,
   useCities,
+  type LocationItem,
 } from "@/features/checkout/hooks/useCheckout";
 import { CheckoutFormValues } from "../schemas/checkout.schema";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useTrans } from "@/shared/hooks/useTrans";
+import { Textarea } from "@/shared/ui/Textarea";
+import { Button } from "@/shared/ui/Button";
 
 interface CheckoutAddressStepProps {
   onNext: () => void;
@@ -23,21 +26,25 @@ export function CheckoutAddressStep({
   onNext,
   isSubmitting,
 }: CheckoutAddressStepProps) {
+  /* ─── Form Setup & Context ─────────────────────────────────────── */
   const {
     register,
     control,
     setValue,
     trigger,
-    getValues,
+    watch,
     formState: { errors },
   } = useFormContext<CheckoutFormValues>();
 
+  // Watch location fields to trigger fetching dependent data
   const countryId = useWatch({ control, name: "countryId" });
   const regionId = useWatch({ control, name: "regionId" });
 
+  /* ─── Hooks & Translations ─────────────────────────────────────── */
   const t = useTranslations("cart");
   const getTrans = useTrans();
 
+  /* ─── Data Fetching ────────────────────────────────────────────── */
   const { data: countries = [], isLoading: loadingCountries } = useCountries();
   const { data: regions = [], isLoading: loadingRegions } = useRegions(
     countryId || null
@@ -46,23 +53,47 @@ export function CheckoutAddressStep({
     regionId || null
   );
 
-  const { watch } = useFormContext<CheckoutFormValues>();
-
-  // Reset downstream locations on change
+  /* ─── Side Effects ─────────────────────────────────────────────── */
+  // Reset downstream locations (Region, City) when upstream locations (Country, Region) change
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "countryId") {
-        setValue("regionId", "");
-        setValue("cityId", "");
+        setValue("regionId", "", { shouldValidate: true });
+        setValue("cityId", "", { shouldValidate: true });
       }
       if (name === "regionId") {
-        setValue("cityId", "");
+        setValue("cityId", "", { shouldValidate: true });
       }
     });
     return () => subscription.unsubscribe();
   }, [watch, setValue]);
 
+  /* ─── Memoized Options (Performance Optimization) ──────────────── */
+  // Memoize mapped arrays to prevent unnecessary re-renders of Select components
+  const countryOptions = useMemo(() => {
+    return countries.map((c: LocationItem) => ({
+      value: c._id,
+      label: getTrans(c.name),
+    }));
+  }, [countries, getTrans]);
+
+  const regionOptions = useMemo(() => {
+    return regions.map((r: LocationItem) => ({
+      value: r._id,
+      label: getTrans(r.name),
+    }));
+  }, [regions, getTrans]);
+
+  const cityOptions = useMemo(() => {
+    return cities.map((c: LocationItem) => ({
+      value: c._id,
+      label: getTrans(c.name),
+    }));
+  }, [cities, getTrans]);
+
+  /* ─── Handlers ─────────────────────────────────────────────────── */
   const handleContinue = async () => {
+    // Validate only the current step's fields before proceeding
     const isValid = await trigger([
       "firstName",
       "lastName",
@@ -72,13 +103,16 @@ export function CheckoutAddressStep({
       "cityId",
       "street",
     ]);
+    
     if (isValid) {
       onNext();
     }
   };
 
+  /* ─── Render ───────────────────────────────────────────────────── */
   return (
     <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-lg shadow-primary/3 animate-in fade-in slide-in-from-left-4 duration-500">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2.5 bg-primary/10 rounded-2xl">
           <MapPin className="w-5 h-5 text-primary" />
@@ -89,7 +123,7 @@ export function CheckoutAddressStep({
       </div>
 
       <div className="space-y-6 pt-2">
-        {/* Name row */}
+        {/* Name Row */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
@@ -97,12 +131,8 @@ export function CheckoutAddressStep({
               label={t("address.first_name")}
               placeholder={t("address.first_name_placeholder")}
               required
+              error={errors.firstName?.message}
             />
-            {errors.firstName && (
-              <span className="text-xs text-destructive mt-1 block">
-                {errors.firstName.message}
-              </span>
-            )}
           </div>
           <div>
             <Input
@@ -110,12 +140,8 @@ export function CheckoutAddressStep({
               label={t("address.last_name")}
               placeholder={t("address.last_name_placeholder")}
               required
+              error={errors.lastName?.message}
             />
-            {errors.lastName && (
-              <span className="text-xs text-destructive mt-1 block">
-                {errors.lastName.message}
-              </span>
-            )}
           </div>
         </div>
 
@@ -127,12 +153,8 @@ export function CheckoutAddressStep({
             type="tel"
             {...register("phone")}
             required
+            error={errors.phone?.message}
           />
-          {errors.phone && (
-            <span className="text-xs text-destructive mt-1 block">
-              {errors.phone.message}
-            </span>
-          )}
         </div>
 
         {/* Country */}
@@ -143,10 +165,7 @@ export function CheckoutAddressStep({
           </label>
           <Select
             {...register("countryId")}
-            options={countries.map((c: any) => ({
-              value: c._id,
-              label: getTrans(c.name),
-            }))}
+            options={countryOptions}
             label={
               loadingCountries
                 ? t("address.loading")
@@ -154,12 +173,8 @@ export function CheckoutAddressStep({
             }
             disabled={loadingCountries}
             required
+            error={errors.countryId?.message}
           />
-          {errors.countryId && (
-            <span className="text-xs text-destructive mt-1 block">
-              {errors.countryId.message}
-            </span>
-          )}
         </div>
 
         {/* Region */}
@@ -170,10 +185,7 @@ export function CheckoutAddressStep({
           </label>
           <Select
             {...register("regionId")}
-            options={regions.map((r: any) => ({
-              value: r._id,
-              label: getTrans(r.name),
-            }))}
+            options={regionOptions}
             label={
               loadingRegions
                 ? t("address.loading")
@@ -181,12 +193,8 @@ export function CheckoutAddressStep({
             }
             disabled={!countryId || loadingRegions}
             required
+            error={errors.regionId?.message}
           />
-          {errors.regionId && (
-            <span className="text-xs text-destructive mt-1 block">
-              {errors.regionId.message}
-            </span>
-          )}
         </div>
 
         {/* City */}
@@ -197,10 +205,7 @@ export function CheckoutAddressStep({
           </label>
           <Select
             {...register("cityId")}
-            options={cities.map((c: any) => ({
-              value: c._id,
-              label: getTrans(c.name),
-            }))}
+            options={cityOptions}
             label={
               loadingCities
                 ? t("address.loading")
@@ -208,12 +213,8 @@ export function CheckoutAddressStep({
             }
             disabled={!regionId || loadingCities}
             required
+            error={errors.cityId?.message}
           />
-          {errors.cityId && (
-            <span className="text-xs text-destructive mt-1 block">
-              {errors.cityId.message}
-            </span>
-          )}
         </div>
 
         {/* Street */}
@@ -223,52 +224,49 @@ export function CheckoutAddressStep({
             label={t("address.street")}
             placeholder={t("address.street_placeholder")}
             required
+            error={errors.street?.message}
           />
-          {errors.street && (
-            <span className="text-xs text-destructive mt-1 block">
-              {errors.street.message}
-            </span>
-          )}
         </div>
 
-        {/* Building + Postal */}
+        {/* Building + Postal Row */}
         <div className="grid grid-cols-2 gap-4">
           <Input
             {...register("building")}
             label={t("address.building")}
             placeholder={t("address.building_placeholder")}
+            error={errors.building?.message}
           />
           <Input
             {...register("postalCode")}
             label={t("address.postal_code")}
             placeholder="12345"
+            error={errors.postalCode?.message}
           />
         </div>
 
         {/* Additional Info */}
         <div>
-          <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-            {t("address.additional_info")}
-          </label>
-          <textarea
+          <Textarea
             {...register("additionalInfo")}
             rows={3}
-            className="flex w-full rounded-2xl border border-input bg-transparent px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            label={t("address.additional_info")}
             placeholder={t("address.additional_info_placeholder")}
+            error={errors.additionalInfo?.message}
           />
         </div>
 
+        {/* Footer Actions */}
         <div className="flex justify-end pt-6 border-t border-border/40">
-          <button
-            type="button"
+          <Button
             onClick={handleContinue}
             disabled={isSubmitting}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
+            size="lg"
+            variant={"default"}
           >
             {isSubmitting ? <Loader2 className="animate-spin w-5 h-5" /> : null}
             {t("address.continue")}
             <ArrowRight className="w-5 h-5 rtl:rotate-180" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

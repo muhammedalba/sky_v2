@@ -67,6 +67,19 @@ export const settingsSchema = z.object({
     cod: z.boolean().default(false),
   }),
 
+  // Bank Transfer Details
+  bankTransferDetails: z.object({
+    bankName: z.string().default(''),
+    accountName: z.string().default(''),
+    accountNumber: z.string().default(''),
+    iban: z.string().default(''),
+  }).default({
+    bankName: '',
+    accountName: '',
+    accountNumber: '',
+    iban: '',
+  }),
+
   // Shipping
   freeShippingThreshold: z.coerce.number().min(0).default(0),
   vatRate: z.coerce.number().min(0).max(100).default(15),

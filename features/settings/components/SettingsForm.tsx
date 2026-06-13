@@ -18,6 +18,7 @@ const SEOSection = dynamic(() => import('./sections/SEOSection'), { loading: () 
 const SocialSection = dynamic(() => import('./sections/SocialSection'), { loading: () => <SectionSkeleton /> });
 const ContactSection = dynamic(() => import('./sections/ContactSection'), { loading: () => <SectionSkeleton /> });
 const PaymentsSection = dynamic(() => import('./sections/PaymentsSection'), { loading: () => <SectionSkeleton /> });
+const BankTransferSection = dynamic(() => import('./sections/BankTransferSection'), { loading: () => <SectionSkeleton /> });
 const ShippingSection = dynamic(() => import('./sections/ShippingSection'), { loading: () => <SectionSkeleton /> });
 const AdvancedSection = dynamic(() => import('./sections/AdvancedSection'), { loading: () => <SectionSkeleton /> });
 const FeaturesSection = dynamic(() => import('./sections/FeaturesSection'), { loading: () => <SectionSkeleton /> });
@@ -57,6 +58,12 @@ const SETTINGS_DEFAULTS: SettingsInput = {
     paypal: false,
     bankTransfer: false,
     cod: false,
+  },
+  bankTransferDetails: {
+    bankName: '',
+    accountName: '',
+    accountNumber: '',
+    iban: '',
   },
   freeShippingThreshold: 0,
   vatRate: 15,
@@ -121,7 +128,7 @@ console.log("errors: ",errors);
       // 1. Localized & Nested Objects (JSON Stringify)
       const jsonFields: (keyof SettingsInput)[] = [
         'siteName', 'siteDescription', 'metaTitle', 'metaDescription',
-        'socialLinks', 'contactInfo', 'gateways', 'features', 'maintenanceMessage'
+        'socialLinks', 'contactInfo', 'gateways', 'bankTransferDetails', 'features', 'maintenanceMessage'
       ];
       jsonFields.forEach(field => {
         if (data[field]) formData.append(field, JSON.stringify(data[field]));
@@ -179,6 +186,7 @@ console.log("errors: ",errors);
       case 'social': return SocialSection;
       case 'contact': return ContactSection;
       case 'payments': return PaymentsSection;
+      case 'bank-transfer': return BankTransferSection;
       case 'shipping': return ShippingSection;
       case 'features': return FeaturesSection;
       case 'advanced': return AdvancedSection;
