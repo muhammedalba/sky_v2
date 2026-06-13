@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
 
 export default function CheckoutCallbackPage() {
-  const t = useTranslations("checkout");
+
   const searchParams = useSearchParams();
   
   // Extract provider payment ID (invoice_id or id)
