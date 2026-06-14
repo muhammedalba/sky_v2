@@ -97,6 +97,9 @@ export default function MoyasarCheckoutPage() {
             publishable_api_key: publishableKey,
             callback_url: `${window.location.origin}/${locale}/checkout/callback`,
             methods: ['creditcard', 'applepay', 'stcpay'],
+           supported_networks: ['visa', 'mastercard', 'mada', 'unionpay'],
+            apple_pay: true,
+            stc_pay: true,
             metadata: {
               orderId,
             },
