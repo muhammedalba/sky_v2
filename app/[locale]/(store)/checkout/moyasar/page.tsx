@@ -37,6 +37,7 @@ export default function MoyasarCheckoutPage() {
     const fetchOrder = async () => {
       try {
         const res = await apiClient.get(`/order/${orderId}`);
+        console.log("res", res);
         const order = res.data?.data || res.data;
         if (order && order.grandTotal) {
           setOrderAmount(order.grandTotal);
@@ -96,10 +97,8 @@ export default function MoyasarCheckoutPage() {
             description: `Order ${orderId}`,
             publishable_api_key: publishableKey,
             callback_url: `${window.location.origin}/${locale}/checkout/callback`,
-            methods: ['creditcard', 'applepay', 'stcpay'],
-           supported_networks: ['visa', 'mastercard', 'mada', 'unionpay'],
-            apple_pay: true,
-            stc_pay: true,
+            methods: ['creditcard', 'stcpay'],
+           supported_networks: ['visa', 'mastercard', 'mada', 'amex', 'unionpay'],
             metadata: {
               orderId,
             },
