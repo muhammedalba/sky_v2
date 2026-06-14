@@ -10,7 +10,8 @@ interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
   ({ className, label, description, id, onCheckedChange, ...props }, ref) => {
     // توليد ID فريد إذا لم يوجد لربط الليبل بالمدخل
-    const switchId = id || React.useId();
+    const generatedId = React.useId();
+    const switchId = id || generatedId;
 
     return (
       <div className={cn("group flex items-center justify-between gap-4", className)}>
@@ -50,6 +51,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             ref={ref}
             onChange={(e) => onCheckedChange?.(e.target.checked)}
             {...props}
+            checked={props.checked ?? false}
           />
 
           <div className={cn(

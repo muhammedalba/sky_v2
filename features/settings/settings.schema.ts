@@ -59,13 +59,8 @@ export const settingsSchema = z.object({
     }),
   }),
 
-  // Gateways
-  gateways: z.object({
-    stripe: z.boolean().default(false),
-    paypal: z.boolean().default(false),
-    bankTransfer: z.boolean().default(false),
-    cod: z.boolean().default(false),
-  }),
+  // Payments
+  paymentsEnabled: z.boolean().default(true),
 
   // Bank Transfer Details
   bankTransferDetails: z.object({

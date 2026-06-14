@@ -8,7 +8,12 @@ import {
   SearchOption,
 } from "@/shared/ui/form/SearchableSelect";
 import { SearchableMultiSelect } from "@/shared/ui/form/SearchableMultiSelect";
-import { BrandsIcon, CategoriesIcon, SubCategoriesIcon, UsersIcon } from "@/shared/ui/Icons";
+import {
+  BrandsIcon,
+  CategoriesIcon,
+  SubCategoriesIcon,
+  UsersIcon,
+} from "@/shared/ui/Icons";
 
 interface ProductTaxonomyPanelProps {
   locale: string;

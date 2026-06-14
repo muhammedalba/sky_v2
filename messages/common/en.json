@@ -89,7 +89,8 @@
     "taxes": "Taxes",
     "locations": "Locations",
     "roles": "Roles & Permissions",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "paymentMethods": "Payment Methods"
   },
   "auth": {
     "login": "Sign In",

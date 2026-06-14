@@ -66,7 +66,7 @@ export const useCreateRegion = () => {
       const response = await apiClient.post('/locations/regions', data);
       return response.data?.data || response.data;
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['regions'] });
     },
   });

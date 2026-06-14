@@ -4,9 +4,10 @@ import  { useMemo } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { CheckoutFormValues } from "../schemas/checkout.schema";
-import { ActivePaymentMethod } from "../hooks/useCheckout";
+
 import { useTranslations } from "next-intl";
 import { useTrans } from "@/shared/hooks/useTrans";
+import { ActivePaymentMethod } from "../constants/paymentMethods";
 
 /**
  * @interface CheckoutReviewStepProps

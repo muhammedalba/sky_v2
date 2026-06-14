@@ -153,6 +153,10 @@ export const env = {
     ROLES: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_ROLES || '/roles',
     },
+    PAYMENTS: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PAYMENTS || '/payments',
+      ALL: process.env.NEXT_PUBLIC_ENDPOINT_PAYMENTS_ALL || '/payments/all',
+    },
     NOTIFICATIONS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS || '/notifications',
       ADMIN_DELETE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_DELETE || '/notifications/admin',

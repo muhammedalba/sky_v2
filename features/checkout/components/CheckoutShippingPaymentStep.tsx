@@ -5,10 +5,10 @@ import {
   Truck, CheckCircle, Upload, AlertCircle, Info, ArrowRight, Loader2,
   Banknote, Wallet, ShieldCheck, Clock
 } from "lucide-react";
-import { ActivePaymentMethod } from "../hooks/useCheckout";
 import { useTranslations } from "next-intl";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useSettings } from "@/features/settings/hooks/useSettings";
+import { ActivePaymentMethod } from "../constants/paymentMethods";
 
 /* ─── Gateway icons ─────────────────────────────────────────────────────────── */
 
@@ -194,8 +194,8 @@ export function CheckoutShippingPaymentStep({
                 key={option.providerId}
                 className={`relative flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
                   selectedShippingId === option.providerId
-                    ? "border-primary bg-primary/5 ring-1 ring-primary"
-                    : "border-border/60 hover:border-primary/50"
+                    ? "border-primary/40 bg-primary/5 "
+                    : "border-border/60 hover:border-primary/60"
                 }`}
               >
                 <div className="flex items-center gap-4">
@@ -251,7 +251,6 @@ export function CheckoutShippingPaymentStep({
           </div>
         ) : (
           <div className="grid gap-3">
-            {/* استخدام التحقق الآمن ?.map هنا أيضاً */}
             {paymentMethods?.map((method) => {
               const isCOD = method.code === "cod";
               const disabled = isCOD && !isCODSupportedByCarrier;

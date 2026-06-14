@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState, startTransition } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  startTransition,
+  useCallback,
+} from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
@@ -13,10 +19,13 @@ import {
   useCheckoutFlow,
   useCheckoutSummary,
   useActivePaymentMethods,
+} from "@/features/checkout/hooks/useCheckout";
+import {
   useCountries,
   useCities,
-  type LocationItem,
-} from "@/features/checkout/hooks/useCheckout";
+} from "@/features/locations/hooks/useLocations";
+import { usePaymentRedirector } from "@/features/checkout/hooks/usePaymentRedirector";
+import { useCheckoutReviewData } from "@/features/checkout/hooks/useCheckoutReviewData";
 import { useCart } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
@@ -52,12 +61,23 @@ export default function CheckoutPage() {
   /* ─────────────────────────────────────────── HOOKS ──────────────────────────────────────────────── */
   const router = useRouter();
   const getTrans = useTrans();
+  const { redirect } = usePaymentRedirector();
   const formatCurrency = useFormatCurrency();
   const t = useTranslations("cart");
   /* ─── Local State for Non-Form Fields ──────────────────────────── */
+  const [currentStep, setCurrentStep] = useState(0);
   const [selectedShippingId, setSelectedShippingId] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+
+  const nextStep = useCallback(
+    () => setCurrentStep((p: number) => Math.min(p + 1, 2)),
+    [],
+  );
+  const prevStep = useCallback(
+    () => setCurrentStep((p: number) => Math.max(p - 1, 0)),
+    [],
+  );
 
   // shipping options from preview result
   const shippingOptions = useMemo(
@@ -67,9 +87,6 @@ export default function CheckoutPage() {
 
   /* ─── Checkout Flow Hook */
   const {
-    currentStep,
-    nextStep,
-    prevStep,
     submitAddress,
     selectShipping,
     selectPayment,
@@ -165,59 +182,44 @@ export default function CheckoutPage() {
     selectPayment(id);
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     const fd = new FormData();
     if (receiptFile) fd.append("transferReceiptImg", receiptFile);
 
     const notes = form.getValues("additionalInfo");
     if (notes) fd.append("notes", notes);
 
-    placeOrder(fd);
-  };
+    try {
+      const resData = await placeOrder(fd);
+      redirect(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
 
   /* ─── Resolved Data for Review Step ───────────────────────────── */
   const regionId = useWatch({ control: form.control, name: "regionId" });
-  const countryId = useWatch({ control: form.control, name: "countryId" });
-  const cityId = useWatch({ control: form.control, name: "cityId" });
+  const { data: cities = [] } = useCities(regionId || undefined);
 
-  const { data: cities = [] } = useCities(regionId || null);
-
-  // Optimization: Memoize heavy array lookups to prevent recalculation on every form keystroke/re-render
-  const selectedCountry = useMemo(
-    () => countries.find((c: LocationItem) => c._id === countryId),
-    [countries, countryId]
-  );
-
-  const selectedCity = useMemo(
-    () => cities.find((c: LocationItem) => c._id === cityId),
-    [cities, cityId]
-  );
-
-  // using getTrans for translate from ar to en and vice versa
-  const selectedCountryName = useMemo(
-    () => getTrans(selectedCountry?.name),
-    [getTrans, selectedCountry?.name]
-  );
-  
-  const selectedCityName = useMemo(
-    () => getTrans(selectedCity?.name),
-    [getTrans, selectedCity?.name]
-  );
-
-  const selectedShippingOption = useMemo(
-    () => shippingOptions.find((opt: { providerId?: string }) => opt.providerId === selectedShippingId),
-    [shippingOptions, selectedShippingId]
-  );
-
-  const selectedPayment = useMemo(
-    () => paymentMethods.find((m: { _id: string }) => m._id === selectedPaymentId),
-    [paymentMethods, selectedPaymentId]
-  );
-
-  const isCODSupportedByCarrier = selectedShippingOption?.supportsCOD ?? false;
+  const {
+    selectedCityName,
+    selectedCountryName,
+    selectedShippingOption,
+    selectedPayment,
+    isCODSupportedByCarrier,
+  } = useCheckoutReviewData({
+    form,
+    countries,
+    cities,
+    shippingOptions,
+    paymentMethods,
+    getTrans,
+    selectedShippingId,
+    selectedPaymentId,
+  });
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-background">
+    <div className="min-h-screen pt-24 pb-20 bg-accent/30">
       <div className="container mx-auto px-4 sm:px-6">
         <Breadcrumb
           items={[
@@ -235,7 +237,9 @@ export default function CheckoutPage() {
             <FormProvider {...form}>
               {currentStep === 0 && (
                 <CheckoutAddressStep
-                  onNext={() => submitAddress(form.getValues())}
+                  onNext={() =>
+                    submitAddress(form.getValues(), () => nextStep())
+                  }
                   isSubmitting={isSubmitting}
                 />
               )}

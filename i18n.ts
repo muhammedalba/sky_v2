@@ -51,6 +51,8 @@ const loaders: Record<string, (locale: string) => Promise<unknown>> = {
     import(`./messages/roles/${locale}.json`).then((m) => m.default),
   notifications: (locale) =>
     import(`./messages/notifications/${locale}.json`).then((m) => m.default),
+  paymentMethods: (locale) =>
+    import(`./messages/paymentMethods/${locale}.json`).then((m) => m.default),
 };
 
 // ─── Module-level cache: messages are loaded once per locale per server process ───
