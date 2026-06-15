@@ -12,7 +12,6 @@ import { Skeleton } from '@/shared/ui/Skeleton';
 import Pagination, { PaginationData } from '@/shared/ui/Pagination';
 import { BrandsIcon, ChevronLeftIcon, ChevronRightIcon } from "@/shared/ui/Icons";
 import { Button } from '@/shared/ui/Button';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 

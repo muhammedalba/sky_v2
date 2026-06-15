@@ -6,7 +6,6 @@ export interface PaymentMethodRow {
   fixedFee?: number;
   percentageFee?: number;
   isActive: boolean;
-  [key: string]: unknown;
   provider: string;
   description: string;
   config: object;

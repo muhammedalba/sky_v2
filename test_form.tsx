@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
@@ -72,8 +72,7 @@ export default function PaymentMethodForm({
   // Mutations & Queries
   const createMutation = useCreatePaymentMethod();
   const updateMutation = useUpdatePaymentMethod();
-  const { data: countries = [], isLoading: isLoadingCountries } =
-    useCountries();
+  const { data: countries = [], isLoading: isLoadingCountries } = useCountries();
 
   // ===========================================================================
   // Form Initialization
@@ -92,8 +91,7 @@ export default function PaymentMethodForm({
       percentageFee: initialData?.percentageFee || 0,
       isActive: initialData?.isActive ?? true,
       isDefault: initialData?.isDefault ?? false,
-      requiresOnlineConfirmation:
-        initialData?.requiresOnlineConfirmation ?? false,
+      requiresOnlineConfirmation: initialData?.requiresOnlineConfirmation ?? false,
       passFeesToCustomer: initialData?.passFeesToCustomer ?? false,
       displayOrder: initialData?.displayOrder || 0,
       supportedCurrencies: initialData?.supportedCurrencies || ["SAR"],
@@ -106,29 +104,13 @@ export default function PaymentMethodForm({
   // ===========================================================================
   // Form Watchers
   // ===========================================================================
-  const [
-    isActive,
-    isDefault,
-    requiresOnlineConfirmation,
-    requiresAdditionalInfo,
-    passFeesToCustomer,
-    watchedCurrencies,
-    watchedCountries,
-  ] = useWatch({
-    control: form.control,
-    name: [
-      "isActive",
-      "isDefault",
-      "requiresOnlineConfirmation",
-      "requiresAdditionalInfo",
-      "passFeesToCustomer",
-      "supportedCurrencies",
-      "supportedCountries",
-    ],
-  });
-
-  const supportedCurrencies = watchedCurrencies || [];
-  const supportedCountries = watchedCountries || [];
+  const isActive = form.watch("isActive");
+  const isDefault = form.watch("isDefault");
+  const requiresOnlineConfirmation = form.watch("requiresOnlineConfirmation");
+  const requiresAdditionalInfo = form.watch("requiresAdditionalInfo");
+  const passFeesToCustomer = form.watch("passFeesToCustomer");
+  const supportedCurrencies = form.watch("supportedCurrencies") || [];
+  const supportedCountries = form.watch("supportedCountries") || [];
 
   // Boolean flag to disable inputs during submission
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -140,16 +122,13 @@ export default function PaymentMethodForm({
    * Memoized options for the Payment Method Type select field.
    * Prevents re-creating the array on every re-render triggered by form.watch().
    */
-  const paymentTypeOptions = useMemo(
-    () => [
-      { value: "card", label: t("form.typeOptions.card") },
-      { value: "wallet", label: t("form.typeOptions.wallet") },
-      { value: "bank_transfer", label: t("form.typeOptions.bank_transfer") },
-      { value: "cash_on_delivery", label: t("form.typeOptions.cash") },
-      { value: "bnpl", label: t("form.typeOptions.bnpl") },
-    ],
-    [t],
-  );
+  const paymentTypeOptions = useMemo(() => [
+    { value: "card", label: t("form.typeOptions.card") },
+    { value: "wallet", label: t("form.typeOptions.wallet") },
+    { value: "bank_transfer", label: t("form.typeOptions.bank_transfer") },
+    { value: "cash", label: t("form.typeOptions.cash") },
+    { value: "bnpl", label: t("form.typeOptions.bnpl") },
+  ], [t]);
 
   // ===========================================================================
   // Handlers
@@ -159,7 +138,8 @@ export default function PaymentMethodForm({
    * Routes to either update or create mutation based on the presence of `initialData`.
    * * @param {PaymentMethodFormValues} data - The validated form data.
    */
-  const onSubmit = async (data: PaymentMethodFormValues) => {
+  import { SubmitHandler } from 'react-hook-form';
+const onSubmit: SubmitHandler<PaymentMethodFormValues> = async (data) => {
     try {
       if (initialData) {
         await updateMutation.mutateAsync({ id: initialData._id, data });
@@ -195,9 +175,7 @@ export default function PaymentMethodForm({
       />
 
       <form
-        onSubmit={form.handleSubmit((data) =>
-          onSubmit(data as unknown as PaymentMethodFormValues),
-        )}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 max-w-4xl mx-auto pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700"
       >
         {/* --- Basic Information Section --- */}
@@ -427,13 +405,7 @@ export default function PaymentMethodForm({
             />
             {form.formState.errors.config && (
               <p className="text-red-500 text-sm mt-1">
-                {
-                  (
-                    form.formState.errors.config as unknown as {
-                      message: string;
-                    }
-                  ).message
-                }
+                {(form.formState.errors.config as unknown as { message: string }).message}
               </p>
             )}
           </div>

@@ -2,66 +2,85 @@
 
 import { useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
-import { useQueryState } from "@/shared/hooks/useQueryState";
+import { useTranslations } from "next-intl";
 
+// Custom Hooks
+import { useQueryState } from "@/shared/hooks/useQueryState";
+import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
+import { useToast } from "@/shared/hooks/useToast";
+import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+
+// Mutations & Queries
 import {
   useAdminPaymentMethods,
   useDeletePaymentMethod,
   useUpdatePaymentMethod,
 } from "@/features/payments/hooks/usePaymentMethods";
+
+// UI Components
 import { Button } from "@/shared/ui/Button";
 import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
-import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
-import { cn } from "@/lib/utils";
-import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
 import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
 import EntitySearchBar from "@/shared/ui/dashboard/EntitySearchBar";
-
 import { Switch } from "@/shared/ui/Switch";
-import { useToast } from "@/shared/hooks/useToast";
 import { Tooltip } from "@/shared/ui/Tooltip";
-import { Permissions } from "@/features/roles/types";
 import Can from "@/components/auth/Can";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 
-type PaymentMethodRow = {
-  _id: string;
-  name: string;
-  code: string;
-  type: string;
-  fixedFee?: number;
-  percentageFee?: number;
-  isActive: boolean;
-  [key: string]: unknown;
-};
+// Icons & Utils
+import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
+import { cn } from "@/lib/utils";
 
+// Types
+import { Permissions } from "@/features/roles/types";
+import { PaymentMethodRow } from "@/features/payments/types";
+
+/**
+ * Defines the available tabs for filtering payment methods.
+ */
 type ViewTab = "all" | "active" | "inactive";
 
+/**
+ * Maps each view tab to its corresponding API query parameter.
+ */
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
   all: {},
   active: { isActive: "true" },
   inactive: { isActive: "false" },
 };
 
+/**
+ * PaymentMethodsPage Component
+ * * Renders the dashboard page for managing payment methods. Includes functionality
+ * for searching, filtering by status, pagination, updating status, and deleting entries.
+ * * @returns {JSX.Element} The fully rendered Payment Methods management page.
+ */
 export default function PaymentMethodsPage() {
-  // hooks
+  // ===========================================================================
+  // Hooks & Utilities
+  // ===========================================================================
   const { getQueryParam, setQueryParams } = useQueryState();
   const formatCurrency = useFormatCurrency();
-  const locale = useLocale();
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
   const toast = useToast();
-  // use tras
+
+  // Translations
   const t = useTranslations("paymentMethods");
   const tCommon = useTranslations("common");
   const tButtons = useTranslations("common.buttons");
-  // query params
+
+  // ===========================================================================
+  // State & Query Parameters
+  // ===========================================================================
   const page = Number(getQueryParam("page", "1"));
   const search = getQueryParam("search", "");
   const viewTab = getQueryParam("tab", "active") as ViewTab;
 
+  /**
+   * Memoized query parameters to fetch the payment methods.
+   * Prevents unnecessary re-fetching if parameters haven't changed.
+   */
   const queryParams = useMemo(
     () => ({
       page,
@@ -71,14 +90,25 @@ export default function PaymentMethodsPage() {
     }),
     [page, search, viewTab],
   );
-  //get data
+
+  // ===========================================================================
+  // Data Fetching & Mutations
+  // ===========================================================================
   const { data, isLoading, refetch } = useAdminPaymentMethods(queryParams);
-  // mutations
+
   const { mutateAsync: deleteMethodAsync, isPending: deleteMethodPending } =
     useDeletePaymentMethod();
+
   const { mutateAsync: updateMethodAsync, isPending: updateMethodPending } =
     useUpdatePaymentMethod();
-  // handlers
+
+  // ===========================================================================
+  // Event Handlers
+  // ===========================================================================
+
+  /**
+   * Updates the current page index in the URL query.
+   */
   const handlePageChange = useCallback(
     (val: number) => {
       setQueryParams({ page: val });
@@ -86,6 +116,9 @@ export default function PaymentMethodsPage() {
     [setQueryParams],
   );
 
+  /**
+   * Updates the search keyword in the URL query and resets to page 1.
+   */
   const handleSearch = useCallback(
     (value: string) => {
       setQueryParams({ search: value, page: 1 });
@@ -93,6 +126,9 @@ export default function PaymentMethodsPage() {
     [setQueryParams],
   );
 
+  /**
+   * Updates the active tab filter in the URL query and resets to page 1.
+   */
   const handleTabChange = useCallback(
     (tabValue: string) => {
       setQueryParams({ tab: tabValue, page: 1 });
@@ -100,6 +136,11 @@ export default function PaymentMethodsPage() {
     [setQueryParams],
   );
 
+  /**
+   * Toggles the active status of a payment method.
+   * * @param {PaymentMethodRow} method - The payment method being updated.
+   * @param {boolean} newStatus - The new boolean status.
+   */
   const handleStatusChange = useCallback(
     async (method: PaymentMethodRow, newStatus: boolean) => {
       if (newStatus === undefined) return;
@@ -111,14 +152,18 @@ export default function PaymentMethodsPage() {
         toast.success(tCommon("messages.updateSuccess"));
         refetch();
       } catch (error: unknown) {
-        console.log(error);
-
+        console.error("Failed to update status:", error);
         toast.error(tCommon("messages.errorOccurred"));
       }
     },
     [updateMethodAsync, toast, tCommon, refetch],
   );
 
+  /**
+   * Opens the confirmation dialog for deleting a payment method.
+   * * @param {string} id - The ID of the payment method.
+   * @param {string} name - The name of the payment method (for display).
+   */
   const handleDelete = useCallback(
     (id: string, name: string) => {
       confirmDialog.openDialog({
@@ -130,27 +175,41 @@ export default function PaymentMethodsPage() {
         },
       });
     },
-    [confirmDialog, deleteMethodAsync, refetch],
+    [confirmDialog, deleteMethodAsync, refetch, t],
   );
 
-  const tabs = [
-    {
-      label: t("tabs.all"),
-      key: "all",
-      activeClass: "bg-primary text-primary-foreground shadow-sm",
-    },
-    {
-      label: t("tabs.active"),
-      key: "active",
-      activeClass: "bg-emerald-500 text-white shadow-sm",
-    },
-    {
-      label: t("tabs.inactive"),
-      key: "inactive",
-      activeClass: "bg-destructive text-destructive-foreground shadow-sm",
-    },
-  ];
+  // ===========================================================================
+  // UI Configurations (Tabs & Columns)
+  // ===========================================================================
 
+  /**
+   * Configuration array for the filter tabs.
+   */
+  const tabs = useMemo(
+    () => [
+      {
+        label: t("tabs.all"),
+        key: "all",
+        activeClass: "bg-primary text-primary-foreground shadow-sm",
+      },
+      {
+        label: t("tabs.active"),
+        key: "active",
+        activeClass: "bg-emerald-500 text-white shadow-sm",
+      },
+      {
+        label: t("tabs.inactive"),
+        key: "inactive",
+        activeClass: "bg-destructive/70 text-destructive-foreground shadow-sm",
+      },
+    ],
+    [t],
+  );
+
+  /**
+   * Configuration array for the DataTable columns.
+   * Wrapped in useMemo to prevent unnecessary re-renders of the table component.
+   */
   const columns = useMemo(
     () => [
       {
@@ -161,7 +220,7 @@ export default function PaymentMethodsPage() {
             <div className="font-bold text-base text-foreground font-mono group-hover:text-primary transition-colors">
               {method.name}
             </div>
-            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider opacity-60">
+            <span className="text-[10px] text-foreground font-medium uppercase tracking-wider opacity-60">
               {method.code}
             </span>
           </div>
@@ -170,7 +229,7 @@ export default function PaymentMethodsPage() {
       {
         header: t("columns.type"),
         render: (method: PaymentMethodRow) => (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-semibold">
             {t(`types.${method.type}`)}
           </span>
         ),
@@ -201,7 +260,7 @@ export default function PaymentMethodsPage() {
                 method.isActive ? "text-success" : "text-muted-foreground",
               )}
             >
-              {method.isActive ? "Active" : "Inactive"}
+              {method.isActive ? t("tabs.active") : t("tabs.inactive")}
             </span>
           </div>
         ),
@@ -211,7 +270,8 @@ export default function PaymentMethodsPage() {
         className: "ps-6 text-center",
         render: (method: PaymentMethodRow) => (
           <div className="flex justify-center gap-2 transition-all duration-300">
-            <Can permission={Permissions.UPDATE_SETTINGS}>
+            {/* Edit Action */}
+            <Can permission={Permissions.UPDATE_PAYMENT_METHOD}>
               <Tooltip content={tButtons("edit")}>
                 <Button
                   variant="outline"
@@ -229,7 +289,8 @@ export default function PaymentMethodsPage() {
               </Tooltip>
             </Can>
 
-            <Can permission={Permissions.UPDATE_SETTINGS}>
+            {/* Delete Action */}
+            <Can permission={Permissions.DELETE_PAYMENT_METHOD}>
               <Tooltip content={tButtons("delete")}>
                 <Button
                   variant="outline"
@@ -262,8 +323,12 @@ export default function PaymentMethodsPage() {
     ],
   );
 
+  // ===========================================================================
+  // Render
+  // ===========================================================================
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Page Header */}
       <EntityPageHeader
         title={t("title")}
         subtitle={t("subtitle")}
@@ -271,13 +336,13 @@ export default function PaymentMethodsPage() {
         action={{
           label: t("create"),
           icon: <PlusIcon className="w-4 h-4" />,
-          onClick: () =>
-            router.push(`/${locale}/dashboard/payment-methods/create`),
+          onClick: () => router.push(`/dashboard/payment-methods/create`),
           disabled: updateMethodPending || isLoading || deleteMethodPending,
-          permission: Permissions.UPDATE_SETTINGS,
+          permission: Permissions.CREATE_PAYMENT_METHOD,
         }}
       />
 
+      {/* Filters & Search */}
       <div className="flex flex-col gap-4">
         <EntitySearchBar
           defaultValue={search}
@@ -285,13 +350,26 @@ export default function PaymentMethodsPage() {
           placeholder={t("searchPlaceholder")}
         />
 
+        {/* Status Tabs */}
         <div className="border-b border-border/40 pb-4">
           <div className="flex gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
+                type="button"
+                disabled={
+                  viewTab === tab.key ||
+                  isLoading ||
+                  deleteMethodPending ||
+                  updateMethodPending
+                }
                 onClick={() => handleTabChange(tab.key)}
-                className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : "bg-muted/50 text-muted-foreground hover:bg-muted/80"}`}
+                className={cn(
+                  "px-4 py-2 cursor-pointer rounded-xl text-sm font-bold ",
+                  viewTab === tab.key
+                    ? tab.activeClass
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted/80",
+                )}
               >
                 {tab.label}
               </button>
@@ -300,8 +378,9 @@ export default function PaymentMethodsPage() {
         </div>
       </div>
 
+      {/* Data Table */}
       <EntityDataTable<PaymentMethodRow>
-        data={data?.data || []}
+        data={data?.data ?? []}
         isLoading={isLoading}
         pagination={data?.meta?.pagination}
         onPageChange={handlePageChange}
@@ -309,12 +388,12 @@ export default function PaymentMethodsPage() {
         emptyState={{
           title: t("empty.title"),
           description: t("empty.description"),
-          createLink: () =>
-            router.push(`/${locale}/dashboard/payment-methods/create`),
+          createLink: () => router.push(`/dashboard/payment-methods/create`),
           createLabel: t("empty.createLabel"),
         }}
       />
 
+      {/* Shared Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         onClose={confirmDialog.closeDialog}

@@ -2,14 +2,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminPaymentsApi } from "@/features/payments/payments.api";
 import { PaymentMethodFormValues } from "@/features/payments/payments.schema";
 import { ApiResponse } from "@/types";
-import { PaymentMethodRow } from "@/features/payments/types";
+import { PaymentMethodRow } from "../types";
 
 export function useAdminPaymentMethods(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: ["admin-payment-methods", params],
     queryFn: async () => {
       const response = await adminPaymentsApi.getAll(params);
-      return response as unknown as ApiResponse<any>;
+      return response as unknown as ApiResponse<PaymentMethodRow[]>;
     },
   });
 }
