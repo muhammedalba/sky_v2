@@ -3,3 +3,4 @@ import PaymentMethodForm from '@/features/payments/components/dashboard/PaymentM
 export default function CreatePaymentMethodPage() {
   return <PaymentMethodForm />;
 }
+ 

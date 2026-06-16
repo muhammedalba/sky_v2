@@ -294,19 +294,24 @@ export function CheckoutShippingPaymentStep({
                       <h3 className="font-bold text-base text-foreground">
                         {getTrans(method.name)}
                       </h3>
-                      {method.badge && (
+                      {method.code && (
                         <span
                           className={`text-[10px] font-black px-1.5 py-0.5 rounded-md tracking-wide ${getGatewayBadgeStyle(method.code)}`}
                         >
-                          {method.badge}
+                          {method.code}
                         </span>
                       )}
-                      {method.fees > 0 && (
+                      {method.feeType === "fixed" && (
                         <span className="text-xs text-muted-foreground ml-auto">
-                          +{formatCurrency(method.fees)}
+                          +{formatCurrency(method.fixedFee)}
                         </span>
                       )}
-                    </div>
+                      {method.feeType === "percentage" && (
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          +{method.percentageFee}%
+                        </span>
+                      )}
+                    </div> 
 
                     <p
                       className={`text-xs mt-0.5 leading-relaxed ${
