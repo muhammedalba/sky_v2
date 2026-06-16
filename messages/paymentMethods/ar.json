@@ -10,7 +10,11 @@
   "basicInformation": "المعلومات الأساسية",
   "mainDetails": "التفاصيل الأساسية لطريقة الدفع",
   "name": "الاسم",
+  "nameAr": "الاسم (بالعربية)",
+  "nameEn": "الاسم (باللغة الإنجليزية)",
   "namePlaceholder": "مثال: فيزا / ماستركارد",
+  "namePlaceholderAr": "مثال: فيزا / ماستركارد",
+  "namePlaceholderEn": "مثال: Visa / Mastercard",
   "deleteConfirmationTitle": "تأكيد الحذف",
   "deleteConfirmationMessage": "هل أنت متأكد أنك تريد حذف {name}؟",
   "code": "الرمز (Code)",
@@ -18,7 +22,11 @@
   "provider": "المزود",
   "providerPlaceholder": "مثال: Stripe, PayPal, Moyasar",
   "description": "الوصف",
+  "descriptionAr": "الوصف (بالعربية)",
+  "descriptionEn": "الوصف (باللغة الإنجليزية)",
   "descriptionPlaceholder": "وصف مبسط لطريقة الدفع",
+  "descriptionPlaceholderAr": "مثال: الدفع عن طريق البطاقة الائتمانية",
+  "descriptionPlaceholderEn": "مثال: Pay via Credit Card",
   "icon": "أيقونة الدفع",
   "iconPlaceholder": "مثال: https://example.com/icon.png",
   "configurationSettings": "إعدادات الربط (Configuration)",
@@ -81,6 +89,7 @@
     "codeLabel": "الرمز (Gateway Key)",
     "codePlaceholder": "مثال: moyasar, stripe, cash",
     "typeLabel": "النوع",
+    "feeTypeLabel": "نوع الرسوم",
     "fixedFeeLabel": "رسوم ثابتة",
     "percentageFeeLabel": "نسبة الرسوم (%)",
     "displayOrderLabel": "ترتيب العرض",
@@ -119,6 +128,10 @@
       "bank_transfer": "حوالة بنكية",
       "cash": "الدفع عند الاستلام",
       "bnpl": "اشتر الآن وادفع لاحقاً (تابي، تمارا)"
+    },
+    "feeTypeOptions": {
+      "fixed": "مبلغ ثابت",
+      "percentage": "نسبة مئوية"
     }
   }
 }

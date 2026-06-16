@@ -10,7 +10,11 @@
   "basicInformation": "Basic Information",
   "mainDetails": "Main details of the payment method",
   "name": "Name",
+  "nameAr": "Name (Arabic)",
+  "nameEn": "Name (English)",
   "namePlaceholder": "e.g. Visa / Mastercard",
+  "namePlaceholderAr": "e.g. فيزا / ماستركارد",
+  "namePlaceholderEn": "e.g. Visa / Mastercard",
   "deleteConfirmationTitle": "Delete Confirmation",
   "deleteConfirmationMessage": "Are you sure you want to delete {name}?",
   "code": "Code",
@@ -18,7 +22,11 @@
   "provider": "Provider",
   "providerPlaceholder": "e.g. Stripe, PayPal, Moyasar",
   "description": "Description",
+  "descriptionAr": "Description (Arabic)",
+  "descriptionEn": "Description (English)",
   "descriptionPlaceholder": "Brief description of the payment method",
+  "descriptionPlaceholderAr": "e.g. الدفع عبر البطاقة الائتمانية",
+  "descriptionPlaceholderEn": "e.g. Pay via Credit Card",
   "icon": "Icon URL",
   "iconPlaceholder": "e.g. https://example.com/icon.png",
   "configurationSettings": "Configuration Settings",
@@ -81,6 +89,7 @@
     "codeLabel": "Code (Gateway Key)",
     "codePlaceholder": "e.g. moyasar, stripe, cash",
     "typeLabel": "Type",
+    "feeTypeLabel": "Fee Type",
     "fixedFeeLabel": "Fixed Fee",
     "percentageFeeLabel": "Percentage Fee (%)",
     "displayOrderLabel": "Display Order",
@@ -119,6 +128,10 @@
       "bank_transfer": "Bank Transfer",
       "cash": "Cash on Delivery",
       "bnpl": "Buy Now Pay Later (Tabby, Tamara)"
+    },
+    "feeTypeOptions": {
+      "fixed": "Fixed Amount",
+      "percentage": "Percentage"
     }
   }
 }

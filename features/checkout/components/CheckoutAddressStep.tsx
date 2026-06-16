@@ -103,7 +103,7 @@ export function CheckoutAddressStep({
       "cityId",
       "street",
     ]);
-    
+    console.log("isValid", isValid);
     if (isValid) {
       onNext();
     }

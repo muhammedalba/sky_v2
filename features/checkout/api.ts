@@ -11,13 +11,14 @@ export const locationsApi = {
 
 // ─── Payments ────────────────────────────────────────────────────────────────
 export const paymentsApi = {
-  getActiveMethods: () => apiClient.get('/payments'),
+  getActiveMethods: (currency?: string, countryId?: string) =>
+    apiClient.get('/payments', { params: { currency, countryId } }),
 };
 
 // ─── Checkout Orchestrator ──────────────────────────────────────────────────
 export const checkoutApi = {
   getSummary: () => apiClient.get('/checkout/summary'),
-  setAddress: (address: any) => apiClient.post('/checkout/address', { address }),
+  setAddress: (address: Record<string, unknown>) => apiClient.post('/checkout/address', { address }),
   setShippingMethod: (shippingProviderId: string) =>
     apiClient.post('/checkout/shipping-method', { shippingProviderId }),
   setPaymentMethod: (paymentMethodId: string) =>

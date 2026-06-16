@@ -2,7 +2,7 @@
 
 import { useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 // Custom Hooks
 import { useQueryState } from "@/shared/hooks/useQueryState";
@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 // Types
 import { Permissions } from "@/features/roles/types";
 import { PaymentMethodRow } from "@/features/payments/types";
+import { useTrans } from "@/shared/hooks/useTrans";
 
 /**
  * Defines the available tabs for filtering payment methods.
@@ -64,11 +65,13 @@ export default function PaymentMethodsPage() {
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
   const toast = useToast();
+  const getTrans = useTrans();
 
   // Translations
   const t = useTranslations("paymentMethods");
   const tCommon = useTranslations("common");
   const tButtons = useTranslations("common.buttons");
+  const locale = useLocale();
 
   // ===========================================================================
   // State & Query Parameters
@@ -86,15 +89,17 @@ export default function PaymentMethodsPage() {
       page,
       limit: 10,
       keywords: search,
+      locale,
       ...TAB_FILTER_PARAMS[viewTab],
     }),
-    [page, search, viewTab],
+    [page, search, viewTab, locale],
   );
 
   // ===========================================================================
   // Data Fetching & Mutations
   // ===========================================================================
   const { data, isLoading, refetch } = useAdminPaymentMethods(queryParams);
+  console.log(data, "data");
 
   const { mutateAsync: deleteMethodAsync, isPending: deleteMethodPending } =
     useDeletePaymentMethod();
@@ -218,7 +223,7 @@ export default function PaymentMethodsPage() {
         render: (method: PaymentMethodRow) => (
           <div className="flex flex-col gap-1 py-1">
             <div className="font-bold text-base text-foreground font-mono group-hover:text-primary transition-colors">
-              {method.name}
+              {getTrans(method.name)}
             </div>
             <span className="text-[10px] text-foreground font-medium uppercase tracking-wider opacity-60">
               {method.code}
@@ -296,7 +301,7 @@ export default function PaymentMethodsPage() {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-destructive/10 text-destructive hover:text-destructive/70 hover:border-destructive/20 transition-all"
-                  onClick={() => handleDelete(method._id, method.name)}
+                  onClick={() => handleDelete(method._id, getTrans(method.name))}
                   isLoading={deleteMethodPending}
                   disabled={
                     deleteMethodPending || isLoading || updateMethodPending
@@ -320,6 +325,7 @@ export default function PaymentMethodsPage() {
       handleStatusChange,
       isLoading,
       formatCurrency,
+      getTrans,
     ],
   );
 

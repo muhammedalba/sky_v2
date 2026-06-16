@@ -82,11 +82,16 @@ export default function PaymentMethodForm({
     // @ts-expect-error: zodResolver type mismatch with react-hook-form
     resolver: zodResolver(paymentMethodSchema),
     defaultValues: {
-      name: initialData?.name || "",
+      name: initialData?.name && typeof initialData.name === 'object' 
+        ? { ar: initialData.name.ar || "", en: initialData.name.en || "" } 
+        : { ar: "", en: "" },
       code: initialData?.code || "",
       type: initialData?.type || "card",
       provider: initialData?.provider || "",
-      description: initialData?.description || "",
+      description: initialData?.description && typeof initialData.description === 'object'
+        ? { ar: initialData.description.ar || "", en: initialData.description.en || "" }
+        : { ar: "", en: "" },
+      feeType: initialData?.feeType || "fixed",
       config: initialData?.config || {},
       fixedFee: initialData?.fixedFee || 0,
       percentageFee: initialData?.percentageFee || 0,
@@ -114,6 +119,7 @@ export default function PaymentMethodForm({
     passFeesToCustomer,
     watchedCurrencies,
     watchedCountries,
+    watchedFeeType,
   ] = useWatch({
     control: form.control,
     name: [
@@ -124,11 +130,13 @@ export default function PaymentMethodForm({
       "passFeesToCustomer",
       "supportedCurrencies",
       "supportedCountries",
+      "feeType",
     ],
   });
 
   const supportedCurrencies = watchedCurrencies || [];
   const supportedCountries = watchedCountries || [];
+  const feeType = watchedFeeType || "fixed";
 
   // Boolean flag to disable inputs during submission
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -147,6 +155,14 @@ export default function PaymentMethodForm({
       { value: "bank_transfer", label: t("form.typeOptions.bank_transfer") },
       { value: "cash_on_delivery", label: t("form.typeOptions.cash") },
       { value: "bnpl", label: t("form.typeOptions.bnpl") },
+    ],
+    [t],
+  );
+
+  const feeTypeOptions = useMemo(
+    () => [
+      { value: "fixed", label: t("form.feeTypeOptions.fixed", { defaultValue: "Fixed" }) },
+      { value: "percentage", label: t("form.feeTypeOptions.percentage", { defaultValue: "Percentage" }) },
     ],
     [t],
   );
@@ -219,12 +235,23 @@ export default function PaymentMethodForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             <div className="space-y-2">
               <Input
-                {...form.register("name")}
+                {...form.register("name.ar")}
                 disabled={isPending}
-                label={t("name")}
+                label={t("nameAr", { defaultValue: "Name (Arabic)" })}
                 icon={TagIcon}
-                placeholder={t("namePlaceholder")}
-                error={form.formState.errors.name?.message}
+                placeholder={t("namePlaceholderAr", { defaultValue: "Enter Arabic Name" })}
+                error={form.formState.errors.name?.ar?.message}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Input
+                {...form.register("name.en")}
+                disabled={isPending}
+                label={t("nameEn", { defaultValue: "Name (English)" })}
+                icon={TagIcon}
+                placeholder={t("namePlaceholderEn", { defaultValue: "Enter English Name" })}
+                error={form.formState.errors.name?.en?.message}
               />
             </div>
 
@@ -260,38 +287,63 @@ export default function PaymentMethodForm({
               />
             </div>
 
-            <div className="space-y-2">
-              <Input
-                {...form.register("fixedFee", { valueAsNumber: true })}
+            <div className="space-y-2 lg:col-span-2">
+              <Select
+                {...form.register("feeType")}
                 disabled={isPending}
-                type="number"
-                placeholder="0"
-                label={t("form.fixedFeeLabel")}
-                icon={AiSparkIcon}
-                error={form.formState.errors.fixedFee?.message}
+                label={t("form.feeTypeLabel", { defaultValue: "Fee Type" })}
+                options={feeTypeOptions}
+                error={form.formState.errors.feeType?.message}
               />
             </div>
 
-            <div className="space-y-2">
-              <Input
-                {...form.register("percentageFee", { valueAsNumber: true })}
-                disabled={isPending}
-                type="number"
-                placeholder="0"
-                label={t("form.percentageFeeLabel")}
-                icon={AiSparkIcon}
-                error={form.formState.errors.percentageFee?.message}
-              />
-            </div>
+            {feeType === "fixed" && (
+              <div className="space-y-2">
+                <Input
+                  {...form.register("fixedFee", { valueAsNumber: true })}
+                  disabled={isPending}
+                  type="number"
+                  placeholder="0"
+                  label={t("form.fixedFeeLabel")}
+                  icon={AiSparkIcon}
+                  error={form.formState.errors.fixedFee?.message}
+                />
+              </div>
+            )}
+
+            {feeType === "percentage" && (
+              <div className="space-y-2">
+                <Input
+                  {...form.register("percentageFee", { valueAsNumber: true })}
+                  disabled={isPending}
+                  type="number"
+                  placeholder="0"
+                  label={t("form.percentageFeeLabel")}
+                  icon={AiSparkIcon}
+                  error={form.formState.errors.percentageFee?.message}
+                />
+              </div>
+            )}
 
             <div className="space-y-2 lg:col-span-2">
               <Input
-                {...form.register("description")}
+                {...form.register("description.ar")}
                 disabled={isPending}
-                label={t("description")}
+                label={t("descriptionAr", { defaultValue: "Description (Arabic)" })}
                 icon={TagIcon}
-                placeholder={t("descriptionPlaceholder")}
-                error={form.formState.errors.description?.message}
+                placeholder={t("descriptionPlaceholderAr", { defaultValue: "Enter Arabic description" })}
+                error={form.formState.errors.description?.ar?.message}
+              />
+            </div>
+            
+            <div className="space-y-2 lg:col-span-2">
+              <Input
+                {...form.register("description.en")}
+                disabled={isPending}
+                label={t("descriptionEn", { defaultValue: "Description (English)" })}
+                icon={TagIcon}
+                placeholder={t("descriptionPlaceholderEn", { defaultValue: "Enter English description" })}
+                error={form.formState.errors.description?.en?.message}
               />
             </div>
 

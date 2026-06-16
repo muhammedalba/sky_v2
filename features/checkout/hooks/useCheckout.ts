@@ -58,7 +58,7 @@ export function useCities(regionId: string | null) {
 
 // ─── Payment methods ──────────────────────────────────────────────────────────
 
-import { ALL_METHODS, type ActivePaymentMethod } from "../constants/paymentMethods";
+import { type ActivePaymentMethod } from "../constants/paymentMethods";
 
 interface ApiPaymentMethod {
   _id: string;
@@ -71,25 +71,18 @@ interface ApiPaymentMethod {
   supportedCurrencies: string[];
 }
 
-export function useActivePaymentMethods() {
+export function useActivePaymentMethods(currency?: string, countryId?: string) {
   return useQuery<ActivePaymentMethod[]>({
-    queryKey: ["payment-methods"],
+    queryKey: ["payment-methods", currency, countryId],
     queryFn: async () => {
-      const res = await paymentsApi.getActiveMethods();
+      const res = await paymentsApi.getActiveMethods(currency, countryId);
       const apiMethods: ApiPaymentMethod[] = res.data?.data || res.data;
-      console.log("apiMethods",apiMethods);
-      
-      return apiMethods
-        .map((apiMethod) => {
-          const localMeta = ALL_METHODS.find((m) => m.code === apiMethod.code);
-          if (!localMeta) return null;
-          return {
-            ...localMeta,
-            fees: apiMethod.fees,
-            _id: apiMethod.code,
-          } as ActivePaymentMethod;
-        })
-        .filter(Boolean) as ActivePaymentMethod[];
+      console.log("apiMethods", apiMethods);
+
+      return apiMethods.map((apiMethod) => ({
+        ...apiMethod,
+        _id: apiMethod.code,
+      } as unknown as ActivePaymentMethod));
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -113,6 +106,7 @@ export function useCheckoutSummary(options?: Omit<UseQueryOptions<any, Error, an
 
 export function useSetAddress() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: async (address: AddressPayload) => {
       const res = await checkoutApi.setAddress(address);
@@ -121,11 +115,21 @@ export function useSetAddress() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
     },
+    onError: (error: Error | unknown) => {
+      let message = "Failed to set address";
+      if (isAxiosError(error) && error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error instanceof Error && error.message) {
+        message = error.message;
+      }
+      toast.error(message);
+    },
   });
 }
 
 export function useSetShippingMethod() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: async (shippingProviderId: string) => {
       const res = await checkoutApi.setShippingMethod(shippingProviderId);
@@ -134,11 +138,21 @@ export function useSetShippingMethod() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
     },
+    onError: (error: Error | unknown) => {
+      let message = "Failed to set shipping method";
+      if (isAxiosError(error) && error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error instanceof Error && error.message) {
+        message = error.message;
+      }
+      toast.error(message);
+    },
   });
 }
 
 export function useSetPaymentMethod() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: async (paymentMethodId: string) => {
       const res = await checkoutApi.setPaymentMethod(paymentMethodId);
@@ -147,11 +161,21 @@ export function useSetPaymentMethod() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
     },
+    onError: (error: Error | unknown) => {
+      let message = "Failed to set payment method";
+      if (isAxiosError(error) && error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error instanceof Error && error.message) {
+        message = error.message;
+      }
+      toast.error(message);
+    },
   });
 }
 
 export function useApplyCoupon() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: async (couponCode: string) => {
       const res = await checkoutApi.applyCoupon(couponCode);
@@ -159,6 +183,15 @@ export function useApplyCoupon() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
+    },
+    onError: (error: Error | unknown) => {
+      let message = "Failed to apply coupon";
+      if (isAxiosError(error) && error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error instanceof Error && error.message) {
+        message = error.message;
+      }
+      toast.error(message);
     },
   });
 }

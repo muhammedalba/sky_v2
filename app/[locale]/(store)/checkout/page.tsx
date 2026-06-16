@@ -33,6 +33,7 @@ import { useMe } from "@/features/auth/hooks/useAuth";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
+import { useSettings } from "@/app/providers/SettingsProvider";
 
 // Components
 import { CheckoutStepIndicator } from "@/features/checkout/components/CheckoutStepIndicator";
@@ -46,12 +47,13 @@ export default function CheckoutPage() {
   // check if user is authenticated
   const { data: user } = useMe();
   const isAuth = !!user;
+  // get settings
+  const settings = useSettings();
+  const currency = settings.currencyCode;
   // get checkout summary data
   const { data: previewResult, isLoading: summaryLoading } = useCheckoutSummary(
     { enabled: isAuth },
   );
-  // get payment methods
-  const { data: paymentMethods = [] } = useActivePaymentMethods();
   // get countries
   const { data: countries = [] } = useCountries();
   // get cart items from server
@@ -136,6 +138,12 @@ export default function CheckoutPage() {
     },
     mode: "onBlur",
   });
+
+  const countryId = useWatch({ control: form.control, name: "countryId" });
+
+  // get payment methods
+  const { data: paymentMethods = [] } = useActivePaymentMethods(currency, countryId);
+  console.log("paymentMethods", paymentMethods);
 
   // Pre-fill user data if authenticated
   useEffect(() => {
