@@ -69,6 +69,7 @@ interface ApiPaymentMethod {
   displayOrder: number;
   icon?: string;
   supportedCurrencies: string[];
+  publicConfig?: { publishableKey?: string };
 }
 
 export function useActivePaymentMethods(currency?: string, countryId?: string) {
@@ -77,11 +78,11 @@ export function useActivePaymentMethods(currency?: string, countryId?: string) {
     queryFn: async () => {
       const res = await paymentsApi.getActiveMethods(currency, countryId);
       const apiMethods: ApiPaymentMethod[] = res.data?.data || res.data;
-      console.log("apiMethods", apiMethods);
 
       return apiMethods.map((apiMethod) => ({
         ...apiMethod,
         _id: apiMethod.code,
+        publicConfig: apiMethod.publicConfig,
       } as unknown as ActivePaymentMethod));
     },
     staleTime: 5 * 60 * 1000,

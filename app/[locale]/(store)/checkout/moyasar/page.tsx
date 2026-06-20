@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useToast } from "@/shared/hooks/useToast";
 import { apiClient } from "@/lib/api/client";
 import { ShieldCheckIcon, CreditCardIcon, AlertCircleIcon } from "lucide-react";
+import { useActivePaymentMethods } from "@/features/checkout/hooks/useCheckout";
 
 declare global {
   interface Window {
@@ -32,6 +33,15 @@ export default function MoyasarCheckoutPage() {
   const hasFetched = useRef(false);
   const hasInitialized = useRef(false);
 
+  // Fetch active payment methods to read publicConfig.publishableKey.
+  // React Query caches this data from the checkout page — no extra HTTP request.
+  const { data: paymentMethods = [] } = useActivePaymentMethods();
+
+  // Resolve publishableKey from the whitelisted publicConfig (server-side generated)
+  const publishableKey = paymentMethods.find(
+    (m) => m.code === "moyasar"
+  )?.publicConfig?.publishableKey;
+  console.log("publishableKey", publishableKey);
   // 1. Get orderId from session storage on mount
   useEffect(() => {
     const storedOrderId = sessionStorage.getItem("moyasar_order_id");
@@ -70,18 +80,11 @@ export default function MoyasarCheckoutPage() {
     fetchOrder();
   }, [orderId, locale, t, toast]);
 
-  // 3. Initialize Moyasar once script is loaded and amount is ready
+  // 3. Initialize Moyasar once script, amount, and publishableKey are all ready
   useEffect(() => {
-    if (isScriptLoaded && orderAmount !== null && orderId && !error) {
+    if (isScriptLoaded && orderAmount !== null && orderId && publishableKey && !error) {
       if (hasInitialized.current) return;
       hasInitialized.current = true;
-
-      const publishableKey = process.env.NEXT_PUBLIC_MOYASAR_PUBLISHABLE_KEY;
-      
-      if (!publishableKey) {
-        toast.error("Payment configuration error.");
-        return;
-      }
 
       const amountInHalalas = Math.round(orderAmount * 100);
       let currencyCode = (orderCurrency || 'SAR').toUpperCase().trim();
@@ -117,7 +120,15 @@ export default function MoyasarCheckoutPage() {
         }
       }
     }
-  }, [isScriptLoaded, orderAmount, orderCurrency, orderId, locale, toast, error, t]);
+  }, [isScriptLoaded, orderAmount, orderCurrency, orderId, publishableKey, locale, toast, error, t]);
+
+  // Show config error if payment methods loaded but Moyasar key is missing
+  useEffect(() => {
+    if (paymentMethods.length > 0 && !publishableKey && !error) {
+      toast.error("Payment configuration error.");
+      setError("Payment configuration error.");
+    }
+  }, [paymentMethods, publishableKey, error, toast]);
 
   if (error) {
     return (
