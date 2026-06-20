@@ -128,5 +128,35 @@
     "shipping_info": "معلومات التوصيل",
     "shipping_and_payment": "الشحن والدفع",
     "review_and_confirm": "مراجعة وتأكيد"
+  },
+  "payment_pages": {
+    "moyasar": {
+      "payment_error": "خطأ في الدفع",
+      "failed_to_load_order": "تعذر تحميل تفاصيل الطلب",
+      "failed_to_init": "فشل في تهيئة بوابة الدفع",
+      "return_to_checkout": "العودة للدفع",
+      "secure_payment": "إتمام الدفع الأمن",
+      "secure_payment_desc": "الرجاء إدخال بيانات الدفع لإتمام طلبك بأمان",
+      "preparing_gateway": "تجهيز بوابة الدفع...",
+      "total_amount": "إجمالي المبلغ",
+      "secure_ssl_msg": "معلومات الدفع مشفرة ومحمية بالكامل بتقنية SSL"
+    },
+    "callback": {
+      "invalid_request": "طلب غير صالح",
+      "no_reference": "لم يتم العثور على مرجع الدفع في الرابط.",
+      "return_to_checkout": "العودة للدفع",
+      "verifying_payment": "جاري التحقق من الدفع...",
+      "verifying_desc": "يرجى الانتظار بينما نقوم بتأكيد عملية الدفع الخاصة بك بأمان مع مزود الخدمة.",
+      "payment_successful": "تم الدفع بنجاح!",
+      "payment_success_desc": "شكراً لشرائك. تمت معالجة عملية الدفع بنجاح.",
+      "order_id": "رقم الطلب: ",
+      "view_orders": "عرض طلباتي",
+      "continue_shopping": "متابعة التسوق",
+      "payment_failed": "فشل الدفع",
+      "payment_failed_desc": "عذراً، تعذر التحقق من الدفع بشكل آمن أو فشلت العملية.",
+      "payment_expired": "انتهت صلاحية الدفع",
+      "payment_expired_desc": "عذراً، لقد انتهت صلاحية جلسة الدفع. يرجى المحاولة مرة أخرى.",
+      "try_again": "حاول مرة أخرى"
+    }
   }
 }

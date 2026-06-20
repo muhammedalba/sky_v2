@@ -227,7 +227,7 @@ export default function CheckoutPage() {
   });
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-accent/30">
+    <div className="min-h-screen pt-40 pb-20 bg-accent/30">
       <div className="container mx-auto px-4 sm:px-6">
         <Breadcrumb
           items={[

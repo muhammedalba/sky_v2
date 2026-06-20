@@ -646,6 +646,143 @@ export const ArrowRightIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+export const UploadIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
+export const InfoIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
+  </svg>
+);
+
+export const BanknoteIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="2" y="6" width="20" height="12" rx="2" />
+    <circle cx="12" cy="12" r="2" />
+    <path d="M6 12h.01M18 12h.01" />
+  </svg>
+);
+
+export const WalletIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+  </svg>
+);
+
+export const ShieldCheckIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="m9 12 2 2 4-4" />
+  </svg>
+);
+
+export const StripeIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill="#635BFF"
+      d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"
+    />
+  </svg>
+);
+
+export const PayPalIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="7.056 3 37.228 45"
+    className={className}
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill="#003087"
+      d="M38.914 13.35c0 5.574-5.144 12.15-12.927 12.15H18.49l-.368 2.322L16.373 39H7.056l5.605-36h15.095c5.083 0 9.082 2.833 10.555 6.77a9.687 9.687 0 0 1 .603 3.58z"
+    />
+    <path
+      fill="#0079C1"
+      d="M44.284 23.7A12.894 12.894 0 0 1 31.53 34.5h-5.206L24.157 48H14.89l1.483-9 1.75-11.178.367-2.322h7.497c7.773 0 12.927-6.576 12.927-12.15 3.825 1.974 6.055 5.963 5.37 10.35z"
+    />
+  </svg>
+);
+
+export const VisaIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill="#1A1F71"
+      d="M9.112 8.262L5.97 15.758H3.92L2.374 9.775c-.094-.368-.175-.503-.461-.658C1.447 8.864.677 8.627 0 8.479l.046-.217h3.3a.904.904 0 01.894.764l.817 4.338 2.018-5.102zm8.033 5.049c.008-1.979-2.736-2.088-2.717-2.972.006-.269.262-.555.822-.628a3.66 3.66 0 011.913.336l.34-1.59a5.207 5.207 0 00-1.814-.333c-1.917 0-3.266 1.02-3.278 2.479-.012 1.079.963 1.68 1.698 2.04.756.367 1.01.603 1.006.931-.005.504-.602.725-1.16.734-.975.015-1.54-.263-1.992-.473l-.351 1.642c.453.208 1.289.39 2.156.398 2.037 0 3.37-1.006 3.377-2.564m5.061 2.447H24l-1.565-7.496h-1.656a.883.883 0 00-.826.55l-2.909 6.946h2.036l.405-1.12h2.488zm-2.163-2.656l1.02-2.815.588 2.815zm-8.16-4.84l-1.603 7.496H8.34l1.605-7.496z"
+    />
+  </svg>
+);
+
+export const MastercardIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="0 0 116.5 72"
+    className={className}
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="42.5" y="7.7" fill="#FF5F00" width="31.5" height="56.6" />
+    <path
+      fill="#EB001B"
+      d="M44.5 36c0-11 5.1-21.5 13.7-28.3C42.6-4.6 20-1.9 7.7 13.8C-4.6 29.4-1.9 52 13.8 64.3c13.1 10.3 31.4 10.3 44.5 0C49.6 57.5 44.5 47 44.5 36z"
+    />
+    <path
+      fill="#F79E1B"
+      d="M116.5 36c0 19.9-16.1 36-36 36c-8.1 0-15.9-2.7-22.2-7.7c15.6-12.3 18.3-34.9 6-50.6c-1.8-2.2-3.8-4.3-6-6c15.6-12.3 38.3-9.6 50.5 6.1C113.8 20.1 116.5 27.9 116.5 36z"
+    />
+  </svg>
+);
+
+export const MoyasarIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="#00a294" strokeWidth="2" />
+    <line x1="2" y1="10" x2="22" y2="10" stroke="#00a294" strokeWidth="2" />
+    <path
+      d="M12 14l2 2 4-4"
+      stroke="#00a294"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+  </svg>
+);
+
+export const CreditCardIcon = ({ className }: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="2" y="4" width="20" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+    <line x1="2" y1="9" x2="22" y2="9" stroke="currentColor" strokeWidth="2" />
+    <rect x="5" y="13" width="4" height="3" rx="1" fill="currentColor" />
+  </svg>
+);
+
 export const Icons = {
   AlertCircle: AlertCircleIcon,
   RotateCcw: RotateCcwIcon,
@@ -735,4 +872,15 @@ export const Icons = {
   Bell: BellIcon,
   Spinner: SpinnerIcon,
   Send: SendIcon,
+  Upload: UploadIcon,
+  Info: InfoIcon,
+  Banknote: BanknoteIcon,
+  Wallet: WalletIcon,
+  ShieldCheck: ShieldCheckIcon,
+  Stripe: StripeIcon,
+  PayPal: PayPalIcon,
+  Visa: VisaIcon,
+  Mastercard: MastercardIcon,
+  Moyasar: MoyasarIcon,
+  CreditCard: CreditCardIcon,
 };

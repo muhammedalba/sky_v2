@@ -128,6 +128,36 @@
     "shipping_info": "Shipping Info",
     "shipping_and_payment": "Shipping & Payment",
     "review_and_confirm": "Review & Confirm"
+  },
+  "payment_pages": {
+    "moyasar": {
+      "payment_error": "Payment Error",
+      "failed_to_load_order": "Failed to load order details",
+      "failed_to_init": "Failed to initialize payment gateway",
+      "return_to_checkout": "Return to Checkout",
+      "secure_payment": "Secure Payment",
+      "secure_payment_desc": "Please enter your payment details to securely complete your order",
+      "preparing_gateway": "Preparing payment gateway...",
+      "total_amount": "Total Amount",
+      "secure_ssl_msg": "Payment information is fully encrypted and secured by SSL"
+    },
+    "callback": {
+      "invalid_request": "Invalid Request",
+      "no_reference": "No payment reference was found in the URL.",
+      "return_to_checkout": "Return to Checkout",
+      "verifying_payment": "Verifying Payment...",
+      "verifying_desc": "Please wait while we securely confirm your payment with the provider.",
+      "payment_successful": "Payment Successful!",
+      "payment_success_desc": "Thank you for your purchase. Your payment was processed successfully.",
+      "order_id": "Order ID: ",
+      "view_orders": "View Orders",
+      "continue_shopping": "Continue Shopping",
+      "payment_failed": "Payment Failed",
+      "payment_failed_desc": "Unfortunately, your payment could not be securely verified or failed.",
+      "payment_expired": "Payment Expired",
+      "payment_expired_desc": "Sorry, your payment session has expired. Please try again.",
+      "try_again": "Try Again"
+    }
   }
 }
 

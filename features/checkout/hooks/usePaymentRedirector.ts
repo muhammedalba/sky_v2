@@ -10,7 +10,10 @@ export function usePaymentRedirector() {
     const orderId = resData?.orderId ;
     const methodCode = resData?.methodCode;
 
-    if ((methodCode === "paypal" || methodCode === "moyasar") && resData?.approvalUrl) {
+    if (methodCode === "moyasar") {
+      sessionStorage.setItem("moyasar_order_id", orderId);
+      router.push(`/${locale}/checkout/moyasar`);
+    } else if (methodCode === "paypal" && resData?.approvalUrl) {
       window.location.href = resData.approvalUrl;
     } else if (methodCode === "stripe" && resData?.client_secret) {
       router.push(`/${locale}/checkout/payment?orderId=${orderId}&client_secret=${resData.client_secret}`);
