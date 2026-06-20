@@ -36,11 +36,11 @@ export default function MoyasarCheckoutPage() {
   useEffect(() => {
     const storedOrderId = sessionStorage.getItem("moyasar_order_id");
     if (!storedOrderId) {
-      // router.replace(`/${locale}/checkout`);
+      router.replace(`/checkout`);
       return;
     }
     setOrderId(storedOrderId);
-  }, [locale, router]);
+  }, [router]);
 
   // 2. Fetch order details to know the amount
   useEffect(() => {
