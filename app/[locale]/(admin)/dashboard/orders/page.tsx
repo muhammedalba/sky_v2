@@ -62,7 +62,7 @@ export default function OrdersPage({ params }: { params: Promise<{ locale: strin
       header: t('fields.total'),
       render: (order: Order) => (
         <span className="font-black text-sm text-foreground bg-muted/30 px-2 py-1 rounded-lg">
-          {formatCurrency(order.totalOrderPrice || 0)}
+          {formatCurrency(order.grandTotal || order.totalPrice || 0)}
         </span>
       )
     },

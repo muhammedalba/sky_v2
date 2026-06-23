@@ -2,40 +2,48 @@ import { User } from '@/features/users/types';
 import { Product } from '@/features/products/types';
 
 export interface Address {
-  _id?: string;
-  alias?: string;
-  details: string;
-  phone: string;
-  city: string;
-  state?: string;
-  country?: string;
-  zipCode?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  country?: any;
+  city?: any;
+  street?: string;
+  building?: string;
   postalCode?: string;
+  additionalInfo?: string;
+  addressType?: string;
 }
 
 export interface OrderItem {
-  _id: string;
-  product: Product;
-  count: number;
-  color?: string;
+  productId?: Product;
+  variantId?: string;
+  quantity: number;
+  totalPrice: number;
   price: number;
+  weight?: number;
+  brand?: any;
+  category?: any;
 }
 
 export interface Order {
   _id: string;
-  orderNumber?: string;
   user: User;
-  cartItems: OrderItem[];
+  items: OrderItem[];
   shippingAddress?: Address;
-  taxPrice?: number;
-  shippingPrice?: number;
-  totalOrderPrice: number;
-  paymentMethodType: 'card' | 'cash';
-  isPaid: boolean;
-  paidAt?: string;
-  isDelivered: boolean;
-  deliveredAt?: string;
+  shippingProviderId?: string;
+  shippingRateId?: string;
+  paymentMethodCode?: string;
+  shippingAmount?: number;
+  taxAmount?: number;
+  paymentFees?: number;
+  grandTotal?: number;
+  totalPrice?: number;
+  discountAmount?: number;
+  currency?: string;
+  couponId?: any;
+  paymentStatus?: string;
   status: string;
+  isCheckedOut?: boolean;
   createdAt: string;
   updatedAt: string;
 }

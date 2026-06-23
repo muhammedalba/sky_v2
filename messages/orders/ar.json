@@ -14,10 +14,12 @@
             "date": "التاريخ"
       },
       "status": {
+            "pending_payment": "بانتظار الدفع",
             "pending": "قيد الانتظار",
             "processing": "قيد المعالجة",
             "shipped": "تم الشحن",
             "delivered": "تم التسليم",
+            "completed": "مكتمل",
             "cancelled": "ملغي"
       },
       "actions": {

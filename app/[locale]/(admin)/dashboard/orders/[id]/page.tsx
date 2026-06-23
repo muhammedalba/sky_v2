@@ -16,7 +16,7 @@ import { Skeleton } from '@/shared/ui/Skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/Table';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { formatCurrency, getStatusColor, cn, formatEmail, formatRelativeTime } from '@/lib/utils';
-import { Product } from '@/types';
+import { OrderItem } from '@/types';
 import { useTrans } from '@/shared/hooks/useTrans';
 
 export default function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -83,10 +83,12 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
   }
 
   const statusOptions = [
+    { value: 'pending_payment', label: t('status.pending_payment') || 'Pending Payment' },
     { value: 'pending', label: t('status.pending') || 'Pending' },
     { value: 'processing', label: t('status.processing') || 'Processing' },
     { value: 'shipped', label: t('status.shipped') || 'Shipped' },
     { value: 'delivered', label: t('status.delivered') || 'Delivered' },
+    { value: 'completed', label: t('status.completed') || 'Completed' },
     { value: 'cancelled', label: t('status.cancelled') || 'Cancelled' },
   ];
 
@@ -115,7 +117,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
         </div>
         <div className="flex items-center gap-3">
            <Button variant="outline" className="rounded-xl px-6 font-bold flex items-center gap-2">
-              <MenuIcon className="w-4 h-4" />{/* Print icon replacement */}
+              <MenuIcon className="w-4 h-4" />
               Invoice
            </Button>
         </div>
@@ -140,17 +142,16 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                        </TableRow>
                     </TableHeader>
                     <TableBody>
-                       {order.cartItems?.map((item: { product?: Product, color?: string, price: number, count?: number }, i: number) => (
+                       {order.items?.map((item: OrderItem, i: number) => (
                          <TableRow key={i} className="border-b last:border-0">
                            <TableCell>
                              <div className="flex items-center gap-4 py-2">
                                 <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden shrink-0">
-                                   {/* Product Image Logic */}
-                                   {item.product?.imageCover ? (
+                                   {item.productId?.imageCover ? (
                                       <div className="relative w-full h-full">
                                         <ImageWithFallback 
-                                          src={item.product.imageCover} 
-                                          alt={getTrans(item.product.title) || 'Product Image'} 
+                                          src={item.productId.imageCover} 
+                                          alt={getTrans(item.productId.title) || 'Product Image'} 
                                           fill
                                           className="object-cover" 
                                         />
@@ -160,14 +161,14 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                                    )}
                                 </div>
                                 <div>
-                                   <p className="font-bold text-sm">{getTrans(item.product?.title) || 'Unknown Product'}</p>
-                                   <p className="text-xs text-muted-foreground font-medium capitalize">{item.color || 'Default Color'}</p>
+                                   <p className="font-bold text-sm line-clamp-1">{getTrans(item.productId?.title) || 'Unknown Product'}</p>
+                                   {item.weight && <p className="text-xs text-muted-foreground font-medium mt-0.5">Weight: {item.weight}g</p>}
                                 </div>
                              </div>
                            </TableCell>
-                           <TableCell className="text-center font-bold">x{item.count || 1}</TableCell>
+                           <TableCell className="text-center font-bold">x{item.quantity || 1}</TableCell>
                            <TableCell className="text-right text-muted-foreground font-medium">{formatCurrency(item.price)}</TableCell>
-                           <TableCell className="text-right font-black">{formatCurrency(item.price * (item.count || 1))}</TableCell>
+                           <TableCell className="text-right font-black">{formatCurrency(item.totalPrice)}</TableCell>
                          </TableRow>
                        ))}
                     </TableBody>
@@ -176,30 +177,43 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
               <div className="p-8 bg-secondary/20 flex flex-col items-end space-y-3">
                  <div className="flex justify-between w-64 text-sm font-medium text-muted-foreground">
                     <span>Subtotal</span>
-                    <span className="text-foreground">{formatCurrency(order.totalOrderPrice || 0)}</span>
+                    <span className="text-foreground">{formatCurrency(order.totalPrice || 0)}</span>
                  </div>
-                 <div className="flex justify-between w-64 text-sm font-medium text-muted-foreground">
-                    <span>Shipping Fee</span>
-                    <Badge variant="secondary" className="bg-success/10 text-success hover:bg-success/20 border-none px-2">Free</Badge>
-                 </div>
+                 
+                 {order.shippingAmount !== undefined && (
+                   <div className="flex justify-between w-64 text-sm font-medium text-muted-foreground">
+                      <span>Shipping Fee</span>
+                      <span className="text-foreground">{order.shippingAmount === 0 ? <Badge variant="secondary" className="bg-success/10 text-success hover:bg-success/20 border-none px-2">Free</Badge> : formatCurrency(order.shippingAmount)}</span>
+                   </div>
+                 )}
+
+                 {!!order.taxAmount && order.taxAmount > 0 && (
+                   <div className="flex justify-between w-64 text-sm font-medium text-muted-foreground">
+                      <span>Taxes</span>
+                      <span className="text-foreground">{formatCurrency(order.taxAmount)}</span>
+                   </div>
+                 )}
+
+                 {!!order.paymentFees && order.paymentFees > 0 && (
+                   <div className="flex justify-between w-64 text-sm font-medium text-muted-foreground">
+                      <span>Payment Fees</span>
+                      <span className="text-foreground">{formatCurrency(order.paymentFees)}</span>
+                   </div>
+                 )}
+
+                 {!!order.discountAmount && order.discountAmount > 0 && (
+                   <div className="flex justify-between w-64 text-sm font-medium text-success">
+                      <span>Discount</span>
+                      <span>-{formatCurrency(order.discountAmount)}</span>
+                   </div>
+                 )}
+
                  <div className="w-64 h-px bg-border my-2" />
                  <div className="flex justify-between w-64 text-xl font-black">
-                    <span>Total</span>
-                    <span className="text-primary">{formatCurrency(order.totalOrderPrice || 0)}</span>
+                    <span>Grand Total</span>
+                    <span className="text-primary">{formatCurrency(order.grandTotal || order.totalPrice || 0)}</span>
                  </div>
               </div>
-           </Card>
-
-           {/* Timeline / Additional Notes */}
-           <Card className="border-none shadow-sm ring-1 ring-border/50">
-             <CardHeader>
-                <CardTitle className="text-lg font-bold">Notes from Customer</CardTitle>
-             </CardHeader>
-             <CardContent>
-                <div className="p-4 rounded-2xl bg-secondary/30 italic text-muted-foreground text-sm">
-                   &quot;No special instructions provided by the customer for this order.&quot;
-                </div>
-             </CardContent>
            </Card>
         </div>
 
@@ -212,23 +226,25 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
              <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
                    <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-primary to-indigo-500 text-white flex items-center justify-center font-black shadow-lg shadow-primary/20">
-                      {order.user?.name?.charAt(0) || 'U'}
+                      {order.user?.name?.charAt(0) || order.shippingAddress?.firstName?.charAt(0) || 'G'}
                    </div>
                    <div>
-                      <p className="font-black text-foreground">{order.user?.name || 'Guest User'}</p>
+                      <p className="font-black text-foreground">{order.user?.name || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Guest User'}</p>
                       <p className="text-xs text-muted-foreground font-medium">{order.user?.email ? formatEmail(order.user.email) : 'No email provided'}</p>
                    </div>
                 </div>
                 <div className="space-y-4">
                    <div className="flex items-center gap-3 text-sm font-medium">
                       <div className="p-2 rounded-lg bg-secondary text-muted-foreground"><UsersIcon className="w-4 h-4" /></div>
-                      <span className="text-foreground">{order.user?.phone || 'No phone number'}</span>
+                      <span className="text-foreground">{order.shippingAddress?.phone || order.user?.phone || 'No phone number'}</span>
                    </div>
                    <div className="flex items-start gap-3 text-sm font-medium leading-relaxed">
-                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:bg-primary transition-colors mt-0.5 whitespace-nowrap"><MenuIcon className="w-4 h-4" /></div>{/* Map pin icon replacement */}
+                      <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:bg-primary transition-colors mt-0.5 whitespace-nowrap"><MenuIcon className="w-4 h-4" /></div>
                       <span className="text-foreground">
-                         {order.shippingAddress?.details}, {order.shippingAddress?.city} <br />
-                         {order.shippingAddress?.phone}
+                         {order.shippingAddress?.building && `${order.shippingAddress.building}, `}
+                         {order.shippingAddress?.street} <br />
+                         {getTrans(order.shippingAddress?.city?.name) || (typeof order.shippingAddress?.city === 'string' ? order.shippingAddress.city : '')}, {getTrans(order.shippingAddress?.country?.name) || (typeof order.shippingAddress?.country === 'string' ? order.shippingAddress.country : '')} <br />
+                         {order.shippingAddress?.postalCode}
                       </span>
                    </div>
                 </div>
@@ -237,19 +253,27 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
 
            <Card className="border-none shadow-sm ring-1 ring-border/50">
               <CardHeader>
-                 <CardTitle className="text-lg font-bold">Payment Status</CardTitle>
+                 <CardTitle className="text-lg font-bold">Payment & Logistics</CardTitle>
               </CardHeader>
-              <CardContent>
-                 <div className="flex items-center justify-between p-4 rounded-2xl bg-success/10 dark:bg-success/5 border border-success/20 dark:border-success/10">
-                    <div className="flex items-center gap-3">
-                       <div className="w-8 h-8 rounded-full bg-success text-white flex items-center justify-center">
-                          <MenuIcon className="w-4 h-4" />{/* Checkmark replacement */}
-                       </div>
-                       <span className="text-success font-black text-sm uppercase tracking-wider">{order.paymentMethodType || 'CARD'}</span>
+              <CardContent className="space-y-4">
+                 <div className="flex flex-col gap-1 p-4 rounded-2xl bg-secondary/20 border border-border/50">
+                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Payment Method</span>
+                    <div className="flex items-center justify-between">
+                       <span className="font-black text-sm uppercase">{order.paymentMethodCode || 'N/A'}</span>
+                       <Badge variant="outline" className={cn("font-bold uppercase text-[10px]", order.paymentStatus === 'paid' ? "border-success/30 text-success bg-success/5" : "border-warning/30 text-warning bg-warning/5")}>
+                          {order.paymentStatus || 'Pending'}
+                       </Badge>
                     </div>
-                    <Badge variant="outline" className="bg-white dark:bg-background border-success/30 text-success font-bold uppercase text-[10px]">
-                       {order.isPaid ? 'Success' : 'Pending'}
-                    </Badge>
+                 </div>
+                 
+                 <div className="flex flex-col gap-1 p-4 rounded-2xl bg-secondary/20 border border-border/50">
+                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Shipping Provider</span>
+                    <div className="flex items-center justify-between">
+                       <span className="font-black text-sm uppercase">Standard Delivery</span>
+                       <Badge variant="secondary" className="font-bold text-[10px]">
+                          {order.shippingProviderId ? 'Assigned' : 'Unassigned'}
+                       </Badge>
+                    </div>
                  </div>
               </CardContent>
            </Card>
