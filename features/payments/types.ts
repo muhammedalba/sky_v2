@@ -9,7 +9,8 @@ export interface PaymentMethodRow {
   isActive: boolean;
   provider: string;
   description: { ar: string; en: string } | string;
-  config: object;
+  publicConfig: object;
+  secretConfig: object;
   isDefault: boolean;
   requiresOnlineConfirmation: boolean;
   passFeesToCustomer: boolean;

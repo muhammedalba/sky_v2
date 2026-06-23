@@ -41,6 +41,7 @@ export default function MoyasarCheckoutPage() {
   const publishableKey = paymentMethods.find(
     (m) => m.code === "moyasar"
   )?.publicConfig?.publishableKey;
+  console.log("publishableKey", publishableKey);
   // 1. Get orderId from session storage on mount
   useEffect(() => {
     const storedOrderId = sessionStorage.getItem("moyasar_order_id");

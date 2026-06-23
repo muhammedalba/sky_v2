@@ -92,7 +92,8 @@ export default function PaymentMethodForm({
         ? { ar: initialData.description.ar || "", en: initialData.description.en || "" }
         : { ar: "", en: "" },
       feeType: initialData?.feeType || "fixed",
-      config: initialData?.config || {},
+      publicConfig: initialData?.publicConfig || {},
+      secretConfig: initialData?.secretConfig || {},
       fixedFee: initialData?.fixedFee || 0,
       percentageFee: initialData?.percentageFee || 0,
       isActive: initialData?.isActive ?? true,
@@ -453,35 +454,69 @@ export default function PaymentMethodForm({
           </div>
         </div>
 
-        {/* --- Config JSON Section --- */}
+        {/* --- Public Config JSON Section --- */}
         <div className="bg-background/50 backdrop-blur-sm p-6 rounded-2xl border border-border/40 shadow-sm space-y-6 w-full">
           <div>
             <label className="text-sm font-bold text-foreground block mb-2">
-              {t("form.configJsonLabel")}
+              {t("form.publicConfigJsonLabel", { defaultValue: "Public Config JSON (Available to clients)" })}
             </label>
             <p className="text-xs text-muted-foreground mb-4">
-              {t("form.configJsonDesc")}
+              {t("form.publicConfigJsonDesc", { defaultValue: "Enter public configuration (e.g., publishable keys) in valid JSON format." })}
             </p>
             <textarea
               className="w-full h-32 p-3 rounded-xl border border-input bg-transparent text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none resize-y"
-              defaultValue={JSON.stringify(form.getValues("config"), null, 2)}
+              defaultValue={JSON.stringify(form.getValues("publicConfig"), null, 2)}
               disabled={isPending}
               onChange={(e) => {
                 try {
-                  // Attempt to parse the user's manual JSON input
-                  form.setValue("config", JSON.parse(e.target.value));
-                  form.clearErrors("config");
-                } catch (err) {
-                  // Surface JSON validation errors immediately to the user
-                  form.setError("config", { message: t("form.invalidJson") });
+                  form.setValue("publicConfig", JSON.parse(e.target.value));
+                  form.clearErrors("publicConfig");
+                } catch {
+                  form.setError("publicConfig", { message: t("form.invalidJson", { defaultValue: "Invalid JSON" }) });
                 }
               }}
             />
-            {form.formState.errors.config && (
+            {form.formState.errors.publicConfig && (
               <p className="text-red-500 text-sm mt-1">
                 {
                   (
-                    form.formState.errors.config as unknown as {
+                    form.formState.errors.publicConfig as unknown as {
+                      message: string;
+                    }
+                  ).message
+                }
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* --- Secret Config JSON Section --- */}
+        <div className="bg-background/50 backdrop-blur-sm p-6 rounded-2xl border border-border/40 shadow-sm space-y-6 w-full">
+          <div>
+            <label className="text-sm font-bold text-foreground block mb-2">
+              {t("form.secretConfigJsonLabel", { defaultValue: "Secret Config JSON (Encrypted in DB)" })}
+            </label>
+            <p className="text-xs text-muted-foreground mb-4">
+              {t("form.secretConfigJsonDesc", { defaultValue: "Enter secret configuration (e.g., secret keys, webhooks) in valid JSON format." })}
+            </p>
+            <textarea
+              className="w-full h-32 p-3 rounded-xl border border-input bg-transparent text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none resize-y"
+              defaultValue={JSON.stringify(form.getValues("secretConfig"), null, 2)}
+              disabled={isPending}
+              onChange={(e) => {
+                try {
+                  form.setValue("secretConfig", JSON.parse(e.target.value));
+                  form.clearErrors("secretConfig");
+                } catch {
+                  form.setError("secretConfig", { message: t("form.invalidJson", { defaultValue: "Invalid JSON" }) });
+                }
+              }}
+            />
+            {form.formState.errors.secretConfig && (
+              <p className="text-red-500 text-sm mt-1">
+                {
+                  (
+                    form.formState.errors.secretConfig as unknown as {
                       message: string;
                     }
                   ).message

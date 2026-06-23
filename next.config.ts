@@ -1,13 +1,14 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from 'next-intl/plugin';
+import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "./lib/env";
 
-const withNextIntl = createNextIntlPlugin('./i18n.ts');
+const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["172.20.10.7"],
   /**
    * Reverse Proxy configuration to resolve Third-Party Cookie restrictions.
-   * 
+   *
    * @description
    * In production, the Next.js frontend and NestJS backend operate on separate domains.
    * To prevent browsers from blocking authentication cookies (`access_token` and `is_logged_in`)
@@ -20,23 +21,23 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/v1/:path*',
+        source: "/api/v1/:path*",
         destination: `${env.API_URL}/:path*`,
       },
     ];
   },
   images: {
-    unoptimized: process.env.NEXT_PUBLIC_NODE_ENV === 'development',
+    unoptimized: process.env.NEXT_PUBLIC_NODE_ENV === "development",
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
       {
-        protocol: 'http',
-        hostname: '**',
+        protocol: "http",
+        hostname: "**",
       },
-    ]
+    ],
   },
 };
 

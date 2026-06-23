@@ -64,12 +64,17 @@ interface ApiPaymentMethod {
   _id: string;
   code: string;
   name: string;
+  description?: string;
+  provider: string;
+  type: string;
+  feeType: 'fixed' | 'percentage';
+  fixedFee: number;
+  percentageFee: number;
   isActive: boolean;
-  fees: number;
   displayOrder: number;
   icon?: string;
-  supportedCurrencies: string[];
-  publicConfig?: { publishableKey?: string };
+  supportedCurrencies?: string[];
+  publicConfig?: Record<string, unknown>;
 }
 
 export function useActivePaymentMethods(currency?: string, countryId?: string) {
