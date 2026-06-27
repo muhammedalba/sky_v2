@@ -34,7 +34,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             {...props}
           >
-            <option className="" value="" disabled>
+            <option className="" value="" disabled={props.required}>
               {label || "Select"}
             </option>
             {options.map((option) => (

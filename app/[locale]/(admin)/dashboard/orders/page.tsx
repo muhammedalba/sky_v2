@@ -1,153 +1,310 @@
-"use client";
+'use client';
 
-import { use, useMemo, useCallback } from "react";
-import { useTranslations } from "next-intl";
-import { useOrders } from "@/features/orders/hooks/useOrders";
-import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
-import { Badge } from "@/shared/ui/Badge";
-import { MenuIcon, OrdersIcon } from "@/shared/ui/Icons";
-import { formatDate, getStatusColor, cn } from "@/lib/utils";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { Order } from "@/types";
-import Link from "next/link";
-import { useQueryState } from "@/shared/hooks/useQueryState";
-import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
-import { Permissions } from "@/features/roles/types";
-import Can from "@/components/auth/Can";
-import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import { use, useMemo, useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useOrders, useUpdateOrderStatus, useDeleteOrder } from '@/features/orders/hooks/useOrders';
+import { useOrderStats } from '@/features/orders/hooks/useOrderStats';
+import { useOrderFilters } from '@/features/orders/hooks/useOrderFilters';
+import { useOrderSelection } from '@/features/orders/hooks/useOrderSelection';
+import OrderStatsCards from '@/features/orders/components/OrderStatsCards';
+import OrderChartsSection from '@/features/orders/components/OrderChartsSection';
+import OrderTableHeader from '@/features/orders/components/OrderTableHeader';
+import OrderFiltersComponent from '@/features/orders/components/OrderFilters';
+import OrdersTable from '@/features/orders/components/OrdersTable';
+import OrderMobileCard from '@/features/orders/components/OrderMobileCard';
+import OrderDetailDrawer from '@/features/orders/components/OrderDetailDrawer';
+import InvoicePreviewDialog from '@/features/orders/components/InvoicePreviewDialog';
+import OrderBulkActions from '@/features/orders/components/OrderBulkActions';
+import Pagination from '@/shared/ui/Pagination';
+import { Order } from '@/types';
+import { useQueryState } from '@/shared/hooks/useQueryState';
 
 export default function OrdersPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = use(params);
+  use(params);
   const { getQueryParam, setQueryParam } = useQueryState();
+  const queryClient = useQueryClient();
 
-  const page = Number(getQueryParam("page", "1"));
-  const t = useTranslations("orders");
-  const formatCurrency = useFormatCurrency();
+  const page = Number(getQueryParam('page', '1'));
+  const limit = 10;
 
-  const queryParams = useMemo(() => ({ page, limit: 10 }), [page]);
-  const { data, isLoading } = useOrders(queryParams);
-  console.log("data", data);
-  const setPage = useCallback(
-    (val: number) => setQueryParam("page", val),
+  // Hooks for filters and selection
+  const {
+    filters,
+    sortField,
+    sortDirection,
+    setFilter,
+    setSorting,
+    resetFilters,
+    activeFilterCount,
+    hasActiveFilters,
+  } = useOrderFilters();
+
+  // Combine query parameters
+  const queryParams = useMemo(
+    () => ({
+      page,
+      limit,
+      status: filters.status || undefined,
+      paymentStatus: filters.paymentStatus || undefined,
+      paymentMethod: filters.paymentMethod || undefined,
+      keywords: filters.search || undefined,
+      sort: sortField,
+      order: sortDirection,
+      startDate: filters.dateFrom || undefined,
+      endDate: filters.dateTo || undefined,
+    }),
+    [page, limit, filters, sortField, sortDirection],
+  );
+
+  // Fetch orders and stats
+  const { data: ordersData, isLoading: isOrdersLoading, isRefetching } = useOrders(queryParams);
+  console.log(ordersData)
+  const { data: statsData, isLoading: isStatsLoading } = useOrderStats({
+    startDate: filters.dateFrom || undefined,
+    endDate: filters.dateTo || undefined,
+  });
+
+  const orders = useMemo(() => ordersData?.data || [], [ordersData]);
+  const orderIds = useMemo(() => orders.map((o) => o._id), [orders]);
+
+  const {
+    selectedCount,
+    isSelected,
+    isAllSelected,
+    toggleOne,
+    toggleAll,
+    clearSelection,
+    selectedArray,
+  } = useOrderSelection(orderIds);
+
+  // Drawer & Dialog State
+  const [selectedOrderForDrawer, setSelectedOrderForDrawer] = useState<Order | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState<Order | null>(null);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+
+  // Actions
+  const updateStatusMutation = useUpdateOrderStatus();
+  const deleteOrderMutation = useDeleteOrder();
+
+  const handleViewOrder = useCallback((order: Order) => {
+    setSelectedOrderForDrawer(order);
+    setIsDrawerOpen(true);
+  }, []);
+
+  const handlePreviewInvoice = useCallback((order: Order) => {
+    setSelectedOrderForInvoice(order);
+    setIsInvoiceOpen(true);
+  }, []);
+
+  const handleSingleDelete = useCallback(
+    async (id: string) => {
+      if (confirm('Are you sure you want to delete this order?')) {
+        await deleteOrderMutation.mutateAsync(id);
+      }
+    },
+    [deleteOrderMutation],
+  );
+
+  const handleRefresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['orders'] });
+    queryClient.invalidateQueries({ queryKey: ['order-stats'] });
+  }, [queryClient]);
+
+  // Bulk Actions
+  const handleBulkStatusUpdate = useCallback(
+    async (status: string) => {
+      await Promise.all(
+        selectedArray.map((id) =>
+          updateStatusMutation.mutateAsync({ id, status }),
+        ),
+      );
+      clearSelection();
+    },
+    [selectedArray, updateStatusMutation, clearSelection],
+  );
+
+  const handleBulkDelete = useCallback(async () => {
+    await Promise.all(
+      selectedArray.map((id) => deleteOrderMutation.mutateAsync(id)),
+    );
+    clearSelection();
+  }, [selectedArray, deleteOrderMutation, clearSelection]);
+
+  // Client-side CSV export helper
+  const handleExportCsv = useCallback(
+    (ordersToExport: Order[], filename: string) => {
+      const headers = [
+        'Order ID',
+        'Customer Name',
+        'Customer Email',
+        'Status',
+        'Payment Status',
+        'Payment Method',
+        'Quantity',
+        'Total',
+        'Date',
+      ];
+      const rows = ordersToExport.map((o) => [
+        o._id,
+        o.user?.name || 'Guest',
+        o.user?.email || '',
+        o.status,
+        o.paymentStatus || '',
+        o.paymentMethodCode || o.paymentMethod || '',
+        o.totalQuantity || o.items?.length || 0,
+        o.grandTotal || o.totalPrice || 0,
+        o.createdAt,
+      ]);
+
+      const csvContent =
+        'data:text/csv;charset=utf-8,\uFEFF' +
+        [
+          headers.join(','),
+          ...rows.map((e) =>
+            e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(','),
+          ),
+        ].join('\n');
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    [],
+  );
+
+  const handleExportAll = useCallback(() => {
+    handleExportCsv(orders, `orders-export-${new Date().toISOString().slice(0, 10)}.csv`);
+  }, [orders, handleExportCsv]);
+
+  const handleBulkExport = useCallback(() => {
+    const selectedOrders = orders.filter((o) => selectedArray.includes(o._id));
+    handleExportCsv(
+      selectedOrders,
+      `selected-orders-${new Date().toISOString().slice(0, 10)}.csv`,
+    );
+  }, [orders, selectedArray, handleExportCsv]);
+
+  const handlePageChange = useCallback(
+    (val: number) => {
+      setQueryParam('page', String(val));
+    },
     [setQueryParam],
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        header: t("orderNumber") || "Order ID",
-        className: "pl-6",
-        render: (order: Order) => (
-          <span className="font-black text-sm text-foreground font-mono">
-            #{order._id?.slice(-8).toUpperCase()}
-          </span>
-        ),
-      },
-      {
-        header: t("fields.customer"),
-        render: (order: Order, index: number) => (
-          <div className="flex items-center gap-3">
-            <div className="h-14 w-14 rounded-full  shrink-0 overflow-hidden  relative">
-              <ImageWithFallback
-                src={order.user?.avatar || ""}
-                alt={order.user?.name || "Guest Customer"}
-                fill
-                sizes="48px"
-                loading={index < 5 ? "eager" : "lazy"}
-                className="object-cover group-hover:scale-110 transition-transform duration-500 "
-              />
-            </div>
-            <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-              {order.user?.name || "Guest Customer"}
-            </span>
-          </div>
-        ),
-      },
-      {
-        header: t("fields.date"),
-        render: (order: Order) => (
-          <span className="text-muted-foreground text-sm font-bold lowercase tracking-tight italic">
-            {formatDate(order.createdAt)}
-          </span>
-        ),
-      },
-      {
-        header: t("fields.total"),
-        render: (order: Order) => (
-          <span className="font-black text-sm text-foreground bg-muted/30 px-2 py-1 rounded-lg">
-            {formatCurrency(order.grandTotal || order.totalPrice || 0)}
-          </span>
-        ),
-      },
-      {
-        header: t("fields.status"),
-        render: (order: Order) => (
-          <Badge
-            className={cn(
-              "rounded-full px-3 py-0.5 font-bold text-[10px] uppercase tracking-wider border-none shadow-sm",
-              getStatusColor(order.status),
-            )}
-          >
-            {order.status || "Pending"}
-          </Badge>
-        ),
-      },
-      {
-        header: "Actions",
-        className: "pr-6 text-right",
-        render: (order: Order) => (
-          <div className="flex justify-end translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-            <Can permission={Permissions.VIEW_ORDERS}>
-              <Link
-                href={`/${locale}/dashboard/orders/${order._id}`}
-                className="h-9 px-6 inline-flex items-center justify-center rounded-xl bg-primary text-white hover:bg-primary/90 font-bold text-xs transition-all active:scale-95 shadow-lg shadow-primary/20"
-              >
-                View
-              </Link>
-            </Can>
-          </div>
-        ),
-      },
-    ],
-    [t, formatCurrency, locale],
-  );
-
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <EntityPageHeader
-        title={t("title")}
-        subtitle={t("orderList")}
-        totalResults={t("totalOrders", {
-          count: data?.meta?.pagination?.totalResults || 0,
-        })}
-        action={{
-          label: "Export CSV",
-          icon: <MenuIcon className="w-5 h-5" />,
-          onClick: () => {
-            // Future export CSV logic
-          },
-          permission: Permissions.VIEW_ORDERS,
-          className:
-            "bg-secondary text-secondary-foreground border border-border/60 hover:bg-secondary/80",
-        }}
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-16">
+      {/* 1. Header component */}
+      <OrderTableHeader
+        totalCount={Number(ordersData?.meta?.pagination?.totalResults || 0)}
+        onRefresh={handleRefresh}
+        onExportAll={handleExportAll}
+        isRefreshing={isRefetching}
       />
 
-      <EntityDataTable<Order>
-        data={data?.data}
-        isLoading={isLoading}
-        pagination={data?.meta?.pagination}
-        onPageChange={setPage}
-        columns={columns}
-        emptyState={{
-          title: "No orders found",
-          description:
-            "Your shop's sales journey starts here. Promote your products to get sales!",
-          icon: <OrdersIcon className="h-10 w-10 text-muted-foreground/40" />,
-        }}
+      {/* 2. Stat Cards Grid */}
+      <OrderStatsCards stats={statsData} isLoading={isStatsLoading} />
+
+      {/* 3. Charts & Analytics Row */}
+      <OrderChartsSection stats={statsData} isLoading={isStatsLoading} />
+
+      {/* 4. Filters & Search Section */}
+      <OrderFiltersComponent
+        filters={filters}
+        activeFilterCount={activeFilterCount}
+        hasActiveFilters={hasActiveFilters}
+        onFilterChange={setFilter}
+        onReset={resetFilters}
+      />
+
+      {/* 5. Responsive Orders Grid / Table */}
+      <div className="block md:hidden space-y-4">
+        {isOrdersLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="p-5 rounded-2xl border border-border/40 bg-card space-y-4 animate-pulse"
+            >
+              <div className="flex justify-between">
+                <div className="h-5 w-24 bg-muted rounded" />
+                <div className="h-4 w-16 bg-muted rounded" />
+              </div>
+              <div className="h-10 bg-muted rounded-xl" />
+              <div className="flex gap-2">
+                <div className="h-5 w-16 bg-muted rounded-full" />
+                <div className="h-5 w-16 bg-muted rounded-full" />
+              </div>
+            </div>
+          ))
+        ) : orders.length === 0 ? (
+          <div className="rounded-2xl border border-border/40 bg-card flex flex-col items-center justify-center py-16 px-6">
+            <p className="text-base font-bold text-foreground">No orders found</p>
+          </div>
+        ) : (
+          orders.map((order) => (
+            <OrderMobileCard
+              key={order._id}
+              order={order}
+              onClick={() => handleViewOrder(order)}
+            />
+          ))
+        )}
+      </div>
+
+      <div className="hidden md:block">
+        <OrdersTable
+          data={orders}
+          isLoading={isOrdersLoading}
+          isSelected={isSelected}
+          isAllSelected={isAllSelected}
+          onToggleOne={toggleOne}
+          onToggleAll={toggleAll}
+          onViewOrder={handleViewOrder}
+          onDeleteOrder={handleSingleDelete}
+          onPreviewInvoice={handlePreviewInvoice}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          onSort={setSorting}
+        />
+      </div>
+
+      {/* 6. Pagination */}
+      {ordersData?.meta?.pagination && (
+        <Pagination
+          pagination={ordersData.meta.pagination}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      {/* 7. Floating Bulk Actions */}
+      <OrderBulkActions
+        selectedCount={selectedCount}
+        onClearSelection={clearSelection}
+        onBulkStatusUpdate={handleBulkStatusUpdate}
+        onBulkDelete={handleBulkDelete}
+        onBulkExport={handleBulkExport}
+      />
+
+      {/* 8. Order Detail Drawer (max-w-2xl) */}
+      <OrderDetailDrawer
+        order={selectedOrderForDrawer}
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+      />
+
+      {/* 9. Invoice Preview Dialog */}
+      <InvoicePreviewDialog
+        order={selectedOrderForInvoice}
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
       />
     </div>
   );

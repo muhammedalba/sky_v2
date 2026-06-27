@@ -10,7 +10,8 @@ export const ordersApi = {
   ...baseCrud,
   updateStatus: (id: string, data: Record<string, unknown>) =>
     apiClient.patch<ApiResponse<Order>>(`${ENDPOINTS.BASE}/${id}`, data),
-  getStats: () => apiClient.get(ENDPOINTS.STATS),
+  getStats: (params?: { startDate?: string; endDate?: string }) =>
+    apiClient.get(ENDPOINTS.STATS, { params }),
   applyCoupon: (data: { items: Record<string, unknown>[]; couponCode: string }) =>
     apiClient.post(ENDPOINTS.COUPON, data),
   createBankTransfer: (data: FormData) =>
