@@ -1,0 +1,85 @@
+'use client';
+
+import { Order } from '@/features/orders/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
+import { DownloadIcon, PrinterIcon, FileTextIcon } from 'lucide-react';
+import { Button } from '@/shared/ui/Button';
+
+interface InvoicePreviewProps {
+  order: Order;
+  onPreviewInvoice?: () => void;
+  onDownloadInvoice?: () => void;
+}
+
+export default function InvoicePreview({
+  order,
+  onPreviewInvoice,
+  onDownloadInvoice,
+}: InvoicePreviewProps) {
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
+      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4">
+        <CardTitle className="text-sm font-bold text-foreground">Invoice</CardTitle>
+        <div className="flex items-center gap-2">
+          {onDownloadInvoice && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDownloadInvoice}
+              className="rounded-xl font-bold text-xs h-8 px-3 bg-card border-border hover:bg-secondary/40 flex items-center gap-1.5"
+            >
+              <DownloadIcon className="w-3.5 h-3.5 text-muted-foreground" />
+              Download
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrint}
+            className="rounded-xl font-bold text-xs h-8 px-3 bg-card border-border hover:bg-secondary/40 flex items-center gap-1.5"
+          >
+            <PrinterIcon className="w-3.5 h-3.5 text-muted-foreground" />
+            Print
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        {order.InvoicePdf ? (
+          <div className="w-full h-[400px] relative bg-secondary/5">
+            <iframe
+              src={`${order.InvoicePdf}#toolbar=0&navpanes=0`}
+              className="w-full h-full border-none"
+              title="Invoice PDF"
+            />
+          </div>
+        ) : (
+          <div className="p-8 border-none flex flex-col items-center justify-center text-center space-y-3 bg-secondary/5 h-[300px]">
+            <div className="p-3 bg-secondary/35 text-muted-foreground rounded-full">
+              <FileTextIcon className="w-8 h-8" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-foreground">No PDF Invoice Generated</p>
+              <p className="text-[10px] text-muted-foreground mt-1 max-w-[280px]">
+                You can print or preview the HTML invoice receipt version.
+              </p>
+            </div>
+            {onPreviewInvoice && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onPreviewInvoice}
+                className="rounded-xl font-bold text-xs"
+              >
+                Open Invoice Preview
+              </Button>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

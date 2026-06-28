@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 import {
   Table,
@@ -10,44 +10,47 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/shared/ui/Table';
-import { Badge } from '@/shared/ui/Badge';
-import { Skeleton } from '@/shared/ui/Skeleton';
-import { Tooltip } from '@/shared/ui/Tooltip';
-import { Checkbox } from '@/shared/ui/Checkbox';
-import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { Order } from '@/types';
-import { cn, formatDate, formatRelativeTime } from '@/lib/utils';
-import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
+} from "@/shared/ui/Table";
+import { Badge } from "@/shared/ui/Badge";
+import { Skeleton } from "@/shared/ui/Skeleton";
+import { Tooltip } from "@/shared/ui/Tooltip";
+import { Checkbox } from "@/shared/ui/Checkbox";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import { Order } from "@/types";
+import { cn, formatDate, formatRelativeTime } from "@/lib/utils";
+import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import {
   EyeIcon,
   TrashIcon,
   FileTextIcon,
   DownloadIcon,
   ChevronDownIcon,
-} from '@/shared/ui/Icons';
+  EditIcon,
+} from "@/shared/ui/Icons";
+import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 
 // ─── Status color maps ──────────────────────────────────────────────────────────
 
 const ORDER_STATUS_STYLES: Record<string, string> = {
-  pending_payment: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  pending: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
-  processing: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-  shipped: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-  delivered: 'bg-teal-500/10 text-teal-600 dark:text-teal-400',
-  completed: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  cancelled: 'bg-red-500/10 text-red-600 dark:text-red-400',
-  expired: 'bg-gray-500/10 text-gray-600 dark:text-gray-400',
+  pending_payment: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  pending: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+  processing: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  shipped: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+  delivered: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
+  completed: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  cancelled: "bg-red-500/10 text-red-600 dark:text-red-400",
+  expired: "bg-gray-500/10 text-gray-600 dark:text-gray-400",
 };
 
 const PAYMENT_STATUS_STYLES: Record<string, string> = {
-  INITIATED: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
-  PENDING: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  PAID: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  FAILED: 'bg-red-500/10 text-red-600 dark:text-red-400',
-  CANCELLED: 'bg-red-500/10 text-red-600 dark:text-red-400',
-  REFUNDED: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-  EXPIRED: 'bg-gray-500/10 text-gray-600 dark:text-gray-400',
+  INITIATED: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
+  PENDING: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  PAID: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  FAILED: "bg-red-500/10 text-red-600 dark:text-red-400",
+  CANCELLED: "bg-red-500/10 text-red-600 dark:text-red-400",
+  REFUNDED: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  EXPIRED: "bg-gray-500/10 text-gray-600 dark:text-gray-400",
 };
 
 // ─── Props ──────────────────────────────────────────────────────────────────────
@@ -88,14 +91,14 @@ function SortableHeader({
   return (
     <TableHead
       className={cn(
-        'cursor-pointer select-none hover:text-foreground transition-colors group/sort',
+        "cursor-pointer select-none hover:text-foreground transition-colors group/sort",
         className,
       )}
       onClick={() => {
         if (isActive) {
-          onSort(field, currentDir === 'asc' ? 'desc' : 'asc');
+          onSort(field, currentDir === "asc" ? "desc" : "asc");
         } else {
-          onSort(field, 'desc');
+          onSort(field, "desc");
         }
       }}
     >
@@ -103,9 +106,9 @@ function SortableHeader({
         {label}
         <ChevronDownIcon
           className={cn(
-            'w-3 h-3 transition-all opacity-0 group-hover/sort:opacity-60',
-            isActive && 'opacity-100',
-            isActive && currentDir === 'asc' && 'rotate-180',
+            "w-3 h-3 transition-all opacity-0 group-hover/sort:opacity-60",
+            isActive && "opacity-100",
+            isActive && currentDir === "asc" && "rotate-180",
           )}
         />
       </div>
@@ -119,11 +122,14 @@ function ActionsDropdown({
   onView,
   onDelete,
   onPreviewInvoice,
+  orderId,
 }: {
   onView: () => void;
   onDelete: () => void;
   onPreviewInvoice: () => void;
+  orderId: string;
 }) {
+  const t = useTranslations("orders");
   const [isOpen, setIsOpen] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -136,7 +142,9 @@ function ActionsDropdown({
     } else {
       const rect = buttonRef.current?.getBoundingClientRect();
       if (rect) {
-        const isRtl = typeof document !== 'undefined' && document.documentElement.dir === 'rtl';
+        const isRtl =
+          typeof document !== "undefined" &&
+          document.documentElement.dir === "rtl";
         const menuWidth = 192; // w-48 is 192px
         const leftPos = isRtl
           ? rect.left + window.scrollX
@@ -163,8 +171,8 @@ function ActionsDropdown({
       setIsOpen(false);
     };
 
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [isOpen]);
 
   return (
@@ -174,7 +182,11 @@ function ActionsDropdown({
         onClick={toggleMenu}
         className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-muted/60 transition-colors"
       >
-        <svg className="w-4 h-4 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-muted-foreground"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
         </svg>
       </button>
@@ -184,12 +196,19 @@ function ActionsDropdown({
           <div
             ref={menuRef}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: `${coords.top}px`,
               left: `${coords.left}px`,
             }}
             className="z-50 w-48 py-1.5 bg-popover border border-border rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200"
           >
+            <Link
+              href={`/dashboard/orders/${orderId}`}
+              className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-foreground hover:bg-muted/60 transition-colors text-start"
+            >
+              <EditIcon className="w-4 h-4 text-muted-foreground" />
+              {t("manageOrder")}
+            </Link>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -198,7 +217,7 @@ function ActionsDropdown({
               }}
               className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-foreground hover:bg-muted/60 transition-colors text-start"
             >
-              <EyeIcon className="w-4 h-4 text-muted-foreground" /> View Details
+              <EyeIcon className="w-4 h-4 text-muted-foreground" /> {t("actions.viewDetails")}
             </button>
             <button
               onClick={(e) => {
@@ -208,7 +227,7 @@ function ActionsDropdown({
               }}
               className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-foreground hover:bg-muted/60 transition-colors text-start"
             >
-              <FileTextIcon className="w-4 h-4 text-muted-foreground" /> Preview Invoice
+              <FileTextIcon className="w-4 h-4 text-muted-foreground" /> {t("viewInvoice")}
             </button>
             <button
               onClick={(e) => {
@@ -217,7 +236,7 @@ function ActionsDropdown({
               }}
               className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-foreground hover:bg-muted/60 transition-colors text-start"
             >
-              <DownloadIcon className="w-4 h-4 text-muted-foreground" /> Download Invoice
+              <DownloadIcon className="w-4 h-4 text-muted-foreground" /> {t("downloadInvoice")}
             </button>
             <div className="border-t border-border/50 my-1" />
             <button
@@ -228,7 +247,7 @@ function ActionsDropdown({
               }}
               className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors text-start"
             >
-              <TrashIcon className="w-4 h-4" /> Delete
+              <TrashIcon className="w-4 h-4" /> {t("actions.delete")}
             </button>
           </div>,
           document.body,
@@ -254,6 +273,8 @@ export default function OrdersTable({
   onSort,
 }: OrdersTableProps) {
   const formatCurrency = useFormatCurrency();
+  const t = useTranslations("orders");
+  const locale = useLocale();
 
   if (isLoading) {
     return (
@@ -273,7 +294,9 @@ export default function OrdersTable({
               <TableRow key={i} className="border-b border-border/20 h-16">
                 {Array.from({ length: 8 }).map((_, j) => (
                   <TableCell key={j}>
-                    <Skeleton className={cn('h-5 rounded', j === 0 ? 'w-5' : 'w-full')} />
+                    <Skeleton
+                      className={cn("h-5 rounded", j === 0 ? "w-5" : "w-full")}
+                    />
                   </TableCell>
                 ))}
               </TableRow>
@@ -288,13 +311,26 @@ export default function OrdersTable({
     return (
       <div className="rounded-2xl border border-border/40 bg-card flex flex-col items-center justify-center py-20 px-6">
         <div className="p-4 rounded-2xl bg-muted/30 ring-1 ring-border/20 mb-4">
-          <svg className="w-10 h-10 text-muted-foreground/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          <svg
+            className="w-10 h-10 text-muted-foreground/40"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
           </svg>
         </div>
-        <p className="text-lg font-bold text-foreground mb-1">No orders found</p>
+        <p className="text-lg font-bold text-foreground mb-1">
+          {t("noOrders")}
+        </p>
         <p className="text-sm text-muted-foreground text-center max-w-xs">
-          Your shop&apos;s sales journey starts here. Adjust your filters or promote your products to get sales!
+          Your shop&apos;s sales journey starts here. Adjust your filters or
+          promote your products to get sales!
         </p>
       </div>
     );
@@ -313,36 +349,36 @@ export default function OrdersTable({
                   ref={undefined}
                 />
               </TableHead>
-              <TableHead>Order</TableHead>
-              <TableHead>Customer</TableHead>
+              <TableHead>{t("orderNumber")}</TableHead>
+              <TableHead>{t("fields.customer")}</TableHead>
               <SortableHeader
-                label="Status"
+                label={t("fields.status")}
                 field="status"
                 currentField={sortField}
                 currentDir={sortDirection}
                 onSort={onSort}
               />
-              <TableHead>Payment</TableHead>
+              <TableHead>{t("paymentStatusLabel")}</TableHead>
               {/* <TableHead>Method</TableHead> */}
-              <TableHead className="hidden xl:table-cell">Qty</TableHead>
+              <TableHead className="hidden xl:table-cell">{t("qty")}</TableHead>
               {/* <TableHead className="hidden lg:table-cell">Subtotal</TableHead> */}
-              <TableHead className="hidden xl:table-cell">Shipping</TableHead>
-              <TableHead className="hidden xl:table-cell">Discount</TableHead>
+              <TableHead className="hidden xl:table-cell">{t("shipping")}</TableHead>
+              <TableHead className="hidden xl:table-cell">{t("discount")}</TableHead>
               <SortableHeader
-                label="Total"
+                label={t("fields.total")}
                 field="grandTotal"
                 currentField={sortField}
                 currentDir={sortDirection}
                 onSort={onSort}
               />
               <SortableHeader
-                label="Date"
+                label={t("fields.date")}
                 field="createdAt"
                 currentField={sortField}
                 currentDir={sortDirection}
                 onSort={onSort}
               />
-              <TableHead className="text-end pe-4">Actions</TableHead>
+              <TableHead className="text-end pe-4">{t("actions.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -350,8 +386,8 @@ export default function OrdersTable({
               <TableRow
                 key={order._id}
                 className={cn(
-                  'group cursor-pointer hover:bg-muted/40 transition-all duration-200 border-b border-border/20 last:border-0 h-16',
-                  isSelected(order._id) && 'bg-primary/5',
+                  "group cursor-pointer hover:bg-muted/40 transition-all duration-200 border-b border-border/20 last:border-0 h-16",
+                  isSelected(order._id) && "bg-primary/5",
                 )}
                 onClick={() => onViewOrder(order)}
               >
@@ -378,20 +414,20 @@ export default function OrdersTable({
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="h-8 w-8 rounded-full shrink-0 overflow-hidden relative bg-muted/30">
                       <ImageWithFallback
-                        src={order.user?.avatar || ''}
-                        alt={order.user?.name || 'Guest'}
+                        src={order.user?.avatar || ""}
+                        alt={order.user?.name || "Guest"}
                         fill
                         sizes="32px"
-                        loading={idx < 5 ? 'eager' : 'lazy'}
+                        loading={idx < 5 ? "eager" : "lazy"}
                         className="object-cover"
                       />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-foreground truncate max-w-[140px]">
-                        {order.user?.name || 'Guest'}
+                        {order.user?.name || "Guest"}
                       </p>
                       <p className="text-xs text-muted-foreground truncate max-w-[140px]">
-                        {order.user?.email || ''}
+                        {order.user?.email || ""}
                       </p>
                     </div>
                   </div>
@@ -401,11 +437,12 @@ export default function OrdersTable({
                 <TableCell>
                   <Badge
                     className={cn(
-                      'rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none',
-                      ORDER_STATUS_STYLES[order.status] || 'bg-muted text-muted-foreground',
+                      "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
+                      ORDER_STATUS_STYLES[order.status] ||
+                        "bg-muted text-muted-foreground",
                     )}
                   >
-                    {order.status?.replace('_', ' ') || 'Unknown'}
+                    {order.status ? t(`status.${order.status}`) : "—"}
                   </Badge>
                 </TableCell>
 
@@ -413,12 +450,12 @@ export default function OrdersTable({
                 <TableCell>
                   <Badge
                     className={cn(
-                      'rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none',
-                      PAYMENT_STATUS_STYLES[order.paymentStatus || ''] ||
-                        'bg-muted text-muted-foreground',
+                      "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
+                      PAYMENT_STATUS_STYLES[order.paymentStatus || ""] ||
+                        "bg-muted text-muted-foreground",
                     )}
                   >
-                    {order.paymentStatus || '—'}
+                    {order.paymentStatus ? t(`paymentStatus.${order.paymentStatus.toUpperCase()}`, { defaultValue: order.paymentStatus }) : "—"}
                   </Badge>
                 </TableCell>
 
@@ -472,7 +509,7 @@ export default function OrdersTable({
                 <TableCell>
                   <Tooltip content={formatDate(order.createdAt)}>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatRelativeTime(order.createdAt, 'en-US')}
+                      {formatRelativeTime(order.createdAt, locale === "ar" ? "ar" : "en-US")}
                     </span>
                   </Tooltip>
                 </TableCell>
@@ -487,6 +524,7 @@ export default function OrdersTable({
                       onView={() => onViewOrder(order)}
                       onDelete={() => onDeleteOrder(order._id)}
                       onPreviewInvoice={() => onPreviewInvoice(order)}
+                      orderId={order._id}
                     />
                   </div>
                 </TableCell>

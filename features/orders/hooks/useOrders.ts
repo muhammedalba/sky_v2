@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ApiResponse, Order } from '@/types';
-import { ordersApi } from '@/features/orders/api';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ApiResponse, Order } from "@/types";
+import { ordersApi } from "@/features/orders/api";
 
 interface OrderQueryParams {
   page?: number;
@@ -19,9 +19,11 @@ interface OrderQueryParams {
 
 export function useOrders(params?: OrderQueryParams) {
   return useQuery({
-    queryKey: ['orders', params],
+    queryKey: ["orders", params],
     queryFn: async () => {
-      const response = (await ordersApi.getAll(params as Record<string, unknown>)) as unknown as ApiResponse<Order[]>;
+      const response = (await ordersApi.getAll(
+        params as Record<string, unknown>,
+      )) as unknown as ApiResponse<Order[]>;
       return response;
     },
     throwOnError: true,
@@ -30,9 +32,11 @@ export function useOrders(params?: OrderQueryParams) {
 
 export function useOrder(id: string) {
   return useQuery({
-    queryKey: ['orders', id],
+    queryKey: ["orders", id],
     queryFn: async () => {
-      const response = (await ordersApi.getOne(id)) as unknown as ApiResponse<Order>;
+      const response = (await ordersApi.getOne(
+        id,
+      )) as unknown as ApiResponse<Order>;
       return response.data;
     },
     enabled: !!id,
@@ -44,14 +48,14 @@ export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const response = await ordersApi.updateStatus(id, { status });
+    mutationFn: async ({ id, ...data }: { id: string; [key: string]: unknown }) => {
+      const response = await ordersApi.updateStatus(id, data);
       return response.data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      queryClient.invalidateQueries({ queryKey: ['orders', variables.id] });
-      queryClient.invalidateQueries({ queryKey: ['order-stats'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
     },
   });
 }
@@ -64,8 +68,8 @@ export function useDeleteOrder() {
       await ordersApi.delete(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      queryClient.invalidateQueries({ queryKey: ['order-stats'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
     },
   });
 }

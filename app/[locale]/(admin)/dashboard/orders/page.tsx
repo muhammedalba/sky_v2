@@ -1,23 +1,30 @@
-'use client';
+"use client";
 
-import { use, useMemo, useState, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useOrders, useUpdateOrderStatus, useDeleteOrder } from '@/features/orders/hooks/useOrders';
-import { useOrderStats } from '@/features/orders/hooks/useOrderStats';
-import { useOrderFilters } from '@/features/orders/hooks/useOrderFilters';
-import { useOrderSelection } from '@/features/orders/hooks/useOrderSelection';
-import OrderStatsCards from '@/features/orders/components/OrderStatsCards';
-import OrderChartsSection from '@/features/orders/components/OrderChartsSection';
-import OrderTableHeader from '@/features/orders/components/OrderTableHeader';
-import OrderFiltersComponent from '@/features/orders/components/OrderFilters';
-import OrdersTable from '@/features/orders/components/OrdersTable';
-import OrderMobileCard from '@/features/orders/components/OrderMobileCard';
-import OrderDetailDrawer from '@/features/orders/components/OrderDetailDrawer';
-import InvoicePreviewDialog from '@/features/orders/components/InvoicePreviewDialog';
-import OrderBulkActions from '@/features/orders/components/OrderBulkActions';
-import Pagination from '@/shared/ui/Pagination';
-import { Order } from '@/types';
-import { useQueryState } from '@/shared/hooks/useQueryState';
+import { use, useMemo, useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useOrders,
+  useUpdateOrderStatus,
+  useDeleteOrder,
+} from "@/features/orders/hooks/useOrders";
+import { useOrderStats } from "@/features/orders/hooks/useOrderStats";
+import { useOrderFilters } from "@/features/orders/hooks/useOrderFilters";
+import { useOrderSelection } from "@/features/orders/hooks/useOrderSelection";
+import OrderStatsCards from "@/features/orders/components/OrderStatsCards";
+import OrderChartsSection from "@/features/orders/components/OrderChartsSection";
+import OrderFiltersComponent from "@/features/orders/components/OrderFilters";
+import OrdersTable from "@/features/orders/components/OrdersTable";
+import OrderMobileCard from "@/features/orders/components/OrderMobileCard";
+import OrderDetailDrawer from "@/features/orders/components/OrderDetailDrawer";
+import InvoicePreviewDialog from "@/features/orders/components/InvoicePreviewDialog";
+import OrderBulkActions from "@/features/orders/components/OrderBulkActions";
+import Pagination from "@/shared/ui/Pagination";
+import { Order } from "@/types";
+import { useQueryState } from "@/shared/hooks/useQueryState";
+import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
+import { Permissions } from "@/features/roles/types";
+import {  RefreshCwIcon } from "@/shared/ui/Icons";
+import { useTranslations } from "next-intl";
 
 export default function OrdersPage({
   params,
@@ -25,10 +32,11 @@ export default function OrdersPage({
   params: Promise<{ locale: string }>;
 }) {
   use(params);
+  const t = useTranslations("orders");
   const { getQueryParam, setQueryParam } = useQueryState();
   const queryClient = useQueryClient();
 
-  const page = Number(getQueryParam('page', '1'));
+  const page = Number(getQueryParam("page", "1"));
   const limit = 10;
 
   // Hooks for filters and selection
@@ -61,8 +69,12 @@ export default function OrdersPage({
   );
 
   // Fetch orders and stats
-  const { data: ordersData, isLoading: isOrdersLoading, isRefetching } = useOrders(queryParams);
-  console.log(ordersData)
+  const {
+    data: ordersData,
+    isLoading: isOrdersLoading,
+    isRefetching,
+  } = useOrders(queryParams);
+  console.log(ordersData);
   const { data: statsData, isLoading: isStatsLoading } = useOrderStats({
     startDate: filters.dateFrom || undefined,
     endDate: filters.dateTo || undefined,
@@ -82,9 +94,11 @@ export default function OrdersPage({
   } = useOrderSelection(orderIds);
 
   // Drawer & Dialog State
-  const [selectedOrderForDrawer, setSelectedOrderForDrawer] = useState<Order | null>(null);
+  const [selectedOrderForDrawer, setSelectedOrderForDrawer] =
+    useState<Order | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState<Order | null>(null);
+  const [selectedOrderForInvoice, setSelectedOrderForInvoice] =
+    useState<Order | null>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
 
   // Actions
@@ -103,7 +117,7 @@ export default function OrdersPage({
 
   const handleSingleDelete = useCallback(
     async (id: string) => {
-      if (confirm('Are you sure you want to delete this order?')) {
+      if (confirm("Are you sure you want to delete this order?")) {
         await deleteOrderMutation.mutateAsync(id);
       }
     },
@@ -111,8 +125,8 @@ export default function OrdersPage({
   );
 
   const handleRefresh = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['orders'] });
-    queryClient.invalidateQueries({ queryKey: ['order-stats'] });
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+    queryClient.invalidateQueries({ queryKey: ["order-stats"] });
   }, [queryClient]);
 
   // Bulk Actions
@@ -139,50 +153,53 @@ export default function OrdersPage({
   const handleExportCsv = useCallback(
     (ordersToExport: Order[], filename: string) => {
       const headers = [
-        'Order ID',
-        'Customer Name',
-        'Customer Email',
-        'Status',
-        'Payment Status',
-        'Payment Method',
-        'Quantity',
-        'Total',
-        'Date',
+        "Order ID",
+        "Customer Name",
+        "Customer Email",
+        "Status",
+        "Payment Status",
+        "Payment Method",
+        "Quantity",
+        "Total",
+        "Date",
       ];
       const rows = ordersToExport.map((o) => [
         o._id,
-        o.user?.name || 'Guest',
-        o.user?.email || '',
+        o.user?.name || "Guest",
+        o.user?.email || "",
         o.status,
-        o.paymentStatus || '',
-        o.paymentMethodCode || o.paymentMethod || '',
+        o.paymentStatus || "",
+        o.paymentMethodCode || o.paymentMethod || "",
         o.totalQuantity || o.items?.length || 0,
         o.grandTotal || o.totalPrice || 0,
         o.createdAt,
       ]);
 
       const csvContent =
-        'data:text/csv;charset=utf-8,\uFEFF' +
+        "data:text/csv;charset=utf-8,\uFEFF" +
         [
-          headers.join(','),
+          headers.join(","),
           ...rows.map((e) =>
-            e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(','),
+            e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(","),
           ),
-        ].join('\n');
+        ].join("\n");
 
       const encodedUri = encodeURI(csvContent);
-      const link = document.createElement('a');
-      link.setAttribute('href', encodedUri);
-      link.setAttribute('download', filename);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     },
     [],
   );
-
+// we use letter to filter 
   const handleExportAll = useCallback(() => {
-    handleExportCsv(orders, `orders-export-${new Date().toISOString().slice(0, 10)}.csv`);
+    handleExportCsv(
+      orders,
+      `orders-export-${new Date().toISOString().slice(0, 10)}.csv`,
+    );
   }, [orders, handleExportCsv]);
 
   const handleBulkExport = useCallback(() => {
@@ -195,7 +212,7 @@ export default function OrdersPage({
 
   const handlePageChange = useCallback(
     (val: number) => {
-      setQueryParam('page', String(val));
+      setQueryParam("page", String(val));
     },
     [setQueryParam],
   );
@@ -203,11 +220,20 @@ export default function OrdersPage({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-16">
       {/* 1. Header component */}
-      <OrderTableHeader
-        totalCount={Number(ordersData?.meta?.pagination?.totalResults || 0)}
-        onRefresh={handleRefresh}
-        onExportAll={handleExportAll}
-        isRefreshing={isRefetching}
+
+      <EntityPageHeader
+        title={t("title")}
+        subtitle={t("subtitle")}
+        totalResults={t("totalOrders", {
+          count: ordersData?.meta?.pagination?.totalResults || 0,
+        })}
+        action={{
+          label: t("refresh"), 
+          icon: <RefreshCwIcon className="w-5 h-5" />,
+          onClick: handleRefresh,
+          disabled: isOrdersLoading || isRefetching,
+          permission: Permissions.UPDATE_ORDER_STATUS,
+        }}
       />
 
       {/* 2. Stat Cards Grid */}
@@ -246,7 +272,9 @@ export default function OrdersPage({
           ))
         ) : orders.length === 0 ? (
           <div className="rounded-2xl border border-border/40 bg-card flex flex-col items-center justify-center py-16 px-6">
-            <p className="text-base font-bold text-foreground">No orders found</p>
+            <p className="text-base font-bold text-foreground">
+              No orders found
+            </p>
           </div>
         ) : (
           orders.map((order) => (

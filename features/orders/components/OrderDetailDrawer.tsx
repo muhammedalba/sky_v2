@@ -1,14 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import Link from "next/link";
 import { Sheet, SheetContent } from "@/shared/ui/sheet/Sheet";
-import { Badge } from "@/shared/ui/Badge";
 import { Card, CardContent } from "@/shared/ui/Card";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { Order } from "@/types";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { cn, formatDate, formatRelativeTime } from "@/lib/utils";
+import { cn, formatDate, formatRelativeTime, getPaymentStatusColor, getStatusColor } from "@/lib/utils";
 import {
   MapPinIcon,
   CreditCardIcon,
@@ -25,26 +25,6 @@ interface OrderDetailDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const ORDER_STATUS_STYLES: Record<string, string> = {
-  pending_payment: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  pending: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
-  processing: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  shipped: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
-  delivered: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
-  completed: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  cancelled: "bg-red-500/10 text-red-600 dark:text-red-400",
-  expired: "bg-gray-500/10 text-gray-600 dark:text-gray-400",
-};
-
-const PAYMENT_STATUS_STYLES: Record<string, string> = {
-  INITIATED: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-  PENDING: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  PAID: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  FAILED: "bg-red-500/10 text-red-600 dark:text-red-400",
-  CANCELLED: "bg-red-500/10 text-red-600 dark:text-red-400",
-  REFUNDED: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
-  EXPIRED: "bg-gray-500/10 text-gray-600 dark:text-gray-400",
-};
 
 export default function OrderDetailDrawer({
   order,
@@ -52,8 +32,9 @@ export default function OrderDetailDrawer({
   onOpenChange,
 }: OrderDetailDrawerProps) {
   const formatCurrency = useFormatCurrency();
-  const t = useTranslations('orders');
+  const t = useTranslations("orders");
   const getTrans = useTrans();
+  const locale = useLocale();
 
   const formattedAddress = useMemo(() => {
     if (!order?.shippingAddress) return "";
@@ -95,9 +76,12 @@ export default function OrderDetailDrawer({
         time:
           order.processingAt ||
           (order.paymentStatus === "PAID" ? order.updatedAt : undefined),
-        isCompleted: ["processing", "shipped", "delivered", "completed"].includes(
-          order.status,
-        ),
+        isCompleted: [
+          "processing",
+          "shipped",
+          "delivered",
+          "completed",
+        ].includes(order.status),
       },
       {
         key: "shipped",
@@ -148,23 +132,30 @@ export default function OrderDetailDrawer({
       <SheetContent className="sm:max-w-2xl w-full h-full flex flex-col p-0 border-l border-border/50 bg-background/95 backdrop-blur-md">
         {/* Header */}
         <div className="p-6 border-b border-border/40 bg-muted/20 flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="font-mono font-black text-lg text-foreground bg-muted px-2.5 py-1 rounded-lg">
-              #{order._id?.toUpperCase()}
-            </span>
-            <Badge
-              className={cn(
-                "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
-                ORDER_STATUS_STYLES[order.status] ||
-                  "bg-muted text-muted-foreground",
-              )}
-            >
-              {order.status?.replace("_", " ") || "Unknown"}
-            </Badge>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="font-mono font-black text-lg text-foreground bg-muted px-2.5 py-1 rounded-lg">
+                #{order._id?.toUpperCase().slice(0, 8)}
+              </span>
+              <span
+                className={cn(
+                  "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
+                  getStatusColor(order.status)
+                )}
+              >
+                {order.status ? t(`status.${order.status}`) : "—"}
+              </span>
+              <Link
+                href={`/dashboard/orders/${order._id}`}
+                className="text-xs font-bold text-primary hover:text-primary/80 transition-colors flex items-center gap-1 shrink-0 bg-primary/10 px-2.5 py-1.5 rounded-xl border border-primary/20 hover:bg-primary/20"
+                onClick={() => onOpenChange(false)}
+              >
+                {t("manageOrder")} {locale === "ar" ? "←" : "→"}
+              </Link>
+            </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Placed on {formatDate(order.createdAt)} (
-            {formatRelativeTime(order.createdAt, "en-US")})
+            {t("placedOn", { date: formatDate(order.createdAt) })} ({formatRelativeTime(order.createdAt, locale === "ar" ? "ar" : "en-US")})
           </p>
         </div>
 
@@ -190,7 +181,7 @@ export default function OrderDetailDrawer({
                 </div>
                 <div className="min-w-0">
                   <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                    Customer Info
+                    {t("customerInfo")}
                   </h4>
                   <p className="text-xs font-medium text-foreground mt-1 truncate">
                     {order.user?.name || "Guest"}
@@ -215,7 +206,7 @@ export default function OrderDetailDrawer({
                 </div>
                 <div className="min-w-0">
                   <h4 className="text-sm font-semibold text-foreground">
-                    Shipping Address
+                    {t("shippingAddress")}
                   </h4>
                   {formattedAddress ? (
                     <p className="text-xs font-medium text-muted-foreground mt-1 leading-relaxed">
@@ -223,7 +214,7 @@ export default function OrderDetailDrawer({
                     </p>
                   ) : (
                     <p className="text-xs text-muted-foreground mt-1 italic">
-                      No address provided
+                      {t("noAddress")}
                     </p>
                   )}
                 </div>
@@ -241,21 +232,21 @@ export default function OrderDetailDrawer({
                 </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="text-sm font-semibold text-foreground">
-                    Payment Method
+                    {t("paymentMethod")}
                   </h4>
                   <p className="text-xs font-medium text-foreground mt-1 capitalize">
                     {order.paymentMethodCode || order.paymentMethod || "—"}
                   </p>
                   <div className="mt-1">
-                    <Badge
+                    <span
+                    
                       className={cn(
                         "rounded-full px-2 py-0.5 font-semibold text-[9px] uppercase tracking-wider border-none",
-                        PAYMENT_STATUS_STYLES[order.paymentStatus || ""] ||
-                          "bg-muted text-muted-foreground",
+                        getPaymentStatusColor(order.paymentStatus || "") 
                       )}
                     >
-                      {order.paymentStatus || "—"}
-                    </Badge>
+                      {order.paymentStatus ? t(`paymentStatus.${order.paymentStatus.toUpperCase()}`, { defaultValue: order.paymentStatus }) : "—"}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -269,7 +260,7 @@ export default function OrderDetailDrawer({
                 </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="text-sm font-semibold text-foreground">
-                    Shipping Provider
+                    {t("shippingProvider")}
                   </h4>
                   <p className="text-xs font-medium text-foreground mt-1">
                     {typeof order.shippingProviderId === "object" &&
@@ -283,8 +274,8 @@ export default function OrderDetailDrawer({
                     order.deliveryDate) && (
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {order.shippingRateId?.estimatedDays
-                        ? `Delivery: ${order.shippingRateId.estimatedDays}`
-                        : `Est. Delivery: ${order.deliveryDate}`}
+                        ? t("delivery", { days: order.shippingRateId.estimatedDays })
+                        : t("estimatedDelivery", { date: order.deliveryDate || "" })}
                     </p>
                   )}
                 </div>
@@ -300,7 +291,7 @@ export default function OrderDetailDrawer({
                   <div className="flex items-center gap-2">
                     <TagIcon className="w-4 h-4 text-emerald-500 shrink-0" />
                     <span className="text-xs text-muted-foreground">
-                      Coupon:
+                      {t("coupon")}:
                     </span>
                     <span className="text-xs font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded">
                       {order.couponCode}
@@ -312,7 +303,7 @@ export default function OrderDetailDrawer({
                     <StickyNoteIcon className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                     <div className="min-w-0">
                       <span className="text-xs text-muted-foreground font-semibold">
-                        Notes:
+                        {t("notes")}:
                       </span>
                       <p className="text-xs text-foreground/80 mt-0.5 whitespace-pre-wrap leading-relaxed">
                         {order.notes}
@@ -326,16 +317,16 @@ export default function OrderDetailDrawer({
 
           {/* Products List Compact Table */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-foreground">Order Items</h4>
-            <div className="rounded-xl border border-border/40 overflow-hidden bg-card">
+            <h4 className="text-sm font-bold text-foreground">{t("orderItems")}</h4>
+            <div className="rounded-xl border border-border/40 overflow-x-auto bg-card">
               <table className="w-full text-start border-collapse text-xs">
                 <thead>
                   <tr className="bg-muted/40 border-b border-border/40 text-muted-foreground font-semibold">
-                    <th className="p-3">Product</th>
-                    <th className="p-3">SKU</th>
-                    <th className="p-3 text-center">Qty</th>
-                    <th className="p-3 text-end">Unit Price</th>
-                    <th className="p-3 text-end">Total</th>
+                    <th className="p-3">{t("product")}</th>
+                    <th className="p-3">{t("sku")}</th>
+                    <th className="p-3 text-center">{t("qty")}</th>
+                    <th className="p-3 text-end">{t("unitPrice")}</th>
+                    <th className="p-3 text-end">{t("fields.total")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/20">
@@ -369,8 +360,8 @@ export default function OrderDetailDrawer({
                                   ([key, val]) => {
                                     const valStr =
                                       typeof val === "object" && val
-                                        ? (val as Record<string, unknown>)
-                                            .value ?? JSON.stringify(val)
+                                        ? ((val as Record<string, unknown>)
+                                            .value ?? JSON.stringify(val))
                                         : val;
                                     return (
                                       <span
@@ -407,18 +398,18 @@ export default function OrderDetailDrawer({
 
           {/* Order Summary breakdown */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-foreground">Order Summary</h4>
+            <h4 className="text-sm font-bold text-foreground">{t("orderSummary")}</h4>
             <Card className="border-border/30 bg-muted/5">
               <CardContent className="p-4 space-y-2 text-xs">
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Subtotal</span>
+                  <span>{t("subtotal")}</span>
                   <span className="tabular-nums font-semibold">
                     {formatCurrency(order.totalPrice || 0)}
                   </span>
                 </div>
                 {order.shippingAmount !== undefined && (
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Shipping Amount</span>
+                    <span>{t("shippingAmount")}</span>
                     <span className="tabular-nums font-semibold">
                       {formatCurrency(order.shippingAmount)}
                     </span>
@@ -427,7 +418,7 @@ export default function OrderDetailDrawer({
                 {order.discountAmount !== undefined &&
                   order.discountAmount > 0 && (
                     <div className="flex justify-between text-red-500 dark:text-red-400">
-                      <span>Discount</span>
+                      <span>{t("discount")}</span>
                       <span className="tabular-nums font-bold">
                         -{formatCurrency(order.discountAmount)}
                       </span>
@@ -435,7 +426,7 @@ export default function OrderDetailDrawer({
                   )}
                 {order.taxAmount !== undefined && (
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Tax Amount</span>
+                    <span>{t("taxAmount")}</span>
                     <span className="tabular-nums font-semibold">
                       {formatCurrency(order.taxAmount)}
                     </span>
@@ -443,14 +434,14 @@ export default function OrderDetailDrawer({
                 )}
                 {order.paymentFees !== undefined && (
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Payment Fees</span>
+                    <span>{t("paymentFees")}</span>
                     <span className="tabular-nums font-semibold">
                       {formatCurrency(order.paymentFees)}
                     </span>
                   </div>
                 )}
                 <div className="border-t border-border/40 my-2 pt-2 flex justify-between text-sm font-black text-foreground">
-                  <span>Grand Total</span>
+                  <span>{t("grandTotal")}</span>
                   <span className="tabular-nums text-primary text-base">
                     {formatCurrency(order.grandTotal || order.totalPrice || 0)}
                   </span>
@@ -461,12 +452,12 @@ export default function OrderDetailDrawer({
 
           {/* Timeline lifecycle */}
           <div className="space-y-4 pt-2">
-            <h4 className="text-sm font-bold text-foreground">Order Journey</h4>
+            <h4 className="text-sm font-bold text-foreground">{t("orderJourney")}</h4>
             <div className="relative ps-6 border-s border-border/40 ms-3 space-y-6 py-2">
               {timelineSteps.map((step, idx) => {
-                if (step.key === "cancelled" && !order.cancelledAt)
-                  return null;
-                const isCancelledStep = step.key === "cancelled" || step.key === "expired";
+                if (step.key === "cancelled" && !order.cancelledAt) return null;
+                const isCancelledStep =
+                  step.key === "cancelled" || step.key === "expired";
                 return (
                   <div key={idx} className="relative group">
                     {/* Circle node */}
@@ -502,7 +493,7 @@ export default function OrderDetailDrawer({
                       </div>
                       {step.isCompleted && step.time && (
                         <p className="text-[10px] text-muted-foreground/80 mt-0.5">
-                          Completed {formatRelativeTime(step.time, "en-US")}
+                          {locale === "ar" ? "اكتمل" : "Completed"} {formatRelativeTime(step.time, locale === "ar" ? "ar" : "en-US")}
                         </p>
                       )}
                     </div>
