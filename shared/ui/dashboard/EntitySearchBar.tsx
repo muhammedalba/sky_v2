@@ -64,7 +64,7 @@ export default function EntitySearchBar({
   return (
     <div
       className={cn(
-        "flex items-center gap-4 bg-background/50 backdrop-blur-sm p-1 rounded-2xl border border-border/40 shadow-sm w-full max-w-2xl",
+        "flex items-center gap-2 bg-accent/40 backdrop-blur-sm p-1 rounded-2xl border border-border  w-full max-w-2xl",
         className,
       )}
     >
@@ -74,7 +74,7 @@ export default function EntitySearchBar({
           placeholder={placeholder}
           value={searchTerm}
           disabled={disabled}
-          className="ps-11 h-12 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
+          className="ps-11 h-8 w-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-sm placeholder:text-muted-foreground/60"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>

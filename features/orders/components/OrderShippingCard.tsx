@@ -30,8 +30,8 @@ export default function OrderShippingCard({ order, onEdit }: OrderShippingCardPr
 
   return (
     <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
-      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4">
-        <CardTitle className="text-sm font-bold text-foreground">Shipping Information</CardTitle>
+      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4 bg-muted">
+        <CardTitle className="text-sm font-bold title-gradient">Shipping Information</CardTitle>
         <Button
           variant="outline"
           size="sm"

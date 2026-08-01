@@ -3,6 +3,7 @@
   "subtitle":"طلبات العملاء",
   "orderList": "قائمة الطلبات",
   "orderDetails": "تفاصيل الطلب",
+  "order": "الطلب #{id}",
   "orderNumber": "رقم الطلب",
   "totalOrders": "إجمالي الطلبات: {count}",
   "placedOn": "تم تقديم الطلب في {date}",
@@ -15,6 +16,7 @@
   "delivery": "التسليم خلال: {days}",
   "orderItems": "عناصر الطلب",
   "noOrders": "لم يتم العثور على أي طلبات",
+  "noOrdersDesc": "رحلة مبيعات متجرك تبدأ من هنا. اضبط فلاترك أو روّج لمنتجاتك للحصول على مبيعات!",
   "refresh": "تحديث",
   "moreActions": "المزيد من الإجراءات",
   "editOrder": "تعديل الطلب",
@@ -78,7 +80,8 @@
     "actions": "الإجراءات",
     "delete": "حذف",
     "updateStatus": "تحديث الحالة",
-    "viewDetails": "عرض التفاصيل"
+    "viewDetails": "عرض التفاصيل",
+    "viewProducts": "عرض المنتجات"
   },
   "paymentStatus": {
     "INITIATED": "مبتدأ",
@@ -92,5 +95,33 @@
   },
   "messages": {
     "statusUpdated": "تم تحديث حالة الطلب بنجاح"
+  },
+  "filters": {
+    "search": "ابحث عن طلبات، عملاء، بريد إلكتروني...",
+    "toggle": "الفلاتر",
+    "reset": "إعادة تعيين",
+    "orderStatus": "حالة الطلب",
+    "paymentStatus": "حالة الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "dateFrom": "من",
+    "dateTo": "إلى"
+  },
+  "paymentMethods": {
+    "moyasar": "ميسّر",
+    "stripe": "Stripe",
+    "paypal": "PayPal",
+    "cod": "الدفع عند الاستلام",
+    "banktransfer": "تحويل بنكي"
+  },
+  "bulk": {
+    "selected": "محدد",
+    "updateStatus": "تحديث الحالة",
+    "export": "تصدير",
+    "delete": "حذف",
+    "deselectAll": "إلغاء تحديد الكل",
+    "deleteTitle": "حذف الطلبات المحددة",
+    "deleteMessage": "هل أنت متأكد من أنك تريد حذف هذه الطلبات الـ {count} نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteConfirm": "حذف الطلبات",
+    "deleteCancel": "الاحتفاظ بالطلبات"
   }
 }

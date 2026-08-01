@@ -161,11 +161,12 @@ export function formatRelativeTime(
  *
  * @param status - The status keyword (e.g. "pending", "delivered", "cancelled").
  * @returns Class string combining background and text color utility classes.
+ * 
  */
 export function getStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
     pending_payment: "bg-amber-500/10 text-amber-600",
-    pending: "bg-orange-500/10 text-orange-600",
+    pending: "bg-orange-500/10 text-orange-400",
     processing: "bg-blue-500/10 text-blue-600",
     shipped: "bg-indigo-500/10 text-indigo-600",
     delivered: "bg-teal-500/10 text-teal-600",

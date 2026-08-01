@@ -1,19 +1,12 @@
-'use client';
+"use client";
 
-import { Order, OrderItem } from '@/features/orders/types';
-import { Card, CardHeader, CardTitle } from '@/shared/ui/Card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/shared/ui/Table';
-import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { useTrans } from '@/shared/hooks/useTrans';
-import { ProductsIcon } from '@/shared/ui/Icons';
-import Link from 'next/link';
+import { Order } from "@/features/orders/types";
+
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import { useTrans } from "@/shared/hooks/useTrans";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 
 interface OrderProductsTableProps {
   order: Order;
@@ -21,105 +14,106 @@ interface OrderProductsTableProps {
 
 export default function OrderProductsTable({ order }: OrderProductsTableProps) {
   const getTrans = useTrans();
-
+ const t = useTranslations("orders");
   const totalItemsCount = order.items?.length || 0;
-
+const formatCurrency = useFormatCurrency();
   return (
-    <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
-      <CardHeader className="pb-4 border-b border-border/20">
-        <CardTitle className="text-sm font-bold text-foreground">
-          Products ({totalItemsCount} items)
-        </CardTitle>
-      </CardHeader>
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/10 border-b border-border/20">
-              <TableHead className="font-bold text-xs text-muted-foreground py-3">Product</TableHead>
-              <TableHead className="font-bold text-xs text-muted-foreground py-3">SKU</TableHead>
-              <TableHead className="font-bold text-xs text-muted-foreground text-right py-3">Price</TableHead>
-              <TableHead className="font-bold text-xs text-muted-foreground text-center py-3">Qty</TableHead>
-              <TableHead className="font-bold text-xs text-muted-foreground text-right py-3">Discount</TableHead>
-              <TableHead className="font-bold text-xs text-muted-foreground text-right py-3">Tax</TableHead>
-              <TableHead className="font-bold text-xs text-muted-foreground text-right py-3">Total</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {order.items?.map((item: OrderItem, i: number) => {
-              const productTitle = getTrans(item.productId?.title) || 'Unknown Product';
-              const productSpecs = item.variantId?.attributes
-                ? Object.entries(item.variantId.attributes)
-                    .map(([k, v]) => `${k.toUpperCase()}: ${typeof v === 'object' && v !== null ? (v as { name?: string }).name || JSON.stringify(v) : v}`)
-                    .join(', ')
-                : '';
-
-              const unitPrice = item.price || 0;
-              const discount = (item as unknown as Record<string, number>).discountAmount || 0;
-              const tax = (item as unknown as Record<string, number>).taxAmount || 0;
-              const totalPrice = item.totalPrice || (unitPrice * item.quantity);
-
-              return (
-                <TableRow key={i} className="border-b border-border/20 last:border-0 hover:bg-muted/5 transition-colors">
-                  <TableCell className="py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-secondary/35 overflow-hidden shrink-0 relative border border-border/10 flex items-center justify-center">
-                        {item.productId?.imageCover ? (
+    <div className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
+      <div className="p-4 bg-muted">
+        <h3 className="text-md font-bold title-gradient ">
+            {t("orderItems")} ({totalItemsCount})
+        </h3>
+      </div >
+      <div className="overflow-x-auto ">
+        {/* Products List Compact Table */}
+        <div className="space-y-2">
+          <div className="rounded-xl overflow-x-auto bg-card">
+            <table className="w-full text-start border-collapse text-xs">
+              <thead>
+                <tr className="bg-muted/40 border-b border-border/40 text-muted-foreground font-semibold  ">
+                  <th className="p-3 text-start ">{t("product")}</th>
+                  <th className="p-3 text-start ">{t("sku")}</th>
+                  <th className="p-3 text-start ">{t("qty")}</th>
+                  <th className="p-3 text-start ">{t("unitPrice")}</th>
+                  <th className="p-3 text-start ">{t("fields.total")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/20">
+                {order.items?.map((item, idx) => (
+                  <tr key={idx} className="hover:bg-muted/10">
+                    <td className="p-3 flex items-center gap-2 min-w-0">
+                      <Link href={`/dashboard/products/${item.productId?.slug}/edit`} className="w-8 h-8 rounded-lg relative overflow-hidden shrink-0 bg-muted/40">
+                        {(item.productId?.imageCover ||
+                          item.productId?.images?.[0]) && (
                           <ImageWithFallback
-                            src={item.productId.imageCover}
-                            alt={productTitle}
+                            src={
+                              item.productId.imageCover ||
+                              item.productId.images?.[0] ||
+                              ""
+                            }
+                            alt={getTrans(item.productId.title)}
                             fill
-                            sizes="48px"
+                            sizes="32px"
                             className="object-cover"
                           />
-                        ) : (
-                          <ProductsIcon className="w-5 h-5 text-muted-foreground" />
                         )}
+                      </Link>
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-semibold text-foreground truncate max-w-[150px]">
+                          {getTrans(item.productId?.title)}
+                        </span>
+                        {typeof item.variantId === "object" &&
+                          item.variantId?.attributes && (
+                            <div className="flex flex-wrap gap-1 mt-1 max-w-[200px]">
+                              {Object.entries(item.variantId.attributes).map(
+                                ([key, val]) => {
+                                  const valStr =
+                                    typeof val === "object" && val
+                                      ? ((val as Record<string, unknown>)
+                                          .value ?? JSON.stringify(val))
+                                      : val;
+                                  return (
+                                    <span
+                                      key={key}
+                                      className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap"
+                                    >
+                                      {key}: {String(valStr)}
+                                    </span>
+                                  );
+                                },
+                              )}
+                            </div>
+                          )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-xs text-foreground truncate max-w-[200px]">
-                          {productTitle}
-                        </p>
-                        {productSpecs && (
-                          <p className="text-[10px] text-muted-foreground font-semibold truncate max-w-[200px] mt-0.5">
-                            {productSpecs}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono text-[10px] font-bold text-muted-foreground py-4">
-                    {item.variantId?.sku || 'N/A'}
-                  </TableCell>
-                  <TableCell className="text-right text-xs font-bold text-foreground py-4 tabular-nums">
-                    {unitPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[9px] text-muted-foreground">{order.currency || 'SAR'}</span>
-                  </TableCell>
-                  <TableCell className="text-center text-xs font-bold text-foreground py-4 tabular-nums">
-                    {item.quantity || 1}
-                  </TableCell>
-                  <TableCell className="text-right text-xs font-bold text-red-500 py-4 tabular-nums">
-                    {discount > 0 ? `-${discount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '0.00'} <span className="text-[9px] text-muted-foreground">{order.currency || 'SAR'}</span>
-                  </TableCell>
-                  <TableCell className="text-right text-xs font-bold text-foreground py-4 tabular-nums">
-                    {tax.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[9px] text-muted-foreground">{order.currency || 'SAR'}</span>
-                  </TableCell>
-                  <TableCell className="text-right text-xs font-black text-foreground py-4 tabular-nums">
-                    {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[9px] text-muted-foreground">{order.currency || 'SAR'}</span>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                    </td>
+                    <td className="p-3 text-muted-foreground font-mono">
+                      {item.sku || item.variantId?.sku || "—"}
+                    </td>
+                    <td className="p-3 text-center font-medium">
+                      {item.quantity}
+                    </td>
+                    <td className="p-3 text-end text-muted-foreground tabular-nums">
+                      {formatCurrency(item.price)}
+                    </td>
+                    <td className="p-3 text-end font-bold text-foreground tabular-nums">
+                      {formatCurrency(item.totalPrice)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      <div className="py-4 border-t border-border/20 text-center bg-muted/5">
+      <div className="py-4 border-t border-border/40 text-center bg-muted">
         <Link
           href="/dashboard/products"
           className="text-xs font-bold text-primary hover:underline hover:text-primary/90 transition-colors"
         >
-          View all products
+         {t("actions.viewProducts")}
         </Link>
       </div>
-    </Card>
+    </div>
   );
 }

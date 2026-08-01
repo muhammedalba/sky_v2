@@ -75,7 +75,7 @@ export default function OrderDetailDrawer({
         key: "processing",
         time:
           order.processingAt ||
-          (order.paymentStatus === "PAID" ? order.updatedAt : undefined),
+          (order.paymentStatus?.toLocaleUpperCase() === "PAID" ? order.updatedAt : undefined),
         isCompleted: [
           "processing",
           "shipped",
@@ -155,7 +155,7 @@ export default function OrderDetailDrawer({
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            {t("placedOn", { date: formatDate(order.createdAt) })} ({formatRelativeTime(order.createdAt, locale === "ar" ? "ar" : "en-US")})
+            {t("placedOn", { date: formatDate(order.createdAt) })} ({formatRelativeTime(order.createdAt, locale === "ar" ? "ar-SA" : "en-US")})
           </p>
         </div>
 
@@ -493,7 +493,7 @@ export default function OrderDetailDrawer({
                       </div>
                       {step.isCompleted && step.time && (
                         <p className="text-[10px] text-muted-foreground/80 mt-0.5">
-                          {locale === "ar" ? "اكتمل" : "Completed"} {formatRelativeTime(step.time, locale === "ar" ? "ar" : "en-US")}
+                          {t('status.completed')} {formatRelativeTime(step.time, locale === "ar" ? "ar-SA" : "en-US")}
                         </p>
                       )}
                     </div>

@@ -3,6 +3,7 @@
   "subtitle": "customer orders",
   "orderList": "Order List",
   "orderDetails": "Order Details",
+  "order": "Order #{id}",
   "orderNumber": "Order Number",
   "totalOrders": "Total Orders: {count}",
   "placedOn": "Placed on {date}",
@@ -15,6 +16,7 @@
   "delivery": "Delivery: {days}",
   "orderItems": "Order Items",
   "noOrders": "No orders found",
+  "noOrdersDesc": "Your shop's sales journey starts here. Adjust your filters or promote your products to get sales!",
   "refresh": "Refresh",
   "moreActions": "More Actions",
   "editOrder": "Edit Order",
@@ -78,7 +80,8 @@
     "actions": "Actions",
     "delete": "Delete",
     "updateStatus": "Update Status",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "viewProducts": "View Products"
   },
   "paymentStatus": {
     "INITIATED": "Initiated",
@@ -92,5 +95,33 @@
   },
   "messages": {
     "statusUpdated": "Order status updated successfully"
+  },
+  "filters": {
+    "search": "Search orders, customers, emails...",
+    "toggle": "Filters",
+    "reset": "Reset",
+    "orderStatus": "Order Status",
+    "paymentStatus": "Payment Status",
+    "paymentMethod": "Payment Method",
+    "dateFrom": "From",
+    "dateTo": "To"
+  },
+  "paymentMethods": {
+    "moyasar": "Moyasar",
+    "stripe": "Stripe",
+    "paypal": "PayPal",
+    "cod": "Cash on Delivery",
+    "banktransfer": "Bank Transfer"
+  },
+  "bulk": {
+    "selected": "Selected",
+    "updateStatus": "Update Status",
+    "export": "Export",
+    "delete": "Delete",
+    "deselectAll": "Deselect all",
+    "deleteTitle": "Delete Selected Orders",
+    "deleteMessage": "Are you sure you want to permanently delete these {count} orders? This action cannot be undone.",
+    "deleteConfirm": "Delete Orders",
+    "deleteCancel": "Keep Orders"
   }
 }

@@ -23,8 +23,9 @@ import { Order } from "@/types";
 import { useQueryState } from "@/shared/hooks/useQueryState";
 import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
 import { Permissions } from "@/features/roles/types";
-import {  RefreshCwIcon } from "@/shared/ui/Icons";
+import { RefreshCwIcon } from "@/shared/ui/Icons";
 import { useTranslations } from "next-intl";
+import Can from "@/components/auth/Can";
 
 export default function OrdersPage({
   params,
@@ -75,10 +76,16 @@ export default function OrdersPage({
     isRefetching,
   } = useOrders(queryParams);
   console.log(ordersData);
-  const { data: statsData, isLoading: isStatsLoading } = useOrderStats({
-    startDate: filters.dateFrom || undefined,
-    endDate: filters.dateTo || undefined,
-  });
+  // stats - using filters dateRange only
+  const statsQueryParams = useMemo(
+    () => ({
+      startDate: filters.dateFrom || undefined,
+      endDate: filters.dateTo || undefined,
+    }),
+    [filters],
+  );
+  const { data: statsData, isLoading: isStatsLoading } =
+    useOrderStats(statsQueryParams);
 
   const orders = useMemo(() => ordersData?.data || [], [ordersData]);
   const orderIds = useMemo(() => orders.map((o) => o._id), [orders]);
@@ -194,7 +201,7 @@ export default function OrdersPage({
     },
     [],
   );
-// we use letter to filter 
+  // we use letter to filter
   const handleExportAll = useCallback(() => {
     handleExportCsv(
       orders,
@@ -228,7 +235,7 @@ export default function OrdersPage({
           count: ordersData?.meta?.pagination?.totalResults || 0,
         })}
         action={{
-          label: t("refresh"), 
+          label: t("refresh"),
           icon: <RefreshCwIcon className="w-5 h-5" />,
           onClick: handleRefresh,
           disabled: isOrdersLoading || isRefetching,
@@ -237,10 +244,13 @@ export default function OrdersPage({
       />
 
       {/* 2. Stat Cards Grid */}
-      <OrderStatsCards stats={statsData} isLoading={isStatsLoading} />
-
+      <Can permission={Permissions.VIEW_DASHBOARD_STATS}>
+        <OrderStatsCards stats={statsData} isLoading={isStatsLoading} />
+      </Can>
       {/* 3. Charts & Analytics Row */}
-      <OrderChartsSection stats={statsData} isLoading={isStatsLoading} />
+      <Can permission={Permissions.VIEW_DASHBOARD_STATS}>
+        <OrderChartsSection stats={statsData} isLoading={isStatsLoading} />
+      </Can>
 
       {/* 4. Filters & Search Section */}
       <OrderFiltersComponent
