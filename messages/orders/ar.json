@@ -1,6 +1,6 @@
 {
   "title": "الطلبات",
-  "subtitle":"طلبات العملاء",
+  "subtitle": "طلبات العملاء",
   "orderList": "قائمة الطلبات",
   "orderDetails": "تفاصيل الطلب",
   "order": "الطلب #{id}",
@@ -22,12 +22,15 @@
   "editOrder": "تعديل الطلب",
   "manageOrder": "إدارة الطلب",
   "viewCouponDetails": "عرض تفاصيل الكوبون",
-  "applied": "مطبق",
+  "applied": "مُطبّق",
   "discount": "الخصم",
   "couponType": "النوع",
   "expiresOn": "تنتهي صلاحيته في",
   "coupon": "كوبون",
+  "usedCount": "عدد مرات الاستخدام",
   "notes": "ملاحظات",
+  "notNotes": "لا توجد ملاحظات",
+  "addNotes": "أضف ملاحظات داخلية حول هذا الطلب ...",
   "timeline": "مخطط حالة الطلب",
   "product": "المنتج",
   "sku": "رمز SKU",
@@ -81,10 +84,14 @@
     "delete": "حذف",
     "updateStatus": "تحديث الحالة",
     "viewDetails": "عرض التفاصيل",
-    "viewProducts": "عرض المنتجات"
+    "viewProducts": "عرض المنتجات",
+    "quickActions": "إجراءات سريعة",
+    "viewUser": "عرض العميل",
+    "viewCoupon": "عرض الكوبون",
+    "cancelOrder": "إلغاء الطلب"
   },
   "paymentStatus": {
-    "INITIATED": "مبتدأ",
+    "INITIATED": "تم البدء",
     "PENDING": "قيد الانتظار",
     "PAID": "مدفوع",
     "FAILED": "فشل",
@@ -94,7 +101,10 @@
     "unknown": "غير معروف"
   },
   "messages": {
-    "statusUpdated": "تم تحديث حالة الطلب بنجاح"
+    "statusUpdated": "تم تحديث حالة الطلب بنجاح",
+    "successNotes": "تم إضافة الملاحظات بنجاح",
+    "errorNotes": "فشل في إضافة الملاحظات",
+    "notNotes": "لا توجد ملاحظات"
   },
   "filters": {
     "search": "ابحث عن طلبات، عملاء، بريد إلكتروني...",
@@ -113,6 +123,9 @@
     "cod": "الدفع عند الاستلام",
     "banktransfer": "تحويل بنكي"
   },
+  "totalQuantity": "إجمالي الكمية",
+  "totalItems": "إجمالي العناصر",
+  "customerSince": "عميل منذ",
   "bulk": {
     "selected": "محدد",
     "updateStatus": "تحديث الحالة",
@@ -123,5 +136,33 @@
     "deleteMessage": "هل أنت متأكد من أنك تريد حذف هذه الطلبات الـ {count} نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
     "deleteConfirm": "حذف الطلبات",
     "deleteCancel": "الاحتفاظ بالطلبات"
+  },
+  "shippingInfo": {
+    "fullName": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "address": "العنوان",
+    "shippingInfo": "معلومات الشحن",
+    "country": "الدولة",
+    "city": "المدينة",
+    "building": "المبنى",
+    "postalCode": "الرمز البريدي",
+    "shippingCode": "كود الشحن",
+    "estimatedDays": "الأيام المقدرة",
+    "basePrice": "السعر الأساسي",
+    "additionalKg": "كغ إضافية",
+    "additionalInfo": "معلومات إضافية",
+    "baseWeight": "الوزن الأساسي",
+    "trackingUrl": "رقم التتبع",
+    "shippingProvider": "مزود الشحن",
+    "shippingCost": "تكلفة الشحن"
+  },
+  "paymentInfo": {
+    "paymentInfo": "معلومات الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "paymentDate": "تاريخ الدفع",
+    "paymentStatus": "حالة الدفع",
+    "currency": "العملة",
+    "paymentFees": "رسوم الدفع",
+    "amountPaid": "المبلغ المدفوع"
   }
 }

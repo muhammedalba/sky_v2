@@ -8,5 +8,13 @@ export const ORDER_STATUS_OPTIONS = [
   { value: "cancelled", label: "status.cancelled" },
   { value: "expired", label: "status.expired" },
 ];
+export const PAYMENT_STATUS_OPTIONS = [
+  { value: "INITIATED", label: "paymentStatus.INITIATED" },
+  { value: "PENDING", label: "paymentStatus.PENDING" },
+  { value: "PAID", label: "paymentStatus.PAID" },
+  { value: "FAILED", label: "paymentStatus.FAILED" },
+  { value: "CANCELLED", label: "paymentStatus.CANCELLED" },
+  { value: "REFUNDED", label: "paymentStatus.REFUNDED" },
+  { value: "EXPIRED", label: "paymentStatus.EXPIRED" },
+];
 
- 

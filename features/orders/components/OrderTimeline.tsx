@@ -68,7 +68,7 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
 
   return (
     <Card className="border border-border/40 shadow-xs bg-card rounded-2xl">
-      <CardHeader className="pb-4 border-b border-border/20">
+      <CardHeader className="pb-4 border-b border-border/20 bg-muted/70  rounded-t-2xl">
         <CardTitle className="text-md font-bold title-gradient">Order Timeline</CardTitle>
       </CardHeader>
       <CardContent className="pt-6">

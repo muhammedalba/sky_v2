@@ -11,13 +11,17 @@ import {
 } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useUpdateOrderStatus } from "@/features/orders/hooks/useOrders";
-import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
+
 import Link from "next/link";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
-import { UserIcon } from "@/shared/ui/Icons";
+import { CheckIcon, SpinnerIcon, UserIcon } from "@/shared/ui/Icons";
 import { Tooltip } from "@/shared/ui/Tooltip";
-import { ORDER_STATUS_OPTIONS } from "@/shared/constants/order-constants";
+import {
+  ORDER_STATUS_OPTIONS,
+  PAYMENT_STATUS_OPTIONS,
+} from "@/shared/constants/order-constants";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import { CheckCircle2Icon } from "lucide-react";
 
 interface OrderHeaderProps {
   order: Order;
@@ -28,6 +32,20 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
   const formatCurrency = useFormatCurrency();
   const updateStatusMutation = useUpdateOrderStatus();
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const handlePaymentStatusChange = async (newStatus: string) => {
+    setIsUpdating(true);
+    try {
+      await updateStatusMutation.mutateAsync({
+        id: order._id,
+        paymentStatus: newStatus,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const handleStatusChange = async (newStatus: string) => {
     setIsUpdating(true);
@@ -50,7 +68,7 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
       {/* Top 3-Card Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Customer Card */}
-        <div className="p-5 rounded-2xl border border-border/40 bg-card flex items-start justify-between gap-4 shadow-xs">
+        <div className="p-5 rounded-2xl border border-border/40 bg-card  shadow-xs">
           <Tooltip content={t("viewCustomer")}>
             <Link
               href={
@@ -73,7 +91,7 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
                     <UserIcon className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex flex-col gap-1">
                   <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                     {t("customerInfo")}
                   </h4>
@@ -88,6 +106,14 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
                       {order.user.phone}
                     </p>
                   )}
+                  <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground gap-3">
+                    <span>{t("customerSince")} :</span>
+                    <span className="text-primary/80 font-semibold ">
+                      {order.user?.createdAt
+                        ? formatDate(order.user.createdAt)
+                        : "Jan 18, 2026"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
@@ -113,12 +139,13 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
             <div className="mt-1 flex items-center gap-2">
               {isUpdating ? (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-bold">
-                  <Loader2Icon className="w-3.5 h-3.5 animate-spin" />
+                  <SpinnerIcon className="w-3.5 h-3.5 animate-spin" />
                   {t("updating")}
                 </div>
               ) : (
                 <select
                   value={order.status}
+                  disabled={isUpdating}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className={cn(
                     "flex items-center gap-2 w-full px-4 py-1 my-2 outline-0 text-xs text-start font-medium text-foreground hover:bg-muted/60 disabled:opacity-50 transition-colors border rounded-lg",
@@ -134,23 +161,47 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2 justify-between">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-              {t("paymentStatusLabel")} :
-            </p>
-            <Badge
-              className={cn(
-                "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
-                getPaymentStatusColor(order.paymentStatus?.toLowerCase() || ""),
+          {/* paymentStatusLabel */}
+          <div>
+            <div className="flex items-center gap-2 justify-between">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                {t("paymentStatusLabel")} :{" "}
+              </p>
+              <Badge
+                className={cn(
+                  "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
+                  getPaymentStatusColor(order.paymentStatus || ""),
+                )}
+              >
+                {order.paymentStatus ? t(`paymentStatus.${order.paymentStatus.toUpperCase()}`) : "—"}
+              </Badge>
+            </div>
+            <div className="mt-1 flex items-center gap-2">
+              {isUpdating ? (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-bold">
+                  <SpinnerIcon className="w-3.5 h-3.5 animate-spin" />
+                  {t("updating")}
+                </div>
+              ) : (
+                <select
+                  value={order.paymentStatus}
+                  disabled={isUpdating}
+                  onChange={(e) => handlePaymentStatusChange(e.target.value)}
+                  className={cn(
+                    "flex items-center gap-2 w-full px-4 py-1 my-2 outline-0 text-xs text-start font-medium text-foreground hover:bg-muted/60 disabled:opacity-50 transition-colors border rounded-lg",
+                    "focus:border-primary",
+                  )}
+                >
+                  {PAYMENT_STATUS_OPTIONS.map((status) => (
+                    <option key={status.value} value={status.value.toUpperCase()}>
+                      {t(status.label)}
+                    </option>
+                  ))}
+                </select>
               )}
-            >
-              {order.paymentStatus
-                ? t(`paymentStatus.${order.paymentStatus.toUpperCase()}`, {
-                    defaultValue: order.paymentStatus,
-                  })
-                : "—"}
-            </Badge>
+            </div>
           </div>
+
         </div>
 
         {/* Grand Total Card */}
@@ -167,7 +218,7 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
             </p>
           </div>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2Icon className="w-3.5 h-3.5 shrink-0" />
+            <CheckIcon className="w-3.5 h-3.5 shrink-0 border border-success rounded-full " />
             <span>{t("paidOn", { date: formattedDate })}</span>
           </div>
         </div>

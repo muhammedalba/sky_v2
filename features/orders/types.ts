@@ -1,14 +1,15 @@
 import { User } from '@/features/users/types';
-import { Product } from '@/features/products/types';
+import { Product, ProductVariant } from '@/features/products/types';
+import { Coupon } from '@/types';
+import { ShippingProvider, ShippingRate } from '../shipping/types';
+import { City, Country } from '../locations/types';
 
 export interface Address {
   firstName?: string;
   lastName?: string;
   phone?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  country?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  city?: any;
+  country?: Country;
+  city?: City;
   street?: string;
   building?: string;
   postalCode?: string;
@@ -18,8 +19,7 @@ export interface Address {
 
 export interface OrderItem {
   productId?: Product;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variantId?: any;
+  variantId?: ProductVariant;
   quantity: number;
   totalPrice: number;
   price: number;
@@ -35,10 +35,9 @@ export interface Order {
   user: User;
   items: OrderItem[];
   shippingAddress?: Address;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  shippingProviderId?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  shippingRateId?: any;
+  shippingProviderId?: ShippingProvider;
+
+  shippingRateId?: ShippingRate;
   paymentMethodCode?: string;
   paymentMethod?: string;
   shippingMethod?: string;
@@ -50,7 +49,7 @@ export interface Order {
   totalQuantity?: number;
   discountAmount?: number;
   currency?: string;
-  couponId?: string | Record<string, unknown>;
+  couponId?: Coupon;
   couponCode?: string;
   paymentStatus?: string;
   status: string;

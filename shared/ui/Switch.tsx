@@ -8,7 +8,7 @@ interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
 }
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
-  ({ className, label, description, id, onCheckedChange, ...props }, ref) => {
+  ({ className, label, description, id, onCheckedChange, defaultChecked, checked, ...props }, ref) => {
     // توليد ID فريد إذا لم يوجد لربط الليبل بالمدخل
     const generatedId = React.useId();
     const switchId = id || generatedId;
@@ -24,7 +24,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
               <span className={cn(
                 "text-sm font-semibold transition-colors duration-200",
                 props.disabled ? "text-muted-foreground/40" :
-                  props.checked ? "text-foreground" : "text-muted-foreground/50"
+                  checked ? "text-foreground" : "text-muted-foreground/50"
               )}>
                 {label}
               </span>
@@ -51,7 +51,9 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             ref={ref}
             onChange={(e) => onCheckedChange?.(e.target.checked)}
             {...props}
-            checked={props.checked ?? false}
+            {...(checked !== undefined
+              ? { checked }
+              : { defaultChecked })}
           />
 
           <div className={cn(

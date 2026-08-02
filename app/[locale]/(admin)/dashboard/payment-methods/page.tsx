@@ -99,7 +99,6 @@ export default function PaymentMethodsPage() {
   // Data Fetching & Mutations
   // ===========================================================================
   const { data, isLoading, refetch } = useAdminPaymentMethods(queryParams);
-  console.log(data, "data");
 
   const { mutateAsync: deleteMethodAsync, isPending: deleteMethodPending } =
     useDeletePaymentMethod();
@@ -225,10 +224,10 @@ export default function PaymentMethodsPage() {
             <div className="font-bold text-base text-foreground font-mono group-hover:text-primary transition-colors">
               {getTrans(method.name)}
             </div>
-            <span className="text-[10px] text-foreground font-medium uppercase tracking-wider opacity-60">
+            <span className="text-[10px] text-destructive font-medium uppercase tracking-wider opacity-80">
               {method.code}
             </span>
-          </div>
+          </div> 
         ),
       },
       {

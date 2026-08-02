@@ -19,9 +19,10 @@ export function usePaymentRedirector() {
       router.push(`/${locale}/checkout/payment?orderId=${orderId}&client_secret=${resData.client_secret}`);
     } else {
       if (orderId) {
-        router.push(`/${locale}/account/orders/${orderId}`);
+        router.push(`/`);
+        // router.push(`/${locale}/account/orders/${orderId}`);
       } else {
-        router.push(`/${locale}/account/orders`);
+        router.push(`/${locale}/account`);
       }
     }
   };

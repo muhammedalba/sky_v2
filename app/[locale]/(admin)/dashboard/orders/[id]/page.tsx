@@ -1,14 +1,13 @@
 "use client";
 
 import { use, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useOrder } from "@/features/orders/hooks/useOrders";
 import { Button } from "@/shared/ui/Button";
 import { Skeleton } from "@/shared/ui/Skeleton";
 import { Card } from "@/shared/ui/Card";
-import { TicketIcon, ShoppingBagIcon } from "lucide-react";
 import { Permissions } from "@/features/roles/types";
 // Sub-components
 import OrderHeader from "@/features/orders/components/OrderHeader";
@@ -17,15 +16,15 @@ import OrderProductsTable from "@/features/orders/components/OrderProductsTable"
 import OrderShippingCard from "@/features/orders/components/OrderShippingCard";
 import OrderPaymentCard from "@/features/orders/components/OrderPaymentCard";
 import OrderSummaryCard from "@/features/orders/components/OrderSummaryCard";
-import CustomerCard from "@/features/orders/components/CustomerCard";
-import StatusManagementCard from "@/features/orders/components/StatusManagementCard";
 import InvoicePreview from "@/features/orders/components/InvoicePreview";
 import OrderNotes from "@/features/orders/components/OrderNotes";
 import OrderActions from "@/features/orders/components/OrderActions";
 import InvoicePreviewDialog from "@/features/orders/components/InvoicePreviewDialog";
 import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
-import { RefreshCwIcon } from "@/shared/ui/Icons";
+import { CouponsIcon, RefreshCwIcon, ShoppingBagIcon } from "@/shared/ui/Icons";
 import { formatDate } from "@/lib/utils";
+import Link from "next/link";
+import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 
 export default function OrderDetailsPage({
   params,
@@ -40,7 +39,7 @@ export default function OrderDetailsPage({
   console.log(order);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const t = useTranslations("orders");
-
+  const formatCurrency = useFormatCurrency();
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["order", id] });
     queryClient.invalidateQueries({ queryKey: ["order-stats"] });
@@ -145,66 +144,67 @@ export default function OrderDetailsPage({
           {/* Order Totals Summary Card */}
           <OrderSummaryCard order={order} />
 
-          {/* Customer Metadata Profile Card */}
-          <CustomerCard order={order} />
-
           {/* Coupon Code Summary Widget */}
-          <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
+          {order.couponId && (
+            <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
+              {/* Title */}
+              <div className="flex items-center justify-between bg-muted/70 p-3">
                 <div className="flex items-center gap-2">
+                  {/* image */}
                   <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 border border-amber-500/20 shrink-0">
-                    <TicketIcon className="w-5 h-5" />
+                    <CouponsIcon className="w-5 h-5" />
                   </div>
+                  {/* name and title */}
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-mono font-black text-sm text-foreground">
-                        {order.couponCode || "SAVE20"}
-                      </span>
-                      <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded-full border-none">
-                        Applied
+                        {order.couponId?.name || "N/A"}
                       </span>
                     </div>
                   </div>
                 </div>
+                <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded-full border-none">
+                  {t("applied")}
+                </span>
               </div>
-              <div className="mt-5 space-y-3.5">
+              {/* Info details */}
+              <div className="mt-5 space-y-3.5 px-6">
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-                  <span>Discount</span>
+                  <span>{t("discount")}</span>
                   <span className="text-foreground font-bold tabular-nums">
-                    {(order.discountAmount || 121.0).toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    })}{" "}
+                    {formatCurrency(order.couponId?.discount)}
                     {order.currency || "SAR"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-                  <span>Type</span>
+                  <span>{t("couponType")}</span>
                   <span className="text-foreground font-bold">
-                    Fixed Amount
+                    {order.couponId?.type || "N/A"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-                  <span>Expires On</span>
+                  <span>{t("expiresOn")}</span>
                   <span className="text-foreground font-bold">
-                    Jul 23, 2026
+                    {formatDate(order.couponId?.expires || "N/A")}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+                  <span>{t("usedCount")}</span>
+                  <span className="text-foreground font-bold">
+                    ( {order.couponId?.usageCount || "N/A"} )
                   </span>
                 </div>
               </div>
-              <div className="pt-4 border-t border-border/20 mt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full rounded-xl font-bold text-xs h-9 bg-card border-border hover:bg-secondary/40 text-foreground transition-all"
+              <div className="pt-4  mt-4 px-6 pb-5 bg-muted/50">
+                <Link
+                  href={`/dashboard/coupons/${order.couponId?._id}/edit`}
+                  className="w-full flex justify-center items-center  font-bold text-xs text-primary text-center hover:underline underline-offset-3 cursor-pointer "
                 >
-                  View Coupon Details
-                </Button>
+                  {t("viewCouponDetails")}
+                </Link>
               </div>
-            </div>
-          </Card>
-
-          {/* Status & Payment Interactive Controls */}
-          <StatusManagementCard order={order} />
+            </Card>
+          )}
 
           {/* Quick Operations Admin Buttons */}
           <OrderActions order={order} />

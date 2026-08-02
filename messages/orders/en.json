@@ -27,7 +27,10 @@
   "couponType": "Type",
   "expiresOn": "Expires On",
   "coupon": "Coupon",
+  "usedCount": "Used Count",
   "notes": "Notes",
+  "notNotes":"No notes added",
+  "addNotes":"Add internal notes about this order...",
   "timeline": "Order Timeline",
   "product": "Product",
   "sku": "SKU",
@@ -81,7 +84,11 @@
     "delete": "Delete",
     "updateStatus": "Update Status",
     "viewDetails": "View Details",
-    "viewProducts": "View Products"
+    "viewProducts": "View Products",
+    "quickActions": "Quick Actions",
+    "viewUser": "View User",
+    "viewCoupon": "View Coupon",
+    "cancelOrder": "Cancel Order"
   },
   "paymentStatus": {
     "INITIATED": "Initiated",
@@ -94,7 +101,9 @@
     "unknown": "Unknown"
   },
   "messages": {
-    "statusUpdated": "Order status updated successfully"
+    "statusUpdated": "Order status updated successfully",
+    "successNotes":" Add internal notes about this order...",
+    "errorNotes":"Failed to update notes"
   },
   "filters": {
     "search": "Search orders, customers, emails...",
@@ -113,6 +122,9 @@
     "cod": "Cash on Delivery",
     "banktransfer": "Bank Transfer"
   },
+  "totalQuantity": "Total Quantity",
+  "totalItems": "Total Items",
+  "customerSince": "Customer Since",
   "bulk": {
     "selected": "Selected",
     "updateStatus": "Update Status",
@@ -123,5 +135,33 @@
     "deleteMessage": "Are you sure you want to permanently delete these {count} orders? This action cannot be undone.",
     "deleteConfirm": "Delete Orders",
     "deleteCancel": "Keep Orders"
+  },
+  "shippingInfo": {
+    "country": "Country",
+    "city": "City",
+    "building": "Building",
+    "postalCode": "Postal Code",
+    "shippingCode": "Shipping Code",
+    "estimatedDays": "Estimated Days",
+    "basePrice": "Base Price",
+    "additionalKg": "Additional Kg",
+    "baseWeight": "Base Weight",
+    "trackingUrl": "Tracking Number",
+    "shippingCost": "Shipping Cost",
+    "fullName": "Full Name",
+    "phone": "Phone",
+    "address": "Address",
+    "shippingInfo": "Shipping Information",
+    "shippingProvider": "Shipping Provider",
+    "additionalInfo": "Additional Info"
+  },
+  "paymentInfo": {
+    "paymentInfo": "Payment Information",
+    "paymentMethod": "Payment Method",
+    "paymentDate": "Payment Date",
+    "paymentStatus": "Payment Status",
+    "currency": "Currency",
+    "paymentFees": "Payment Fees",
+    "amountPaid": "Amount Paid"
   }
 }

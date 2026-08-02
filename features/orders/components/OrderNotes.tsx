@@ -1,11 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Order } from '@/features/orders/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
-import { Button } from '@/shared/ui/Button';
-import { useUpdateOrderStatus } from '@/features/orders/hooks/useOrders';
-import { PencilIcon, CheckIcon, XIcon, Loader2Icon } from 'lucide-react';
+import { useState } from "react";
+import { Order } from "@/features/orders/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
+import { Button } from "@/shared/ui/Button";
+import { useUpdateOrderStatus } from "@/features/orders/hooks/useOrders";
+import { useToast } from "@/shared/hooks/useToast";
+import { useTranslations } from "next-intl";
+import { CheckIcon, EditIcon, SpinnerIcon, XIcon } from "@/shared/ui/Icons";
 
 interface OrderNotesProps {
   order: Order;
@@ -14,29 +16,52 @@ interface OrderNotesProps {
 export default function OrderNotes({ order }: OrderNotesProps) {
   const updateStatusMutation = useUpdateOrderStatus();
   const [isEditing, setIsEditing] = useState(false);
-  const [notesText, setNotesText] = useState(order.notes || '');
+  const [notesText, setNotesText] = useState(order.notes || "");
+  const t = useTranslations("orders");
+  const tButtons = useTranslations("buttons");
+
+  const { success: toastSuccess, error: toastError } = useToast();
 
   const handleSaveNotes = async () => {
+    const trimmedNotes = notesText.trim();
+
+    if (
+      trimmedNotes === order.notes ||
+      (trimmedNotes.length === 0 && !order.notes)
+    ) {
+      setIsEditing(false);
+      return;
+    }
+    if (trimmedNotes.length > 400) {
+      toastError(t("messages.errorNotes"));
+      setIsEditing(false);
+      return;
+    }
     try {
       await updateStatusMutation.mutateAsync({
         id: order._id,
-        notes: notesText,
+        notes: trimmedNotes,
       });
+
       setIsEditing(false);
+      toastSuccess(t("messages.successNotes"));
     } catch (err) {
-      console.error('Failed to update notes:', err);
+      toastError(t("messages.errorNotes"));
+      console.error("Failed to update notes:", err);
     }
   };
 
   const handleCancel = () => {
-    setNotesText(order.notes || '');
+    setNotesText(order.notes || "");
     setIsEditing(false);
   };
 
   return (
     <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
-      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4">
-        <CardTitle className="text-sm font-bold text-foreground">Notes</CardTitle>
+      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4 bg-muted/70">
+        <CardTitle className="text-sm font-bold title-gradient">
+          {t("notes")}
+        </CardTitle>
         {!isEditing && (
           <Button
             variant="outline"
@@ -44,8 +69,8 @@ export default function OrderNotes({ order }: OrderNotesProps) {
             onClick={() => setIsEditing(true)}
             className="rounded-xl font-bold text-xs h-8 px-3 bg-card border-border hover:bg-secondary/40 flex items-center gap-1.5"
           >
-            <PencilIcon className="w-3 h-3 text-muted-foreground" />
-            Edit
+            <EditIcon className="w-3 h-3 text-muted-foreground" />
+            {tButtons("edit")}
           </Button>
         )}
       </CardHeader>
@@ -66,7 +91,7 @@ export default function OrderNotes({ order }: OrderNotesProps) {
                 className="rounded-xl font-bold px-3 h-8"
               >
                 <XIcon className="w-3.5 h-3.5 mr-1" />
-                Cancel
+                {tButtons("cancel")}
               </Button>
               <Button
                 size="sm"
@@ -76,13 +101,13 @@ export default function OrderNotes({ order }: OrderNotesProps) {
               >
                 {updateStatusMutation.isPending ? (
                   <>
-                    <Loader2Icon className="w-3.5 h-3.5 animate-spin" />
-                    Saving
+                    <SpinnerIcon className="w-3.5 h-3.5 animate-spin" />
+                    {tButtons("saving")}
                   </>
                 ) : (
                   <>
                     <CheckIcon className="w-3.5 h-3.5" />
-                    Save
+                    {tButtons("save")}
                   </>
                 )}
               </Button>
@@ -95,10 +120,10 @@ export default function OrderNotes({ order }: OrderNotesProps) {
                 {order.notes}
               </div>
             ) : (
-              <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 text-xs text-amber-800 dark:text-amber-300">
-                <p className="font-bold">No notes added</p>
-                <p className="font-medium text-amber-800/80 dark:text-amber-300/80 mt-0.5">
-                  Add internal notes about this order...
+              <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 text-xs text-amber-800">
+                <p className="font-bold">{t("notNotes")}</p>
+                <p className="font-medium text-amber-800/80 mt-0.5">
+                  {t("addNotes")}
                 </p>
               </div>
             )}
