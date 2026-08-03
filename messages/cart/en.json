@@ -84,6 +84,11 @@
     "postal_code": "Postal Code",
     "additional_info": "Additional Info (Optional)",
     "additional_info_placeholder": "Landmark, preferred time...",
+    "company_info": "Company Info (Optional)",
+    "company_name": "Company Name",
+    "company_name_placeholder": "e.g. Elite Trading Co.",
+    "vendor_vat_no": "Vendor VAT No.",
+    "vendor_vat_no_placeholder": "e.g. 300XXXXXXXXX",
     "continue": "Continue"
   },
   "shipping_payment": {

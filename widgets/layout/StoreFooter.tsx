@@ -188,14 +188,21 @@ export default function StoreFooter() {
                    <span className="truncate">{settings.contactInfo.email}</span>
                  </li>
                )}
-               {settings.contactInfo?.address?.[locale as 'ar' | 'en'] && (
-                 <li className="flex items-center  gap-3 text-xs sm:text-sm text-muted-foreground group">
-                   <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0 mt-0.5">
-                     <MapPinIcon className="w-3.5 h-3.5 text-primary" />
-                   </div>
-                   <span className="leading-tight">{settings.contactInfo.address[locale as 'ar' | 'en']}</span>
-                 </li>
-               )}
+                {settings.businessAddress && (
+                  <li className="flex items-center  gap-3 text-xs sm:text-sm text-muted-foreground group">
+                    <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0 mt-0.5">
+                      <MapPinIcon className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="leading-tight">
+                      {[
+                        settings.businessAddress.street?.[locale as 'ar' | 'en'],
+                        settings.businessAddress.area?.[locale as 'ar' | 'en'],
+                        settings.businessAddress.city?.[locale as 'ar' | 'en'],
+                        settings.businessAddress.country?.[locale as 'ar' | 'en']
+                      ].filter(Boolean).join(', ')}
+                    </span>
+                  </li>
+                )}
              </ul>
           </ScrollReveal>
 

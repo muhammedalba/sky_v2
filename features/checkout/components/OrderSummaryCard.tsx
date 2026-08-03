@@ -27,6 +27,7 @@ import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import { getAttributeLabel } from "@/shared/constants/product-constants";
 
 export interface CouponFormValues {
   couponCode: string;
@@ -219,6 +220,8 @@ export function OrderSummaryCard({
         )}
       >
         {cartItems.map((item: CartItem, index: number) => {
+          console.log(item);
+
           const product = item.product;
           if (!product) return null;
           const { price, image } = resolveItemData(item);
@@ -227,7 +230,7 @@ export function OrderSummaryCard({
           const key = String(
             (item as unknown as Record<string, unknown>).productId ??
               (item as unknown as Record<string, unknown>)._id ??
-              title,
+              title + index,
           );
           return (
             <div key={key} className="flex items-center gap-3">
@@ -246,6 +249,19 @@ export function OrderSummaryCard({
                 <p className="text-sm font-semibold text-foreground truncate">
                   {title}
                 </p>
+                {item?.variant?.attributes && Object.keys(item?.variant?.attributes).length > 0 && (
+                  <p className="text-[11px] text-muted-foreground line-clamp-1">
+                    {Object.entries(item?.variant?.attributes)
+                      .map(([key, val]) => {
+                        const attrVal =
+                          typeof val === "object" && val !== null
+                            ? String((val as { value?: string | number }).value)
+                            : String(val);
+                        return `${getAttributeLabel(key, true)}: ${attrVal}`;
+                      })
+                      .join(" · ")}
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground">
                   × {item.quantity}
                 </p>

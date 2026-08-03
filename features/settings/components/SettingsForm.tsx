@@ -28,6 +28,9 @@ const SocialSection = dynamic(() => import("./sections/SocialSection"), {
 const ContactSection = dynamic(() => import("./sections/ContactSection"), {
   loading: () => <SectionSkeleton />,
 });
+const BusinessAddressSection = dynamic(() => import("./sections/BusinessAddressSection"), {
+  loading: () => <SectionSkeleton />,
+});
 const PaymentsSection = dynamic(() => import("./sections/PaymentsSection"), {
   loading: () => <SectionSkeleton />,
 });
@@ -73,9 +76,18 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   contactInfo: {
     email: "",
     phones: [],
-    address: { ar: "", en: "" },
     workingDays: { ar: "من الاثنين الى الجمعة", en: "from Monday to Friday" },
     workingHours: { ar: "من 8 صباحا الى 6 مساء", en: "from 8 AM to 6 PM" },
+  },
+  businessAddress: {
+    country: { ar: "", en: "" },
+    city: { ar: "", en: "" },
+    area: { ar: "", en: "" },
+    street: { ar: "", en: "" },
+    mailBox: "",
+    poBox: "",
+    vatNo: "",
+    crNo: "",
   },
   paymentsEnabled: true,
   bankTransferDetails: {
@@ -107,6 +119,13 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   logo: undefined,
   favicon: undefined,
 };
+
+const ContactAndAddressSection = () => (
+  <div className="space-y-6">
+    <ContactSection />
+    <BusinessAddressSection />
+  </div>
+);
 
 export default function SettingsForm() {
   const t = useTranslations("settings");
@@ -156,6 +175,7 @@ export default function SettingsForm() {
           "metaDescription",
           "socialLinks",
           "contactInfo",
+          "businessAddress",
           "bankTransferDetails",
           "features",
           "maintenanceMessage",
@@ -235,7 +255,7 @@ export default function SettingsForm() {
       case "social":
         return SocialSection;
       case "contact":
-        return ContactSection;
+        return ContactAndAddressSection;
       case "payments":
         return PaymentsSection;
       case "bank-transfer":

@@ -4,6 +4,7 @@ import { Order } from '@/features/orders/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
 import { DownloadIcon, PrinterIcon, FileTextIcon } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
+import { useTranslations } from 'next-intl';
 
 interface InvoicePreviewProps {
   order: Order;
@@ -16,14 +17,12 @@ export default function InvoicePreview({
   onPreviewInvoice,
   onDownloadInvoice,
 }: InvoicePreviewProps) {
-  const handlePrint = () => {
-    window.print();
-  };
+  const t = useTranslations('orders.invoicePreview');
 
   return (
     <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
-      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4">
-        <CardTitle className="text-sm font-bold text-foreground">Invoice</CardTitle>
+      <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4 bg-muted/70">
+        <CardTitle className="text-sm font-bold title-gradient">{t('title')}</CardTitle>
         <div className="flex items-center gap-2">
           {onDownloadInvoice && (
             <Button
@@ -33,18 +32,9 @@ export default function InvoicePreview({
               className="rounded-xl font-bold text-xs h-8 px-3 bg-card border-border hover:bg-secondary/40 flex items-center gap-1.5"
             >
               <DownloadIcon className="w-3.5 h-3.5 text-muted-foreground" />
-              Download
+              {t('download')}
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePrint}
-            className="rounded-xl font-bold text-xs h-8 px-3 bg-card border-border hover:bg-secondary/40 flex items-center gap-1.5"
-          >
-            <PrinterIcon className="w-3.5 h-3.5 text-muted-foreground" />
-            Print
-          </Button>
         </div>
       </CardHeader>
       <CardContent className="p-0">
@@ -53,7 +43,7 @@ export default function InvoicePreview({
             <iframe
               src={`${order.InvoicePdf}#toolbar=0&navpanes=0`}
               className="w-full h-full border-none"
-              title="Invoice PDF"
+              title={t('pdfTitle')}
             />
           </div>
         ) : (
@@ -62,9 +52,9 @@ export default function InvoicePreview({
               <FileTextIcon className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-xs font-bold text-foreground">No PDF Invoice Generated</p>
+              <p className="text-xs font-bold text-foreground">{t('noPdfGenerated')}</p>
               <p className="text-[10px] text-muted-foreground mt-1 max-w-[280px]">
-                You can print or preview the HTML invoice receipt version.
+                {t('noPdfDesc')}
               </p>
             </div>
             {onPreviewInvoice && (
@@ -74,7 +64,7 @@ export default function InvoicePreview({
                 onClick={onPreviewInvoice}
                 className="rounded-xl font-bold text-xs"
               >
-                Open Invoice Preview
+                {t('openPreview')}
               </Button>
             )}
           </div>

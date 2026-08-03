@@ -102,6 +102,8 @@ export function CheckoutAddressStep({
       "regionId",
       "cityId",
       "street",
+      "companyName",
+      "vendorVatNo",
     ]);
     console.log("isValid", isValid);
     if (isValid) {
@@ -155,6 +157,31 @@ export function CheckoutAddressStep({
             required
             error={errors.phone?.message}
           />
+        </div>
+
+        {/* Company Info (Optional) */}
+        <div className="space-y-4 pt-2 border-t border-border/20">
+          <h3 className="text-sm font-bold text-foreground">
+            {t("address.company_info")}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Input
+                {...register("companyName")}
+                label={t("address.company_name")}
+                placeholder={t("address.company_name_placeholder")}
+                error={errors.companyName?.message}
+              />
+            </div>
+            <div>
+              <Input
+                {...register("vendorVatNo")}
+                label={t("address.vendor_vat_no")}
+                placeholder={t("address.vendor_vat_no_placeholder")}
+                error={errors.vendorVatNo?.message}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Country */}

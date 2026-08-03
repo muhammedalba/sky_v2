@@ -15,6 +15,8 @@ export interface Address {
   postalCode?: string;
   additionalInfo?: string;
   addressType?: string;
+  companyName?: string;
+  vendorVatNo?: string;
 }
 
 export interface OrderItem {
@@ -55,6 +57,7 @@ export interface Order {
   status: string;
   isCheckedOut?: boolean;
   notes?: string;
+  transferReceiptImg?: string;
   InvoicePdf?: string;
   DeliveryReceiptImage?: string;
   deliveryDate?: string;

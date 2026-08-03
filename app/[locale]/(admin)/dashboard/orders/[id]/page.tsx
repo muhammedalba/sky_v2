@@ -66,7 +66,7 @@ export default function OrderDetailsPage({
 
   if (!order) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[500px] p-6 text-center space-y-4 max-w-md mx-auto">
+      <div className="flex flex-col items-center justify-center min-h-125 p-6 text-center space-y-4 max-w-md mx-auto">
         <div className="p-4 bg-secondary/20 rounded-full text-muted-foreground animate-bounce">
           <ShoppingBagIcon className="w-12 h-12" />
         </div>

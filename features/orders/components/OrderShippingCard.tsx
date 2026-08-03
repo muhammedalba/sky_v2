@@ -14,9 +14,7 @@ interface OrderShippingCardProps {
   order: Order;
 }
 
-export default function OrderShippingCard({
-  order,
-}: OrderShippingCardProps) {
+export default function OrderShippingCard({ order }: OrderShippingCardProps) {
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
   const t = useTranslations("orders");
@@ -68,7 +66,9 @@ export default function OrderShippingCard({
             </div>
 
             <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
-              <span className="text-muted-foreground font-semibold">{t("shippingInfo.phone")}</span>
+              <span className="text-muted-foreground font-semibold">
+                {t("shippingInfo.phone")}
+              </span>
               <div className="flex items-center gap-1">
                 <span className="text-foreground font-bold">
                   {address?.phone || "N/A"}
@@ -98,7 +98,9 @@ export default function OrderShippingCard({
             </div>
 
             <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
-              <span className="text-muted-foreground font-semibold">{t("shippingInfo.city")}</span>
+              <span className="text-muted-foreground font-semibold">
+                {t("shippingInfo.city")}
+              </span>
               <span className="text-foreground font-bold">
                 {getTrans(address?.city?.name) || "N/A"}
               </span>
@@ -106,7 +108,7 @@ export default function OrderShippingCard({
 
             <div className="flex items-start justify-between text-xs font-medium border-b border-border/10 pb-2 gap-4">
               <span className="text-muted-foreground font-semibold shrink-0">
-               {t("shippingInfo.address")}
+                {t("shippingInfo.address")}
               </span>
               <span className="text-foreground font-bold text-right leading-normal">
                 {address?.street || "N/A"}
@@ -128,6 +130,26 @@ export default function OrderShippingCard({
                 {address?.postalCode || "N/A"}
               </span>
             </div>
+            {address?.companyName && (
+              <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
+                <span className="text-muted-foreground font-semibold">
+                  {t("shippingInfo.companyName")}
+                </span>
+                <span className="text-foreground font-bold">
+                  {address.companyName}
+                </span>
+              </div>
+            )}
+            {address?.vendorVatNo && (
+              <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
+                <span className="text-muted-foreground font-semibold">
+                  {t("shippingInfo.vendorVatNo")}
+                </span>
+                <span className="text-foreground font-bold">
+                  {address.vendorVatNo}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right Column */}
@@ -197,7 +219,7 @@ export default function OrderShippingCard({
                 <button
                   onClick={() =>
                     copyToClipboard(
-                      order?.shippingProviderId?.trackingUrl,
+                      order?.shippingProviderId?.trackingUrl || "N/A",
                       setCopiedTracking,
                     )
                   }

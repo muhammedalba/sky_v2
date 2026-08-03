@@ -28,9 +28,19 @@ export interface SocialLinks {
 export interface contactInfo {
   email: string;
   phones: string[];
-  address?: LocalizedString;
   workingDays?: LocalizedString;
   workingHours?: LocalizedString;
+}
+
+export interface BusinessAddress {
+  country: LocalizedString;
+  city: LocalizedString;
+  area: LocalizedString;
+  street: LocalizedString;
+  mailBox: string;
+  poBox: string;
+  vatNo: string;
+  crNo: string;
 }
 
 export interface Gateways {
@@ -50,6 +60,7 @@ export interface StoreSettings {
   googleAnalyticsId: string;
   socialLinks: SocialLinks;
   contactInfo: contactInfo;
+  businessAddress: BusinessAddress;
   currencyCode: string;
   currencySymbol: string;
   exchangeRate: number;
@@ -71,7 +82,6 @@ export interface StoreSettings {
   // Legacy support for common fields
   supportPhone?: string;
   supportEmail?: string;
-  address?: LocalizedString;
 }
 
 export type SettingsContextType = StoreSettings;

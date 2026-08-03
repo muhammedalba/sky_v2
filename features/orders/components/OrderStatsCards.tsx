@@ -4,6 +4,7 @@ import { OrderStatsResponse } from '@/features/orders/types';
 import { StatCard } from '@/shared/ui/StatCard';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
+import { useTranslations } from 'next-intl';
 import {
   OrdersIcon,
   ClockIcon,
@@ -20,6 +21,7 @@ interface OrderStatsCardsProps {
 
 export default function OrderStatsCards({ stats, isLoading }: OrderStatsCardsProps) {
   const formatCurrency = useFormatCurrency();
+  const t = useTranslations('orders.stats');
 
   if (isLoading) {
     return (
@@ -52,47 +54,47 @@ export default function OrderStatsCards({ stats, isLoading }: OrderStatsCardsPro
 
   const cards = [
     {
-      title: 'Total Orders',
+      title: t('totalOrders'),
       value: overview.totalOrdersSystemWide?.toLocaleString() ?? '0',
       Icon: OrdersIcon,
       colorFrom: 'from-primary/5',
       colorBg: 'bg-primary/10 dark:bg-primary/20',
       colorIcon: 'text-primary',
-      badge: 'All Time',
+      badge: t('badges.allTime'),
       badgeVariant: 'default' as const,
     },
     {
-      title: 'Period Orders',
+      title: t('periodOrders'),
       value: overview.currentPeriodOrders?.toLocaleString() ?? '0',
       Icon: ClockIcon,
       colorFrom: 'from-blue-500/5',
       colorBg: 'bg-blue-500/10 dark:bg-blue-500/20',
       colorIcon: 'text-blue-500',
-      badge: 'This Month',
+      badge: t('badges.thisMonth'),
       badgeVariant: 'default' as const,
     },
     {
-      title: 'Valid Orders',
+      title: t('validOrders'),
       value: overview.validOrdersCount?.toLocaleString() ?? '0',
       Icon: ShieldCheckIcon,
       colorFrom: 'from-emerald-500/5',
       colorBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
       colorIcon: 'text-emerald-500',
-      badge: 'Successful',
+      badge: t('badges.successful'),
       badgeVariant: 'success' as const,
     },
     {
-      title: 'Revenue',
+      title: t('revenue'),
       value: formatCurrency(overview.totalRevenue ?? 0),
       Icon: DollarSignIcon,
       colorFrom: 'from-green-500/5',
       colorBg: 'bg-green-500/10 dark:bg-green-500/20',
       colorIcon: 'text-green-600',
-      badge: 'This Month',
+      badge: t('badges.thisMonth'),
       badgeVariant: 'success' as const,
     },
     {
-      title: 'Avg Order Value',
+      title: t('avgOrderValue'),
       value: formatCurrency(overview.averageOrderValue ?? 0),
       Icon: BarChart3Icon,
       colorFrom: 'from-purple-500/5',
@@ -100,7 +102,7 @@ export default function OrderStatsCards({ stats, isLoading }: OrderStatsCardsPro
       colorIcon: 'text-purple-500',
     },
     {
-      title: 'Top Status',
+      title: t('topStatus'),
       value: topStatus ? `${topStatus[1]}` : '0',
       Icon: ActivityIcon,
       colorFrom: 'from-amber-500/5',

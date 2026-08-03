@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
-import { AreaTrendChart } from '@/shared/ui/charts/AreaTrendChart';
-import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
-import { Skeleton } from '@/shared/ui/Skeleton';
-import { OrderStatsResponse } from '@/features/orders/types';
-import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
-import { cn } from '@/lib/utils';
+import { useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
+import { AreaTrendChart } from "@/shared/ui/charts/AreaTrendChart";
+import { PieCompositionChart } from "@/shared/ui/charts/PieCompositionChart";
+import { Skeleton } from "@/shared/ui/Skeleton";
+import { OrderStatsResponse } from "@/features/orders/types";
+import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface OrderChartsSectionProps {
   stats?: OrderStatsResponse;
@@ -15,27 +16,33 @@ interface OrderChartsSectionProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending_payment: '#f59e0b',
-  pending: '#f97316',
-  processing: '#3b82f6',
-  shipped: '#6366f1',
-  delivered: '#14b8a6',
-  completed: '#10b981',
-  cancelled: '#ef4444',
-  expired: '#6b7280',
+  pending_payment: "#f59e0b",
+  pending: "#f97316",
+  processing: "#3b82f6",
+  shipped: "#6366f1",
+  delivered: "#14b8a6",
+  completed: "#10b981",
+  cancelled: "#ef4444",
+  expired: "#6b7280",
 };
 
-export default function OrderChartsSection({ stats, isLoading }: OrderChartsSectionProps) {
+export default function OrderChartsSection({
+  stats,
+  isLoading,
+}: OrderChartsSectionProps) {
   const formatCurrency = useFormatCurrency();
+  const t = useTranslations("orders");
+
+  const statusBreakdown = stats?.statusBreakdown;
 
   const pieData = useMemo(() => {
-    if (!stats?.statusBreakdown) return [];
-    return Object.entries(stats.statusBreakdown).map(([name, value]) => ({
-      name: name.charAt(0).toUpperCase() + name.slice(1).replace('_', ' '),
+    if (!statusBreakdown) return [];
+    return Object.entries(statusBreakdown).map(([name, value]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1).replace("_", " "),
       value,
-      color: STATUS_COLORS[name] || '#6b7280',
+      color: STATUS_COLORS[name] || "#6b7280",
     }));
-  }, [stats?.statusBreakdown]);
+  }, [statusBreakdown]);
 
   if (isLoading) {
     return (
@@ -46,7 +53,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
               <Skeleton className="h-5 w-40 rounded" />
             </CardHeader>
             <CardContent>
-              <Skeleton className="h-[250px] w-full rounded-xl" />
+              <Skeleton className="h-62.5 w-full rounded-xl" />
             </CardContent>
           </Card>
         ))}
@@ -64,7 +71,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
         <Card className="border-border/50 bg-card shadow-sm overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Daily Orders
+              {t("charts.dailyOrders")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -82,7 +89,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
         <Card className="border-border/50 bg-card shadow-sm overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Order Status Distribution
+              {t("charts.orderStatusDistribution")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -103,7 +110,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
           <Card className="border-border/50 bg-card shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                Top Products
+                {t("charts.topProducts")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -115,14 +122,14 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
                   <div className="flex items-center gap-3 min-w-0">
                     <span
                       className={cn(
-                        'flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shrink-0',
+                        "flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shrink-0",
                         i === 0
-                          ? 'bg-amber-500/10 text-amber-600'
+                          ? "bg-amber-500/10 text-amber-600"
                           : i === 1
-                            ? 'bg-gray-300/20 text-gray-500'
+                            ? "bg-gray-300/20 text-gray-500"
                             : i === 2
-                              ? 'bg-orange-500/10 text-orange-600'
-                              : 'bg-muted/50 text-muted-foreground',
+                              ? "bg-orange-500/10 text-orange-600"
+                              : "bg-muted/50 text-muted-foreground",
                       )}
                     >
                       {i + 1}
@@ -132,7 +139,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
                     </span>
                   </div>
                   <span className="text-sm font-bold text-muted-foreground shrink-0 tabular-nums">
-                    {product.totalQuantity} sold
+                    {product.totalQuantity} {t("charts.sold")}
                   </span>
                 </div>
               ))}
@@ -145,7 +152,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
           <Card className="border-border/50 bg-card shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                Top Customers
+                {t("charts.topCustomers")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -157,14 +164,14 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
                   <div className="flex items-center gap-3 min-w-0">
                     <span
                       className={cn(
-                        'flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shrink-0',
+                        "flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shrink-0",
                         i === 0
-                          ? 'bg-amber-500/10 text-amber-600'
+                          ? "bg-amber-500/10 text-amber-600"
                           : i === 1
-                            ? 'bg-gray-300/20 text-gray-500'
+                            ? "bg-gray-300/20 text-gray-500"
                             : i === 2
-                              ? 'bg-orange-500/10 text-orange-600'
-                              : 'bg-muted/50 text-muted-foreground',
+                              ? "bg-orange-500/10 text-orange-600"
+                              : "bg-muted/50 text-muted-foreground",
                       )}
                     >
                       {i + 1}
@@ -174,7 +181,7 @@ export default function OrderChartsSection({ stats, isLoading }: OrderChartsSect
                         {customer.userName}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {customer.totalOrders} orders
+                        {customer.totalOrders} {t("charts.ordersCount")}
                       </p>
                     </div>
                   </div>

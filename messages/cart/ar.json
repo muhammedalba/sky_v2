@@ -84,6 +84,11 @@
     "postal_code": "الرمز البريدي",
     "additional_info": "معلومات إضافية (اختياري)",
     "additional_info_placeholder": "علامة مميزة، وقت مفضل للتوصيل...",
+    "company_info": "معلومات الشركة (اختياري)",
+    "company_name": "اسم الشركة",
+    "company_name_placeholder": "مثال: شركة النخبة للتجارة",
+    "vendor_vat_no": "الرقم الضريبي للمورد (VAT)",
+    "vendor_vat_no_placeholder": "مثال: 300XXXXXXXXX",
     "continue": "متابعة"
   },
   "shipping_payment": {

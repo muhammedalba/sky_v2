@@ -67,9 +67,18 @@ export default function ContactPage() {
 
   const email = contactInfo?.email || 'hello@skygalaxy.com';
   const phone = contactInfo?.phones?.[0] || '+1 (555) 000-0000';
-  const officeAddress = contactInfo?.address?.[locale] || (locale === 'ar' 
-    ? 'الرياض، المملكة العربية السعودية' 
-    : '123 Tech Blvd, San Francisco, CA');
+  const businessAddress = settings?.businessAddress;
+  const addressParts = businessAddress ? [
+    businessAddress.street?.[locale],
+    businessAddress.area?.[locale],
+    businessAddress.city?.[locale],
+    businessAddress.country?.[locale]
+  ].filter(Boolean) : [];
+  const officeAddress = addressParts.length > 0
+    ? addressParts.join(', ')
+    : (locale === 'ar' 
+      ? 'الرياض، المملكة العربية السعودية' 
+      : 'Riyadh, Saudi Arabia');
   const workingDays = contactInfo?.workingDays?.[locale] || (locale === 'ar' ? 'من الإثنين إلى الجمعة' : 'Monday - Friday');
   const workingHours = contactInfo?.workingHours?.[locale] || '09:00 AM - 06:00 PM';
 

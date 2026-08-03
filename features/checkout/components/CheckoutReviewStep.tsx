@@ -42,9 +42,9 @@ export function CheckoutReviewStep({
   // ─── 1. تحسين الأداء: دمج خطافات المراقبة (useWatch Optimization) ───
   // بدلاً من استدعاء خطاف المراقبة 3 مرات منفصلة، نقوم بمراقبة المدخلات كمصفوفة في طلب واحد
   // هذا يقلل من استهلاك الذاكرة ويجعل المكون يستمع للتغيرات بشكل موحد.
-  const [firstName, lastName, street] = useWatch({
+  const [firstName, lastName, street, companyName, vendorVatNo] = useWatch({
     control,
-    name: ["firstName", "lastName", "street"],
+    name: ["firstName", "lastName", "street", "companyName", "vendorVatNo"],
   });
 
   // تهيئة دوال الترجمة والترجمة المحلية المخصصة للغات
@@ -76,8 +76,18 @@ export function CheckoutReviewStep({
           {/* اسم العميل */}
           <div className="flex justify-between border-b border-border/40 pb-3">
             <span className="text-muted-foreground">{t("review.name")}</span>
-            <span className="font-semibold">
-              {safeFirstName} {safeLastName}
+            <span className="font-semibold text-end">
+              <div>{safeFirstName} {safeLastName}</div>
+              {companyName && (
+                <div className="text-xs text-muted-foreground font-normal mt-0.5">
+                  {companyName}
+                </div>
+              )}
+              {vendorVatNo && (
+                <div className="text-xs text-muted-foreground font-normal mt-0.5">
+                  VAT: {vendorVatNo}
+                </div>
+              )}
             </span>
           </div>
 

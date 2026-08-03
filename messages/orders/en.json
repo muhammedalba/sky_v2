@@ -153,7 +153,9 @@
     "address": "Address",
     "shippingInfo": "Shipping Information",
     "shippingProvider": "Shipping Provider",
-    "additionalInfo": "Additional Info"
+    "additionalInfo": "Additional Info",
+    "companyName": "Company Name",
+    "vendorVatNo": "Vendor VAT No."
   },
   "paymentInfo": {
     "paymentInfo": "Payment Information",
@@ -162,6 +164,38 @@
     "paymentStatus": "Payment Status",
     "currency": "Currency",
     "paymentFees": "Payment Fees",
-    "amountPaid": "Amount Paid"
+    "amountPaid": "Amount Paid",
+    "transferReceipt": "Bank Transfer Receipt",
+    "viewReceipt": "View Receipt",
+    "downloadReceipt": "Download Receipt"
+  },
+  "stats": {
+    "totalOrders": "Total Orders",
+    "periodOrders": "Period Orders",
+    "validOrders": "Valid Orders",
+    "revenue": "Revenue",
+    "avgOrderValue": "Avg Order Value",
+    "topStatus": "Top Status",
+    "badges": {
+      "allTime": "All Time",
+      "thisMonth": "This Month",
+      "successful": "Successful"
+    }
+  },
+  "charts": {
+    "dailyOrders": "Daily Orders",
+    "orderStatusDistribution": "Order Status Distribution",
+    "topProducts": "Top Products",
+    "sold": "sold",
+    "topCustomers": "Top Customers",
+    "ordersCount": "orders"
+  },
+  "invoicePreview": {
+    "title": "Invoice",
+    "download": "Download",
+    "pdfTitle": "Invoice PDF",
+    "noPdfGenerated": "No PDF Invoice Generated",
+    "noPdfDesc": "You can print or preview the HTML invoice receipt version.",
+    "openPreview": "Open Invoice Preview"
   }
 }

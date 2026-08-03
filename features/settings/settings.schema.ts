@@ -45,10 +45,6 @@ export const settingsSchema = z.object({
   contactInfo: z.object({
     email: z.string().email('errors.invalidEmail').or(z.literal('')).default(''),
     phones: z.array(z.string()).default([]),
-    address: z.object({
-      ar: z.string().default(''),
-      en: z.string().default(''),
-    }),
     workingDays: z.object({
       ar: z.string().default(''),
       en: z.string().default(''),
@@ -57,6 +53,39 @@ export const settingsSchema = z.object({
       ar: z.string().default(''),
       en: z.string().default(''),
     }),
+  }),
+
+  // Business Address
+  businessAddress: z.object({
+    country: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
+    city: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
+    area: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
+    street: z.object({
+      ar: z.string().default(''),
+      en: z.string().default(''),
+    }),
+    mailBox: z.string().default(''),
+    poBox: z.string().default(''),
+    vatNo: z.string().default(''),
+    crNo: z.string().default(''),
+  }).default({
+    country: { ar: '', en: '' },
+    city: { ar: '', en: '' },
+    area: { ar: '', en: '' },
+    street: { ar: '', en: '' },
+    mailBox: '',
+    poBox: '',
+    vatNo: '',
+    crNo: '',
   }),
 
   // Payments

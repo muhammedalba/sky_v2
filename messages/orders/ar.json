@@ -154,7 +154,9 @@
     "baseWeight": "الوزن الأساسي",
     "trackingUrl": "رقم التتبع",
     "shippingProvider": "مزود الشحن",
-    "shippingCost": "تكلفة الشحن"
+    "shippingCost": "تكلفة الشحن",
+    "companyName": "اسم الشركة",
+    "vendorVatNo": "الرقم الضريبي للمورد"
   },
   "paymentInfo": {
     "paymentInfo": "معلومات الدفع",
@@ -163,6 +165,38 @@
     "paymentStatus": "حالة الدفع",
     "currency": "العملة",
     "paymentFees": "رسوم الدفع",
-    "amountPaid": "المبلغ المدفوع"
+    "amountPaid": "المبلغ المدفوع",
+    "transferReceipt": "إشعار الحوالة البنكية",
+    "viewReceipt": "عرض الإشعار",
+    "downloadReceipt": "تحميل الإشعار"
+  },
+  "stats": {
+    "totalOrders": "إجمالي الطلبات",
+    "periodOrders": "طلبات الفترة",
+    "validOrders": "الطلبات الصالحة",
+    "revenue": "الإيرادات",
+    "avgOrderValue": "متوسط قيمة الطلب",
+    "topStatus": "أعلى حالة",
+    "badges": {
+      "allTime": "كل الأوقات",
+      "thisMonth": "هذا الشهر",
+      "successful": "ناجح"
+    }
+  },
+  "charts": {
+    "dailyOrders": "الطلبات اليومية",
+    "orderStatusDistribution": "توزيع حالة الطلبات",
+    "topProducts": "أفضل المنتجات",
+    "sold": "مباع",
+    "topCustomers": "أفضل العملاء",
+    "ordersCount": "طلبات"
+  },
+  "invoicePreview": {
+    "title": "الفاتورة",
+    "download": "تحميل",
+    "pdfTitle": "ملف الفاتورة PDF",
+    "noPdfGenerated": "لم يتم إنشاء فاتورة PDF",
+    "noPdfDesc": "يمكنك طباعة أو معاينة نسخة إيصال الفاتورة بصيغة HTML.",
+    "openPreview": "فتح معاينة الفاتورة"
   }
 }
