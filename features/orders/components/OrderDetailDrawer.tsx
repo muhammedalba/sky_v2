@@ -359,9 +359,8 @@ export default function OrderDetailDrawer({
                                 {Object.entries(item.variantId.attributes).map(
                                   ([key, val]) => {
                                     const valStr =
-                                      typeof val === "object" && val
-                                        ? ((val as Record<string, unknown>)
-                                            .value ?? JSON.stringify(val))
+                                      typeof val === "object" && val !== null
+                                        ? (val.value ?? JSON.stringify(val))
                                         : val;
                                     return (
                                       <span
