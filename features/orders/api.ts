@@ -10,6 +10,10 @@ export const ordersApi = {
   ...baseCrud,
   updateStatus: (id: string, data: Record<string, unknown>) =>
     apiClient.patch<ApiResponse<Order>>(`${ENDPOINTS.BASE}/${id}`, data),
+  updateOrderDetails: (id: string, data: FormData) =>
+    apiClient.patch<ApiResponse<Order>>(`${ENDPOINTS.BASE}/${id}`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
   getStats: (params?: { startDate?: string; endDate?: string }) =>
     apiClient.get(ENDPOINTS.STATS, { params }),
   applyCoupon: (data: { items: Record<string, unknown>[]; couponCode: string }) =>

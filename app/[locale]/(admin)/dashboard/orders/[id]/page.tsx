@@ -15,6 +15,7 @@ import OrderTimeline from "@/features/orders/components/OrderTimeline";
 import OrderProductsTable from "@/features/orders/components/OrderProductsTable";
 import OrderShippingCard from "@/features/orders/components/OrderShippingCard";
 import OrderPaymentCard from "@/features/orders/components/OrderPaymentCard";
+import OrderDeliveryCard from "@/features/orders/components/OrderDeliveryCard";
 import OrderSummaryCard from "@/features/orders/components/OrderSummaryCard";
 import InvoicePreview from "@/features/orders/components/InvoicePreview";
 import OrderNotes from "@/features/orders/components/OrderNotes";
@@ -121,6 +122,9 @@ export default function OrderDetailsPage({
 
           {/* Billing Payment Info Card */}
           <OrderPaymentCard order={order} />
+
+          {/* Delivery Info Card */}
+          <OrderDeliveryCard order={order} />
 
           {/* Internal Operations Notes */}
           <OrderNotes order={order} />

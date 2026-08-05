@@ -39,7 +39,7 @@ export default function InvoicePreview({
       </CardHeader>
       <CardContent className="p-0">
         {order.InvoicePdf ? (
-          <div className="w-full h-[400px] relative bg-secondary/5">
+          <div className="w-full h-100 relative bg-secondary/5">
             <iframe
               src={`${order.InvoicePdf}#toolbar=0&navpanes=0`}
               className="w-full h-full border-none"
@@ -47,13 +47,13 @@ export default function InvoicePreview({
             />
           </div>
         ) : (
-          <div className="p-8 border-none flex flex-col items-center justify-center text-center space-y-3 bg-secondary/5 h-[300px]">
+          <div className="p-8 border-none flex flex-col items-center justify-center text-center space-y-3 bg-secondary/5 h-75">
             <div className="p-3 bg-secondary/35 text-muted-foreground rounded-full">
               <FileTextIcon className="w-8 h-8" />
             </div>
             <div>
               <p className="text-xs font-bold text-foreground">{t('noPdfGenerated')}</p>
-              <p className="text-[10px] text-muted-foreground mt-1 max-w-[280px]">
+              <p className="text-[10px] text-muted-foreground mt-1 max-w-70">
                 {t('noPdfDesc')}
               </p>
             </div>

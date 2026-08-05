@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import Modal from "@/shared/ui/Modal";
 import { Button } from "@/shared/ui/Button";
 import { Order } from "@/features/orders/types";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { formatDate } from "@/lib/utils";
-import { DownloadIcon } from "@/shared/ui/Icons";
+import { DownloadIcon, SpinnerIcon } from "@/shared/ui/Icons";
 import { Printer as PrinterIcon } from "lucide-react";
+import { useSettings } from "@/features/settings/hooks/useSettings";
+
 
 interface InvoicePreviewDialogProps {
   order: Order | null;
@@ -113,51 +116,98 @@ function numberToArabicWords(amount: number): string {
   return `${amount.toLocaleString("ar-SA")} ريال سعودي`;
 }
 
-// ZATCA-styled visual QR Code component
-function ZatcaQrCode({ value }: { value: string }) {
+/**
+ * Encodes invoice data into ZATCA Phase-1 compliant Base64 TLV string.
+ * Format per ZATCA standard:
+ *   Tag 01 → Seller Name
+ *   Tag 02 → VAT Registration Number
+ *   Tag 03 → Invoice Date/Time (ISO 8601)
+ *   Tag 04 → Invoice Total (with VAT)
+ *   Tag 05 → VAT Amount
+ *
+ * The resulting Base64 string is what the official ZATCA "Fatoora" app scans.
+ */
+function buildZatcaTlvBase64({
+  sellerName,
+  vatNumber,
+  invoiceDateTime,
+  totalWithVat,
+  vatAmount,
+}: {
+  sellerName: string;
+  vatNumber: string;
+  invoiceDateTime: string;
+  totalWithVat: string;
+  vatAmount: string;
+}): string {
+  const encoder = new TextEncoder();
+
+  function encodeTlv(tag: number, value: string): Uint8Array {
+    const valueBytes = encoder.encode(value);
+    const tlv = new Uint8Array(2 + valueBytes.length);
+    tlv[0] = tag;
+    tlv[1] = valueBytes.length;
+    tlv.set(valueBytes, 2);
+    return tlv;
+  }
+
+  const fields = [
+    encodeTlv(1, sellerName),
+    encodeTlv(2, vatNumber),
+    encodeTlv(3, invoiceDateTime),
+    encodeTlv(4, totalWithVat),
+    encodeTlv(5, vatAmount),
+  ];
+
+  const totalLength = fields.reduce((sum, f) => sum + f.length, 0);
+  const merged = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const field of fields) {
+    merged.set(field, offset);
+    offset += field.length;
+  }
+
+  // Convert Uint8Array → Base64
+  let binary = "";
+  merged.forEach((byte) => (binary += String.fromCharCode(byte)));
+  return btoa(binary);
+}
+
+/**
+ * ZATCA Phase-1 QR Code component.
+ * Accepts structured invoice data, encodes it to TLV Base64,
+ * and renders a real scannable QR code.
+ */
+function ZatcaQrCode({
+  sellerName,
+  vatNumber,
+  invoiceDateTime,
+  totalWithVat,
+  vatAmount,
+}: {
+  sellerName: string;
+  vatNumber: string;
+  invoiceDateTime: string;
+  totalWithVat: string;
+  vatAmount: string;
+}) {
+  const base64Tlv = buildZatcaTlvBase64({
+    sellerName,
+    vatNumber,
+    invoiceDateTime,
+    totalWithVat,
+    vatAmount,
+  });
+
   return (
-    <div
-      className="w-24 h-24 border border-black p-1 bg-white flex flex-col items-center justify-center"
-      data-qr-value={value}
-    >
-      <svg viewBox="0 0 100 100" className="w-full h-full">
-        <rect x="5" y="5" width="25" height="25" fill="black" />
-        <rect x="9" y="9" width="17" height="17" fill="white" />
-        <rect x="13" y="13" width="9" height="9" fill="black" />
-
-        <rect x="70" y="5" width="25" height="25" fill="black" />
-        <rect x="74" y="9" width="17" height="17" fill="white" />
-        <rect x="78" y="13" width="9" height="9" fill="black" />
-
-        <rect x="5" y="70" width="25" height="25" fill="black" />
-        <rect x="9" y="74" width="17" height="17" fill="white" />
-        <rect x="13" y="78" width="9" height="9" fill="black" />
-
-        <rect x="35" y="5" width="8" height="8" fill="black" />
-        <rect x="50" y="5" width="8" height="8" fill="black" />
-        <rect x="40" y="15" width="12" height="6" fill="black" />
-        <rect x="58" y="15" width="6" height="12" fill="black" />
-
-        <rect x="5" y="35" width="8" height="8" fill="black" />
-        <rect x="15" y="45" width="10" height="10" fill="black" />
-        <rect x="5" y="58" width="8" height="6" fill="black" />
-
-        <rect x="35" y="35" width="30" height="30" fill="black" />
-        <rect x="42" y="42" width="16" height="16" fill="white" />
-        <rect x="47" y="47" width="6" height="6" fill="black" />
-
-        <rect x="72" y="35" width="8" height="12" fill="black" />
-        <rect x="85" y="40" width="10" height="8" fill="black" />
-        <rect x="75" y="52" width="18" height="8" fill="black" />
-
-        <rect x="35" y="70" width="12" height="8" fill="black" />
-        <rect x="52" y="75" width="12" height="18" fill="black" />
-        <rect x="35" y="85" width="14" height="10" fill="black" />
-
-        <rect x="70" y="70" width="10" height="10" fill="black" />
-        <rect x="85" y="70" width="10" height="10" fill="black" />
-        <rect x="70" y="85" width="25" height="10" fill="black" />
-      </svg>
+    <div className="w-36 h-36 bg-white flex flex-col items-center justify-center">
+      <QRCodeSVG
+        value={base64Tlv}
+        size={140}
+        bgColor="#ffffff"
+        fgColor="#000000"
+        level="M"
+      />
     </div>
   );
 }
@@ -169,6 +219,8 @@ export default function InvoicePreviewDialog({
 }: InvoicePreviewDialogProps) {
   const formatCurrency = useFormatCurrency();
   const printAreaRef = useRef<HTMLDivElement>(null);
+  const { data: settings, isLoading: isSettingsLoading } = useSettings();
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   const handlePrint = () => {
     const printContent = printAreaRef.current?.innerHTML;
@@ -217,7 +269,7 @@ export default function InvoicePreviewDialog({
           ${customPrintStyle}
         </head>
         <body class="bg-white text-slate-900 p-4">
-          <div class="max-w-[850px] mx-auto bg-white text-slate-900">
+          <div class="max-w-212.5 mx-auto bg-white text-slate-900">
             ${printContent}
           </div>
         </body>
@@ -234,17 +286,72 @@ export default function InvoicePreviewDialog({
     }, 400);
   };
 
-  const handleDownload = () => {
-    if (order?.InvoicePdf) {
-      const link = document.createElement("a");
-      link.href = order.InvoicePdf;
-      link.download = `Invoice-${order._id}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      return;
+  const handleDownload = async () => {
+    const element = printAreaRef.current;
+    if (!element) return;
+
+    setIsGeneratingPdf(true);
+    try {
+      // html-to-image uses SVG foreignObject: the browser itself renders the element,
+      // so all modern CSS (oklch, lab, grid, etc.) works natively without a custom parser.
+      const [{ toPng }, { default: jsPDF }] = await Promise.all([
+        import("html-to-image"),
+        import("jspdf"),
+      ]);
+
+      // Capture at 2x pixel ratio for retina quality
+      const pixelRatio = window.devicePixelRatio || 2;
+      const imgData = await toPng(element, {
+        quality: 1,
+        pixelRatio: Math.max(pixelRatio, 2),
+        backgroundColor: "#ffffff",
+        skipFonts: false, // keep Arabic fonts
+        fetchRequestInit: { cache: "force-cache" },
+      });
+
+      // A4: 210 × 297 mm
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Fit the entire invoice into a single A4 page:
+      // If the image is taller than the page, scale it down proportionally.
+      const img = new Image();
+      img.src = imgData;
+      await new Promise<void>((res) => {
+        img.onload = () => res();
+      });
+
+      const imgRatio = img.height / img.width;
+      const imgWidthFull = pageWidth;
+      const imgHeightFull = pageWidth * imgRatio;
+
+      // Scale down if the content overflows page height
+      const scale = imgHeightFull > pageHeight ? pageHeight / imgHeightFull : 1;
+      const finalW = imgWidthFull * scale;
+      const finalH = imgHeightFull * scale;
+
+      // Center horizontally in case scale reduced the width
+      const xOffset = (pageWidth - finalW) / 2;
+
+      pdf.addImage(imgData, "PNG", xOffset, 0, finalW, finalH);
+
+      pdf.save(
+        `Invoice ${order?.shippingAddress?.firstName ?? "N/A"} ${
+          order?.shippingAddress?.lastName ?? "N/A"
+        }-${order?.deliveryReceiptNumber ?? "order"}.pdf`,
+      );
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      // Fallback: open browser print dialog
+      handlePrint();
+    } finally {
+      setIsGeneratingPdf(false);
     }
-    handlePrint();
   };
 
   if (!order) return null;
@@ -265,6 +372,42 @@ export default function InvoicePreviewDialog({
     "المملكة العربية السعودية";
   const customerCity = getLocationName(order.shippingAddress?.city) || "-";
 
+  // Dynamic Store Settings
+  const siteNameAr = getLocalizedValue(settings?.siteName, "ar") || "متجري";
+  const siteNameEn = getLocalizedValue(settings?.siteName, "en") || "My Store";
+  const siteLogo = settings?.logo || "/assets/images/logo.png";
+  const crNo = settings?.businessAddress?.crNo || "-";
+  const vatNo = settings?.businessAddress?.vatNo || "-";
+
+  const bankName = settings?.bankTransferDetails?.bankName || "-";
+  const accountName = settings?.bankTransferDetails?.accountName || "-";
+  const accountNumber = settings?.bankTransferDetails?.accountNumber || "-";
+  const iban = settings?.bankTransferDetails?.iban || "-";
+
+  const email = settings?.contactInfo?.email || "";
+  const phone = settings?.contactInfo?.phones?.[0] || "";
+
+  const companyCountryAr =
+    getLocalizedValue(settings?.businessAddress?.country, "ar") ||
+    "المملكة العربية السعودية";
+  const companyCountryEn =
+    getLocalizedValue(settings?.businessAddress?.country, "en") ||
+    "Saudi Arabia";
+  const companyCityAr =
+    getLocalizedValue(settings?.businessAddress?.city, "ar") || "-";
+  const companyCityEn =
+    getLocalizedValue(settings?.businessAddress?.city, "en") || "-";
+  const companyAreaAr =
+    getLocalizedValue(settings?.businessAddress?.area, "ar") || "-";
+  const companyAreaEn =
+    getLocalizedValue(settings?.businessAddress?.area, "en") || "-";
+  const companyStreetAr =
+    getLocalizedValue(settings?.businessAddress?.street, "ar") || "-";
+  const companyStreetEn =
+    getLocalizedValue(settings?.businessAddress?.street, "en") || "-";
+  const mailBox = settings?.businessAddress?.mailBox || "-";
+  const poBox = settings?.businessAddress?.poBox || "-";
+
   return (
     <Modal
       isOpen={isOpen}
@@ -273,432 +416,498 @@ export default function InvoicePreviewDialog({
       size="xl"
       footer={
         <div className="flex gap-2.5">
-          <Button variant="outline" onClick={handlePrint} className="gap-2">
+          <Button
+            variant="outline"
+            onClick={handlePrint}
+            className="gap-2"
+            disabled={isSettingsLoading}
+          >
             <PrinterIcon className="w-4 h-4" /> طباعة الفاتورة / Print Invoice
           </Button>
-          <Button variant="default" onClick={handleDownload} className="gap-2">
-            <DownloadIcon className="w-4 h-4" /> تحميل PDF / Download PDF
+          <Button
+            variant="default"
+            onClick={handleDownload}
+            className="gap-2"
+            disabled={isSettingsLoading || isGeneratingPdf}
+          >
+            {isGeneratingPdf ? (
+              <>
+                <SpinnerIcon className="w-4 h-4 animate-spin" />
+                جاري إنشاء PDF...
+              </>
+            ) : (
+              <>
+                <DownloadIcon className="w-4 h-4" /> تحميل PDF / Download PDF
+              </>
+            )}
           </Button>
         </div>
       }
     >
       <div className="bg-card border border-border/40 rounded-2xl p-4 overflow-hidden max-h-[80vh] overflow-y-auto">
-        {/* Printable Invoice Container */}
-        <div
-          ref={printAreaRef}
-          className="bg-white text-slate-900 p-6 space-y-4 text-xs font-sans border border-slate-300 rounded-lg shadow-sm"
-          dir="rtl"
-        >
-          {/* 1. Header Section with Logo & Bilingual Company Details */}
-          <div className="grid grid-cols-3 items-center gap-2 pb-4 border-b border-black">
-            {/* Left Column: English Info */}
-            <div
-              className="text-left text-[11px] leading-snug space-y-0.5 text-slate-800"
-              dir="ltr"
-            >
-              <p className="font-bold text-xs text-black uppercase">
-                Sky Galaxy Co. For trading
-              </p>
-              <p>
-                <span className="font-semibold">CR No.:</span> 1010881633
-              </p>
-              <p>
-                <span className="font-semibold">VAT Registration number:</span>{" "}
-                311658655700003
-              </p>
-            </div>
-
-            {/* Center Column: Logo & Tagline */}
-            <div className="flex flex-col items-center justify-center text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/assets/images/logo.png"
-                alt="Sky Galaxy Logo"
-                className="h-14 w-auto object-contain mb-1"
-              />
-              <p className="font-bold text-[12px] text-sky-950">Sky Galaxy</p>
-              <p className="text-[9px] text-slate-600 font-medium">
-                for insulation and building materials
-              </p>
-            </div>
-
-            {/* Right Column: Arabic Info */}
-            <div
-              className="text-right text-[11px] leading-snug space-y-0.5 text-slate-800"
-              dir="rtl"
-            >
-              <p className="font-bold text-xs text-black">
-                شركة مجرة السماء للتجارة
-              </p>
-              <p>
-                <span className="font-semibold">رقم السجل التجاري:</span>{" "}
-                1010881633
-              </p>
-              <p>
-                <span className="font-semibold">رقم التسجيل الضريبي:</span>{" "}
-                311658655700003
-              </p>
-            </div>
+        {isSettingsLoading ? (
+          <div className="flex flex-col items-center justify-center p-12 space-y-4">
+            <SpinnerIcon className="w-8 h-8 text-primary" />
+            <p className="text-xs font-bold text-muted-foreground">
+              جاري تحميل إعدادات الفاتورة...
+            </p>
           </div>
+        ) : (
+          /* Printable Invoice Container */
+          <div
+            ref={printAreaRef}
+            className="bg-white text-slate-900 p-6 space-y-4 text-xs font-sans border border-slate-300 rounded-lg shadow-sm"
+            dir="rtl"
+          >
+            {/* 1. Header Section with Logo & Bilingual Company Details */}
+            <div className="grid grid-cols-3 items-center gap-2 pb-4 border-b border-black">
+              {/* Left Column: English Info */}
+              <div
+                className="text-left text-[11px] leading-snug space-y-0.5 text-slate-800"
+                dir="ltr"
+              >
+                <p className="font-bold text-xs text-black uppercase">
+                  {siteNameEn}
+                </p>
+                <p>
+                  <span className="font-semibold">CR No.:</span> {crNo}
+                </p>
+                <p>
+                  <span className="font-semibold">
+                    VAT Registration number:
+                  </span>{" "}
+                  {vatNo}
+                </p>
+              </div>
 
-          {/* 2. Invoice Title Badge & Meta Grid Table */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1 border-t border-black"></div>
-              <h2 className="px-6 py-1 bg-sky-100 text-sky-950 border border-black font-black text-sm rounded text-center min-w-[220px]">
-                فاتورة ضريبية / Tax Invoice
-              </h2>
-              <div className="flex-1 border-t border-black"></div>
+              {/* Center Column: Logo & Tagline */}
+              <div className="flex flex-col items-center justify-center text-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={siteLogo}
+                  alt={`${siteNameAr} Logo`}
+                  className="h-14 w-auto object-contain mb-1"
+                />
+                <p className="font-bold text-[12px] text-sky-950">
+                  {siteNameAr}
+                </p>
+                <p className="text-[9px] text-slate-600 font-medium">
+                  {siteNameEn}
+                </p>
+              </div>
+
+              {/* Right Column: Arabic Info */}
+              <div
+                className="text-right text-[11px] leading-snug space-y-0.5 text-slate-800"
+                dir="rtl"
+              >
+                <p className="font-bold text-xs text-black">{siteNameAr}</p>
+                <p>
+                  <span className="font-semibold">رقم السجل التجاري:</span>{" "}
+                  {crNo}
+                </p>
+                <p>
+                  <span className="font-semibold">رقم التسجيل الضريبي:</span>{" "}
+                  {vatNo}
+                </p>
+              </div>
             </div>
 
-            <table className="w-full border border-black text-center text-[10px] border-collapse">
-              <tbody>
-                <tr className="border-b border-black">
-                  <td className="bg-slate-100 font-bold border-l border-black p-1.5 w-1/6">
-                    التاريخ / Date:
-                  </td>
-                  <td className="p-1.5 border-l border-black w-2/6">
-                    {formatDate(order.createdAt)}
-                  </td>
-                  <td className="bg-slate-100 font-bold border-l border-black p-1.5 w-1/6">
-                    الرقم / No:
-                  </td>
-                  <td className="p-1.5 font-mono font-bold w-2/6">
-                    RUH-2-{orderYear} -{" "}
-                    {order._id?.slice(-4)?.toUpperCase() || "7786"}
-                  </td>
-                </tr>
-                <tr className="border-b border-black">
-                  <td className="bg-slate-100 font-bold border-l border-black p-1.5">
-                    اذن الاستلام / Delivery No:
-                  </td>
-                  <td className="p-1.5 border-l border-black">
-                    DEL-{order._id?.slice(-4)?.toUpperCase() || "-"}
-                  </td>
-                  <td className="bg-slate-100 font-bold border-l border-black p-1.5">
-                    طلب الشراء / Sales Order:
-                  </td>
-                  <td className="p-1.5 font-mono">
-                    #{order._id?.toUpperCase()}
-                  </td>
-                </tr>
-                <tr className="border-b border-black">
-                  <td className="bg-slate-100 font-bold border-l border-black p-1.5">
-                    مكان التوصيل / Place of delivery:
-                  </td>
-                  <td colSpan={3} className="p-1.5 text-right font-medium">
-                    {[customerCity, customerCountry]
-                      .filter(Boolean)
-                      .join(", ") || "المملكة العربية السعودية"}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="bg-slate-100 font-bold border-l border-black p-1.5">
-                    البيان / Description:
-                  </td>
-                  <td colSpan={3} className="p-1.5 text-right font-medium">
-                    {order.notes ||
-                      `طلب شراء من العميل: ${order.user?.name || "عميل متجر مجرة السماء"}`}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            {/* 2. Invoice Title Badge & Meta Grid Table */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 border-t border-black"></div>
+                <h2 className="px-6 py-1 bg-sky-100 text-sky-950 border border-black font-black text-sm rounded text-center min-w-[220px]">
+                  فاتورة ضريبية / Tax Invoice
+                </h2>
+                <div className="flex-1 border-t border-black"></div>
+              </div>
 
-          {/* 3. Vendor Info Box */}
-          <div className="border border-black text-[10px]">
-            <div className="bg-sky-100 text-sky-950 font-bold p-1.5 border-b border-black flex justify-between items-center">
-              <span>المورد / Vendor: شركة مجرة السماء للتجارة</span>
-              <span>
-                الرقم الضريبي للمنشأة / Vendor VAT No: 311658655700003
-              </span>
-            </div>
-            <table className="w-full text-center border-collapse">
-              <thead>
-                <tr className="bg-slate-100 border-b border-black font-semibold">
-                  <th className="p-1 border-l border-black">البلد | Country</th>
-                  <th className="p-1 border-l border-black">المدينة | City</th>
-                  <th className="p-1 border-l border-black">المنطقة | Area</th>
-                  <th className="p-1 border-l border-black">الشارع | Street</th>
-                  <th className="p-1 border-l border-black">
-                    صندوق بريد | Mail Box
-                  </th>
-                  <th className="p-1">الرمز البريدي | Po Box</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="p-1 border-l border-black">
-                    المملكة العربية السعودية
-                  </td>
-                  <td className="p-1 border-l border-black">الرياض</td>
-                  <td className="p-1 border-l border-black">حي جرير</td>
-                  <td className="p-1 border-l border-black">
-                    طريق صلاح الدين الايوبي
-                  </td>
-                  <td className="p-1 border-l border-black">7284</td>
-                  <td className="p-1">12837</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* 4. Customer Info Box */}
-          <div className="border border-black text-[10px]">
-            <div className="bg-sky-100 text-sky-950 font-bold p-1.5 border-b border-black flex justify-between items-center">
-              <span>العميل / Customer: {order.user?.name || "عميل كوين"}</span>
-              <span>الرقم الضريبي للعميل / Customer VAT No: {userVat}</span>
-            </div>
-            <table className="w-full text-center border-collapse">
-              <thead>
-                <tr className="bg-slate-100 border-b border-black font-semibold">
-                  <th className="p-1 border-l border-black">البلد | Country</th>
-                  <th className="p-1 border-l border-black">المدينة | City</th>
-                  <th className="p-1 border-l border-black">المنطقة | Area</th>
-                  <th className="p-1 border-l border-black">الشارع | Street</th>
-                  <th className="p-1 border-l border-black">
-                    صندوق بريد | Mail Box
-                  </th>
-                  <th className="p-1">الرمز البريدي | Po Box</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="p-1 border-l border-black">
-                    {customerCountry}
-                  </td>
-                  <td className="p-1 border-l border-black">{customerCity}</td>
-                  <td className="p-1 border-l border-black">
-                    {order.shippingAddress?.building || "-"}
-                  </td>
-                  <td className="p-1 border-l border-black">
-                    {order.shippingAddress?.street || "-"}
-                  </td>
-                  <td className="p-1 border-l border-black">-</td>
-                  <td className="p-1">
-                    {order.shippingAddress?.postalCode || "-"}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* 5. Products Table */}
-          <div className="border border-black overflow-hidden">
-            <table className="w-full text-center border-collapse text-[10px]">
-              <thead>
-                <tr className="bg-sky-100 text-sky-950 font-bold border-b border-black">
-                  <th className="p-1.5 border-l border-black w-8">#</th>
-                  <th className="p-1.5 border-l border-black text-right">
-                    البيان / Description
-                  </th>
-                  <th className="p-1.5 border-l border-black w-14">
-                    الكمية / Qty
-                  </th>
-                  <th className="p-1.5 border-l border-black w-20">
-                    الأفرادي / Price
-                  </th>
-                  <th className="p-1.5 border-l border-black w-24">
-                    الإجمالي / Total
-                  </th>
-                  <th className="p-1.5 border-l border-black w-20">
-                    الضريبة / VAT
-                  </th>
-                  <th className="p-1.5 w-24">المجموع النهائي / Final Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black">
-                {order.items?.map((item, idx) => {
-                  const titleAr =
-                    getLocalizedValue(item.productId?.title, "ar") || "منتج";
-                  const titleEn = getLocalizedValue(
-                    item.productId?.title,
-                    "en",
-                  );
-                  const itemQty = item.quantity || 1;
-                  const itemPrice = item.price || 0;
-                  const itemTotal = item.totalPrice || itemQty * itemPrice;
-                  const itemVat = itemTotal * 0.15;
-                  const itemFinalTotal = itemTotal + itemVat;
-
-                  return (
-                    <tr key={idx} className="hover:bg-slate-50">
-                      <td className="p-1.5 border-l border-black font-medium">
-                        {idx + 1}
-                      </td>
-                      <td className="p-1.5 border-l border-black text-right">
-                        <div className="font-semibold text-slate-900">
-                          {titleAr}
-                        </div>
-                        {titleEn && (
-                          <div className="text-[9px] text-slate-600 font-sans">
-                            {titleEn}
-                          </div>
-                        )}
-                        {item.sku && (
-                          <div className="text-[9px] font-mono text-slate-500">
-                            SKU: {item.sku}
-                          </div>
-                        )}
-                      </td>
-                      <td className="p-1.5 border-l border-black font-medium">
-                        {itemQty}
-                      </td>
-                      <td className="p-1.5 border-l border-black font-mono">
-                        {formatCurrency(itemPrice)}
-                      </td>
-                      <td className="p-1.5 border-l border-black font-mono font-semibold">
-                        {formatCurrency(itemTotal)}
-                      </td>
-                      <td className="p-1.5 border-l border-black font-mono text-slate-700">
-                        {formatCurrency(itemVat)}
-                      </td>
-                      <td className="p-1.5 font-mono font-bold text-slate-900">
-                        {formatCurrency(itemFinalTotal)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 6. Summary Breakdown & QR Code Section */}
-          <div className="flex gap-4 items-start pt-2">
-            {/* Left: ZATCA QR Code */}
-            <div className="flex flex-col items-center justify-center p-2 border border-black rounded bg-white">
-              <ZatcaQrCode
-                value={`Sky Galaxy|311658655700003|${order.createdAt}|${grandTotal}|${tax}`}
-              />
-            </div>
-
-            {/* Right: Summary Breakdown Table */}
-            <div className="flex-1 border border-black text-[10px]">
-              <table className="w-full border-collapse">
+              <table className="w-full border border-black text-center text-[10px] border-collapse">
                 <tbody>
                   <tr className="border-b border-black">
-                    <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right w-3/5">
-                      إجمالي الفاتورة / Total Amount
+                    <td className="bg-slate-100 font-bold border-l border-black p-1.5 w-1/6">
+                      التاريخ / Date:
                     </td>
-                    <td className="p-1.5 font-mono font-bold text-left w-2/5">
-                      {formatCurrency(subtotal)}
+                    <td className="p-1.5 border-l border-black w-2/6">
+                      {formatDate(order.createdAt)}
                     </td>
-                  </tr>
-                  <tr className="border-b border-black">
-                    <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
-                      مجموع الخصومات / Total Discount
+                    <td className="bg-slate-100 font-bold border-l border-black p-1.5 w-1/6">
+                      الرقم / No:
                     </td>
-                    <td className="p-1.5 font-mono font-bold text-left">
-                      {formatCurrency(discount)}
-                    </td>
-                  </tr>
-                  <tr className="border-b border-black">
-                    <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
-                      الصافي بعد الخصم - الخاضع للضريبة / Total Amount
-                      (Excluding 15% VAT)
-                    </td>
-                    <td className="p-1.5 font-mono font-bold text-left">
-                      {formatCurrency(taxableSubtotal)}
+                    <td className="p-1.5 font-mono font-bold w-2/6">
+                      RUH-2-{orderYear} -{" "}
+                      {order._id?.slice(-4)?.toUpperCase() || "7786"}
                     </td>
                   </tr>
                   <tr className="border-b border-black">
-                    <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
-                      ضريبة القيمة المضافة 15% / 15% VAT
+                    <td className="bg-slate-100 font-bold border-l border-black p-1.5">
+                      اذن الاستلام / Delivery No:
                     </td>
-                    <td className="p-1.5 font-mono font-bold text-left">
-                      {formatCurrency(tax)}
+                    <td className="p-1.5 border-l border-black font-bold">
+                      {order.deliveryReceiptNumber ||
+                        `DEL-${order._id?.slice(-4)?.toUpperCase() || "-"}`}
+                    </td>
+                    <td className="bg-slate-100 font-bold border-l border-black p-1.5">
+                      طلب الشراء / Sales Order:
+                    </td>
+                    <td className="p-1.5 font-mono">
+                      #{order._id?.toUpperCase()}
                     </td>
                   </tr>
-                  <tr className="bg-sky-200 text-sky-950 font-black">
-                    <td className="p-1.5 border-l border-black text-right">
-                      الإجمالي شامل 15% ضريبة القيمة المضافة / Total Amount
-                      (Including 15% VAT)
+                  <tr className="border-b border-black">
+                    <td className="bg-slate-100 font-bold border-l border-black p-1.5">
+                      مكان التوصيل / Place of delivery:
                     </td>
-                    <td className="p-1.5 font-mono text-base text-left">
-                      {formatCurrency(grandTotal)}
+                    <td colSpan={3} className="p-1.5 text-right font-medium">
+                      {[customerCity, customerCountry]
+                        .filter(Boolean)
+                        .join(", ") || "المملكة العربية السعودية"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="bg-slate-100 font-bold border-l border-black p-1.5">
+                      البيان / Description:
+                    </td>
+                    <td colSpan={3} className="p-1.5 text-right font-medium">
+                      {order.notes ||
+                        `طلب شراء من العميل: ${order.user?.name || "عميل متجر مجرة السماء"}`}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </div>
 
-          {/* Amount in Words */}
-          <div className="bg-slate-100 border border-black p-2 text-center text-xs font-bold text-slate-900">
-            المبلغ المطلوب: {numberToArabicWords(grandTotal)}
-          </div>
-
-          {/* 7. Signatures & Bank Details */}
-          <div className="grid grid-cols-2 gap-4 border border-black p-3 text-[10px]">
-            {/* Signatures */}
-            <div className="space-y-6">
-              <div className="flex justify-between items-center border-b border-dashed border-slate-400 pb-2">
-                <span className="font-bold">أعدت من قبل / Prepared by:</span>
-                <span className="font-mono">...........................</span>
+            {/* 3. Vendor Info Box */}
+            <div className="border border-black text-[10px]">
+              <div className="bg-sky-100 text-sky-950 font-bold p-1.5 border-b border-black flex justify-between items-center">
+                <span>المورد / Vendor: {siteNameAr}</span>
+                <span>الرقم الضريبي للمنشأة / Vendor VAT No: {vatNo}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="font-bold">المستلم / Received by:</span>
-                <span className="font-mono">...........................</span>
+              <table className="w-full text-center border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 border-b border-black font-semibold">
+                    <th className="p-1 border-l border-black">
+                      البلد | Country
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      المدينة | City
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      المنطقة | Area
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      الشارع | Street
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      صندوق بريد | Mail Box
+                    </th>
+                    <th className="p-1">الرمز البريدي | Po Box</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="p-1 border-l border-black">
+                      {companyCountryAr} | {companyCountryEn}
+                    </td>
+                    <td className="p-1 border-l border-black">
+                      {companyCityAr} | {companyCityEn}
+                    </td>
+                    <td className="p-1 border-l border-black">
+                      {companyAreaAr} | {companyAreaEn}
+                    </td>
+                    <td className="p-1 border-l border-black">
+                      {companyStreetAr} | {companyStreetEn}
+                    </td>
+                    <td className="p-1 border-l border-black">{mailBox}</td>
+                    <td className="p-1">{poBox}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* 4. Customer Info Box */}
+            <div className="border border-black text-[10px]">
+              <div className="bg-sky-100 text-sky-950 font-bold p-1.5 border-b border-black flex justify-between items-center">
+                <span>
+                  العميل / Customer: {order.user?.name || "عميل كوين"}
+                </span>
+                <span>الرقم الضريبي للعميل / Customer VAT No: {userVat}</span>
+              </div>
+              <table className="w-full text-center border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 border-b border-black font-semibold">
+                    <th className="p-1 border-l border-black">
+                      البلد | Country
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      المدينة | City
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      المنطقة | Area
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      الشارع | Street
+                    </th>
+                    <th className="p-1 border-l border-black">
+                      صندوق بريد | Mail Box
+                    </th>
+                    <th className="p-1">الرمز البريدي | Po Box</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="p-1 border-l border-black">
+                      {customerCountry}
+                    </td>
+                    <td className="p-1 border-l border-black">
+                      {customerCity}
+                    </td>
+                    <td className="p-1 border-l border-black">
+                      {order.shippingAddress?.building || "-"}
+                    </td>
+                    <td className="p-1 border-l border-black">
+                      {order.shippingAddress?.street || "-"}
+                    </td>
+                    <td className="p-1 border-l border-black">-</td>
+                    <td className="p-1">
+                      {order.shippingAddress?.postalCode || "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* 5. Products Table */}
+            <div className="border border-black overflow-hidden">
+              <table className="w-full text-center border-collapse text-[10px]">
+                <thead>
+                  <tr className="bg-sky-100 text-sky-950 font-bold border-b border-black">
+                    <th className="p-1.5 border-l border-black w-8">#</th>
+                    <th className="p-1.5 border-l border-black text-right">
+                      البيان / Description
+                    </th>
+                    <th className="p-1.5 border-l border-black w-14">
+                      الكمية / Qty
+                    </th>
+                    <th className="p-1.5 border-l border-black w-20">
+                      الأفرادي / Price
+                    </th>
+                    <th className="p-1.5 border-l border-black w-24">
+                      الإجمالي / Total
+                    </th>
+                    <th className="p-1.5 border-l border-black w-20">
+                      الضريبة / VAT
+                    </th>
+                    <th className="p-1.5 w-24">
+                      المجموع النهائي / Final Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-black">
+                  {order.items?.map((item, idx) => {
+                    const titleAr =
+                      getLocalizedValue(item.productId?.title, "ar") || "منتج";
+                    const titleEn = getLocalizedValue(
+                      item.productId?.title,
+                      "en",
+                    );
+                    const itemQty = item.quantity || 1;
+                    const itemPrice = item.price || 0;
+                    const itemTotal = item.totalPrice || itemQty * itemPrice;
+                    const itemVat = itemTotal * 0.15;
+                    const itemFinalTotal = itemTotal + itemVat;
+
+                    return (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="p-1.5 border-l border-black font-medium">
+                          {idx + 1}
+                        </td>
+                        <td className="p-1.5 border-l border-black text-right">
+                          <div className="font-semibold text-slate-900">
+                            {titleAr}
+                          </div>
+                          {titleEn && (
+                            <div className="text-[9px] text-slate-600 font-sans">
+                              {titleEn}
+                            </div>
+                          )}
+                          {item.sku && (
+                            <div className="text-[9px] font-mono text-slate-500">
+                              SKU: {item.sku}
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-1.5 border-l border-black font-medium">
+                          {itemQty}
+                        </td>
+                        <td className="p-1.5 border-l border-black font-mono">
+                          {formatCurrency(itemPrice)}
+                        </td>
+                        <td className="p-1.5 border-l border-black font-mono font-semibold">
+                          {formatCurrency(itemTotal)}
+                        </td>
+                        <td className="p-1.5 border-l border-black font-mono text-slate-700">
+                          {formatCurrency(itemVat)}
+                        </td>
+                        <td className="p-1.5 font-mono font-bold text-slate-900">
+                          {formatCurrency(itemFinalTotal)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 6. Summary Breakdown & QR Code Section */}
+            <div className="space-y-2">
+              <div className="flex gap-4 items-start pt-2">
+                {/* Left: ZATCA QR Code */}
+                <div className="flex flex-col items-center justify-center p-2 border border-black rounded bg-white">
+                  <ZatcaQrCode
+                    sellerName={siteNameAr}
+                    vatNumber={crNo}
+                    invoiceDateTime={
+                      order.createdAt
+                        ? new Date(order.createdAt).toISOString()
+                        : new Date().toISOString()
+                    }
+                    totalWithVat={grandTotal.toFixed(2)}
+                    vatAmount={tax.toFixed(2)}
+                  />
+                </div>
+
+                {/* Right: Summary Breakdown Table */}
+                <div className="flex-1 border border-black text-[10px]">
+                  <table className="w-full border-collapse">
+                    <tbody>
+                      <tr className="border-b border-black">
+                        <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right w-3/5">
+                          إجمالي الفاتورة / Total Amount
+                        </td>
+                        <td className="p-1.5 font-mono font-bold text-left w-2/5">
+                          {formatCurrency(subtotal)}
+                        </td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
+                          مجموع الخصومات / Total Discount
+                        </td>
+                        <td className="p-1.5 font-mono font-bold text-left">
+                          {formatCurrency(discount)}
+                        </td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
+                          الصافي بعد الخصم - الخاضع للضريبة / Total Amount
+                          (Excluding VAT)
+                        </td>
+                        <td className="p-1.5 font-mono font-bold text-left">
+                          {formatCurrency(taxableSubtotal)}
+                        </td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
+                          ضريبة القيمة المضافة / VAT Amount
+                        </td>
+                        <td className="p-1.5 font-mono font-bold text-left">
+                          {formatCurrency(tax)}
+                        </td>
+                      </tr>
+                      <tr className="bg-sky-200 text-sky-950 font-black">
+                        <td className="p-1.5 border-l border-black text-right">
+                          الإجمالي شامل ضريبة القيمة المضافة / Total Amount
+                          (Including VAT)
+                        </td>
+                        <td className="p-1.5 font-mono text-base text-left">
+                          {formatCurrency(grandTotal)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 
-            {/* Bank Account Info */}
-            <div className="bg-slate-50 border-r border-black p-2 space-y-1 text-right font-medium">
-              <p>
-                <span className="font-bold">اسم الحساب / Account Name:</span>{" "}
-                شركة مجرة السماء للتجارة
+            {/* Amount in Words */}
+            <div className="bg-slate-100 border border-black p-2 text-center text-xs font-bold text-slate-900">
+              المبلغ المطلوب: {numberToArabicWords(grandTotal)}
+            </div>
+
+            {/* 7. Signatures & Bank Details */}
+            <div className="grid grid-cols-2 gap-4 border border-black p-3 text-[10px]">
+              {/* Signatures */}
+              <div className="space-y-6">
+                <div className="flex justify-between items-center border-b border-dashed border-slate-400 pb-2">
+                  <span className="font-bold">أعدت من قبل / Prepared by:</span>
+                  <span className="font-mono">...........................</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-bold">المستلم / Received by:</span>
+                  <span className="font-mono">...........................</span>
+                </div>
+              </div>
+
+              {/* Bank Account Info */}
+              <div className="bg-slate-50 border-r border-black p-2 space-y-1 text-right font-medium">
+                <p>
+                  <span className="font-bold">اسم الحساب / Account Name:</span>{" "}
+                  {accountName}
+                </p>
+                <p>
+                  <span className="font-bold">البنك / Bank:</span> {bankName}
+                </p>
+                <p>
+                  <span className="font-bold">رقم الحساب / Account No.:</span>{" "}
+                  {accountNumber}
+                </p>
+                <p>
+                  <span className="font-bold">رقم الحساب الدولي / IBAN:</span>{" "}
+                  {iban}
+                </p>
+              </div>
+            </div>
+
+            {/* Return Policy */}
+            <div className="border border-red-500 bg-red-50 p-2 text-center text-[10px] font-semibold text-red-900">
+              <p className="font-bold text-red-700 underline mb-0.5">
+                سياسة الاستبدال والاسترجاع:
               </p>
               <p>
-                <span className="font-bold">البنك / Bank:</span> مصرف الراجحي
-              </p>
-              <p>
-                <span className="font-bold">رقم الحساب / Account No.:</span>{" "}
-                289608019786591
-              </p>
-              <p>
-                <span className="font-bold">رقم الحساب الدولي / IBAN:</span>{" "}
-                SA21 8000 0289 6080 1978 6591
+                استبدال واسترجاع خلال 5 أيام فقط من تاريخ الفاتورة شرط ان تكون
+                المنتجات على حالتها الاصلية
               </p>
             </div>
-          </div>
 
-          {/* Return Policy */}
-          <div className="border border-red-500 bg-red-50 p-2 text-center text-[10px] font-semibold text-red-900">
-            <p className="font-bold text-red-700 underline mb-0.5">
-              سياسة الاستبدال والاسترجاع:
-            </p>
-            <p>
-              استبدال واسترجاع خلال 5 أيام فقط من تاريخ الفاتورة شرط ان تكون
-              المنتجات على حالتها الاصلية
-            </p>
-          </div>
-
-          {/* 8. Company Official Address & Contact Info Footer */}
-          <div className="border-t-2 border-black pt-2 text-center text-[9px] space-y-1 text-slate-700">
-            <p className="font-semibold">
-              المملكة العربية السعودية - الرياض - حي جرير - طريق صلاح الدين
-              الأيوبي - رقم المبنى 5050 - الرقم البريدي 12837 - الرقم الفرعي
-              7284
-            </p>
-            <p dir="ltr" className="font-sans text-[8.5px]">
-              Kingdom of Saudi Arabia - Riyadh - Jareer Dist. - Salah Al Din Al
-              Ayoubi Rd - Building No. 5050 - Postal Code 12837 - Secondary No.
-              7284
-            </p>
-            <div className="flex justify-between items-center text-[8.5px] font-mono pt-1 text-slate-600 border-t border-slate-200">
-              <span>
-                Printed On:{" "}
-                {new Date().toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "2-digit",
-                })}
-              </span>
-              <span>1 / 1</span>
-              <span>Mob: +966 054 485 7553 - E-mail: info@skygalaxyco.com</span>
+            {/* 8. Company Official Address & Contact Info Footer */}
+            <div className="border-t-2 border-black pt-2 text-center text-[9px] space-y-1 text-slate-700">
+              <p className="font-semibold">
+                {companyCountryAr} - {companyCityAr} - {companyAreaAr} -{" "}
+                {companyStreetAr} - صندوق بريد {mailBox} - الرمز البريدي {poBox}
+              </p>
+              <p dir="ltr" className="font-sans text-[8.5px]">
+                {companyCountryEn} - {companyCityEn} - {companyAreaEn} -{" "}
+                {companyStreetEn} - P.O. Box {mailBox} - Postal Code {poBox}
+              </p>
+              <div className="flex justify-between items-center text-[8.5px] font-mono pt-1 text-slate-600 border-t border-slate-200">
+                <span>
+                  Printed On:{" "}
+                  {new Date().toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </span>
+                <span>1 / 1</span>
+                <span>
+                  {phone && `Mob: ${phone} - `}
+                  {email && `E-mail: ${email}`}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </Modal>
   );

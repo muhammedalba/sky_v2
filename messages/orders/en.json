@@ -169,6 +169,25 @@
     "viewReceipt": "View Receipt",
     "downloadReceipt": "Download Receipt"
   },
+  "deliveryInfo": {
+    "title": "Delivery Receipt",
+    "deliveryName": "Delivery Agent Name",
+    "receiptNumber": "Receipt Number",
+    "receiptImage": "Receipt Image",
+    "uploadImage": "Upload Receipt Image",
+    "dragDrop": "Drag & drop or click to upload",
+    "viewReceipt": "View Receipt",
+    "downloadReceipt": "Download",
+    "changeImage": "Change Image",
+    "editName": "Edit Name",
+    "editNumber": "Edit Number",
+    "noReceiptImage": "No receipt image uploaded",
+    "noDeliveryName": "Not assigned",
+    "noReceiptNumber": "Not set",
+    "saving": "Saving...",
+    "deleteReceiptConfirmTitle": "Delete Receipt Image",
+    "deleteReceiptConfirmMessage": "Are you sure you want to delete the delivery receipt image? This action cannot be undone."
+  },
   "stats": {
     "totalOrders": "Total Orders",
     "periodOrders": "Period Orders",

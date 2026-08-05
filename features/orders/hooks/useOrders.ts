@@ -60,6 +60,22 @@ export function useUpdateOrderStatus() {
   });
 }
 
+export function useUpdateOrderDetails() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: FormData }) => {
+      const response = await ordersApi.updateOrderDetails(id, data);
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
+    },
+  });
+}
+
 export function useDeleteOrder() {
   const queryClient = useQueryClient();
 

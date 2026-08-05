@@ -21,7 +21,6 @@ import {
   PAYMENT_STATUS_OPTIONS,
 } from "@/shared/constants/order-constants";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { CheckCircle2Icon } from "lucide-react";
 
 interface OrderHeaderProps {
   order: Order;

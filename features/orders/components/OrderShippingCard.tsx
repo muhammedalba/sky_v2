@@ -37,8 +37,8 @@ export default function OrderShippingCard({ order }: OrderShippingCardProps) {
       <CardHeader className="pb-4 border-b border-border/20 flex flex-row items-center justify-between gap-4 bg-muted">
         <CardTitle className="text-sm font-bold title-gradient flex items-center gap-2">
           <ImageWithFallback
-            alt={order.shippingProviderId?.name}
-            src={order.shippingProviderId?.logo}
+            alt={order.shippingProviderId?.name || ""}
+            src={order.shippingProviderId?.logo || ""}
             width={40}
             height={40}
             className="rounded-lg"

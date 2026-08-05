@@ -60,6 +60,7 @@ export interface Order {
   transferReceiptImg?: string;
   InvoicePdf?: string;
   DeliveryReceiptImage?: string;
+  deliveryReceiptNumber?: string;
   deliveryDate?: string;
   deliveryName?: string;
   // Timeline timestamps

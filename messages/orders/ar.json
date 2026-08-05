@@ -170,6 +170,25 @@
     "viewReceipt": "عرض الإشعار",
     "downloadReceipt": "تحميل الإشعار"
   },
+  "deliveryInfo": {
+    "title": "إيصال التوصيل",
+    "deliveryName": "اسم مندوب التوصيل",
+    "receiptNumber": "رقم وصل التسليم",
+    "receiptImage": "صورة وصل التسليم",
+    "uploadImage": "رفع صورة الوصل",
+    "dragDrop": "اسحب الملف وأفلته هنا أو اضغط للرفع",
+    "viewReceipt": "عرض الوصل",
+    "downloadReceipt": "تحميل",
+    "changeImage": "تغيير الصورة",
+    "editName": "تعديل الاسم",
+    "editNumber": "تعديل الرقم",
+    "noReceiptImage": "لم يتم رفع صورة الوصل بعد",
+    "noDeliveryName": "لم يتم التعيين",
+    "noReceiptNumber": "لم يتم التعيين",
+    "saving": "جاري الحفظ...",
+    "deleteReceiptConfirmTitle": "حذف صورة إيصال التوصيل",
+    "deleteReceiptConfirmMessage": "هل أنت متأكد من أنك تريد حذف صورة إيصال التوصيل؟ لا يمكن التراجع عن هذا الإجراء."
+  },
   "stats": {
     "totalOrders": "إجمالي الطلبات",
     "periodOrders": "طلبات الفترة",
