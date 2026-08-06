@@ -72,6 +72,7 @@ export function formatCurrency(
 export function formatDate(
   date: string | Date,
   locale: string = "en-US",
+  month: "numeric" | "2-digit" | "narrow" | "short" | "long" = "short",
 ): string {
   if (!date) return "-";
   const d = new Date(date);
@@ -79,7 +80,7 @@ export function formatDate(
 
   return new Intl.DateTimeFormat(locale, {
     year: "numeric",
-    month: "short",
+    month: month,
     day: "numeric",
   }).format(d);
 }
@@ -161,7 +162,7 @@ export function formatRelativeTime(
  *
  * @param status - The status keyword (e.g. "pending", "delivered", "cancelled").
  * @returns Class string combining background and text color utility classes.
- * 
+ *
  */
 export function getStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
@@ -177,7 +178,6 @@ export function getStatusColor(status: string): string {
   return statusColors[status.toLowerCase()] || "bg-muted text-muted-foreground";
 }
 
-
 /**
  * Gets Tailwind utility color classes for a payment status badge.
  *
@@ -186,17 +186,16 @@ export function getStatusColor(status: string): string {
  */
 export function getPaymentStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
-  INITIATED: "bg-sky-500/10 text-sky-600 ",
-  PENDING: "bg-amber-500/10 text-amber-600",
-  PAID: "bg-success/10 text-success",
-  FAILED: "bg-red-500/10 text-red-600",
-  CANCELLED: "bg-red-500/10 text-red-600",
-  REFUNDED: "bg-purple-500/10 text-purple-600",
-  EXPIRED: "bg-gray-500/10 text-gray-600",
+    INITIATED: "bg-sky-500/10 text-sky-600 ",
+    PENDING: "bg-amber-500/10 text-amber-600",
+    PAID: "bg-success/10 text-success",
+    FAILED: "bg-red-500/10 text-red-600",
+    CANCELLED: "bg-red-500/10 text-red-600",
+    REFUNDED: "bg-purple-500/10 text-purple-600",
+    EXPIRED: "bg-gray-500/10 text-gray-600",
   };
   return statusColors[status.toUpperCase()] || "bg-muted text-muted-foreground";
 }
-
 
 /**
  * Truncates long strings to a specified maximum length, appending an ellipsis (...).
@@ -292,13 +291,3 @@ export function getActionBadgeVariant(
       return "outline";
   }
 }
-
-
-
-
-
-
-
-
-
-

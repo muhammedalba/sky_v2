@@ -378,7 +378,7 @@ export default function OrdersTable({
                 {/* Order ID */}
                 <TableCell>
                   <span className="font-mono font-bold text-xs text-foreground bg-muted/40 px-2 py-1 rounded-md">
-                    #{order._id?.slice(-8).toUpperCase()}
+                    #{String(order.invoiceNumber ?? order._id?.slice(-4)).padStart(4, "0") }
                   </span>
                 </TableCell>
 
@@ -396,10 +396,10 @@ export default function OrdersTable({
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate max-w-[140px]">
+                      <p className="text-sm font-medium text-foreground truncate max-w-35">
                         {order.user?.name || "Guest"}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate max-w-[140px]">
+                      <p className="text-xs text-muted-foreground truncate max-w-35">
                         {order.user?.email || ""}
                       </p>
                     </div>

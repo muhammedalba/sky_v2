@@ -139,6 +139,7 @@
   "shippingInfo": {
     "country": "Country",
     "city": "City",
+    "street": "Street",
     "building": "Building",
     "postalCode": "Postal Code",
     "shippingCode": "Shipping Code",

@@ -145,6 +145,7 @@
     "country": "الدولة",
     "city": "المدينة",
     "building": "المبنى",
+    "street": "الشارع",
     "postalCode": "الرمز البريدي",
     "shippingCode": "كود الشحن",
     "estimatedDays": "الأيام المقدرة",

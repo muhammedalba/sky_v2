@@ -93,7 +93,7 @@ export default function OrderDetailsPage({
       {/* 1. Header */}
 
       <EntityPageHeader
-        title={t("order", { id: order._id.slice(0, 8) })}
+        title={t("order", { id: order?.invoiceNumber || order._id.slice(0, 8) })}
         subtitle={t("placedOn", { date: formatDate(order.createdAt) })}
         totalResults={t("totalOrders", {
           count: order?.items?.length || 0,

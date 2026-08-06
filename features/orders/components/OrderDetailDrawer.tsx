@@ -8,7 +8,13 @@ import { Card, CardContent } from "@/shared/ui/Card";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { Order } from "@/types";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { cn, formatDate, formatRelativeTime, getPaymentStatusColor, getStatusColor } from "@/lib/utils";
+import {
+  cn,
+  formatDate,
+  formatRelativeTime,
+  getPaymentStatusColor,
+  getStatusColor,
+} from "@/lib/utils";
 import {
   MapPinIcon,
   CreditCardIcon,
@@ -25,7 +31,6 @@ interface OrderDetailDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-
 export default function OrderDetailDrawer({
   order,
   open,
@@ -39,16 +44,19 @@ export default function OrderDetailDrawer({
   const formattedAddress = useMemo(() => {
     if (!order?.shippingAddress) return "";
     const addr = order.shippingAddress;
-    const cityName =
-      typeof addr.city === "object" && addr.city ? addr.city.name : addr.city;
-    const countryName =
-      typeof addr.country === "object" && addr.country
-        ? addr.country.name
-        : addr.country;
-    return [addr.building, addr.street, cityName, countryName, addr.postalCode]
+    const cityName = getTrans(addr?.city?.name);
+
+    const countryName = getTrans(addr?.country?.name);
+    return [
+      countryName,
+      cityName,
+      `${t("shippingInfo.street")} : ${addr?.street}`,
+      `${t("shippingInfo.building")} : ${addr?.building}`,
+      `${t("shippingInfo.postalCode")} : ${addr?.postalCode}`,
+    ]
       .filter(Boolean)
-      .join(", ");
-  }, [order?.shippingAddress]);
+      .join(" , ");
+  }, [order?.shippingAddress, getTrans, t]);
 
   // Constructing timeline based on order lifecycle fields
   const timelineSteps = useMemo(() => {
@@ -75,7 +83,9 @@ export default function OrderDetailDrawer({
         key: "processing",
         time:
           order.processingAt ||
-          (order.paymentStatus?.toLocaleUpperCase() === "PAID" ? order.updatedAt : undefined),
+          (order.paymentStatus?.toLocaleUpperCase() === "PAID"
+            ? order.updatedAt
+            : undefined),
         isCompleted: [
           "processing",
           "shipped",
@@ -140,7 +150,7 @@ export default function OrderDetailDrawer({
               <span
                 className={cn(
                   "rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider border-none",
-                  getStatusColor(order.status)
+                  getStatusColor(order.status),
                 )}
               >
                 {order.status ? t(`status.${order.status}`) : "—"}
@@ -155,7 +165,12 @@ export default function OrderDetailDrawer({
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            {t("placedOn", { date: formatDate(order.createdAt) })} ({formatRelativeTime(order.createdAt, locale === "ar" ? "ar-SA" : "en-US")})
+            {t("placedOn", { date: formatDate(order.createdAt) })} (
+            {formatRelativeTime(
+              order.createdAt,
+              locale === "ar" ? "ar-SA" : "en-US",
+            )}
+            )
           </p>
         </div>
 
@@ -239,13 +254,17 @@ export default function OrderDetailDrawer({
                   </p>
                   <div className="mt-1">
                     <span
-                    
                       className={cn(
                         "rounded-full px-2 py-0.5 font-semibold text-[9px] uppercase tracking-wider border-none",
-                        getPaymentStatusColor(order.paymentStatus || "") 
+                        getPaymentStatusColor(order.paymentStatus || ""),
                       )}
                     >
-                      {order.paymentStatus ? t(`paymentStatus.${order.paymentStatus.toUpperCase()}`, { defaultValue: order.paymentStatus }) : "—"}
+                      {order.paymentStatus
+                        ? t(
+                            `paymentStatus.${order.paymentStatus.toUpperCase()}`,
+                            { defaultValue: order.paymentStatus },
+                          )
+                        : "—"}
                     </span>
                   </div>
                 </div>
@@ -274,8 +293,12 @@ export default function OrderDetailDrawer({
                     order.deliveryDate) && (
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {order.shippingRateId?.estimatedDays
-                        ? t("delivery", { days: order.shippingRateId.estimatedDays })
-                        : t("estimatedDelivery", { date: order.deliveryDate || "" })}
+                        ? t("delivery", {
+                            days: order.shippingRateId.estimatedDays,
+                          })
+                        : t("estimatedDelivery", {
+                            date: order.deliveryDate || "",
+                          })}
                     </p>
                   )}
                 </div>
@@ -317,7 +340,9 @@ export default function OrderDetailDrawer({
 
           {/* Products List Compact Table */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-foreground">{t("orderItems")}</h4>
+            <h4 className="text-sm font-bold text-foreground">
+              {t("orderItems")}
+            </h4>
             <div className="rounded-xl border border-border/40 overflow-x-auto bg-card">
               <table className="w-full text-start border-collapse text-xs">
                 <thead>
@@ -350,12 +375,12 @@ export default function OrderDetailDrawer({
                           )}
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="font-semibold text-foreground truncate max-w-[150px]">
+                          <span className="font-semibold text-foreground truncate max-w-37.5">
                             {getTrans(item.productId?.title)}
                           </span>
                           {typeof item.variantId === "object" &&
                             item.variantId?.attributes && (
-                              <div className="flex flex-wrap gap-1 mt-1 max-w-[200px]">
+                              <div className="flex flex-wrap gap-1 mt-1 max-w-50">
                                 {Object.entries(item.variantId.attributes).map(
                                   ([key, val]) => {
                                     const valStr =
@@ -397,7 +422,9 @@ export default function OrderDetailDrawer({
 
           {/* Order Summary breakdown */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-foreground">{t("orderSummary")}</h4>
+            <h4 className="text-sm font-bold text-foreground">
+              {t("orderSummary")}
+            </h4>
             <Card className="border-border/30 bg-muted/5">
               <CardContent className="p-4 space-y-2 text-xs">
                 <div className="flex justify-between text-muted-foreground">
@@ -451,7 +478,9 @@ export default function OrderDetailDrawer({
 
           {/* Timeline lifecycle */}
           <div className="space-y-4 pt-2">
-            <h4 className="text-sm font-bold text-foreground">{t("orderJourney")}</h4>
+            <h4 className="text-sm font-bold text-foreground">
+              {t("orderJourney")}
+            </h4>
             <div className="relative ps-6 border-s border-border/40 ms-3 space-y-6 py-2">
               {timelineSteps.map((step, idx) => {
                 if (step.key === "cancelled" && !order.cancelledAt) return null;
@@ -492,7 +521,11 @@ export default function OrderDetailDrawer({
                       </div>
                       {step.isCompleted && step.time && (
                         <p className="text-[10px] text-muted-foreground/80 mt-0.5">
-                          {t('status.completed')} {formatRelativeTime(step.time, locale === "ar" ? "ar-SA" : "en-US")}
+                          {t("status.completed")}{" "}
+                          {formatRelativeTime(
+                            step.time,
+                            locale === "ar" ? "ar-SA" : "en-US",
+                          )}
                         </p>
                       )}
                     </div>

@@ -63,6 +63,8 @@ export interface Order {
   deliveryReceiptNumber?: string;
   deliveryDate?: string;
   deliveryName?: string;
+  invoiceNumber?: number; // رقم الفاتورة التسلسلي التلقائي
+  invoiceHash?: string; // هاش الفاتورة الإلكترونية (ZATCA Hash)
   // Timeline timestamps
   checkedOutAt?: string;
   processingAt?: string;
