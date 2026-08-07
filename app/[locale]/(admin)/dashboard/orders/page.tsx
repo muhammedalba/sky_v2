@@ -26,6 +26,8 @@ import { Permissions } from "@/features/roles/types";
 import { RefreshCwIcon } from "@/shared/ui/Icons";
 import { useTranslations } from "next-intl";
 import Can from "@/components/auth/Can";
+import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
+import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 
 export default function OrdersPage({
   params,
@@ -110,6 +112,7 @@ export default function OrdersPage({
   // Actions
   const updateStatusMutation = useUpdateOrderStatus();
   const deleteOrderMutation = useDeleteOrder();
+  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage, isDangerous: isConfirmDangerous } = useConfirmDialog();
 
   const handleViewOrder = useCallback((order: Order) => {
     setSelectedOrderForDrawer(order);
@@ -122,12 +125,17 @@ export default function OrdersPage({
   }, []);
 
   const handleSingleDelete = useCallback(
-    async (id: string) => {
-      if (confirm("Are you sure you want to delete this order?")) {
-        await deleteOrderMutation.mutateAsync(id);
-      }
+    (id: string) => {
+      openDialog({
+        title: t("bulk.deleteTitle") || "Delete Order",
+        message: t("bulk.deleteMessage", { count: 1 }) || "Are you sure you want to delete this order?",
+        isDangerous: true,
+        onConfirm: async () => {
+          await deleteOrderMutation.mutateAsync(id);
+        }
+      });
     },
-    [deleteOrderMutation],
+    [deleteOrderMutation, openDialog, t],
   );
 
   const handleRefresh = useCallback(() => {
@@ -342,6 +350,17 @@ export default function OrdersPage({
         order={selectedOrderForInvoice}
         isOpen={isInvoiceOpen}
         onClose={() => setIsInvoiceOpen(false)}
+      />
+
+      {/* 10. Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={closeDialog}
+        onConfirm={handleConfirm}
+        title={confirmTitle}
+        message={confirmMessage}
+        isDangerous={isConfirmDangerous}
+        isLoading={isConfirmLoading}
       />
     </div>
   );

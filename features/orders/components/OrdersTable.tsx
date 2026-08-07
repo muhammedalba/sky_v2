@@ -23,7 +23,6 @@ import {
   EyeIcon,
   TrashIcon,
   FileTextIcon,
-  DownloadIcon,
   ChevronDownIcon,
   EditIcon,
   MoreVerticalIcon,
@@ -203,15 +202,6 @@ function ActionsDropdown({
             >
               <FileTextIcon className="w-4 h-4 text-muted-foreground" /> {t("viewInvoice")}
             </button> 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(false);
-              }}
-              className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-foreground hover:bg-muted/60 transition-colors text-start"
-            >
-              <DownloadIcon className="w-4 h-4 text-muted-foreground" /> {t("downloadInvoice")}
-            </button>
             <div className="border-t border-border/50 my-1" />
             <button
               onClick={(e) => {
@@ -430,12 +420,7 @@ export default function OrdersTable({
                   </Badge>
                 </TableCell>
 
-                {/* Payment Method 
-                <TableCell>
-                  <span className="text-xs font-medium text-muted-foreground capitalize">
-                    {order.paymentMethodCode || order.paymentMethod || '—'}
-                  </span>
-                </TableCell>*/}
+             
 
                 {/* Quantity */}
                 <TableCell className="hidden xl:table-cell">
@@ -443,13 +428,6 @@ export default function OrdersTable({
                     {order.totalQuantity ?? order.items?.length ?? 0}
                   </span>
                 </TableCell>
-
-                {/* Subtotal 
-                <TableCell className="hidden lg:table-cell">
-                  <span className="text-sm tabular-nums text-muted-foreground">
-                    {formatCurrency(order.totalPrice || 0)}
-                  </span>
-                </TableCell>*/}
 
                 {/* Shipping */}
                 <TableCell className="hidden xl:table-cell">

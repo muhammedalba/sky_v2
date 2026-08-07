@@ -22,8 +22,12 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
               البيان / Description
             </th>
             <th className="p-1.5 border-l border-black w-14">الكمية / Qty</th>
-            <th className="p-1.5 border-l border-black w-20">الأفرادي / Price</th>
-            <th className="p-1.5 border-l border-black w-24">الإجمالي / Total</th>
+            <th className="p-1.5 border-l border-black w-20">
+              الأفرادي / Price
+            </th>
+            <th className="p-1.5 border-l border-black w-24">
+              الإجمالي / Total
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-black">
@@ -50,6 +54,27 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
                       {titleEn}
                     </div>
                   )}
+                  {typeof item.variantId === "object" &&
+                    item.variantId?.attributes && (
+                      <div className="flex flex-wrap gap-1 mt-1 max-w-50">
+                        {Object.entries(item.variantId.attributes).map(
+                          ([key, val]) => {
+                            const valStr =
+                              typeof val === "object" && val !== null
+                                ? (val.value ?? JSON.stringify(val))
+                                : val;
+                            return (
+                              <span
+                                key={key}
+                                className="inline-flex items-center px-1 py-0.5 rounded-md text-[8px] bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap"
+                              >
+                                {key}: {String(valStr)}
+                              </span>
+                            );
+                          },
+                        )}
+                      </div>
+                    )}
                 </td>
                 <td className="p-1.5 border-l border-black font-medium">
                   {itemQty}

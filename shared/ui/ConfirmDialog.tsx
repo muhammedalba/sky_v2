@@ -32,7 +32,9 @@ export default function ConfirmDialog({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    // Defer the state update to avoid synchronous cascading renders
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {

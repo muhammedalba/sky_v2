@@ -59,12 +59,12 @@ const formatCurrency = useFormatCurrency();
                         )}
                       </Link>
                       <div className="flex flex-col min-w-0">
-                        <span className="font-semibold text-foreground truncate max-w-[150px]">
+                        <span className="font-semibold text-foreground truncate max-w-37.5">
                           {getTrans(item.productId?.title)}
                         </span>
                         {typeof item.variantId === "object" &&
                           item.variantId?.attributes && (
-                            <div className="flex flex-wrap gap-1 mt-1 max-w-[200px]">
+                            <div className="flex flex-wrap gap-1 mt-1 max-w-50">
                               {Object.entries(item.variantId.attributes).map(
                                 ([key, val]) => {
                                   const valStr =

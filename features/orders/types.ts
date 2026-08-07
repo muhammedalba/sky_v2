@@ -68,6 +68,9 @@ export interface Order {
   // Timeline timestamps
   checkedOutAt?: string;
   processingAt?: string;
+  shippedAt?: string;
+  deliveredAt?: string;
+  paidAt?: string;
   completedAt?: string;
   cancelledAt?: string;
   createdAt: string;

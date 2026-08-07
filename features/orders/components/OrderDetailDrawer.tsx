@@ -145,7 +145,11 @@ export default function OrderDetailDrawer({
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 flex-wrap">
               <span className="font-mono font-black text-lg text-foreground bg-muted px-2.5 py-1 rounded-lg">
-                #{order._id?.toUpperCase().slice(0, 8)}
+                #
+                {String(order.invoiceNumber ?? order._id?.slice(-4)).padStart(
+                  4,
+                  "0",
+                )}
               </span>
               <span
                 className={cn(
