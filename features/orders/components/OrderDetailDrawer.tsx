@@ -24,6 +24,7 @@ import {
 } from "@/shared/ui/Icons";
 import { FileText as StickyNoteIcon } from "lucide-react";
 import { useTrans } from "@/shared/hooks/useTrans";
+import OrderTimeline from "./OrderTimeline";
 
 interface OrderDetailDrawerProps {
   order: Order | null;
@@ -480,64 +481,9 @@ export default function OrderDetailDrawer({
             </Card>
           </div>
 
-          {/* Timeline lifecycle */}
-          <div className="space-y-4 pt-2">
-            <h4 className="text-sm font-bold text-foreground">
-              {t("orderJourney")}
-            </h4>
-            <div className="relative ps-6 border-s border-border/40 ms-3 space-y-6 py-2">
-              {timelineSteps.map((step, idx) => {
-                if (step.key === "cancelled" && !order.cancelledAt) return null;
-                const isCancelledStep =
-                  step.key === "cancelled" || step.key === "expired";
-                return (
-                  <div key={idx} className="relative group">
-                    {/* Circle node */}
-                    <div
-                      className={cn(
-                        "absolute inset-s-[-30px] top-1 w-4.5 h-4.5 rounded-full border-4 border-background flex items-center justify-center transition-all duration-300 z-10",
-                        step.isCompleted
-                          ? isCancelledStep
-                            ? "bg-red-500"
-                            : "bg-primary"
-                          : "bg-muted border-muted-foreground/20",
-                      )}
-                    />
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <p
-                          className={cn(
-                            "text-xs font-bold transition-colors",
-                            step.isCompleted
-                              ? isCancelledStep
-                                ? "text-red-500"
-                                : "text-foreground"
-                              : "text-muted-foreground/60",
-                          )}
-                        >
-                          {t(`status.${step.key}`)}
-                        </p>
-                        {step.time && (
-                          <span className="text-[10px] text-muted-foreground">
-                            {formatDate(step.time)}
-                          </span>
-                        )}
-                      </div>
-                      {step.isCompleted && step.time && (
-                        <p className="text-[10px] text-muted-foreground/80 mt-0.5">
-                          {t("status.completed")}{" "}
-                          {formatRelativeTime(
-                            step.time,
-                            locale === "ar" ? "ar-SA" : "en-US",
-                          )}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+      
+          {/* Order Lifecycle Timeline */}
+          <OrderTimeline order={order} containerClassName='border-none shadow-none bg-transparent '/>
         </div>
       </SheetContent>
     </Sheet>

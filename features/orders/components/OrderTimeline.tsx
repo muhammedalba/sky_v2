@@ -18,9 +18,10 @@ import {
 
 interface OrderTimelineProps {
   order: Order;
+  containerClassName?: string;
 }
 
-export default function OrderTimeline({ order }: OrderTimelineProps) {
+export default function OrderTimeline({ order, containerClassName }: OrderTimelineProps) {
   const t = useTranslations('orders');
   const locale = useLocale();
 
@@ -135,10 +136,10 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
   const currentStepText = locale.startsWith('ar') ? 'الحالة الحالية' : 'Current';
 
   return (
-    <Card className="border border-border/50 shadow-sm bg-card rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-md">
-      <CardHeader className="py-4 px-6 border-b border-border/30 bg-muted/30">
+    <Card className={`bg-background rounded-3xl overflow-hidden ${containerClassName} `}>
+      <CardHeader className="pb-4 border-b border-border/30 bg-muted/70">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-bold tracking-tight text-foreground flex items-center gap-2.5">
+          <CardTitle className="text-base font-bold tracking-tight title-gradient flex items-center gap-2.5">
             <span className="flex h-2.5 w-2.5 rounded-full bg-primary" />
             {t('timeline')}
           </CardTitle>
@@ -161,11 +162,11 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
                 {idx < timelineSteps.length - 1 && (
                   <div
                     className={cn(
-                      'absolute start-5 sm:start-[22px] top-10 sm:top-11 -bottom-8 sm:-bottom-10 w-0.5 -translate-x-1/2 transition-all duration-500 rounded-full',
+                      'absolute inset-s-5 sm:inset-s-5.5 top-10 sm:top-11 -bottom-8 sm:-bottom-10 w-0.5 -translate-x-1/2 transition-all duration-500 rounded-full',
                       isCompleted && timelineSteps[idx + 1]?.isCompleted
                         ? 'bg-primary/70'
                         : isCompleted
-                        ? 'bg-gradient-to-b from-primary/70 via-primary/30 to-border/40'
+                        ? 'bg-linear-to-b from-primary/70 via-primary/30 to-border/40'
                         : 'bg-border/40'
                     )}
                   />
