@@ -54,6 +54,7 @@
     "showingResults": "عرض {count} نتيجة",
     "available": "متاح",
     "unavailable": "غير متاح",
+    "guest_checkout_disabled": "يتم حالياً إيقاف الشراء بدون تسجيل. يرجى تسجيل الدخول لإضافة المنتجات إلى سلة التسوق.",
     "updateSuccess": "تم التحديث بنجاح"
   },
   "tabs": {

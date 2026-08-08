@@ -154,8 +154,8 @@ export function useRemoveFromCart() {
   const queryClient = useQueryClient();
   const toast = useToast();
   return useMutation({
-    mutationFn: async (productId: string) => {
-      const response = await cartApi.removeItem(productId);
+    mutationFn: async ({ productId, variantId }: { productId: string; variantId?: string }) => {
+      const response = await cartApi.removeItem(productId, variantId);
       return response.data;
     },
     onSuccess: async () => {

@@ -39,6 +39,7 @@ export default function CartPage() {
   const settings = useSettings();
   const { data: user } = useMe();
   const { data: serverCart, isLoading } = useCart();
+  console.log("serverCart", serverCart);
   const { data: previewResult } = useCheckoutSummary({ enabled: !!user });
 
   // ======> cart operations <======
@@ -80,7 +81,7 @@ export default function CartPage() {
   const handleRemoveItem = useCallback(
     (productId: string, variantId?: string) => {
       if (!productId) return;
-      if (user) removeServerItem(productId);
+      if (user) removeServerItem({ productId, variantId });
       else removeGuestItem(productId, variantId);
     },
     [user, removeServerItem, removeGuestItem],
@@ -115,12 +116,7 @@ export default function CartPage() {
     );
   }, [serverCart?.totalPrice, cartItems]);
 
-
-
-
-
-
-  // for guest checkout 
+  // for guest checkout
   const checkoutHref = useMemo(() => {
     // if guest checkout is not enabled and user is not logged in, redirect to login
     if (!user && !settings?.features?.guestCheckout) {
@@ -305,6 +301,3 @@ export default function CartPage() {
     </div>
   );
 }
-
-
-

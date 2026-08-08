@@ -108,7 +108,7 @@ export default function CartDrawer() {
     (productId: string, variantId?: string) => {
       if (!productId) return;
       if (user) {
-        removeServerItem(productId);
+        removeServerItem({ productId, variantId });
       } else {
         removeGuestItem(productId, variantId);
       }
@@ -152,7 +152,7 @@ export default function CartDrawer() {
 
       {/* Drawer */}
       <div
-        className={`absolute top-0 bottom-0 w-full sm:w-[400px] md:w-[450px] bg-background shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`absolute top-0 bottom-0 w-full sm:w-100 md:w-112.5 bg-background shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
           isAr ? "left-0" : "right-0"
         } animate-in slide-in-from-${isAr ? "left" : "right"} zoom-in-95`}
       >

@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useToast } from "@/shared/hooks/useToast";
-import { useApplyCoupon } from "@/features/checkout/hooks/useCheckout";
+import { useApplyCoupon, useRemoveCoupon } from "@/features/checkout/hooks/useCheckout";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -65,6 +65,7 @@ export function OrderSummaryCard({
   const settings = useSettings();
   const { data: user } = useMe();
 
+  console.log("cartItems", cartItems);
   /* ── hooks & state ── */
   const toast = useToast();
   const formatCurrency = useFormatCurrency();
@@ -73,6 +74,8 @@ export function OrderSummaryCard({
   // state local for coupon
   const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
     useApplyCoupon();
+  const { mutateAsync: removeCouponAsync, isPending: removeCouponPending } =
+    useRemoveCoupon();
   const [isCouponOpen, setIsCouponOpen] = useState(false);
   const [appliedCouponLocal, setAppliedCouponLocal] =
     useState<CouponValidationResult | null>(null);
@@ -186,7 +189,7 @@ export function OrderSummaryCard({
 
   const onRemoveCoupon = useCallback(async () => {
     try {
-      await validateCoupon("");
+      await removeCouponAsync();
       if (!checkoutMode) {
         setAppliedCouponLocal(null);
       }
@@ -195,7 +198,7 @@ export function OrderSummaryCard({
     } catch (error) {
       console.error(error);
     }
-  }, [validateCoupon, checkoutMode, setValue, toast, t]);
+  }, [removeCouponAsync, checkoutMode, setValue, toast, t]);
 
   const onToggleCoupon = useCallback(
     () => setIsCouponOpen((prev) => !prev),
@@ -230,10 +233,10 @@ export function OrderSummaryCard({
           const key = String(
             (item as unknown as Record<string, unknown>).productId ??
               (item as unknown as Record<string, unknown>)._id ??
-              title + index,
+              title,
           );
           return (
-            <div key={key} className="flex items-center gap-3">
+            <div key={`${key}-${index}`} className="flex items-center gap-3">
               {image && checkoutMode && (
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/40 shrink-0 bg-accent/30">
                   <ImageWithFallback
@@ -410,7 +413,7 @@ export function OrderSummaryCard({
               </div>
               <button
                 type="button"
-                disabled={isCartUpdating}
+                disabled={isCartUpdating || removeCouponPending}
                 onClick={onRemoveCoupon}
                 className="p-1.5 hover:bg-destructive/10 rounded-full transition-colors cursor-pointer text-muted-foreground hover:text-destructive"
                 aria-label="Remove coupon"

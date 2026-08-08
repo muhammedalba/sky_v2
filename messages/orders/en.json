@@ -103,6 +103,7 @@
   "messages": {
     "statusUpdated": "Order status updated successfully",
     "successNotes":" Add internal notes about this order...",
+    "notNotes":"No notes added",
     "errorNotes":"Failed to update notes"
   },
   "filters": {

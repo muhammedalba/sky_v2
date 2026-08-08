@@ -41,6 +41,7 @@ import { CheckoutAddressStep } from "@/features/checkout/components/CheckoutAddr
 import { CheckoutShippingPaymentStep } from "@/features/checkout/components/CheckoutShippingPaymentStep";
 import { CheckoutReviewStep } from "@/features/checkout/components/CheckoutReviewStep";
 import { OrderSummaryCard } from "@/features/checkout/components/OrderSummaryCard";
+import { useToast } from "@/shared/hooks/useToast";
 
 export default function CheckoutPage() {
   /* ────── Data ─────────────────────────────────────── */
@@ -63,6 +64,7 @@ export default function CheckoutPage() {
   /* ─────────────────────────────────────────── HOOKS ──────────────────────────────────────────────── */
   const router = useRouter();
   const getTrans = useTrans();
+  const toast = useToast();
   const { redirect } = usePaymentRedirector();
   const formatCurrency = useFormatCurrency();
   const t = useTranslations("cart");
@@ -142,7 +144,10 @@ export default function CheckoutPage() {
   const countryId = useWatch({ control: form.control, name: "countryId" });
 
   // get payment methods
-  const { data: paymentMethods = [] } = useActivePaymentMethods(currency, countryId);
+  const { data: paymentMethods = [] } = useActivePaymentMethods(
+    currency,
+    countryId,
+  );
   console.log("paymentMethods", paymentMethods);
 
   // Pre-fill user data if authenticated
@@ -203,7 +208,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.log(error);
     }
-  }; 
+  };
 
   /* ─── Resolved Data for Review Step ───────────────────────────── */
   const regionId = useWatch({ control: form.control, name: "regionId" });
@@ -246,7 +251,9 @@ export default function CheckoutPage() {
               {currentStep === 0 && (
                 <CheckoutAddressStep
                   onNext={() =>
-                    submitAddress(form.getValues(), () => nextStep())
+                    !isAuth
+                      ? toast.warning(t("messages.login_to_apply_coupon"))
+                      : submitAddress(form.getValues(), () => nextStep())
                   }
                   isSubmitting={isSubmitting}
                 />

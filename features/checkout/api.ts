@@ -25,6 +25,8 @@ export const checkoutApi = {
     apiClient.post('/checkout/payment-method', { paymentMethodId }),
   applyCoupon: (couponCode: string) =>
     apiClient.post('/checkout/coupon', { couponCode }),
+  removeCoupon: () =>
+    apiClient.delete('/checkout/coupon'),
   placeOrder: (data: FormData) =>
     apiClient.post('/checkout/place-order', data, {
       headers: { 'Content-Type': 'multipart/form-data' },

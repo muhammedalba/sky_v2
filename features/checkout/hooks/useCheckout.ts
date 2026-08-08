@@ -202,6 +202,29 @@ export function useApplyCoupon() {
   });
 }
 
+export function useRemoveCoupon() {
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  return useMutation({
+    mutationFn: async () => {
+      const res = await checkoutApi.removeCoupon();
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
+    },
+    onError: (error: Error | unknown) => {
+      let message = "Failed to remove coupon";
+      if (isAxiosError(error) && error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error instanceof Error && error.message) {
+        message = error.message;
+      }
+      toast.error(message);
+    },
+  });
+}
+
 // ─── Place order ──────────────────────────────────────────────────────────────
 
 export function usePlaceOrder() {
