@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useOrders,
@@ -29,12 +29,7 @@ import Can from "@/components/auth/Can";
 import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
 import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 
-export default function OrdersPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  use(params);
+export default function OrdersPage() {
   const t = useTranslations("orders");
   const { getQueryParam, setQueryParam } = useQueryState();
   const queryClient = useQueryClient();
@@ -63,7 +58,7 @@ export default function OrdersPage({
       paymentStatus: filters.paymentStatus || undefined,
       paymentMethod: filters.paymentMethod || undefined,
       keywords: filters.search || undefined,
-      sort: sortDirection === 'desc' ? `-${sortField}` : sortField,
+      sort: sortDirection === "desc" ? `-${sortField}` : sortField,
       startDate: filters.dateFrom || undefined,
       endDate: filters.dateTo || undefined,
     }),
@@ -112,7 +107,16 @@ export default function OrdersPage({
   // Actions
   const updateStatusMutation = useUpdateOrderStatus();
   const deleteOrderMutation = useDeleteOrder();
-  const { openDialog, closeDialog, handleConfirm, isOpen: isConfirmOpen, isLoading: isConfirmLoading, title: confirmTitle, message: confirmMessage, isDangerous: isConfirmDangerous } = useConfirmDialog();
+  const {
+    openDialog,
+    closeDialog,
+    handleConfirm,
+    isOpen: isConfirmOpen,
+    isLoading: isConfirmLoading,
+    title: confirmTitle,
+    message: confirmMessage,
+    isDangerous: isConfirmDangerous,
+  } = useConfirmDialog();
 
   const handleViewOrder = useCallback((order: Order) => {
     setSelectedOrderForDrawer(order);
@@ -128,11 +132,13 @@ export default function OrdersPage({
     (id: string) => {
       openDialog({
         title: t("bulk.deleteTitle") || "Delete Order",
-        message: t("bulk.deleteMessage", { count: 1 }) || "Are you sure you want to delete this order?",
+        message:
+          t("bulk.deleteMessage", { count: 1 }) ||
+          "Are you sure you want to delete this order?",
         isDangerous: true,
         onConfirm: async () => {
           await deleteOrderMutation.mutateAsync(id);
-        }
+        },
       });
     },
     [deleteOrderMutation, openDialog, t],
@@ -294,7 +300,7 @@ export default function OrdersPage({
             </p>
           </div>
         ) : (
-          orders.map((order) => (
+          orders?.map((order) => (
             <OrderMobileCard
               key={order._id}
               order={order}

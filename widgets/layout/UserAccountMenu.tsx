@@ -123,6 +123,7 @@ const UserAccountMenu = ({
       >
         {isLoggedIn ? (
           user?.avatar ? (
+            
             <ImageWithFallback
               src={user.avatar}
               alt={user.name || "User Avatar"}
