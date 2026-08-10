@@ -129,10 +129,10 @@ export function CheckoutShippingPaymentStep({
             </span>
           </div>
         ) : (
-          <div className="grid gap-4">
-            {shippingOptions?.map((option) => (
+          <div className="grid gap-4"> 
+            {shippingOptions?.map((option,i) => (
               <label
-                key={option.providerId}
+                key={`${i}-${option.providerName}`}
                 className={`relative flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
                   selectedShippingId === option.providerId
                     ? "border-primary/40 bg-primary/5 "
@@ -195,7 +195,7 @@ export function CheckoutShippingPaymentStep({
         ) : (
           <div className="grid gap-3">
             {paymentMethods?.map((method) => {
-              const isCOD = method.code === "cod";
+              const isCOD = method.code.toLowerCase() === "cod";
               const disabled = isCOD && !isCODSupportedByCarrier;
               const isSelected = selectedPaymentId === method._id;
 
@@ -223,7 +223,7 @@ export function CheckoutShippingPaymentStep({
                   </div>
 
                   <div className="relative shrink-0  rounded-xl flex items-center justify-center">
-                    {getPaymentIcon(method.code)}
+                    {getPaymentIcon(method.provider)}
                   </div>
 
                   <div className="relative flex-1 min-w-0">

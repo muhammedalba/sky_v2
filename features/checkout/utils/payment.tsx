@@ -9,12 +9,12 @@ import {
 } from "@/shared/ui/Icons";
 
 /**
- * دالة جلب الأيقونة المناسبة بناءً على كود طريقة الدفع
- * @param {string} code - كود بوابة الدفع
+ * دالة جلب الأيقونة المناسبة بناءً على اسم طريقة الدفع
+ * @param {string} provider - اسم بوابة الدفع
  * @returns {JSX.Element} - المكون البصري للأيقونة
  */
-export function getPaymentIcon(code: string) {
-  switch (code) {
+export function getPaymentIcon(provider: string) {
+  switch (provider.toLowerCase()) {
     case "stripe":
       return (
         <div className="flex gap-2 items-center">
@@ -53,7 +53,7 @@ export function getPaymentIcon(code: string) {
  * @returns {string} - أصناف Tailwind CSS
  */
 export function getGatewayBadgeStyle(code: string) {
-  switch (code) {
+  switch (code.toLowerCase()) {
     case "stripe":
       return " text-primary bg-primary/10";
     case "paypal":

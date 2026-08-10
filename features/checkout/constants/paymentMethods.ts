@@ -7,6 +7,7 @@ export interface ActivePaymentMethod {
   code: string;       // "stripe" | "paypal" | "banktransfer" | "cod"
   name: string;       // localized name
   description: string; // localized description
+  provider: string;
   type: string;
   feeType: 'fixed' | 'percentage';
   fixedFee: number;

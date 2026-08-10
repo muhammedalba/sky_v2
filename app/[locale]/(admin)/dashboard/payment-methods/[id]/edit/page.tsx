@@ -19,7 +19,7 @@ export default function EditPaymentMethodPage({
           <div className="h-8 w-1/3 bg-muted animate-pulse rounded-md" />
           <div className="h-4 w-1/4 bg-muted animate-pulse rounded-md" />
         </div>
-        <div className="h-[400px] w-full bg-muted animate-pulse rounded-2xl" />
+        <div className="h-100 w-full bg-muted animate-pulse rounded-2xl" />
       </div>
     );
   }
