@@ -6,7 +6,10 @@ export interface Tax {
   _id: string;
   name: string;
   percentage: number;
+  scope: 'global' | 'country' | 'region' | 'city';
   country?: { _id: string; name: { ar: string; en: string } } | string;
+  region?: { _id: string; name: { ar: string; en: string } } | string;
+  city?: { _id: string; name: { ar: string; en: string } } | string;
   taxNumber?: string;
   isIncludedInPrice: boolean;
   isActive: boolean;

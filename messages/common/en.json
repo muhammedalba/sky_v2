@@ -250,7 +250,13 @@
     "createTax": "Add Tax",
     "editTax": "Edit Tax",
     "modalDescription": "Set the tax type and the country it applies to (leave blank to apply to all).",
-    "globalFallback": "Global Default (All Countries)",
+    "globalFallback": "Global Default",
+    "scopes": {
+      "global": "Global",
+      "country": "Country",
+      "region": "Region",
+      "city": "City"
+    },
     "included": "Included in Price",
     "excluded": "Added to Price",
     "active": "Active",
@@ -269,7 +275,11 @@
     "fields": {
       "name": "Tax Name",
       "percentage": "Percentage (%)",
+      "scope": "Scope",
+      "location": "Location",
       "country": "Country",
+      "region": "Region",
+      "city": "City",
       "taxNumber": "Tax Number",
       "description": "Description",
       "isIncludedInPrice": "Tax Included in Price",

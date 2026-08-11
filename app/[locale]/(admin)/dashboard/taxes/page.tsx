@@ -1,24 +1,29 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/shared/ui/Button';
-import { useToast } from '@/shared/hooks/useToast';
+import { useState, useMemo, useCallback } from "react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/shared/ui/Button";
+import { useToast } from "@/shared/hooks/useToast";
 import { EditIcon, PlusIcon, TrashIcon } from "@/shared/ui/Icons";
-import { Badge } from '@/shared/ui/Badge';
-import { Tax, useTaxes, useDeleteTax, useUpdateTax } from '@/features/taxes/hooks/useTaxes';
-import EntityDataTable from '@/shared/ui/dashboard/EntityDataTable';
-import Modal from '@/shared/ui/Modal';
-import TaxForm from '@/features/taxes/components/TaxForm';
-import EntityPageHeader from '@/shared/ui/dashboard/EntityPageHeader';
-import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
-import { useQueryState } from '@/shared/hooks/useQueryState';
-import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog';
-import ConfirmDialog from '@/shared/ui/ConfirmDialog';
-import { Switch } from '@/shared/ui/Switch';
-import { Permissions } from '@/features/roles/types';
+import { Badge } from "@/shared/ui/Badge";
+import {
+  Tax,
+  useTaxes,
+  useDeleteTax,
+  useUpdateTax,
+} from "@/features/taxes/hooks/useTaxes";
+import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
+import Modal from "@/shared/ui/Modal";
+import TaxForm from "@/features/taxes/components/TaxForm";
+import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
+import EntitySearchBar from "@/shared/ui/dashboard/EntitySearchBar";
+import { useQueryState } from "@/shared/hooks/useQueryState";
+import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
+import ConfirmDialog from "@/shared/ui/ConfirmDialog";
+import { Switch } from "@/shared/ui/Switch";
+import { Permissions } from "@/features/roles/types";
 
-type ViewTab = 'all' | 'active' | 'inactive';
+type ViewTab = "all" | "active" | "inactive";
 
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, unknown>> = {
   all: {},
@@ -27,29 +32,34 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, unknown>> = {
 };
 
 export default function TaxesPage() {
-  const t = useTranslations('taxes');
-  const tCommon = useTranslations('common');
-  const tButtons = useTranslations('buttons');
+  const t = useTranslations("taxes");
+  const tCommon = useTranslations("common");
+  const tButtons = useTranslations("buttons");
   const { success: toastSuccess, error: toastError } = useToast();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTax, setEditingTax] = useState<Tax | null>(null);
 
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
-  const page = Number(getQueryParam('page', '1'));
-  const search = getQueryParam('search', '');
-  const viewTab = (getQueryParam('tab', 'all') as ViewTab);
+  const page = Number(getQueryParam("page", "1"));
+  const search = getQueryParam("search", "");
+  const viewTab = getQueryParam("tab", "all") as ViewTab;
 
-  const queryParams = useMemo(() => ({
-    page,
-    limit: 10,
-    keywords: search,
-    ...TAB_FILTER_PARAMS[viewTab]
-  }), [page, search, viewTab]);
+  const queryParams = useMemo(
+    () => ({
+      page,
+      limit: 10,
+      keywords: search,
+      ...TAB_FILTER_PARAMS[viewTab],
+    }),
+    [page, search, viewTab],
+  );
 
   const { data, isLoading, refetch } = useTaxes(queryParams);
-  const { mutateAsync: deleteTaxAsync, isPending: deleteTaxPending } = useDeleteTax();
-  const { mutateAsync: updateTaxAsync, isPending: updateTaxPending } = useUpdateTax();
+  const { mutateAsync: deleteTaxAsync, isPending: deleteTaxPending } =
+    useDeleteTax();
+  const { mutateAsync: updateTaxAsync, isPending: updateTaxPending } =
+    useUpdateTax();
 
   const {
     openDialog,
@@ -58,45 +68,67 @@ export default function TaxesPage() {
     isOpen: isConfirmOpen,
     isLoading: isConfirmLoading,
     title: confirmTitle,
-    message: confirmMessage
+    message: confirmMessage,
   } = useConfirmDialog();
 
-  const handlePageChange = useCallback((val: number) => setQueryParam('page', val), [setQueryParam]);
-  const handleTabChange = useCallback((val: ViewTab) => setQueryParams({ tab: val, page: 1 }), [setQueryParams]);
-  const handleSearch = useCallback((value: string) => setQueryParams({ search: value, page: 1 }), [setQueryParams]);
+  const handlePageChange = useCallback(
+    (val: number) => setQueryParam("page", val),
+    [setQueryParam],
+  );
+  const handleTabChange = useCallback(
+    (val: ViewTab) => setQueryParams({ tab: val, page: 1 }),
+    [setQueryParams],
+  );
+  const handleSearch = useCallback(
+    (value: string) => setQueryParams({ search: value, page: 1 }),
+    [setQueryParams],
+  );
 
   const handleEdit = useCallback((tax: Tax) => {
     setEditingTax(tax);
     setIsFormOpen(true);
   }, []);
 
-  const handleToggleStatus = useCallback(async (tax: Tax) => {
-    try {
-      await updateTaxAsync({ id: tax._id, data: { isActive: !tax.isActive } });
-      toastSuccess(t('updateSuccess') || 'Status updated');
-      refetch();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? (err as { response?: { data?: { message?: string } } }).response?.data?.message || err.message : t('updateError') || 'Error updating status';
-      toastError(msg);
-    }
-  }, [updateTaxAsync, toastSuccess, toastError, t, refetch]);
+  const handleToggleStatus = useCallback(
+    async (tax: Tax) => {
+      try {
+        await updateTaxAsync({
+          id: tax._id,
+          data: { isActive: !tax.isActive },
+        });
+        toastSuccess(t("updateSuccess") || "Status updated");
+        refetch();
+      } catch (err: unknown) {
+        const msg =
+          err instanceof Error
+            ? (err as { response?: { data?: { message?: string } } }).response
+                ?.data?.message || err.message
+            : t("updateError") || "Error updating status";
+        toastError(msg);
+      }
+    },
+    [updateTaxAsync, toastSuccess, toastError, t, refetch],
+  );
 
-  const handleDelete = useCallback((tax: Tax) => {
-    openDialog({
-      title: t('deleteConfirm'),
-      message: `${t('deleteConfirm')} (${tax.name})`,
-      onConfirm: async () => {
-        try {
-          await deleteTaxAsync(tax._id);
-          toastSuccess(t('deleteSuccess'));
-          refetch();
-        } catch (err: unknown) {
-          const msg = err instanceof Error ? err.message : t('deleteError');
-          toastError(msg);
-        }
-      },
-    });
-  }, [openDialog, deleteTaxAsync, toastSuccess, toastError, refetch, t]);
+  const handleDelete = useCallback(
+    (tax: Tax) => {
+      openDialog({
+        title: t("deleteConfirm"),
+        message: `${t("deleteConfirm")} (${tax.name})`,
+        onConfirm: async () => {
+          try {
+            await deleteTaxAsync(tax._id);
+            toastSuccess(t("deleteSuccess"));
+            refetch();
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : t("deleteError");
+            toastError(msg);
+          }
+        },
+      });
+    },
+    [openDialog, deleteTaxAsync, toastSuccess, toastError, refetch, t],
+  );
 
   const handleSuccess = useCallback(() => {
     setIsFormOpen(false);
@@ -104,108 +136,175 @@ export default function TaxesPage() {
     refetch();
   }, [refetch]);
 
-  const tabs = useMemo(() => [
-    { key: 'all' as ViewTab, label: tCommon('tabs.all'), activeClass: 'bg-primary text-white shadow-md shadow-primary/20' },
-    { key: 'active' as ViewTab, label: tCommon('tabs.active'), activeClass: 'bg-success text-white shadow-md shadow-green-500/20' },
-    { key: 'inactive' as ViewTab, label: tCommon('tabs.inactive'), activeClass: 'bg-zinc-500 text-white shadow-md shadow-zinc-500/20' },
-  ], [tCommon]);
-
-  const columns = useMemo(() => [
-    {
-      header: t('fields.name'),
-      render: (item: Tax) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
-            {item.name}
-          </span>
-          {item.description && (
-            <span className="text-xs text-muted-foreground line-clamp-1">{item.description}</span>
-          )}
-        </div>
-      ),
-    },
-    {
-      header: t('fields.percentage'),
-      render: (item: Tax) => (
-        <span className="font-mono text-sm font-bold text-primary bg-primary/5 px-2 py-1 rounded-md">
-          {item.percentage}%
-        </span>
-      ),
-    },
-    {
-      header: t('fields.country'),
-      render: (item: Tax) => {
-        if (!item.country) {
-          return (
-            <Badge variant="secondary" className="font-medium">{t('globalFallback')}</Badge>
-          );
-        }
-        const country = item.country as { name?: { ar?: string; en?: string } | string };
-        return (
-          <span className="font-medium text-muted-foreground">{typeof country.name === 'object' ? country.name?.ar || country.name?.en : country.name || '-'}</span>
-        );
+  const tabs = useMemo(
+    () => [
+      {
+        key: "all" as ViewTab,
+        label: tCommon("tabs.all"),
+        activeClass: "bg-primary text-white shadow-md shadow-primary/20",
       },
-    },
-    {
-      header: t('fields.isIncludedInPrice'),
-      render: (item: Tax) => (
-        <Badge variant={item.isIncludedInPrice ? 'default' : 'outline'} className="font-medium">
-          {item.isIncludedInPrice ? t('included') : t('excluded')}
-        </Badge>
-      ),
-    },
-    {
-      header: t('fields.isActive'),
-      render: (item: Tax) => (
-        <Switch
-          checked={item.isActive}
-          onCheckedChange={() => handleToggleStatus(item)}
-          disabled={updateTaxPending || isLoading}
-        />
-      ),
-    },
-    {
-      header: t('fields.actions'),
-      className: "pe-6 text-center",
-      render: (item: Tax) => (
-        <div className="flex justify-center gap-2.5">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-10 w-10 rounded-lg hover:bg-primary/10 text-primary transition-colors"
-            onClick={() => handleEdit(item)}
-            disabled={isLoading || updateTaxPending}
+      {
+        key: "active" as ViewTab,
+        label: tCommon("tabs.active"),
+        activeClass: "bg-success text-white shadow-md shadow-green-500/20",
+      },
+      {
+        key: "inactive" as ViewTab,
+        label: tCommon("tabs.inactive"),
+        activeClass: "bg-zinc-500 text-white shadow-md shadow-zinc-500/20",
+      },
+    ],
+    [tCommon],
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        header: t("fields.name"),
+        render: (item: Tax) => (
+          <div className="flex flex-col gap-0.5">
+            <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+              {item.name}
+            </span>
+            {item.description && (
+              <span className="text-xs text-muted-foreground line-clamp-1">
+                {item.description}
+              </span>
+            )}
+          </div>
+        ),
+      },
+      {
+        header: t("fields.percentage"),
+        render: (item: Tax) => (
+          <span className="font-mono text-sm font-bold text-primary bg-primary/5 px-2 py-1 rounded-md">
+            {item.percentage}%
+          </span>
+        ),
+      },
+      {
+        header: t("fields.scope", { fallback: "النطاق" }),
+        render: (item: Tax) => {
+          const scope = item.scope || "global";
+          return (
+            <Badge
+              variant={
+                scope === "global"
+                  ? "success"
+                  : scope === "region"
+                    ? "default"
+                    : scope === "country"
+                      ? "destructive"
+                      : "outline"
+              }
+              className="font-medium"
+            >
+              {t(`scopes.${scope}`, { fallback: scope })}
+            </Badge>
+          );
+        },
+      },
+      {
+        header: t("fields.location", { fallback: "الموقع" }),
+        render: (item: Tax) => {
+          if (item.scope === "global" || !item.scope)
+            return <span className="text-muted-foreground">-</span>;
+
+          let locationObj;
+          if (item.scope === "city") locationObj = item.city;
+          else if (item.scope === "region") locationObj = item.region;
+          else locationObj = item.country;
+
+          if (!locationObj)
+            return <span className="text-muted-foreground">-</span>;
+
+          const loc = locationObj as {
+            name?: { ar?: string; en?: string } | string;
+          };
+          return (
+            <span className="font-medium text-muted-foreground">
+              {typeof loc.name === "object"
+                ? loc.name?.ar || loc.name?.en
+                : loc.name || "-"}
+            </span>
+          );
+        },
+      },
+      {
+        header: t("fields.isIncludedInPrice"),
+        render: (item: Tax) => (
+          <Badge
+            variant={item.isIncludedInPrice ? "default" : "outline"}
+            className="font-medium"
           >
-            <EditIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-10 w-10 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
-            onClick={() => handleDelete(item)}
-            disabled={isLoading || deleteTaxPending}
-          >
-            <TrashIcon className="w-4 h-4" />
-          </Button>
-        </div>
-      ),
-    },
-  ], [t, handleEdit, handleDelete, handleToggleStatus, updateTaxPending, isLoading, deleteTaxPending]);
+            {item.isIncludedInPrice ? t("included") : t("excluded")}
+          </Badge>
+        ),
+      },
+      {
+        header: t("fields.isActive"),
+        render: (item: Tax) => (
+          <Switch
+            checked={item.isActive}
+            onCheckedChange={() => handleToggleStatus(item)}
+            disabled={updateTaxPending || isLoading}
+          />
+        ),
+      },
+      {
+        header: t("fields.actions"),
+        className: "pe-6 text-center",
+        render: (item: Tax) => (
+          <div className="flex justify-center gap-2.5">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-lg hover:bg-primary/10 text-primary transition-colors"
+              onClick={() => handleEdit(item)}
+              disabled={isLoading || updateTaxPending}
+            >
+              <EditIcon className="w-4 h-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
+              onClick={() => handleDelete(item)}
+              disabled={isLoading || deleteTaxPending}
+            >
+              <TrashIcon className="w-4 h-4" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [
+      t,
+      handleEdit,
+      handleDelete,
+      handleToggleStatus,
+      updateTaxPending,
+      isLoading,
+      deleteTaxPending,
+    ],
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <EntityPageHeader
-        title={t('title')}
-        subtitle={t('description')}
-        totalResults={tCommon('results.total', { count: data?.meta?.pagination?.totalResults || 0 })}
+        title={t("title")}
+        subtitle={t("description")}
+        totalResults={tCommon("results.total", {
+          count: data?.meta?.pagination?.totalResults || 0,
+        })}
         action={{
-          label: t('createTax'),
+          label: t("createTax"),
           icon: <PlusIcon className="w-5 h-5" />,
           onClick: () => {
             setEditingTax(null);
             setIsFormOpen(true);
           },
-          permission: Permissions.CREATE_TAX
+          permission: Permissions.CREATE_TAX,
         }}
       />
 
@@ -216,7 +315,7 @@ export default function TaxesPage() {
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               disabled={isLoading}
-              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : 'bg-muted/50 text-muted-foreground hover:bg-muted/80'}`}
+              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${viewTab === tab.key ? tab.activeClass : "bg-muted/50 text-muted-foreground hover:bg-muted/80"}`}
             >
               {tab.label}
             </button>
@@ -225,7 +324,7 @@ export default function TaxesPage() {
       </div>
 
       <EntitySearchBar
-        placeholder={t('searchPlaceholder') || 'Search taxes...'}
+        placeholder={t("searchPlaceholder") || "Search taxes..."}
         onSearch={handleSearch}
         defaultValue={search}
         debounceMs={700}
@@ -239,21 +338,21 @@ export default function TaxesPage() {
         onPageChange={handlePageChange}
         columns={columns}
         emptyState={{
-          title: t('empty.title'),
-          description: t('empty.description'),
+          title: t("empty.title"),
+          description: t("empty.description"),
           createLink: () => {
             setEditingTax(null);
             setIsFormOpen(true);
           },
-          createLabel: t('createTax')
+          createLabel: t("createTax"),
         }}
       />
 
       <Modal
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
-        title={editingTax ? t('editTax') : t('createTax')}
-        description={t('modalDescription')}
+        title={editingTax ? t("editTax") : t("createTax")}
+        description={t("modalDescription")}
       >
         <TaxForm
           editingTax={editingTax}
@@ -268,8 +367,8 @@ export default function TaxesPage() {
         onConfirm={handleConfirm}
         title={confirmTitle}
         message={confirmMessage}
-        confirmText={tButtons('confirm')}
-        cancelText={tButtons('cancel')}
+        confirmText={tButtons("confirm")}
+        cancelText={tButtons("cancel")}
         isDangerous={true}
         isLoading={isConfirmLoading}
       />

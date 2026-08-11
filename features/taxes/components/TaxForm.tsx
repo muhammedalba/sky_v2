@@ -11,7 +11,7 @@ import { Switch } from "@/shared/ui/Switch";
 import { Select } from "@/shared/ui/Select";
 import { useToast } from "@/shared/hooks/useToast";
 import { Tax, useCreateTax, useUpdateTax } from "../hooks/useTaxes";
-import { useCountries } from "@/features/locations/hooks/useLocations";
+import { useCountries, useRegions, useCities } from "@/features/locations/hooks/useLocations";
 
 const formSchema = z.object({
   name: z.string().min(1, "الاسم مطلوب"),
@@ -19,18 +19,36 @@ const formSchema = z.object({
     (val) => parseFloat(String(val)),
     z.number().min(0).max(100),
   ),
+  scope: z.enum(['global', 'country', 'region', 'city']).default('global'),
   country: z.string().optional(),
+  region: z.string().optional(),
+  city: z.string().optional(),
   taxNumber: z.string().optional(),
   isIncludedInPrice: z.boolean().default(false),
   isActive: z.boolean().default(true),
   description: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.scope === 'country' && !data.country) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "الدولة مطلوبة", path: ['country'] });
+  }
+  if (data.scope === 'region') {
+    if (!data.country) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "الدولة مطلوبة", path: ['country'] });
+    if (!data.region) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "المنطقة مطلوبة", path: ['region'] });
+  }
+  if (data.scope === 'city') {
+    if (!data.country) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "الدولة مطلوبة", path: ['country'] });
+    if (!data.region) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "المنطقة مطلوبة", path: ['region'] });
+    if (!data.city) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "المدينة مطلوبة", path: ['city'] });
+  }
 });
 
-// تعريف النوع يدوياً لتجاوز مشكلة z.preprocess مع TypeScript
 interface TaxFormData {
   name: string;
   percentage: number;
+  scope: 'global' | 'country' | 'region' | 'city';
   country?: string;
+  region?: string;
+  city?: string;
   taxNumber?: string;
   isIncludedInPrice: boolean;
   isActive: boolean;
@@ -69,7 +87,10 @@ export default function TaxForm({
     defaultValues: {
       name: "VAT",
       percentage: 15,
+      scope: 'global',
       country: "",
+      region: "",
+      city: "",
       taxNumber: "",
       isIncludedInPrice: false,
       isActive: true,
@@ -77,15 +98,25 @@ export default function TaxForm({
     },
   });
 
+  const watchScope = watch("scope");
+  const watchCountry = watch("country");
+  const watchRegion = watch("region");
+
+  const { data: regionsResponse } = useRegions(watchCountry || undefined, true);
+  const regions = Array.isArray(regionsResponse) ? regionsResponse : (regionsResponse as any)?.data || [];
+
+  const { data: citiesResponse } = useCities(watchRegion || undefined, true);
+  const cities = Array.isArray(citiesResponse) ? citiesResponse : (citiesResponse as any)?.data || [];
+
   useEffect(() => {
     if (editingTax) {
       reset({
         name: editingTax.name,
         percentage: editingTax.percentage,
-        country:
-          typeof editingTax.country === "object"
-            ? editingTax.country?._id
-            : editingTax.country || "",
+        scope: editingTax.scope || (editingTax.country ? 'country' : 'global'),
+        country: typeof editingTax.country === "object" ? editingTax.country?._id : editingTax.country || "",
+        region: typeof editingTax.region === "object" ? editingTax.region?._id : editingTax.region || "",
+        city: typeof editingTax.city === "object" ? editingTax.city?._id : editingTax.city || "",
         taxNumber: editingTax.taxNumber || "",
         isIncludedInPrice: editingTax.isIncludedInPrice,
         isActive: editingTax.isActive,
@@ -100,20 +131,30 @@ export default function TaxForm({
 
   const onSubmit = async (data: TaxFormData) => {
     try {
-      const payload = { ...data };
-      // إذا لم تُحدد دولة، نحذف الحقل ليصبح ضريبة افتراضية عامة
-      if (!payload.country) delete payload.country;
+      const payload: Partial<TaxFormData> = { ...data };
+      
+      // التنظيف بناءً على النطاق المحدد
+      if (payload.scope === 'global') {
+        delete payload.country;
+        delete payload.region;
+        delete payload.city;
+      } else if (payload.scope === 'country') {
+        delete payload.region;
+        delete payload.city;
+      } else if (payload.scope === 'region') {
+        delete payload.city;
+      }
 
       if (editingTax) {
-        await updateMutation.mutateAsync({ id: editingTax._id, data: payload });
+        await updateMutation.mutateAsync({ id: editingTax._id, data: payload as Partial<Tax> });
         toastSuccess("تم", "تم تحديث الضريبة بنجاح");
       } else {
-        await createMutation.mutateAsync(payload);
+        await createMutation.mutateAsync(payload as Partial<Tax>);
         toastSuccess("تم", "تم إضافة الضريبة بنجاح");
       }
       onSuccess?.();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "حدث خطأ غير متوقع";
+      const msg = err?.response?.data?.message || err.message || "حدث خطأ غير متوقع";
       toastError(msg);
     }
   };
@@ -139,17 +180,22 @@ export default function TaxForm({
         />
 
         <Select
-          label={t("fields.country")}
-          value={watch("country")}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setValue("country", e.target.value, { shouldValidate: true })
-          }
+          label={t("fields.scope", { fallback: "النطاق" })}
+          value={watchScope}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            const val = e.target.value as TaxFormData['scope'];
+            setValue("scope", val, { shouldValidate: true });
+            if (val === 'global') {
+              setValue("country", "");
+              setValue("region", "");
+              setValue("city", "");
+            }
+          }}
           options={[
-            { value: "", label: t("globalFallback") },
-            ...countries.map((c: any) => ({
-              value: c._id,
-              label: c.name?.ar || c.name,
-            })),
+            { value: "global", label: t("scopes.global", { fallback: "عالمي" }) },
+            { value: "country", label: t("scopes.country", { fallback: "دولة" }) },
+            { value: "region", label: t("scopes.region", { fallback: "منطقة" }) },
+            { value: "city", label: t("scopes.city", { fallback: "مدينة" }) },
           ]}
           dir="rtl"
         />
@@ -160,6 +206,68 @@ export default function TaxForm({
           error={errors.taxNumber?.message}
           dir="rtl"
         />
+
+        {watchScope !== 'global' && (
+          <Select
+            label={t("fields.country")}
+            value={watchCountry}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setValue("country", e.target.value, { shouldValidate: true });
+              setValue("region", "");
+              setValue("city", "");
+            }}
+            options={[
+              { value: "", disabled: true, label: t("globalFallback", { fallback: "اختر الدولة..." }) },
+              ...countries.map((c: any) => ({
+                value: c._id,
+                label: c.name?.ar || c.name, 
+              })),
+            ]}
+            error={errors.country?.message}
+            dir="rtl"
+          />
+        )}
+
+        {(watchScope === 'region' || watchScope === 'city') && (
+          <Select
+            label={t("fields.region", { fallback: "المنطقة" })}
+            value={watchRegion}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setValue("region", e.target.value, { shouldValidate: true });
+              setValue("city", "");
+            }}
+            options={[
+              { value: "", disabled: true, label: "اختر المنطقة..." },
+              ...regions.map((r: any) => ({
+                value: r._id,
+                label: r.name?.ar || r.name,
+              })),
+            ]}
+            error={errors.region?.message}
+            disabled={!watchCountry}
+            dir="rtl"
+          />
+        )}
+
+        {watchScope === 'city' && (
+          <Select
+            label={t("fields.city", { fallback: "المدينة" })}
+            value={watch("city")}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setValue("city", e.target.value, { shouldValidate: true })
+            }
+            options={[
+              { value: "", disabled: true, label: "اختر المدينة..." },
+              ...cities.map((c: any) => ({
+                value: c._id,
+                label: c.name?.ar || c.name,
+              })),
+            ]}
+            error={errors.city?.message}
+            disabled={!watchRegion}
+            dir="rtl"
+          />
+        )}
       </div>
 
       <Input

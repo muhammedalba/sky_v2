@@ -250,7 +250,13 @@
     "createTax": "إضافة ضريبة",
     "editTax": "تعديل ضريبة",
     "modalDescription": "حدد نوع الضريبة والدولة المرتبطة بها (اتركه فارغاً لتطبيقها على الجميع).",
-    "globalFallback": "ضريبة افتراضية (جميع الدول)",
+    "globalFallback": "ضريبة افتراضية",
+    "scopes": {
+      "global": "عالمي",
+      "country": "دولة",
+      "region": "منطقة",
+      "city": "مدينة"
+    },
     "included": "مشمولة بالسعر",
     "excluded": "تُضاف للسعر",
     "active": "نشطة",
@@ -269,7 +275,11 @@
     "fields": {
       "name": "اسم الضريبة",
       "percentage": "النسبة المئوية (%)",
+      "scope": "النطاق",
+      "location": "الموقع",
       "country": "الدولة",
+      "region": "المنطقة",
+      "city": "المدينة",
       "taxNumber": "الرقم الضريبي",
       "description": "الوصف",
       "isIncludedInPrice": "الضريبة مشمولة في السعر",
