@@ -11,6 +11,7 @@ export interface ShippingProvider {
 
 export interface ShippingRate {
   _id: string;
+  scope: 'global' | 'country' | 'region' | 'city';
   provider: ShippingProvider;
   country?: { _id: string; name: { ar: string; en: string } };
   region?: { _id: string; name: { ar: string; en: string } };

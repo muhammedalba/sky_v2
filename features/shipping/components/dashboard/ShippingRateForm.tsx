@@ -16,6 +16,7 @@ import { useCountries, useRegions, useCities } from '@/features/locations/hooks/
 
 const formSchema = z.object({
   provider: z.string().min(1, 'اختر شركة الشحن'),
+  scope: z.enum(['global', 'country', 'region', 'city']),
   country: z.string().optional(),
   region: z.string().optional(),
   city: z.string().optional(),
@@ -54,6 +55,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       provider: editingRate?.provider?._id || '',
+      scope: editingRate?.scope || 'global',
       country: editingRate?.country?._id || '',
       region: editingRate?.region?._id || '',
       city: editingRate?.city?._id || '',
@@ -67,8 +69,13 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
     },
   });
 
+  const selectedScope = watch('scope');
   const selectedCountry = watch('country');
   const selectedRegion = watch('region');
+
+  const showCountry = selectedScope !== 'global';
+  const showRegion = selectedScope === 'region' || selectedScope === 'city';
+  const showCity = selectedScope === 'city';
 
   const { data: countries } = useCountries();
   const { data: regions } = useRegions(selectedCountry);
@@ -82,9 +89,9 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
     try {
       const payload = {
         ...data,
-        country: data.country || undefined,
-        region: data.region || undefined,
-        city: data.city || undefined,
+        country: data.scope === 'global' ? undefined : data.country || undefined,
+        region: ['global', 'country'].includes(data.scope) ? undefined : data.region || undefined,
+        city: ['global', 'country', 'region'].includes(data.scope) ? undefined : data.city || undefined,
       };
 
       if (editingRate) {
@@ -119,49 +126,79 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
 
         <div className="space-y-2">
           <Select 
-            label={t('fields.country')}
-            value={watch('country')} 
+            label={t('fields.scope')}
+            value={watch('scope')} 
             onChange={(e) => {
-              setValue('country', e.target.value, { shouldValidate: true });
+              setValue('scope', e.target.value as any, { shouldValidate: true });
+              setValue('country', '');
               setValue('region', '');
               setValue('city', '');
             }}
-            options={countries?.map((c: any) => ({
-              value: c._id,
-              label: c.name?.ar || c.name
-            })) || []}
+            options={[
+              { value: 'global', label: t('scopes.global') || 'عالمي' },
+              { value: 'country', label: t('scopes.country') || 'دولة' },
+              { value: 'region', label: t('scopes.region') || 'منطقة' },
+              { value: 'city', label: t('scopes.city') || 'مدينة' },
+            ]}
+            error={errors.scope?.message}
             dir="rtl"
           />
         </div>
 
-        <div className="space-y-2">
-          <Select 
-            label={t('fields.region')}
-            value={watch('region')} 
-            onChange={(e) => {
-              setValue('region', e.target.value, { shouldValidate: true });
-              setValue('city', '');
-            }}
-            options={regions?.map((r: any) => ({
-              value: r._id,
-              label: r.name?.ar || r.name
-            })) || []}
-            dir="rtl"
-          />
-        </div>
+        {showCountry && (
+          <div className="space-y-2">
+            <Select 
+              label={t('fields.country')}
+              value={watch('country')} 
+              onChange={(e) => {
+                setValue('country', e.target.value, { shouldValidate: true });
+                setValue('region', '');
+                setValue('city', '');
+              }}
+              options={countries?.map((c: any) => ({
+                value: c._id,
+                label: c.name?.ar || c.name
+              })) || []}
+              error={errors.country?.message}
+              dir="rtl"
+            />
+          </div>
+        )}
 
-        <div className="space-y-2">
-          <Select 
-            label={t('fields.city')}
-            value={watch('city')} 
-            onChange={(e) => setValue('city', e.target.value, { shouldValidate: true })}
-            options={cities?.map((c: any) => ({
-              value: c._id,
-              label: c.name?.ar || c.name
-            })) || []}
-            dir="rtl"
-          />
-        </div>
+        {showRegion && (
+          <div className="space-y-2">
+            <Select 
+              label={t('fields.region')}
+              value={watch('region')} 
+              onChange={(e) => {
+                setValue('region', e.target.value, { shouldValidate: true });
+                setValue('city', '');
+              }}
+              options={regions?.map((r: any) => ({
+                value: r._id,
+                label: r.name?.ar || r.name
+              })) || []}
+              error={errors.region?.message}
+              dir="rtl"
+            />
+          </div>
+        )}
+
+        {showCity && (
+          <div className="space-y-2">
+            <Select 
+              label={t('fields.city')}
+              value={watch('city')} 
+              onChange={(e) => setValue('city', e.target.value, { shouldValidate: true })}
+              options={cities?.map((c: any) => ({
+                value: c._id,
+                label: c.name?.ar || c.name
+              })) || []}
+              error={errors.city?.message}
+              dir="rtl"
+            />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

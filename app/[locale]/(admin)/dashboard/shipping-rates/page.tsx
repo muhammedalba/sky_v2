@@ -170,13 +170,15 @@ export default function ShippingRatesPage() {
       },
     },
     {
-      header: t('fields.country'),
+      header: t('fields.scope'),
       render: (item: ShippingRate) => {
+        const scopeLabel = t(`scopes.${item.scope || 'global'}`);
+
         const countryObj = item.country as unknown as LocationObj | null;
-        let country = t('globalFallback');
+        let country: string | null = null;
         if (countryObj?.name) {
           if (typeof countryObj.name === 'object') {
-            country = countryObj.name.ar || countryObj.name.en || t('globalFallback');
+            country = countryObj.name.ar || countryObj.name.en || null;
           } else {
             country = countryObj.name;
           }
@@ -203,14 +205,21 @@ export default function ShippingRatesPage() {
         }
 
         return (
-          <div className="flex flex-col gap-0.5">
-            <span className="font-medium text-primary text-sm">{country}</span>
-            {region && <span className="text-xs text-foreground flex items-center gap-1">
-              <ChevronRightIcon className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
-            </span>}
-            {city && <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <ChevronRightIcon className="w-2.5 h-2.5 rtl:rotate-180" /> {city}
-            </span>}
+          <div className="flex flex-col gap-1.5">
+            <Badge variant={item.scope === 'global' ? "success" : item.scope === 'country' ? "destructive" : "secondary"} className="w-fit text-xs font-semibold ">
+              {scopeLabel}
+            </Badge>
+            {item.scope !== 'global' && (
+              <div className="flex flex-col gap-0.5">
+                {country && <span className="font-medium text-primary text-sm">{country}</span>}
+                {region && <span className="text-xs text-foreground flex items-center gap-1">
+                  <ChevronRightIcon className="w-2.5 h-2.5 rtl:rotate-180" /> {region}
+                </span>}
+                {city && <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <ChevronRightIcon className="w-2.5 h-2.5 rtl:rotate-180" /> {city}
+                </span>}
+              </div>
+            )}
           </div>
         );
       },

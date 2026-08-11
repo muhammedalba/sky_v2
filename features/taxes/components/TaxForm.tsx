@@ -153,8 +153,8 @@ export default function TaxForm({
         toastSuccess("تم", "تم إضافة الضريبة بنجاح");
       }
       onSuccess?.();
-    } catch (err: unknown) {
-      const msg = err?.response?.data?.message || err.message || "حدث خطأ غير متوقع";
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || "حدث خطأ غير متوقع";
       toastError(msg);
     }
   };

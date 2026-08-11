@@ -224,8 +224,15 @@
       "description": "Add a new shipping rate to get started"
     },
     "globalFallback": "Global Rate (All Countries)",
+    "scopes": {
+      "global": "Global",
+      "country": "Country",
+      "region": "Region",
+      "city": "City"
+    },
     "fields": {
       "provider": "Shipping Provider",
+      "scope": "Geographic Scope",
       "country": "Country",
       "region": "Region",
       "city": "City",
