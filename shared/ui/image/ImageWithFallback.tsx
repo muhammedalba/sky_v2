@@ -16,8 +16,6 @@ export default function ImageWithFallback({
   className,
   ...props
 }: ImageWithFallbackProps) {
-  console.log(src);
-  console.log(alt);
 
   const [error, setError] = useState(false);
   if (error || !src || src === "") {
