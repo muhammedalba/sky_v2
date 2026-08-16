@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Input } from "../Input";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Icons, PlusIcon, SearchIcon, SpinnerIcon } from "../Icons";
+import {  PlusIcon, SearchIcon, SpinnerIcon } from "../Icons";
 
 export interface SearchOption {
   _id: string;

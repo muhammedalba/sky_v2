@@ -25,6 +25,7 @@
     "usageCount": "Usage Count",
     "conditions": "Conditions & Limits",
     "applyTo": "Apply To",
+    "applyToSubtitle":"Select products, categories or brands to apply coupon",
     "applyItems": "Selected Items",
     "options": {
       "all": "All",

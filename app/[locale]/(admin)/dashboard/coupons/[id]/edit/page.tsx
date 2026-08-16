@@ -13,7 +13,7 @@ export default function EditCouponPage({ params }: { params: Promise<{  id: stri
     return (
       <div className="space-y-8 animate-pulse">
         <div className="h-24 bg-muted/40 rounded-2xl border border-border/20" />
-        <Skeleton className="h-[500px] w-full max-w-4xl mx-auto rounded-2xl shadow-sm" />
+        <Skeleton className="h-125 w-full max-w-4xl mx-auto rounded-2xl shadow-sm" />
       </div>
     );
   } else if (coupon) {
