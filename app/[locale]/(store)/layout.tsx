@@ -40,7 +40,7 @@ async function getActivePromoBanner(locale: string): Promise<PromoBanner | null>
     const res = await fetch(
       `${env.API_URL}${env.ENDPOINTS.PROMO_BANNER.ACTIVE}`,
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["promo-banner"] },
         headers: { "Content-Type": "application/json", "Accept-Language": locale, },
       },
     );

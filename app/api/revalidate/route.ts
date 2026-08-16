@@ -26,6 +26,7 @@ const ALLOWED_TAGS = new Set([
   'homepage',
   'brands',
   'carousel',
+  'promo-banner',
 ]);
 
 /**
