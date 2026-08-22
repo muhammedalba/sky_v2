@@ -119,6 +119,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   minOrderAmount: 0,
   enablePerformance: false,
   inventoryAlertsEnabled: true,
+  storageProvider: "local",
   logo: undefined,
   favicon: undefined,
 };
@@ -203,6 +204,7 @@ export default function SettingsForm() {
           "exchangeRate",
           "inventoryAlertsEnabled",
           "paymentsEnabled",
+          "storageProvider",
         ];
         primitiveFields.forEach((field) => {
           const value = data[field];

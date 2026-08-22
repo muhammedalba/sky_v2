@@ -133,7 +133,13 @@
     "systemMaintenance": "System Maintenance",
     "clearCache": "Clear System Cache",
     "clearCacheDesc": "Rebuild internal cache for images, categories, and settings.",
-    "clearButton": "Clear Now"
+    "clearButton": "Clear Now",
+    "storageProvider": "Storage Provider",
+    "storageProviderDesc": "Select where new uploaded images and files will be stored.",
+    "storageLocal": "Local Storage (Filesystem)",
+    "storageLocalDesc": "Store files on the local server disk (Default).",
+    "storageCloudinary": "Cloud Storage (Cloudinary)",
+    "storageCloudinaryDesc": "Store files on Cloudinary Cloud and Global CDN."
   },
   "success": {
     "cacheTitle": "Cache Cleared",

@@ -1,3 +1,4 @@
+import { FileAsset } from '@/shared/types/file-asset';
 import { LocalizedString } from '@/types';
 
 export interface Coupon {
@@ -21,9 +22,9 @@ export interface Coupon {
 export interface Carousel {
   _id: string;
   description: LocalizedString;
-  carouselSm: string;
-  carouselMd: string;
-  carouselLg: string;
+  carouselSm:FileAsset | string;
+  carouselMd:FileAsset | string;
+  carouselLg:FileAsset | string;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;

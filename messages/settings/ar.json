@@ -133,7 +133,13 @@
     "systemMaintenance": "صيانة النظام",
     "clearCache": "مسح الذاكرة المؤقتة",
     "clearCacheDesc": "إعادة بناء الذاكرة المؤقتة للصور والأقسام والإعدادات.",
-    "clearButton": "مسح الآن"
+    "clearButton": "مسح الآن",
+    "storageProvider": "مزود تخزين الملفات",
+    "storageProviderDesc": "اختر مكان حفظ الملفات والصور المرفوعة الجديدة.",
+    "storageLocal": "التخزين المحلي (Local Filesystem)",
+    "storageLocalDesc": "حفظ الملفات محلياً على السيرفر (الافتراضي).",
+    "storageCloudinary": "التخزين السحابي (Cloudinary)",
+    "storageCloudinaryDesc": "حفظ الملفات على سحابة Cloudinary وشبكة CDN العالمية."
   },
   "success": {
     "cacheTitle": "تم مسح الذاكرة",

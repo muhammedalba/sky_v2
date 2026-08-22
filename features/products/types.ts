@@ -2,6 +2,7 @@ import { LocalizedString } from '@/types';
 import { Category, SubCategory } from '@/features/categories/types';
 import { Brand } from '@/features/brands/types';
 import { Supplier } from '@/features/suppliers/types';
+import { FileAsset } from '@/shared/types/file-asset';
 
 
 export interface ProductAttributeValue {
@@ -21,7 +22,7 @@ export interface ProductVariant {
   attributes: Record<string, ProductAttributeValue>;
   components?: Record<string, unknown>[];
   label?: string;
-  image?: string;
+  image?: FileAsset | string;
   isActive: boolean;
 }
 
@@ -50,8 +51,8 @@ export interface Product {
     allowedValues?: string[];
   }[];
   variants?: ProductVariant[];
-  imageCover?: string;
-  images?: string[];
+  imageCover?: FileAsset | string;
+  images?: (FileAsset | string)[];
   category: Category | string;
   SubCategories?: SubCategory[];
   brand?: Brand | string;

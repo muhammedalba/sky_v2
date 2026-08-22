@@ -1,11 +1,12 @@
 import { LocalizedString } from '@/types';
+import { FileAsset } from '@/shared/types/file-asset';
 
 export interface Category {
   _id: string;
   id?: string;
   name: LocalizedString;
   slug?: string;
-  image?: string;
+  image?: FileAsset | string;
   productsCount?: number;
   subCategoriesCount?: number;
   SubCategories?: SubCategory[];

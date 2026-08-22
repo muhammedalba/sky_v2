@@ -1,3 +1,5 @@
+import { FileAsset } from '@/shared/types/file-asset';
+
 export interface Role {
   _id: string;
   name: string;
@@ -13,7 +15,8 @@ export interface User {
   name: string;
   email: string;
   role: Role | string;
-  avatar?: string;
+  avatar?: FileAsset | string;
+
   phone?: string;
   provider?: string;
   passwordChangeAt?: Date;

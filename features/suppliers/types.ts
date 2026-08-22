@@ -1,3 +1,5 @@
+import { FileAsset } from '@/shared/types/file-asset';
+
 export interface Supplier {
   _id: string;
   name: string;
@@ -6,7 +8,7 @@ export interface Supplier {
   address: string;
   contactName: string;
   website: URL;
-  avatar?: string;
+  avatar?: FileAsset | string;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;

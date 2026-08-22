@@ -4,8 +4,11 @@ import { useState } from "react";
 import Image, { ImageProps } from "next/image";
 import { ProductsIcon } from "@/shared/ui/Icons";
 import { cn } from "@/lib/utils";
+import { FileAsset } from "@/shared/types/file-asset";
+import { getImageUrl } from "@/shared/utils/image.util";
 
-interface ImageWithFallbackProps extends ImageProps {
+interface ImageWithFallbackProps extends Omit<ImageProps, "src"> {
+  src?: FileAsset | string | null;
   fallback?: React.ReactNode;
 }
 
@@ -16,9 +19,10 @@ export default function ImageWithFallback({
   className,
   ...props
 }: ImageWithFallbackProps) {
-
   const [error, setError] = useState(false);
-  if (error || !src || src === "") {
+  const resolvedSrc = getImageUrl(src);
+
+  if (error || !resolvedSrc || resolvedSrc === "") {
     return (
       <div
         className={cn(
@@ -32,9 +36,10 @@ export default function ImageWithFallback({
       </div>
     );
   }
+
   return (
     <Image
-      src={src}
+      src={resolvedSrc}
       alt={alt}
       className={className}
       onError={() => setError(true)}

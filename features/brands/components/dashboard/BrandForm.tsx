@@ -7,7 +7,6 @@ import { useCreateBrand, useUpdateBrand } from '@/features/brands/hooks/useBrand
 import { useState } from 'react';
 import { Brand } from '@/types';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { EditIcon } from "@/shared/ui/Icons";
 import { BrandFormValues, brandSchema } from '@/features/brands/brand.schema';
 import { useToast } from '@/shared/hooks/useToast';
@@ -23,11 +22,11 @@ interface BrandFormProps {
 export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFormProps) {
   const t = useTranslations('brands');
   const tCommon = useTranslations('buttons');
-  const tErrors = useTranslations('errors');
+  // const tErrors = useTranslations('errors');
   const createMutation = useCreateBrand();
   const updateMutation = useUpdateBrand();
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(editingBrand?.image || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(typeof editingBrand?.image === 'string' ? editingBrand.image : editingBrand?.image?.url || null);
   const toast = useToast();
   const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
   const {
@@ -42,7 +41,7 @@ export default function BrandForm({ editingBrand, onSuccess, onCancel }: BrandFo
         en: editingBrand ? (typeof editingBrand.name === 'string' ? editingBrand.name : editingBrand.name?.en || '') : '',
         ar: editingBrand ? (typeof editingBrand.name === 'string' ? editingBrand.name : editingBrand.name?.ar || '') : '',
       },
-      image: editingBrand?.image || '',
+      image: typeof editingBrand?.image === 'string' ? editingBrand?.image : editingBrand?.image?.url || '',
     },
   });
 

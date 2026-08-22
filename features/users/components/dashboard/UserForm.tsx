@@ -38,7 +38,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
   const roles = rolesData || [];
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(editingUser?.avatar || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(typeof editingUser?.avatar === 'string' ? editingUser?.avatar : editingUser?.avatar?.url || null);
   const formId = mode === 'create' ? 'create-user-form' : 'edit-user-form';
   const formSchema = mode === 'create' ? createUserSchema : editUserSchema;
 
@@ -50,7 +50,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
       role: typeof editingUser?.role === 'object' ? (editingUser.role as any)?._id : (editingUser?.role || ''),
       isActive: editingUser?.isActive ?? true,
       phone: editingUser?.phone || '',
-      avatar: editingUser?.avatar || null,
+      avatar: typeof editingUser?.avatar === 'string' ? editingUser?.avatar : editingUser?.avatar?.url || null,
       password: '',
       confirmPassword: '',
     },

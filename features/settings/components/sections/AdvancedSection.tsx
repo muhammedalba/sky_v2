@@ -15,6 +15,7 @@ import {
   ActivityIcon,
   AlertTriangleIcon,
   DashboardIcon,
+  DatabaseIcon,
   KeyIcon,
   RefreshCwIcon,
   SettingsIcon,
@@ -26,6 +27,7 @@ import { SettingsInput } from "../../settings.schema";
 import { Permissions } from "@/features/roles/types";
 import { checkUserPermission } from "@/lib/auth";
 import { useMe } from "@/features/auth/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 export default function AdvancedSection() {
   const t = useTranslations("settings");
@@ -39,6 +41,9 @@ export default function AdvancedSection() {
     control,
     formState: { errors },
   } = useFormContext<SettingsInput>();
+
+  const storageProvider =
+    useWatch({ control, name: "storageProvider" }) || "local";
 
   const handleClearCache = async () => {
     setIsClearingCache(true);
@@ -185,6 +190,91 @@ export default function AdvancedSection() {
               error={errors.googleMapsApiKey?.message}
               className="rounded-xl h-11"
             />
+          </div>
+
+          {/* Storage Provider Selection */}
+          <div className="pt-6 border-t border-border/50 space-y-4">
+            <div>
+              <h4 className="font-bold text-sm flex items-center gap-2">
+                <DatabaseIcon className="w-4 h-4 text-primary" />
+                {t("advanced.storageProvider")}
+              </h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {t("advanced.storageProviderDesc")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Local Storage Option */}
+              <div
+                onClick={() =>
+                  setValue("storageProvider", "local", { shouldDirty: true })
+                }
+                className={cn(
+                  "p-4 border rounded-2xl cursor-pointer transition-all flex flex-col justify-between space-y-2",
+                  (storageProvider || "local") === "local"
+                    ? "border-primary bg-primary/5 ring-1 ring-primary"
+                    : "border-border/50 hover:bg-muted/10",
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm">
+                    {t("advanced.storageLocal")}
+                  </span>
+                  <div
+                    className={cn(
+                      "w-4 h-4 rounded-full border flex items-center justify-center",
+                      (storageProvider || "local") === "local"
+                        ? "border-primary"
+                        : "border-muted-foreground/40",
+                    )}
+                  >
+                    {(storageProvider || "local") === "local" && (
+                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    )}
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  {t("advanced.storageLocalDesc")}
+                </p>
+              </div>
+
+              {/* Cloudinary Option */}
+              <div
+                onClick={() =>
+                  setValue("storageProvider", "cloudinary", {
+                    shouldDirty: true,
+                  })
+                }
+                className={cn(
+                  "p-4 border rounded-2xl cursor-pointer transition-all flex flex-col justify-between space-y-2",
+                  storageProvider === "cloudinary"
+                    ? "border-primary bg-primary/5 ring-1 ring-primary"
+                    : "border-border/50 hover:bg-muted/10",
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm">
+                    {t("advanced.storageCloudinary")}
+                  </span>
+                  <div
+                    className={cn(
+                      "w-4 h-4 rounded-full border flex items-center justify-center",
+                      storageProvider === "cloudinary"
+                        ? "border-primary"
+                        : "border-muted-foreground/40",
+                    )}
+                  >
+                    {storageProvider === "cloudinary" && (
+                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    )}
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  {t("advanced.storageCloudinaryDesc")}
+                </p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

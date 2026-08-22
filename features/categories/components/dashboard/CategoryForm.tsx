@@ -29,7 +29,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
 
-  const [imagePreview, setImagePreview] = useState<string | null>(editingCategory?.image || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(typeof editingCategory?.image === 'string' ? editingCategory?.image : editingCategory?.image?.url || null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
@@ -50,7 +50,7 @@ export default function CategoryForm({ editingCategory, onSuccess, onCancel }: C
           ? (typeof editingCategory.name === 'string' ? editingCategory.name : editingCategory.name?.ar ?? '')
           : '',
       },
-      image: editingCategory?.image || '',
+      image: typeof editingCategory?.image === 'string' ? editingCategory?.image : editingCategory?.image?.url || '',
     },
   });
 

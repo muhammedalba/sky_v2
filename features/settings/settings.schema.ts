@@ -167,6 +167,7 @@ export const settingsSchema = z.object({
   minOrderAmount: z.coerce.number().min(0).default(0),
   enablePerformance: z.boolean().default(false),
   inventoryAlertsEnabled: z.boolean().default(true),
+  storageProvider: z.enum(["local", "cloudinary"]).default("local"),
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;
