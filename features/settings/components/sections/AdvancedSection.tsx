@@ -11,7 +11,15 @@ import {
 import { Switch } from "@/shared/ui/Switch";
 import { Input } from "@/shared/ui/Input";
 import { Textarea } from "@/shared/ui/Textarea";
-import { ActivityIcon, AlertTriangleIcon, DashboardIcon, KeyIcon, RefreshCwIcon, SettingsIcon, TrashIcon } from "@/shared/ui/Icons";
+import {
+  ActivityIcon,
+  AlertTriangleIcon,
+  DashboardIcon,
+  KeyIcon,
+  RefreshCwIcon,
+  SettingsIcon,
+  TrashIcon,
+} from "@/shared/ui/Icons";
 import { apiClient } from "@/lib/api/client";
 import { useToast } from "@/shared/hooks/useToast";
 import { SettingsInput } from "../../settings.schema";
@@ -23,7 +31,7 @@ export default function AdvancedSection() {
   const t = useTranslations("settings");
   const toast = useToast();
   const [isClearingCache, setIsClearingCache] = useState(false);
- const { data: user } = useMe();
+  const { data: user } = useMe();
 
   const {
     register,
@@ -58,8 +66,11 @@ export default function AdvancedSection() {
   const maintenanceMode = useWatch({ control, name: "maintenanceMode" });
   const allowRegistration = useWatch({ control, name: "allowRegistration" });
   const autoBackup = useWatch({ control, name: "autoBackup" });
-  const debugMode = useWatch({ control, name: "debugMode" });
-  const inventoryAlertsEnabled = useWatch({ control, name: "inventoryAlertsEnabled" });
+  const enablePerformance = useWatch({ control, name: "enablePerformance" });
+  const inventoryAlertsEnabled = useWatch({
+    control,
+    name: "inventoryAlertsEnabled",
+  });
 
   const toggles = useMemo(
     () => [
@@ -86,23 +97,32 @@ export default function AdvancedSection() {
         value: autoBackup,
       },
       {
-        id: "debugMode",
-        name: t("advanced.debug"),
-        desc: t("advanced.debugDesc"),
+        id: "enablePerformance",
+        name: t("advanced.performance"),
+        desc: t("advanced.performanceDesc"),
         icon: ActivityIcon,
-        value: debugMode,
+        value: enablePerformance,
         permission: Permissions.UPDATE_DEBUG,
       },
       {
         id: "inventoryAlertsEnabled",
         name: t("advanced.inventoryAlerts") || "تنبيهات السلة",
-        desc: t("advanced.inventoryAlertsDesc") || "تفعيل تنبيهات نقص المخزون عند إضافة منتجات للسلة",
+        desc:
+          t("advanced.inventoryAlertsDesc") ||
+          "تفعيل تنبيهات نقص المخزون عند إضافة منتجات للسلة",
         icon: AlertTriangleIcon,
         value: inventoryAlertsEnabled,
         permission: Permissions.UPDATE_SETTINGS,
       },
     ],
-    [t, maintenanceMode, allowRegistration, autoBackup, debugMode, inventoryAlertsEnabled],
+    [
+      t,
+      maintenanceMode,
+      allowRegistration,
+      autoBackup,
+      enablePerformance,
+      inventoryAlertsEnabled,
+    ],
   );
 
   const filteredNavigation = useMemo(() => {

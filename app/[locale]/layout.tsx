@@ -155,7 +155,9 @@ export default async function RootLayout({
             <ToastProvider />
 
             {/* Performance Monitoring */}
-            <PerformanceMonitor debugMode={finalSettings.debugMode ?? false} />
+            <PerformanceMonitor
+              enablePerformance={finalSettings.enablePerformance ?? false}
+            />
             {children}
             <CartDrawer />
             {/* JSON-LD Structured Data for SEO Rich Snippets */}

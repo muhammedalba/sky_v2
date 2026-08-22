@@ -75,10 +75,10 @@ export interface StoreSettings {
   googleMapsApiKey: string;
   features: FeatureFlags;
   gateways: Gateways;
-  debugMode: boolean;
+  enablePerformance: boolean;
   hasCustomShippingRates?: boolean;
   hasCustomTaxes?: boolean;
-  
+
   // Legacy support for common fields
   supportPhone?: string;
   supportEmail?: string;

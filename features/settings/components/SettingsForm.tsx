@@ -28,9 +28,12 @@ const SocialSection = dynamic(() => import("./sections/SocialSection"), {
 const ContactSection = dynamic(() => import("./sections/ContactSection"), {
   loading: () => <SectionSkeleton />,
 });
-const BusinessAddressSection = dynamic(() => import("./sections/BusinessAddressSection"), {
-  loading: () => <SectionSkeleton />,
-});
+const BusinessAddressSection = dynamic(
+  () => import("./sections/BusinessAddressSection"),
+  {
+    loading: () => <SectionSkeleton />,
+  },
+);
 const PaymentsSection = dynamic(() => import("./sections/PaymentsSection"), {
   loading: () => <SectionSkeleton />,
 });
@@ -114,7 +117,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   autoBackup: false,
   googleMapsApiKey: "",
   minOrderAmount: 0,
-  debugMode: false,
+  enablePerformance: false,
   inventoryAlertsEnabled: true,
   logo: undefined,
   favicon: undefined,
@@ -146,7 +149,6 @@ export default function SettingsForm() {
     register,
     formState: { errors, isSubmitting },
   } = methods;
-  console.log(errors);
 
   // Axis 4: Explicitly Register Image Fields (Always tracked regardless of active section)
   useEffect(() => {
@@ -197,7 +199,7 @@ export default function SettingsForm() {
           "autoBackup",
           "googleMapsApiKey",
           "minOrderAmount",
-          "debugMode",
+          "enablePerformance",
           "exchangeRate",
           "inventoryAlertsEnabled",
           "paymentsEnabled",

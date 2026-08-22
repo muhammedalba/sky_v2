@@ -1,7 +1,5 @@
-import { env } from '@/lib/env';
-import { StoreSettings } from '../types/settings';
-
-
+import { env } from "@/lib/env";
+import { StoreSettings } from "../types/settings";
 
 /**
  * Enterprise Grade Settings Service
@@ -14,22 +12,24 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
     const response = await fetch(endpoint, {
       next: {
         revalidate: 3600,
-        tags: ['settings', 'public-settings']
+        tags: ["settings", "public-settings"],
       },
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (!response.ok && response?.status == 503) {
-      console.error(`[SettingsService] Failed to fetch settings: ${response.statusText}`);
+      console.error(
+        `[SettingsService] Failed to fetch settings: ${response.statusText}`,
+      );
       return {
         ...DEFAULT_SETTINGS,
         maintenanceMode: true,
         maintenanceMessage: {
-          ar: 'الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.',
-          en: 'The site is currently under maintenance. Please try again later.'
-        }
+          ar: "الموقع قيد الصيانة حالياً. يرجى المحاولة لاحقاً.",
+          en: "The site is currently under maintenance. Please try again later.",
+        },
       };
     }
 
@@ -37,7 +37,7 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
     // The actual settings are nested inside responseData.data
     const actualSettings = responseData.data || {};
     const merged = { ...DEFAULT_SETTINGS, ...actualSettings };
-    
+
     // Normalize media paths → absolute backend URLs so both Next.js
     // metadata (favicon) and <img> tags resolve correctly.
     return {
@@ -46,7 +46,7 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
       favicon: merged.favicon,
     };
   } catch (error) {
-    console.error('[SettingsService] Connection error:', error);
+    console.error("[SettingsService] Connection error:", error);
     return {
       ...DEFAULT_SETTINGS,
       // maintenanceMode: true,
@@ -63,50 +63,59 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
  * Provides safe defaults in case the API is unreachable
  */
 export const DEFAULT_SETTINGS: StoreSettings = {
-  siteName: { ar: 'سكاي جالاكسي', en: 'Sky Galaxy' },
-  siteDescription: { ar: 'متجر إلكتروني احترافي', en: 'Professional E-commerce Store' },
-  logo: '/assets/images/auth-logo.png',
-  favicon: '/assets/images/favicon.ico',
-  metaTitle: { ar: 'سكاي جالاكسي', en: 'Sky Galaxy' },
-  metaDescription: { ar: 'متجر إلكتروني احترافي', en: 'Professional E-commerce Store' },
-  googleAnalyticsId: '',
+  siteName: { ar: "سكاي جالاكسي", en: "Sky Galaxy" },
+  siteDescription: {
+    ar: "متجر إلكتروني احترافي",
+    en: "Professional E-commerce Store",
+  },
+  logo: "/assets/images/auth-logo.png",
+  favicon: "/assets/images/favicon.ico",
+  metaTitle: { ar: "سكاي جالاكسي", en: "Sky Galaxy" },
+  metaDescription: {
+    ar: "متجر إلكتروني احترافي",
+    en: "Professional E-commerce Store",
+  },
+  googleAnalyticsId: "",
   socialLinks: {
-    facebook: '',
-    instagram: '',
-    twitter: '',
-    linkedin: '',
-    youtube: '',
-    tiktok: '',
-    whatsapp: '',
+    facebook: "",
+    instagram: "",
+    twitter: "",
+    linkedin: "",
+    youtube: "",
+    tiktok: "",
+    whatsapp: "",
   },
   contactInfo: {
-    email: '',
+    email: "",
     phones: [],
-    workingDays: { ar: 'من الاثنين الى السبت', en: 'from Monday to Saturday' },
-    workingHours: { ar: 'من 11 صباحا الى 8 مساء', en: 'from 11 AM to 8 PM' },
+    workingDays: { ar: "من الاثنين الى السبت", en: "from Monday to Saturday" },
+    workingHours: { ar: "من 11 صباحا الى 8 مساء", en: "from 11 AM to 8 PM" },
   },
   businessAddress: {
-    country: { ar: '', en: '' },
-    city: { ar: '', en: '' },
-    area: { ar: '', en: '' },
-    street: { ar: '', en: '' },
-    mailBox: '',
-    poBox: '',
-    vatNo: '',
-    crNo: '',
+    country: { ar: "", en: "" },
+    city: { ar: "", en: "" },
+    area: { ar: "", en: "" },
+    street: { ar: "", en: "" },
+    mailBox: "",
+    poBox: "",
+    vatNo: "",
+    crNo: "",
   },
-  currencyCode: 'SAR',
-  currencySymbol: 'ر.س',
+  currencyCode: "SAR",
+  currencySymbol: "ر.س",
   exchangeRate: 0,
   freeShippingThreshold: 0,
   minOrderAmount: 0,
   vatRate: 15,
   taxesIncluded: true,
   maintenanceMode: false,
-  maintenanceMessage: { ar: 'الموقع قيد الصيانة حالياً', en: 'Site under maintenance' },
+  maintenanceMessage: {
+    ar: "الموقع قيد الصيانة حالياً",
+    en: "Site under maintenance",
+  },
   allowRegistration: true,
   autoBackup: false,
-  googleMapsApiKey: '',
+  googleMapsApiKey: "",
   features: {
     reviews: true,
     coupons: true,
@@ -119,5 +128,5 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     bankTransfer: true,
     cod: true,
   },
-  debugMode: false,
+  enablePerformance: false,
 };

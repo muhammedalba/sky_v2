@@ -3,14 +3,14 @@
 import { useReportWebVitals } from "next/web-vitals";
 
 export default function PerformanceMonitor({
-  debugMode = false,
+  enablePerformance = false,
 }: {
-  debugMode: boolean;
+  enablePerformance: boolean;
 }) {
   useReportWebVitals((metric) => {
     // Only log in development mode to avoid cluttering production
     // if (process.env.NODE_ENV === "development") {
-    if (debugMode) {
+    if (enablePerformance) {
       const timeInMs = Math.round(metric.value);
       let speedStatus = "🟢 Fast";
 
