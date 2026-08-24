@@ -9,6 +9,7 @@ export const profileSchema = z.object({
 });
 
 export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(6, 'invalidCurrentPassword'),
   password: z.string().min(6, 'invalidPassword'),
   confirmPassword: z.string().min(6, 'invalidPassword'),
 }).refine((data) => data.password === data.confirmPassword, {

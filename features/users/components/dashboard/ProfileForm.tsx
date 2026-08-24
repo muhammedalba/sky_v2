@@ -1,30 +1,42 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { useTranslations, useLocale } from 'next-intl';
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useTranslations, useLocale } from "next-intl";
 
-import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
-import { CalendarIcon, KeyIcon, MailIcon, PhoneIcon, ShieldIcon, UserIcon } from "@/shared/ui/Icons";
-import PasswordInput from '@/shared/ui/PasswordInput';
-import { authApi } from '@/features/auth/api';
+import { Button } from "@/shared/ui/Button";
+import { Input } from "@/shared/ui/Input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/shared/ui/Card";
+import {
+  CalendarIcon,
+  KeyIcon,
+  MailIcon,
+  PhoneIcon,
+  ShieldIcon,
+  UserIcon,
+} from "@/shared/ui/Icons";
+import PasswordInput from "@/shared/ui/PasswordInput";
+import { authApi } from "@/features/auth/api";
 import {
   profileSchema,
   changePasswordSchema,
   type ProfileInput,
   type ChangePasswordInput,
-} from '@/features/users/user.schema';
-import { useToastStore } from '@/store/toast-store';
-import { User } from '@/types';
-import { cn, formatRelativeTime } from '@/lib/utils';
-import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import ImageUpload from '@/shared/ui/form/ImageUpload';
-
+} from "@/features/users/user.schema";
+import { useToastStore } from "@/store/toast-store";
+import { User } from "@/types";
+import { cn, formatRelativeTime } from "@/lib/utils";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import ImageUpload from "@/shared/ui/form/ImageUpload";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -47,10 +59,10 @@ function TabButton({ active, onClick, icon, label }: TabButtonProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
+        "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200",
         active
-          ? 'bg-primary text-primary-foreground shadow-sm'
-          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:text-foreground hover:bg-secondary/60",
       )}
     >
       {icon}
@@ -58,9 +70,6 @@ function TabButton({ active, onClick, icon, label }: TabButtonProps) {
     </button>
   );
 }
-
-
-
 
 // ─── Sub-component: Section Header ───────────────────────────────────────────
 
@@ -84,29 +93,29 @@ function SectionHeader({ icon, title, description }: SectionHeaderProps) {
   );
 }
 
-
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-type ActiveTab = 'general' | 'security';
+type ActiveTab = "general" | "security";
 
 export default function ProfileForm({ user }: ProfileFormProps) {
-  const t = useTranslations('profile');
+  const t = useTranslations("profile");
   const locale = useLocale();
   const queryClient = useQueryClient();
   const { addToast } = useToastStore();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(user?.avatar || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    typeof user?.avatar === "string" ? user?.avatar : user?.avatar?.url || null,
+  );
 
-  const [activeTab, setActiveTab] = useState<ActiveTab>('general');
+  const [activeTab, setActiveTab] = useState<ActiveTab>("general");
 
   // ── Profile form ──────────────────────────────────────────────────────────
   const profileForm = useForm<ProfileInput>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name ?? '',
-      email: user?.email ?? '',
+      name: user?.name ?? "",
+      email: user?.email ?? "",
       avatar: user?.avatar || null,
       phone: user?.phone ?? undefined,
     },
@@ -115,70 +124,98 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileInput) => {
       const formData = new FormData();
-      formData.append('name', data.name);
-      formData.append('email', data.email);
-      if (data.phone) formData.append('phone', data.phone);
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      if (data.phone) formData.append("phone", data.phone);
       // if (imageFile) formData.append('avatar', imageFile);
       if (imageFile instanceof File) {
-        formData.append('avatar', imageFile);
+        formData.append("avatar", imageFile);
       } else if (imageFile === null) {
-        formData.append('avatar', 'null'); // Handled by ParseBodyJsonInterceptor (if active) or Transform
+        formData.append("avatar", "null"); // Handled by ParseBodyJsonInterceptor (if active) or Transform
       }
       return authApi.updateMe(formData);
     },
     onSuccess: () => {
       // Invalidate the cached user query so UI re-fetches fresh data from the server
-      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
-      addToast({ title: 'Success', message: t('messages.profileUpdated'), type: 'success' });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      addToast({
+        title: "Success",
+        message: t("messages.profileUpdated"),
+        type: "success",
+      });
     },
-    onError: (error: import('axios').AxiosError<{ errors?: string }>) => {
-      addToast({ title: 'Error', message: error.response?.data?.errors || 'Failed to update profile.', type: 'error' });
+    onError: (error: import("axios").AxiosError<{ errors?: string }>) => {
+      addToast({
+        title: "Error",
+        message: error.response?.data?.errors || "Failed to update profile.",
+        type: "error",
+      });
     },
   });
 
   // ── Password form ─────────────────────────────────────────────────────────
   const passwordForm = useForm<ChangePasswordInput>({
     resolver: zodResolver(changePasswordSchema),
-    defaultValues: { password: '', confirmPassword: '' },
+    defaultValues: { currentPassword: "", password: "", confirmPassword: "" },
   });
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: ChangePasswordInput) =>
-      authApi.changePassword({ password: data.password, confirmPassword: data.confirmPassword }),
+      authApi.changePassword({
+        currentPassword: data.currentPassword,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      }),
     onSuccess: () => {
       passwordForm.reset();
-      addToast({ title: 'Success', message: t('messages.passwordChanged'), type: 'success' });
+      addToast({
+        title: "Success",
+        message: t("messages.passwordChanged"),
+        type: "success",
+      });
     },
-    onError: () => {
-      addToast({ title: 'Error', message: 'Failed to update password.', type: 'error' });
+    onError: (error) => {
+      passwordForm.reset();
+      addToast({
+        title: "Error",
+        message: error?.message || "Failed to update password.",
+        type: "error",
+      });
     },
   });
 
   // ── Role badge helper ─────────────────────────────────────────────────────
-  const roleName = (typeof user.role === 'object' && user.role !== null) 
-    ? user.role.name.toLowerCase() 
-    : (typeof user.role === 'string' ? user.role.toLowerCase() : 'user');
-  const roleLabel = (typeof user.role === 'object' && user.role !== null) 
-    ? user.role.name 
-    : (typeof user.role === 'string' ? user.role : 'User');
+  const roleName =
+    typeof user.role === "object" && user.role !== null
+      ? user.role.name.toLowerCase()
+      : typeof user.role === "string"
+        ? user.role.toLowerCase()
+        : "user";
+  const roleLabel =
+    typeof user.role === "object" && user.role !== null
+      ? user.role.name
+      : typeof user.role === "string"
+        ? user.role
+        : "User";
 
   const roleBadgeClass: Record<string, string> = {
-    superadmin: 'bg-primary/20 text-primary font-black shadow-sm ring-1 ring-primary/30',
-    admin: 'bg-primary/10 text-primary',
-    manager: 'bg-info/10 text-info',
-    user: 'bg-secondary text-secondary-foreground',
+    superadmin:
+      "bg-primary/20 text-primary font-black shadow-sm ring-1 ring-primary/30",
+    admin: "bg-primary/10 text-primary",
+    manager: "bg-info/10 text-info",
+    user: "bg-secondary text-secondary-foreground",
   };
 
   // ─────────────────────────────────────────────────────────────────────────
-  const isOnline = user.lastLogin && (new Date().getTime() - new Date(user.lastLogin).getTime()) < 1000 * 60 * 5;
+  const isOnline =
+    user.lastLogin &&
+    new Date().getTime() - new Date(user.lastLogin).getTime() < 1000 * 60 * 5;
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
       {/* ── Profile Hero Header ── */}
       <Card className="border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
         {/* Gradient banner */}
         <div className="h-28 bg-linear-to-br from-primary/25 via-primary/10 to-background relative">
-
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.15),transparent_70%)]" />
         </div>
 
@@ -187,15 +224,15 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             {/* Avatar */}
             <div className="shrink-0">
               <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-background bg-secondary flex items-center justify-center font-bold text-2xl text-secondary-foreground shadow-lg">
-                {imagePreview && <ImageWithFallback
-                  src={imagePreview}
-                  alt={user.name}
-                  fill
-                  sizes="96px"
-                  className="object-cover"
-                />}
-
-
+                {imagePreview && (
+                  <ImageWithFallback
+                    src={imagePreview}
+                    alt={user.name}
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                  />
+                )}
               </div>
             </div>
 
@@ -203,13 +240,15 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             <div className="flex-1 min-w-0 sm:pb-1">
               {/* Name + Role + Status row */}
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-black tracking-tight truncate">{user.name}</h2>
+                <h2 className="text-xl font-black tracking-tight truncate">
+                  {user.name}
+                </h2>
 
                 {/* Role badge */}
                 <span
                   className={cn(
-                    'text-xs font-bold uppercase px-2.5 py-0.5 rounded-full',
-                    roleBadgeClass[roleName] ?? roleBadgeClass.user
+                    "text-xs font-bold uppercase px-2.5 py-0.5 rounded-full",
+                    roleBadgeClass[roleName] ?? roleBadgeClass.user,
                   )}
                 >
                   {roleLabel}
@@ -218,32 +257,34 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 {/* Active / Inactive badge */}
                 <span
                   className={cn(
-                    'inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full',
+                    "inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full",
                     user.isActive
-                      ? 'bg-success/10 text-success'
-                      : 'bg-destructive/10 text-destructive'
+                      ? "bg-success/10 text-success"
+                      : "bg-destructive/10 text-destructive",
                   )}
                 >
                   <span
                     className={cn(
-                      'w-1.5 h-1.5 rounded-full',
-                      user.isActive ? 'bg-success animate-pulse' : 'bg-destructive'
+                      "w-1.5 h-1.5 rounded-full",
+                      user.isActive
+                        ? "bg-success animate-pulse"
+                        : "bg-destructive",
                     )}
                   />
-                  {user.isActive ? t('status.active') : t('status.inactive')}
+                  {user.isActive ? t("status.active") : t("status.inactive")}
                 </span>
               </div>
 
               {/* Email */}
-              <p className="text-sm text-muted-foreground mt-0.5 truncate">{user.email}</p>
+              <p className="text-sm text-muted-foreground mt-0.5 truncate">
+                {user.email}
+              </p>
 
               {/* Last login */}
               {user.lastLogin && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5">
                   <CalendarIcon className="w-3.5 h-3.5 shrink-0" />
-                  <span>
-                    {t('lastLogin')}{' '}
-                  </span>
+                  <span>{t("lastLogin")} </span>
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-1.5">
                       {isOnline && (
@@ -252,11 +293,17 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
                         </span>
                       )}
-                      <span className={cn(
-                        "text-sm md:font-semibold tracking-tight",
-                        isOnline ? "text-success/70" : "text-muted-foreground/80"
-                      )}>
-                        {user.lastLogin ? formatRelativeTime(user.lastLogin, locale) : '-'}
+                      <span
+                        className={cn(
+                          "text-sm md:font-semibold tracking-tight",
+                          isOnline
+                            ? "text-success/70"
+                            : "text-muted-foreground/80",
+                        )}
+                      >
+                        {user.lastLogin
+                          ? formatRelativeTime(user.lastLogin, locale)
+                          : "-"}
                       </span>
                     </div>
                     {!isOnline && user.lastLogin && (
@@ -275,30 +322,31 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       {/* ── Tabs Navigation ── */}
       <div className="flex items-center gap-1 p-1 bg-secondary/40 rounded-2xl w-fit border border-border/40">
         <TabButton
-          active={activeTab === 'general'}
-          onClick={() => setActiveTab('general')}
+          active={activeTab === "general"}
+          onClick={() => setActiveTab("general")}
           icon={<UserIcon className="w-4 h-4" />}
-          label={t('tabs.general')}
+          label={t("tabs.general")}
         />
         <TabButton
-          active={activeTab === 'security'}
-          onClick={() => setActiveTab('security')}
+          active={activeTab === "security"}
+          onClick={() => setActiveTab("security")}
           icon={<ShieldIcon className="w-4 h-4" />}
-          label={t('tabs.security')}
+          label={t("tabs.security")}
         />
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
           Tab 1 — General Info
       ══════════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'general' && (
+      {activeTab === "general" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-left-2 duration-300">
-
           {/* ── Left: Avatar Upload Card ── */}
           <Card className="border-none shadow-sm ring-1 ring-border/50">
             <CardHeader>
-              <CardTitle className="text-base font-bold">{t('avatar.title')}</CardTitle>
-              <CardDescription>{t('avatar.description')}</CardDescription>
+              <CardTitle className="text-base font-bold">
+                {t("avatar.title")}
+              </CardTitle>
+              <CardDescription>{t("avatar.description")}</CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center pb-8">
               <ImageUpload
@@ -307,12 +355,12 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 onChange={(file: File) => {
                   setImageFile(file);
                   setImagePreview(URL.createObjectURL(file));
-                  profileForm.setValue('avatar', file);
+                  profileForm.setValue("avatar", file);
                 }}
                 onRemove={() => {
                   setImageFile(null);
                   setImagePreview(null);
-                  profileForm.setValue('avatar', null);
+                  profileForm.setValue("avatar", null);
                 }}
               />
             </CardContent>
@@ -323,50 +371,46 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             <CardContent className="pt-6">
               <SectionHeader
                 icon={<UserIcon className="w-5 h-5" />}
-                title={t('personalInfo')}
-                description={t('personalInfoDescription')}
+                title={t("personalInfo")}
+                description={t("personalInfoDescription")}
               />
 
               <form
                 onSubmit={profileForm.handleSubmit((data) =>
-                  updateProfileMutation.mutate(data)
+                  updateProfileMutation.mutate(data),
                 )}
                 className="space-y-5"
               >
                 {/* Name */}
                 <Input
-                  {...profileForm.register('name')}
-                  label={t('fields.name')}
+                  {...profileForm.register("name")}
+                  label={t("fields.name")}
                   icon={UserIcon}
                   placeholder=" "
-                  value={profileForm.watch('name')}
+                  value={profileForm.watch("name")}
                   error={profileForm.formState.errors.name?.message}
                 />
 
-
                 {/* Email */}
                 <Input
-                  {...profileForm.register('email')}
+                  {...profileForm.register("email")}
                   type="email"
-                  label={t('fields.email')}
+                  label={t("fields.email")}
                   icon={MailIcon}
                   placeholder=" "
                   error={profileForm.formState.errors.email?.message}
                 />
 
-
                 {/* Phone (optional, display only if exists) */}
 
                 <Input
-                  {...profileForm.register('phone')}
+                  {...profileForm.register("phone")}
                   type="tel"
-                  label={t('fields.phone')}
+                  label={t("fields.phone")}
                   icon={PhoneIcon}
-
                   placeholder=" "
                   error={profileForm.formState.errors.phone?.message}
                 />
-
 
                 <div className="flex justify-end pt-2">
                   <Button
@@ -374,7 +418,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     isLoading={updateProfileMutation.isPending}
                     className="min-w-[140px] font-bold"
                   >
-                    {t('buttons.saveChanges')}
+                    {t("buttons.saveChanges")}
                   </Button>
                 </div>
               </form>
@@ -386,48 +430,57 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       {/* ══════════════════════════════════════════════════════════════════════
           Tab 2 — Security
       ══════════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'security' && (
+      {activeTab === "security" && (
         <div className="animate-in fade-in slide-in-from-right-2 duration-300">
           <Card className="border-none shadow-sm ring-1 ring-border/50 max-w-2xl">
             <CardContent className="pt-6">
               <SectionHeader
                 icon={<KeyIcon className="w-5 h-5" />}
-                title={t('changePassword')}
-                description={t('changePasswordDescription')}
+                title={t("changePassword")}
+                description={t("changePasswordDescription")}
               />
 
               {/* Security notice */}
               <div className="flex items-start gap-3 p-3.5 mb-6 rounded-xl bg-warning/10 border border-warning/20 text-warning-foreground">
                 <ShieldIcon className="w-4 h-4 mt-0.5 shrink-0 text-warning" />
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  {t('passwordSecurityNote')}
+                  {t("passwordSecurityNote")}
                 </p>
               </div>
 
               <FormProvider {...passwordForm}>
                 <form
                   onSubmit={passwordForm.handleSubmit((data) =>
-                    changePasswordMutation.mutate(data)
+                    changePasswordMutation.mutate(data),
                   )}
                   className="space-y-5"
                 >
-
                   <div className="border-t border-dashed border-border/60 pt-5" />
 
+                  {/* current Password */}
+                  <PasswordInput
+                    {...passwordForm.register("currentPassword")}
+                    label={t("fields.currentPassword")}
+                    icon={ShieldIcon}
+                    error={
+                      passwordForm.formState.errors.currentPassword?.message
+                    }
+                  />
                   {/* New Password */}
                   <PasswordInput
-                    {...passwordForm.register('password')}
-                    label={t('fields.newPassword')}
+                    {...passwordForm.register("password")}
+                    label={t("fields.newPassword")}
                     icon={ShieldIcon}
                     error={passwordForm.formState.errors.password?.message}
-
                   />
                   {/* Confirm Password */}
                   <PasswordInput
-                    {...passwordForm.register('confirmPassword')}
-                    label={t('fields.confirmPassword')}
+                    {...passwordForm.register("confirmPassword")}
+                    label={t("fields.confirmPassword")}
                     icon={ShieldIcon}
-                    error={passwordForm.formState.errors.confirmPassword?.message}
+                    error={
+                      passwordForm.formState.errors.confirmPassword?.message
+                    }
                   />
 
                   <div className="flex justify-end pt-2">
@@ -437,7 +490,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                       isLoading={changePasswordMutation.isPending}
                       className="min-w-[160px] font-bold"
                     >
-                      {t('buttons.updatePassword')}
+                      {t("buttons.updatePassword")}
                     </Button>
                   </div>
                 </form>

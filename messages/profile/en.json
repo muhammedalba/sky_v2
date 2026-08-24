@@ -44,6 +44,7 @@
     "name": "Name",
     "email": "Email Address",
     "phone": "Phone Number",
+    "currentPassword":"Current Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password"
   },
