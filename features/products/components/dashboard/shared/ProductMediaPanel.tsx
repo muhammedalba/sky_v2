@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
 import GalleryUpload from './GalleryUpload';
 import { EyeIcon } from "@/shared/ui/Icons";
+import { FileAsset } from '@/shared/types/file-asset';
 
 interface ProductMediaPanelProps {
   // Cover
@@ -13,7 +14,7 @@ interface ProductMediaPanelProps {
   coverFieldError?: string;
 
   // Gallery
-  galleryPreviews: string[];
+  galleryPreviews: FileAsset[];
   onGalleryAdd: (file: File) => void;
   onGalleryRemove: (index: number) => void;
 

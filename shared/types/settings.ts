@@ -1,3 +1,5 @@
+import { FileAsset } from "./file-asset";
+
 export interface LocalizedString {
   ar: string;
   en: string;
@@ -53,8 +55,8 @@ export interface Gateways {
 export interface StoreSettings {
   siteName: LocalizedString;
   siteDescription: LocalizedString;
-  logo: string;
-  favicon: string;
+  logo: FileAsset;
+  favicon: FileAsset;
   metaTitle: LocalizedString;
   metaDescription: LocalizedString;
   googleAnalyticsId: string;

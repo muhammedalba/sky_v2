@@ -41,7 +41,7 @@ export default function ProductsClient() {
   const locale = useLocale();
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
- const commonT = useTranslations("common.buttons");
+  const commonT = useTranslations("common.buttons");
   const searchParams = useSearchParams();
 
   // ─── Filter States ──────────────────────────────────────
@@ -322,14 +322,26 @@ export default function ProductsClient() {
                     <picture className="absolute inset-0 w-full h-full">
                       <source
                         media="(min-width: 1024px)"
-                        srcSet={slide.carouselLg}
+                        srcSet={
+                          typeof slide.carouselLg === "object"
+                            ? slide.carouselLg.url
+                            : slide.carouselLg
+                        }
                       />
                       <source
                         media="(min-width: 640px)"
-                        srcSet={slide.carouselMd}
+                        srcSet={
+                          typeof slide.carouselMd === "object"
+                            ? slide.carouselMd.url
+                            : slide.carouselMd
+                        }
                       />
                       <img
-                        src={slide.carouselSm}
+                        src={
+                          typeof slide.carouselSm === "object"
+                            ? slide.carouselSm.url
+                            : slide.carouselSm
+                        }
                         alt={slideDesc || "Hero Banner"}
                         className="object-cover w-full h-full"
                         fetchPriority={idx === 0 ? "high" : "low"}
@@ -337,7 +349,7 @@ export default function ProductsClient() {
                     </picture>
 
                     {/* Dark gradient blur covering text */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent flex flex-col justify-end p-6 sm:p-10 lg:p-14 text-white" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/35 to-transparent flex flex-col justify-end p-6 sm:p-10 lg:p-14 text-white" />
 
                     {/* Text overlays */}
                     <div className="absolute bottom-6 sm:bottom-12 lg:bottom-16 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 text-white z-20 space-y-2 sm:space-y-4 max-w-xl">
@@ -506,13 +518,17 @@ export default function ProductsClient() {
                     >
                       {cat.image ? (
                         <img
-                          src={cat.image}
+                          src={
+                            typeof cat.image === "object"
+                              ? cat.image?.url
+                              : cat.image
+                          }
                           alt={catName}
                           className="object-cover w-full h-full transition-transform duration-500 group-hover/cat:scale-110"
                         />
                       ) : (
                         // Absolute Fallback Gradient containing initials
-                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-accent/5 to-muted-foreground/5 flex items-center justify-center text-primary font-black text-base sm:text-xl tracking-wider select-none">
+                        <div className="absolute inset-0 bg-linear-to-tr from-primary/10 via-accent/5 to-muted-foreground/5 flex items-center justify-center text-primary font-black text-base sm:text-xl tracking-wider select-none">
                           {initials}
                         </div>
                       )}
@@ -985,7 +1001,11 @@ export default function ProductsClient() {
               {/* Col-span-6 (Right side, containing the remaining 2 products in standard luxury grids) */}
               <div className="md:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {featuredList.slice(1, 3).map((product) => (
-                   <ProductCard key={product._id} item={product} commonT={commonT} />
+                  <ProductCard
+                    key={product._id}
+                    item={product}
+                    commonT={commonT}
+                  />
                 ))}
               </div>
             </div>

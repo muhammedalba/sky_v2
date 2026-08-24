@@ -1,27 +1,33 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
-import { editProductSchema, EditProductInput } from '@/features/products/product.schema';
-import { useUpdateProduct } from '@/features/products/hooks/useProducts';
-import { useTrans } from '@/shared/hooks/useTrans';
-import { useToast } from '@/shared/hooks/useToast';
-import { Product, ProductVariant, SubCategory } from '@/types';
-import { SearchOption } from '@/shared/ui/form/SearchableSelect';
+import {
+  editProductSchema,
+  EditProductInput,
+} from "@/features/products/product.schema";
+import { useUpdateProduct } from "@/features/products/hooks/useProducts";
+import { useTrans } from "@/shared/hooks/useTrans";
+import { useToast } from "@/shared/hooks/useToast";
+import { Product, ProductVariant, SubCategory } from "@/types";
+import { SearchOption } from "@/shared/ui/form/SearchableSelect";
 
-import FormStickyHeader from '@/shared/ui/dashboard/FormStickyHeader';
-import AttributeBuilder, { AttributeDefinition } from './shared/AttributeBuilder';
-import VariantTable, { VariantRow } from './shared/VariantTable';
-import { ProductBasicInfo } from './shared/ProductBasicInfo';
-import { ProductStatusPanel } from './shared/ProductStatusPanel';
-import { ProductMediaPanel } from './shared/ProductMediaPanel';
-import { ProductTaxonomyPanel } from './shared/ProductTaxonomyPanel';
-import { cartesian, getVariantKey } from './shared/utils/cartesian';
-import { useProductFormOptions } from './shared/hooks/useProductFormOptions';
+import FormStickyHeader from "@/shared/ui/dashboard/FormStickyHeader";
+import AttributeBuilder, {
+  AttributeDefinition,
+} from "./shared/AttributeBuilder";
+import VariantTable, { VariantRow } from "./shared/VariantTable";
+import { ProductBasicInfo } from "./shared/ProductBasicInfo";
+import { ProductStatusPanel } from "./shared/ProductStatusPanel";
+import { ProductMediaPanel } from "./shared/ProductMediaPanel";
+import { ProductTaxonomyPanel } from "./shared/ProductTaxonomyPanel";
+import { cartesian, getVariantKey } from "./shared/utils/cartesian";
+import { useProductFormOptions } from "./shared/hooks/useProductFormOptions";
+import { FileAsset } from "@/shared/types/file-asset";
 
 interface EditProductFormProps {
   locale: string;
@@ -31,50 +37,59 @@ interface EditProductFormProps {
 
 /**
  * مكون `EditProductForm`
- * 
- * هذا المكون هو المسؤول عن واجهة "تعديل المنتج" في لوحة التحكم. يتعامل مع بيانات المنتج الأساسية، 
+ *
+ * هذا المكون هو المسؤول عن واجهة "تعديل المنتج" في لوحة التحكم. يتعامل مع بيانات المنتج الأساسية،
  * الصور، التصنيفات، والأهم من ذلك: إدارة المتغيرات (Variants) والسمات (Attributes) المعقدة.
- * 
+ *
  * ملاحظات للمطورين:
  * - لإضافة حقول جديدة، تأكد من إضافتها في `product.schema.ts`، و`defaultValues` للنموذج، ودالة `onSubmit` لربطها بـ FormData.
  * - تعتمد حالة `variantsToUpdate` على مقارنة التغييرات مع النسخة الأصلية `originalVariants`.
  */
-export default function EditProductForm({ locale, initialData, initialVariants = [] }: EditProductFormProps) {
-  const t = useTranslations('products.form');
-  const tMessages = useTranslations('products.messages');
-
-  const tError = (msg?: string) => (msg ? (msg.startsWith('validation.') ? t(msg) : msg) : undefined);
+export default function EditProductForm({
+  locale,
+  initialData,
+  initialVariants = [],
+}: EditProductFormProps) {
+  const t = useTranslations("products.form");
+  const tMessages = useTranslations("products.messages");
+  console.log(initialData);
+  const tError = (msg?: string) =>
+    msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const toast = useToast();
   const router = useRouter();
   const getTrans = useTrans();
   const updateMutation = useUpdateProduct();
 
-
   // ─── التهيئة واستخراج البيانات الأولية (Derived Initial Values) ─────────
   // يتم هنا التأكد من استخراج البيانات من `initialData` وتحويلها لتلائم صيغة حقول النموذج
   const defaultTitle = useMemo(() => {
-    if (typeof initialData.title === 'object') return initialData.title;
-    return { en: String(initialData.title || ''), ar: '' };
+    if (typeof initialData.title === "object") return initialData.title;
+    return { en: String(initialData.title || ""), ar: "" };
   }, [initialData.title]);
 
   const defaultDesc = useMemo(() => {
-    if (typeof initialData.description === 'object') return initialData.description;
-    return { en: String(initialData.description || ''), ar: '' };
+    if (typeof initialData.description === "object")
+      return initialData.description;
+    return { en: String(initialData.description || ""), ar: "" };
   }, [initialData.description]);
 
   const initialCategoryId = useMemo(() => {
-    if (typeof initialData.category === 'string') return initialData.category;
-    return initialData.category?._id || '';
+    if (typeof initialData.category === "string") return initialData.category;
+    return initialData.category?._id || "";
   }, [initialData.category]);
 
   const initialBrandId = useMemo(() => {
-    if (!initialData.brand) return '';
-    return typeof initialData.brand === 'string' ? initialData.brand : initialData.brand._id;
+    if (!initialData.brand) return "";
+    return typeof initialData.brand === "string"
+      ? initialData.brand
+      : initialData.brand._id;
   }, [initialData.brand]);
 
   const initialSupplierId = useMemo(() => {
-    if (!initialData.supplier) return '';
-    return typeof initialData.supplier === 'string' ? initialData.supplier : initialData.supplier._id;
+    if (!initialData.supplier) return "";
+    return typeof initialData.supplier === "string"
+      ? initialData.supplier
+      : initialData.supplier._id;
   }, [initialData.supplier]);
 
   /**
@@ -82,29 +97,33 @@ export default function EditProductForm({ locale, initialData, initialVariants =
    * سواء كان سلسلة نصية بسيطة أو كائناً متعدد اللغات باستخدام الترجمة.
    */
   const getLabel = (obj: unknown): string => {
-    if (!obj || typeof obj !== 'object') return '';
+    if (!obj || typeof obj !== "object") return "";
     const item = obj as { name: string | { en: string; ar: string } };
-    if (!item.name) return '';
-    if (typeof item.name === 'string') return item.name;
+    if (!item.name) return "";
+    if (typeof item.name === "string") return item.name;
     return getTrans(item.name as { en: string; ar: string });
   };
 
   // 🌟 استعادة السمات والبيانات من المتغيرات الموجودة 🌟
-  // خاصة للسمات الرقمية (Number): نستخرج جميع القيم الرقمية المستخدمة 
-  // في المتغيرات الحالية `initialVariants` ونضعها في `allowedValues` 
+  // خاصة للسمات الرقمية (Number): نستخرج جميع القيم الرقمية المستخدمة
+  // في المتغيرات الحالية `initialVariants` ونضعها في `allowedValues`
   // لكي تظهر بشكل صحيح في منشئ السمات (Attribute Builder).
   const initialAttributes = useMemo(() => {
     const attrs = initialData.allowedAttributes || [];
     return attrs.map((attr) => {
-      if (attr.type.toLocaleLowerCase().trim() === 'number') {
+      if (attr.type.toLocaleLowerCase().trim() === "number") {
         const extractedValues = new Set<string>();
         initialVariants.forEach((v) => {
           const val = v.attributes?.[attr.name];
-          if (typeof val === 'object' && val !== null && 'value' in val) {
+          if (typeof val === "object" && val !== null && "value" in val) {
             extractedValues.add(String(val.value));
           }
         });
-        return { ...attr, allowedValues: Array.from(extractedValues), allowedUnits: attr.allowedUnits || [] };
+        return {
+          ...attr,
+          allowedValues: Array.from(extractedValues),
+          allowedUnits: attr.allowedUnits || [],
+        };
       }
       return { ...attr, allowedValues: attr.allowedValues || [] };
     }) as AttributeDefinition[];
@@ -117,13 +136,16 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     defaultValues: {
       title: defaultTitle as { en: string; ar: string },
       description: defaultDesc as { en: string; ar: string },
-      uses: (initialData.uses as { en: string[]; ar: string[] }) || { en: [], ar: [] },
+      uses: (initialData.uses as { en: string[]; ar: string[] }) || {
+        en: [],
+        ar: [],
+      },
       isUnlimitedStock: initialData.isUnlimitedStock ?? true,
       isActive: initialData.isActive ?? true,
       isFeatured: initialData.isFeatured ?? false,
       category: initialCategoryId,
       SubCategories: (initialData.SubCategories || []).map((sc) =>
-        typeof sc === 'string' ? sc : sc._id,
+        typeof sc === "string" ? sc : sc._id,
       ),
       brand: initialBrandId,
       supplier: initialSupplierId,
@@ -131,40 +153,65 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       variantsToCreate: [],
       variantsToUpdate: [],
       variantsToDelete: [],
-      imageCover: initialData.imageCover,
+      imageCover: typeof initialData.imageCover === "object"
+        ? initialData.imageCover.url
+        : initialData.imageCover || "",
     },
   });
 
-  const { register, setValue, watch, handleSubmit, formState: { errors, isSubmitting } } = form;
+  const {
+    register,
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = form;
 
   // ─── Media State ─────────────────────────────────────
   const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(initialData.imageCover || null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(
+    typeof initialData.imageCover === "object"
+      ? initialData.imageCover.url
+      : initialData.imageCover || null,
+  );
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
-  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(initialData.images || []);
-  const [existingImages, setExistingImages] = useState<string[]>(initialData.images || []);
+  const [galleryPreviews, setGalleryPreviews] = useState<FileAsset[]>(
+    (initialData.images as FileAsset[]) || [],
+  );
+  const [existingImages, setExistingImages] = useState<FileAsset[]>(
+    (initialData.images as FileAsset[]) || [],
+  );
   const [pdfFile, setPdfFile] = useState<File | null>(null);
 
   // ─── SubCategory selection state ─────────────────────
-  const [selectedSubCategories, setSelectedSubCategories] = useState<SearchOption[]>(
-    ((initialData?.SubCategories as unknown as SubCategory[]) || []).map((sc) => ({
-      _id: typeof sc === 'object' ? sc._id : String(sc),
-      name: typeof sc === 'object' ? sc.name : { en: 'Selected', ar: 'تم التحديد' },
-    })) as SearchOption[],
+  const [selectedSubCategories, setSelectedSubCategories] = useState<
+    SearchOption[]
+  >(
+    ((initialData?.SubCategories as unknown as SubCategory[]) || []).map(
+      (sc) => ({
+        _id: typeof sc === "object" ? sc._id : String(sc),
+        name:
+          typeof sc === "object"
+            ? sc.name
+            : { en: "Selected", ar: "تم التحديد" },
+      }),
+    ) as SearchOption[],
   );
 
   // ─── Attribute & Variant State ───────────────────────
-  const [attributes, setAttributes] = useState<AttributeDefinition[]>(initialAttributes);
+  const [attributes, setAttributes] =
+    useState<AttributeDefinition[]>(initialAttributes);
 
   const [existingVariants, setExistingVariants] = useState<VariantRow[]>(
     initialVariants.map((v) => ({
       _id: v._id,
-      sku: v.sku || '',
+      sku: v.sku || "",
       price: v.price,
       priceAfterDiscount: v.priceAfterDiscount,
       stock: v.stock,
       attributes: v.attributes || {},
-      components: (v.components as { name: string; value: number; unit: string }[]) || [],
+      components:
+        (v.components as { name: string; value: number; unit: string }[]) || [],
       label: v.label,
       isActive: v.isActive,
     })),
@@ -172,27 +219,30 @@ export default function EditProductForm({ locale, initialData, initialVariants =
 
   const [newVariants, setNewVariants] = useState<VariantRow[]>([]);
   const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
-  const [autoDeletedVariantIds, setAutoDeletedVariantIds] = useState<string[]>([]);
+  const [autoDeletedVariantIds, setAutoDeletedVariantIds] = useState<string[]>(
+    [],
+  );
 
   // Snapshot for change detection
   const [originalVariants] = useState<VariantRow[]>(
     initialVariants.map((v) => ({
       _id: v._id,
-      sku: v.sku || '',
+      sku: v.sku || "",
       price: v.price,
       priceAfterDiscount: v.priceAfterDiscount,
       stock: v.stock,
       attributes: v.attributes || {},
-      components: (v.components as { name: string; value: number; unit: string }[]) || [],
+      components:
+        (v.components as { name: string; value: number; unit: string }[]) || [],
       label: v.label,
       isActive: v.isActive,
     })),
   );
 
   // ─── Watched values ───────────────────────────────────
-  const watchedCategory = watch('category');
-  const watchedBrand = watch('brand');
-  const watchedSupplier = watch('supplier');
+  const watchedCategory = watch("category");
+  const watchedBrand = watch("brand");
+  const watchedSupplier = watch("supplier");
 
   // ─── Search states + data fetching (shared hook) ─────
   const options = useProductFormOptions(watchedCategory);
@@ -212,11 +262,17 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       // Build lookup: attrName → Set of still-allowed values (string comparison)
       const allowedValuesByName = new Map<string, Set<string>>();
       newAttrs.forEach((attr) => {
-        if (attr.type === 'string') {
-          allowedValuesByName.set(attr.name, new Set((attr.allowedValues || []).map(String)));
-        } else if (attr.type === 'number') {
+        if (attr.type === "string") {
+          allowedValuesByName.set(
+            attr.name,
+            new Set((attr.allowedValues || []).map(String)),
+          );
+        } else if (attr.type === "number") {
           // For number attrs only values matter; units can shift so we match by numeric value
-          allowedValuesByName.set(attr.name, new Set((attr.allowedValues || []).map(String)));
+          allowedValuesByName.set(
+            attr.name,
+            new Set((attr.allowedValues || []).map(String)),
+          );
         }
       });
 
@@ -237,14 +293,16 @@ export default function EditProductForm({ locale, initialData, initialVariants =
           if (!allowed) return true; // attr name itself was removed
           // number attrs are stored as {value, unit} objects
           const strVal =
-            typeof val === 'object' && val !== null && 'value' in val
+            typeof val === "object" && val !== null && "value" in val
               ? String((val as { value: number }).value)
               : String(val);
           return !allowed.has(strVal);
         });
 
         // Rule 3: variant is missing a required attribute name that has been added
-        const missingRequiredAttr = Array.from(newAttrNames).some((name) => !(name in (v.attributes || {})));
+        const missingRequiredAttr = Array.from(newAttrNames).some(
+          (name) => !(name in (v.attributes || {})),
+        );
 
         if ((nameRemoved || valueRemoved || missingRequiredAttr) && v._id) {
           invalidatedIds.push(v._id);
@@ -255,7 +313,9 @@ export default function EditProductForm({ locale, initialData, initialVariants =
 
       // Auto-mark invalidated variants for deletion (deduplicated and reversible)
       setDeletedVariantIds((prev) => {
-        const noLongerInvalidated = autoDeletedVariantIds.filter((id) => !invalidatedIds.includes(id));
+        const noLongerInvalidated = autoDeletedVariantIds.filter(
+          (id) => !invalidatedIds.includes(id),
+        );
         const filtered = prev.filter((id) => !noLongerInvalidated.includes(id));
         return [...new Set([...filtered, ...invalidatedIds])];
       });
@@ -263,32 +323,52 @@ export default function EditProductForm({ locale, initialData, initialVariants =
 
       // Generate new combos only against STILL-VALID existing variants
       const combos = cartesian(newAttrs);
-      const existingKeys = new Set(stillValidExisting.map((v) => getVariantKey(v.attributes)));
-      const newCombos = combos.filter((combo) => !existingKeys.has(getVariantKey(combo)));
+      const existingKeys = new Set(
+        stillValidExisting.map((v) => getVariantKey(v.attributes)),
+      );
+      const newCombos = combos.filter(
+        (combo) => !existingKeys.has(getVariantKey(combo)),
+      );
 
       setNewVariants(
         newCombos.map((combo) => {
           const skuParts = Object.values(combo).map((v) => {
-            if (typeof v === 'object' && v !== null && 'value' in v && 'unit' in v) {
+            if (
+              typeof v === "object" &&
+              v !== null &&
+              "value" in v &&
+              "unit" in v
+            ) {
               return `${v.value}-${v.unit}`.toUpperCase().trim();
             }
-            return String(v).toUpperCase().replace(/\s+/g, '-').trim();
+            return String(v).toUpperCase().replace(/\s+/g, "-").trim();
           });
-          const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+          const dateStr = new Date()
+            .toISOString()
+            .split("T")[0]
+            .replace(/-/g, "");
           skuParts.push(dateStr);
-          return { sku: skuParts.join('-'), price: 0, stock: 0, attributes: combo, isActive: true };
+          return {
+            sku: skuParts.join("-"),
+            price: 0,
+            stock: 0,
+            attributes: combo,
+            isActive: true,
+          };
         }),
       );
     },
     [existingVariants, autoDeletedVariantIds],
   );
 
-  const markForDelete = (id: string) => setDeletedVariantIds((prev) => [...prev, id]);
-  const unmarkDelete = (id: string) => setDeletedVariantIds((prev) => prev.filter((d) => d !== id));
+  const markForDelete = (id: string) =>
+    setDeletedVariantIds((prev) => [...prev, id]);
+  const unmarkDelete = (id: string) =>
+    setDeletedVariantIds((prev) => prev.filter((d) => d !== id));
 
   // ─── Sync to form ────────────────────────────────────
   useEffect(() => {
-    setValue('allowedAttributes', attributes);
+    setValue("allowedAttributes", attributes);
   }, [attributes, setValue]);
 
   // ─── مزامنة حالات المتغيرات مع النموذج (Form Synchronization) ────
@@ -312,7 +392,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     });
 
     setValue(
-      'variantsToUpdate',
+      "variantsToUpdate",
       changed.map((v) => ({
         _id: v._id!,
         sku: v.sku || undefined,
@@ -325,7 +405,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
     );
 
     setValue(
-      'variantsToCreate',
+      "variantsToCreate",
       newVariants.map((v) => ({
         sku: v.sku || undefined,
         price: v.price,
@@ -338,8 +418,14 @@ export default function EditProductForm({ locale, initialData, initialVariants =
       })),
     );
 
-    setValue('variantsToDelete', deletedVariantIds);
-  }, [existingVariants, newVariants, deletedVariantIds, originalVariants, setValue]);
+    setValue("variantsToDelete", deletedVariantIds);
+  }, [
+    existingVariants,
+    newVariants,
+    deletedVariantIds,
+    originalVariants,
+    setValue,
+  ]);
 
   // ─── إدارة الوسائط والصور (Gallery Handlers) ───────────────────────
   /**
@@ -348,12 +434,17 @@ export default function EditProductForm({ locale, initialData, initialVariants =
    */
   const handleGalleryAdd = (file: File) => {
     if (galleryPreviews.length >= 3) {
-      toast.error(t('validation.maxGalleryImagesReached', { defaultValue: 'You can only upload up to 3 images' }));
+      toast.error(
+        t("validation.maxGalleryImagesReached", {
+          defaultValue: "You can only upload up to 3 images",
+        }),
+      );
       return;
     }
     setGalleryFiles((prev) => [...prev, file]);
     const reader = new FileReader();
-    reader.onload = (e) => setGalleryPreviews((prev) => [...prev, e.target?.result as string]);
+    reader.onload = (e) =>
+      setGalleryPreviews((prev) => [...prev, e.target?.result as string]);
     reader.readAsDataURL(file);
   };
 
@@ -363,7 +454,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
    */
   const handleGalleryRemove = (index: number) => {
     const targetUrl = galleryPreviews[index];
-    if (typeof targetUrl === 'string' && (targetUrl.startsWith('http') || targetUrl.startsWith('/'))) {
+    if (
+      typeof targetUrl === "string" &&
+      (targetUrl.startsWith("http") || targetUrl.startsWith("/"))
+    ) {
       setExistingImages((prev) => prev.filter((url) => url !== targetUrl));
     } else {
       const fileIndex = index - existingImages.length;
@@ -379,61 +473,80 @@ export default function EditProductForm({ locale, initialData, initialVariants =
    * - تُجهز `FormData` لإرسال البيانات والملفات معاً.
    * - تفصل المتغيرات في عمليات إنشاء، تحديث، وحذف.
    */
-  const onSubmit = async ( data: EditProductInput) => {
-
+  const onSubmit = async (data: EditProductInput) => {
     const formData = new FormData();
-    formData.append('title', JSON.stringify(data.title));
-    formData.append('description', JSON.stringify(data.description));
-    if (data.uses) formData.append('uses', JSON.stringify(data.uses));
-    formData.append('category', data.category);
-    data.SubCategories?.forEach((id) => formData.append('SubCategories', id));
-    formData.append('isUnlimitedStock', String(data.isUnlimitedStock));
-    formData.append('isActive', String(data.isActive));
-    formData.append('isFeatured', String(data.isFeatured));
-    if (data.brand) formData.append('brand', data.brand);
-    if (data.supplier) formData.append('supplier', data.supplier);
+    formData.append("title", JSON.stringify(data.title));
+    formData.append("description", JSON.stringify(data.description));
+    if (data.uses) formData.append("uses", JSON.stringify(data.uses));
+    formData.append("category", data.category);
+    data.SubCategories?.forEach((id) => formData.append("SubCategories", id));
+    formData.append("isUnlimitedStock", String(data.isUnlimitedStock));
+    formData.append("isActive", String(data.isActive));
+    formData.append("isFeatured", String(data.isFeatured));
+    if (data.brand) formData.append("brand", data.brand);
+    if (data.supplier) formData.append("supplier", data.supplier);
 
     const formattedAllowedAttributes = data.allowedAttributes?.map((attr) => {
-      if (attr.type === 'number') {
-        return { name: attr.name, type: attr.type, required: true, allowedUnits: attr.allowedUnits || [] };
+      if (attr.type === "number") {
+        return {
+          name: attr.name,
+          type: attr.type,
+          required: true,
+          allowedUnits: attr.allowedUnits || [],
+        };
       }
-      return { name: attr.name, type: attr.type, required: true, allowedValues: attr.allowedValues || [] };
+      return {
+        name: attr.name,
+        type: attr.type,
+        required: true,
+        allowedValues: attr.allowedValues || [],
+      };
     });
-    formData.append('allowedAttributes', JSON.stringify(formattedAllowedAttributes || []));
+    formData.append(
+      "allowedAttributes",
+      JSON.stringify(formattedAllowedAttributes || []),
+    );
 
     const variantOps = {
       create: data.variantsToCreate || [],
       update: data.variantsToUpdate || [],
       delete: data.variantsToDelete || [],
     };
-    formData.append('variants', JSON.stringify(variantOps));
+    formData.append("variants", JSON.stringify(variantOps));
 
-    if (coverFile) formData.append('imageCover', coverFile);
-    galleryFiles.forEach((f) => formData.append('images', f));
-    existingImages.forEach((url) => formData.append('images', url));
-    if (pdfFile) formData.append('infoProductPdf', pdfFile);
+    if (coverFile) formData.append("imageCover", coverFile);
+    galleryFiles.forEach((f) => formData.append("images", f));
+    existingImages.forEach((url) => formData.append("images", url));
+    if (pdfFile) formData.append("infoProductPdf", pdfFile);
 
     try {
       await updateMutation.mutateAsync({ id: initialData._id, data: formData });
-      toast.success(tMessages('updateSuccess') || 'Product updated successfully');
+      toast.success(
+        tMessages("updateSuccess") || "Product updated successfully",
+      );
       router.push(`/dashboard/products`);
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : tMessages('updateError') || 'Error while updating product';
+      const msg =
+        error instanceof Error
+          ? error.message
+          : tMessages("updateError") || "Error while updating product";
       toast.error(msg);
     }
   };
 
   const onInvalidSubmit = () => {
     toast.error(
-      locale === 'ar'
-        ? 'يرجى تصحيح الأخطاء في الحقول المطلوبة وملء البيانات بشكل صحيح.'
-        : 'Please correct the errors in the required fields and fill in all data correctly.'
+      locale === "ar"
+        ? "يرجى تصحيح الأخطاء في الحقول المطلوبة وملء البيانات بشكل صحيح."
+        : "Please correct the errors in the required fields and fill in all data correctly.",
     );
 
     setTimeout(() => {
-      const firstErrorEl = document.querySelector('.border-destructive, [aria-invalid="true"]');
+      const firstErrorEl = document.querySelector(
+        '.border-destructive, [aria-invalid="true"]',
+      );
       if (firstErrorEl) {
-        firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstErrorEl.scrollIntoView({ behavior: "smooth", block: "center" });
         if (firstErrorEl instanceof HTMLElement) {
           firstErrorEl.focus();
         }
@@ -447,10 +560,10 @@ export default function EditProductForm({ locale, initialData, initialVariants =
   return (
     <div className="pb-12">
       <FormStickyHeader
-        title={t('titleEdit')}
-        subtitle={t('subtitle')}
-        cancelLabel={t('cancel')}
-        saveLabel={t('save')}
+        title={t("titleEdit")}
+        subtitle={t("subtitle")}
+        cancelLabel={t("cancel")}
+        saveLabel={t("save")}
         formId="edit-product-form"
         isSubmitting={isSubmitting || updateMutation.isPending}
         backUrl={`/${locale}/dashboard/products`}
@@ -464,15 +577,24 @@ export default function EditProductForm({ locale, initialData, initialVariants =
         >
           {/* ═══ LEFT COLUMN ═══ */}
           <div className="lg:col-span-2 space-y-6">
-            <ProductBasicInfo register={register} errors={errors as any} tError={tError} watch={watch} setValue={setValue} />
+            <ProductBasicInfo
+              register={register}
+              errors={errors as any}
+              tError={tError}
+              watch={watch}
+              setValue={setValue}
+            />
 
-            <AttributeBuilder attributes={attributes} onChange={handleAttributesChange} />
+            <AttributeBuilder
+              attributes={attributes}
+              onChange={handleAttributesChange}
+            />
 
             {/* Existing Variants */}
             {existingVariants.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">
-                  {t('existingVariants')} ({existingVariants.length})
+                  {t("existingVariants")} ({existingVariants.length})
                 </h3>
                 <VariantTable
                   variants={existingVariants}
@@ -491,7 +613,7 @@ export default function EditProductForm({ locale, initialData, initialVariants =
             {newVariants.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-xs font-bold text-success uppercase tracking-wider px-1">
-                  {t('newVariants')} ({newVariants.length})
+                  {t("newVariants")} ({newVariants.length})
                 </h3>
                 <VariantTable
                   variants={newVariants}
@@ -511,21 +633,24 @@ export default function EditProductForm({ locale, initialData, initialVariants =
               onCoverChange={(file) => {
                 setCoverFile(file);
                 const reader = new FileReader();
-                reader.onload = (e) => setCoverPreview(e.target?.result as string);
+                reader.onload = (e) =>
+                  setCoverPreview(e.target?.result as string);
                 reader.readAsDataURL(file);
-                setValue('imageCover', file, { shouldValidate: true });
+                setValue("imageCover", file, { shouldValidate: true });
               }}
               onCoverRemove={() => {
                 setCoverFile(null);
                 setCoverPreview(null);
-                setValue('imageCover', undefined, { shouldValidate: true });
+                setValue("imageCover", undefined, { shouldValidate: true });
               }}
               galleryPreviews={galleryPreviews}
               onGalleryAdd={handleGalleryAdd}
               onGalleryRemove={handleGalleryRemove}
               pdfFile={pdfFile}
               onPdfChange={setPdfFile}
-              existingPdfLabel={initialData.infoProductPdf ? 'Current PDF attached' : undefined}
+              existingPdfLabel={
+                initialData.infoProductPdf ? "Current PDF attached" : undefined
+              }
             />
 
             <ProductStatusPanel
@@ -549,20 +674,30 @@ export default function EditProductForm({ locale, initialData, initialVariants =
               onSubCategorySelect={(opt) => {
                 const next = [...selectedSubCategories, opt];
                 setSelectedSubCategories(next);
-                setValue('SubCategories', next.map((sc) => sc._id), { shouldValidate: true });
+                setValue(
+                  "SubCategories",
+                  next.map((sc) => sc._id),
+                  { shouldValidate: true },
+                );
               }}
               onSubCategoryRemove={(id) => {
-                const next = selectedSubCategories.filter((sc) => sc._id !== id);
+                const next = selectedSubCategories.filter(
+                  (sc) => sc._id !== id,
+                );
                 setSelectedSubCategories(next);
-                setValue('SubCategories', next.map((sc) => sc._id), { shouldValidate: true });
+                setValue(
+                  "SubCategories",
+                  next.map((sc) => sc._id),
+                  { shouldValidate: true },
+                );
               }}
               onCategoryChange={(id) => {
-                setValue('category', id, { shouldValidate: true });
-                setValue('SubCategories', []);
+                setValue("category", id, { shouldValidate: true });
+                setValue("SubCategories", []);
                 setSelectedSubCategories([]);
               }}
-              onBrandChange={(id) => setValue('brand', id)}
-              onSupplierChange={(id) => setValue('supplier', id)}
+              onBrandChange={(id) => setValue("brand", id)}
+              onSupplierChange={(id) => setValue("supplier", id)}
               initialBrandLabel={getLabel(initialData?.brand)}
               initialSupplierLabel={getLabel(initialData?.supplier)}
               initialCategoryLabel={getLabel(initialData?.category)}
