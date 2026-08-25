@@ -33,12 +33,18 @@ export default function GeneralSection() {
 
   const imagePreview = useMemo(() => {
     if (logoValue instanceof File) return URL.createObjectURL(logoValue);
-    return logoValue || null;
+    if (logoValue && typeof logoValue === 'object' && 'url' in logoValue) {
+      return (logoValue as { url: string }).url;
+    }
+    return typeof logoValue === 'string' ? logoValue : undefined;
   }, [logoValue]);
 
   const faviconPreview = useMemo(() => {
     if (faviconValue instanceof File) return URL.createObjectURL(faviconValue);
-    return faviconValue || null;
+    if (faviconValue && typeof faviconValue === 'object' && 'url' in faviconValue) {
+      return (faviconValue as { url: string }).url;
+    }
+    return typeof faviconValue === 'string' ? faviconValue : undefined;
   }, [faviconValue]);
 
   return (
@@ -97,7 +103,7 @@ export default function GeneralSection() {
               <span className="text-sm font-medium">{t('general.logoTitle')}</span>
               <p className="text-xs text-muted-foreground">{t('general.logoDesc')}</p>
               <ImageUpload
-                value={imagePreview || null}
+                value={imagePreview}
                 onChange={(file) => {
                   setValue('logo', file, { shouldValidate: true });
                 }}
@@ -111,7 +117,7 @@ export default function GeneralSection() {
               <span className="text-sm font-medium">{t('general.faviconTitle')}</span>
               <p className="text-xs text-muted-foreground">{t('general.faviconDesc')}</p>
               <ImageUpload
-                value={faviconPreview || null}
+                value={faviconPreview}
                 onChange={(file) => {
                   setValue('favicon', file, { shouldValidate: true });
                 }}
