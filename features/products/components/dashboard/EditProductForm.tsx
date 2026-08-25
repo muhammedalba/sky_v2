@@ -443,8 +443,17 @@ export default function EditProductForm({
     }
     setGalleryFiles((prev) => [...prev, file]);
     const reader = new FileReader();
-    reader.onload = (e) =>
-      setGalleryPreviews((prev) => [...prev, e.target?.result as string]);
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setGalleryPreviews((prev) => [
+          ...prev,
+          {
+            url: e.target?.result as string,
+            publicId: file.name,
+          },
+        ]);
+      }
+    };
     reader.readAsDataURL(file);
   };
 
@@ -453,12 +462,13 @@ export default function EditProductForm({
    * تفرّق بين الصور الموجودة مسبقاً (روابط) والصور المرفوعة حديثاً (ملفات).
    */
   const handleGalleryRemove = (index: number) => {
-    const targetUrl = galleryPreviews[index];
+    const target = galleryPreviews[index];
     if (
-      typeof targetUrl === "string" &&
-      (targetUrl.startsWith("http") || targetUrl.startsWith("/"))
+      target &&
+      typeof target === "object" &&
+      (target.url.startsWith("http") || target.url.startsWith("/"))
     ) {
-      setExistingImages((prev) => prev.filter((url) => url !== targetUrl));
+      setExistingImages((prev) => prev.filter((img) => img.url !== target.url));
     } else {
       const fileIndex = index - existingImages.length;
       setGalleryFiles((prev) => prev.filter((_, i) => i !== fileIndex));
@@ -516,9 +526,9 @@ export default function EditProductForm({
 
     if (coverFile) formData.append("imageCover", coverFile);
     galleryFiles.forEach((f) => formData.append("images", f));
-    existingImages.forEach((url) => formData.append("images", url));
+    existingImages.forEach((img) => formData.append("images", JSON.stringify(img)));
     if (pdfFile) formData.append("infoProductPdf", pdfFile);
-
+ 
     try {
       await updateMutation.mutateAsync({ id: initialData._id, data: formData });
       toast.success(

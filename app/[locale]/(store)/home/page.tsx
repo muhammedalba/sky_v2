@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props) {
     namespace: 'home',
     canonicalPath: '',
     siteName:    settings?.siteName?.[locale as 'ar' | 'en'],
-    siteLogoUrl: settings?.logo,
+    siteLogoUrl: settings?.logo?.url,
   });
 }
 
