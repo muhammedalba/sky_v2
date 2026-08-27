@@ -33,7 +33,7 @@ export default function SignUpForm({ locale }: { locale: string }) {
     });
     await registerMutation.mutateAsync(formDataToSubmit);
     toast.success(t('signupSuccess'));
-    router.push(`/${locale}/login?signup=success`);
+    router.push(`/login?signup=success`);
   };
 
   return (
@@ -54,7 +54,7 @@ export default function SignUpForm({ locale }: { locale: string }) {
           <SmartInput name="name" label={t('name')} icon={User} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
           <SmartInput name="email" label={t('email')} icon={Mail} type="email" disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
 
-          <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-3">
             <div className="">
               <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
             </div>
@@ -64,7 +64,7 @@ export default function SignUpForm({ locale }: { locale: string }) {
 
         <Button
           type="submit"
-          className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full mt-6 h-12 text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
           size="lg"
           isLoading={registerMutation.isPending}
           disabled={registerMutation.isPending || isRegistrationDisabled}

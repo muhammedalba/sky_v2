@@ -28,7 +28,7 @@ export function SmartInput({
   const error = errors[name]?.message as string | undefined;
 
   return (
-    <div className="my-7">
+    <div className="my-2">
     <Input
       {...register(name)}
       {...props}

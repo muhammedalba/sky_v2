@@ -14,7 +14,7 @@ import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 import { useToast } from '@/shared/hooks/useToast';
 
-export default function LoginForm({ locale }: { locale: string }) {
+export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('auth');
@@ -32,9 +32,9 @@ export default function LoginForm({ locale }: { locale: string }) {
     if (redirectParam) {
       router.push(redirectParam);
     } else if (canAccessDashboard) {
-      router.push(`/${locale}/dashboard`);
+      router.push(`/dashboard`);
     } else {
-      router.push(`/${locale}/home`);
+      router.push(`/home`);
     }
   };
 
@@ -76,7 +76,7 @@ export default function LoginForm({ locale }: { locale: string }) {
               showStrength={false}
             />
             <div className="flex justify-end">
-              <Link href={`/${locale}/forgot-password`} className="text-xs md:font-semibold text-primary hover:text-primary/80 transition-colors">
+              <Link href={`/forgot-password`} className="text-[9px] md:text-xs md:font-semibold text-primary hover:text-primary/80 transition-colors">
                 {t('forgotPasswordLink')}
               </Link>
             </div>
@@ -95,7 +95,7 @@ export default function LoginForm({ locale }: { locale: string }) {
 
       <SocialLoginSection disabled={loginMutation.isPending} />
 
-      <AuthFooter text={t('noAccount')} linkText={t('signupLink')} linkHref={`/${locale}/signup`} />
+      <AuthFooter text={t('noAccount')} linkText={t('signupLink')} linkHref={`/signup`} />
     </div>
   );
 }

@@ -53,8 +53,11 @@ export const authApi = {
   verifyResetCode: (resetCode: string) =>
     request.post<void>(ENDPOINTS.VERIFY_CODE, { resetCode }),
 
-  resetPassword: (data: { email: string; password: string }) =>
-    request.patch<void>(ENDPOINTS.RESET_PASSWORD, data),
+  resetPassword: (data: {
+    email: string;
+    password: string;
+    passwordResetCode: string;
+  }) => request.patch<void>(ENDPOINTS.RESET_PASSWORD, data),
 
   me: () => request.get<User>(ENDPOINTS.ME),
 

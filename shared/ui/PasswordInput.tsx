@@ -20,7 +20,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     return (
       <div className={cn("w-full", className)}>
-        <div className="relative mb-2">
+        <div className="relative mb-1.5">
           <Input
             {...props}
             label={label}
@@ -45,7 +45,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         {props.name === "password" && showStrength && (
           <PasswordStrength name="password" />
         )}
-        {error && <ErrorMessage message={error} />}
+        {error && <ErrorMessage message={error} className="pt-0" />}
       </div>
     );
   },

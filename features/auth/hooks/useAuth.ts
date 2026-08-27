@@ -1,31 +1,34 @@
-'use client';
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/api/query-keys';
-import { LoginResponseData } from '@/features/auth/types';
-import { authApi } from '@/features/auth/api';
-import { useToast } from '@/shared/hooks/useToast';
-import { syncGuestCart } from '@/features/cart/hooks/useCart';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/api/query-keys";
+import { LoginResponseData } from "@/features/auth/types";
+import { authApi } from "@/features/auth/api";
+import { useToast } from "@/shared/hooks/useToast";
+import { syncGuestCart } from "@/features/cart/hooks/useCart";
 
 export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (credentials: { email: string; password: string }): Promise<LoginResponseData> => {
+    mutationFn: async (credentials: {
+      email: string;
+      password: string;
+    }): Promise<LoginResponseData> => {
       const response = await authApi.login(credentials);
       return response.data;
     },
     onSuccess: async () => {
       await syncGuestCart();
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 }
 
 export function useMe() {
   let isLoggedInCookie = false;
-  if (typeof document !== 'undefined') {
-    isLoggedInCookie = document.cookie.includes('is_logged_in=true');
+  if (typeof document !== "undefined") {
+    isLoggedInCookie = document.cookie.includes("is_logged_in=true");
   }
 
   return useQuery({
@@ -56,7 +59,7 @@ export function useRegister() {
     onSuccess: async () => {
       await syncGuestCart();
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 }
@@ -67,7 +70,6 @@ export function useForgotPassword() {
       const response = await authApi.forgotPassword(email);
       return response.data;
     },
-
   });
 }
 
@@ -82,7 +84,11 @@ export function useVerifyResetCode() {
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: async (data: { email: string; password: string }) => {
+    mutationFn: async (data: {
+      email: string;
+      password: string;
+      passwordResetCode: string;
+    }) => {
       const response = await authApi.resetPassword(data);
       return response.data;
     },
@@ -94,10 +100,10 @@ export function useResetPassword() {
  * Falls back to 'en' if detection fails.
  */
 function getCurrentLocale(): string {
-  if (typeof window === 'undefined') return 'en';
-  const pathSegment = window.location.pathname.split('/')[1];
-  const isValidLocale = pathSegment && ['en', 'ar'].includes(pathSegment);
-  return isValidLocale ? pathSegment : 'en';
+  if (typeof window === "undefined") return "en";
+  const pathSegment = window.location.pathname.split("/")[1];
+  const isValidLocale = pathSegment && ["en", "ar"].includes(pathSegment);
+  return isValidLocale ? pathSegment : "en";
 }
 
 export function useLogout() {
@@ -127,5 +133,3 @@ export function useAuth() {
     logout,
   };
 }
-
-

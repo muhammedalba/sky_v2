@@ -9,7 +9,7 @@ import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput } from '@/shared/ui/form/SmartFields';
 
 interface VerifyStepProps {
-  onSuccess: () => void;
+  onSuccess: (code: string) => void;
   onChangeEmail: () => void;
 }
  
@@ -22,7 +22,7 @@ const VerifyStep = ({ onSuccess, onChangeEmail }: VerifyStepProps) => {
   const onSubmit = async (data: VerifyResetCodeInput) => {
     await verifyMutation.mutateAsync(data.resetCode, {
       onSuccess: () => {
-        onSuccess();
+        onSuccess(data.resetCode);
         toast.success(t('resetSuccess'));
       }
     });

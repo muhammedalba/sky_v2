@@ -1,19 +1,27 @@
-import { getTranslations } from 'next-intl/server';
-import LoginForm from '@/features/auth/components/LoginForm';
-import AuthPageLayout from '@/features/auth/components/AuthPageLayout';
+import { getTranslations } from "next-intl/server";
+import LoginForm from "@/features/auth/components/LoginForm";
+import AuthPageLayout from "@/features/auth/components/AuthPageLayout";
 
 // Metadata generation for SEO
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'auth' });
+  const t = await getTranslations({ locale, namespace: "auth" });
 
   return {
-    title: t('loginTitle'),
-    description: t('loginDescription'),
+    title: t("loginTitle"),
+    description: t("loginDescription"),
   };
 }
 
-export default async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function LoginPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
 
   return (
@@ -21,12 +29,11 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
       type="login"
       locale={locale}
       bgColors={{
-        top: 'bg-gradient-to-br from-primary/30 to-secondary/20',
-        bottom: 'bg-gradient-to-tl from-secondary/30 to-primary/20'
+        top: "bg-gradient-to-br from-primary/30 to-secondary/20",
+        bottom: "bg-gradient-to-tl from-secondary/30 to-primary/20",
       }}
     >
-      <LoginForm locale={locale} />
+      <LoginForm />
     </AuthPageLayout>
   );
 }
-

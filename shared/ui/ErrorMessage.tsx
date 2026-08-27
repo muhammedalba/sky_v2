@@ -27,7 +27,7 @@ export default function ErrorMessage({
 
   return (
     <div className={cn(
-      "text-xs  flex items-center gap-3 p-1 rounded-xl transition-all animate-in fade-in zoom-in-95 duration-300",
+      "text-[9px] md:text-xs   flex items-center gap-3 p-1 rounded-xl transition-all animate-in fade-in zoom-in-95 duration-300",
       showIcon ? "bg-destructive/10 text-destructive border border-destructive/20 font-medium" : "text-destructive font-normal",
       className
     )}>
