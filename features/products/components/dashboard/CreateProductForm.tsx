@@ -18,7 +18,17 @@ import FormStickyHeader from "@/shared/ui/dashboard/FormStickyHeader";
 import AttributeBuilder, {
   AttributeDefinition,
 } from "./shared/AttributeBuilder";
-import VariantTable, { VariantRow } from "./shared/VariantTable";
+import VariantTable, { VariantRow, ShippingProfileRow } from "./shared/VariantTable";
+
+const formatShippingProfile = (sp?: ShippingProfileRow) => {
+  if (!sp) return undefined;
+  return {
+    weightGrams: sp.weightGrams ?? 0,
+    dimensions: sp.dimensions,
+    packageType: sp.packageType || "box",
+    quantityPerPackage: sp.quantityPerPackage ?? 1,
+  };
+};
 import { ProductBasicInfo } from "./shared/ProductBasicInfo";
 import { ProductStatusPanel } from "./shared/ProductStatusPanel";
 import { ProductMediaPanel } from "./shared/ProductMediaPanel";
@@ -70,7 +80,6 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-
   // ─── Media State ─────────────────────────────────────
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -102,7 +111,18 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     const combos = cartesian(attrs);
     if (combos.length === 0) {
       setVariants([
-        { sku: "", price: 0, stock: 0, attributes: {}, isActive: true },
+        {
+          sku: "",
+          price: 0,
+          stock: 0,
+          attributes: {},
+          shippingProfile: {
+            packageType: "box",
+            quantityPerPackage: 1,
+            weightGrams: 0,
+          },
+          isActive: true,
+        },
       ]);
       return;
     }
@@ -129,6 +149,11 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           price: 0,
           stock: 0,
           attributes: combo,
+          shippingProfile: {
+            packageType: "box",
+            quantityPerPackage: 1,
+            weightGrams: 0,
+          },
           isActive: true,
         };
       }),
@@ -154,6 +179,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
         stock: v.stock,
         attributes: v.attributes,
         components: v.components,
+        shippingProfile: formatShippingProfile(v.shippingProfile),
         label: v.label,
         isActive: v.isActive,
       })),
@@ -248,6 +274,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       );
       router.push(`/${locale}/dashboard/products`);
     } catch (error: unknown) {
+      console.log("🚀 ~ handleCreate ~ error:", error);
       const msg =
         error instanceof Error
           ? error.message

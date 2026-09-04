@@ -144,6 +144,13 @@
             "noCustomComponentsDesc": "Using global defaults if set.",
             "addFirstComponent": "Add your first custom component",
             "inheritedDefaults": "inherited from defaults",
+            "shippingInfo": "Shipping Information",
+            "shippingWeightGrams": "Weight (g)",
+            "shippingLengthMm": "Length (mm)",
+            "shippingWidthMm": "Width (mm)",
+            "shippingHeightMm": "Height (mm)",
+            "shippingPackageType": "Package Type",
+            "shippingQtyPerPackage": "Units per Package",
             "addVariant": "Add Variant",
             "validation": {
                   "required": "This field is required",
@@ -189,7 +196,7 @@
                   "selectUnit": "Select Unit",
                   "noUnitsAvailable": "No units available",
                   "duplicateAttributeError": "This attribute is already added. Please add new values to the existing one instead of creating a new one.",
-                  "weightWarning": "Weight must be added in order to calculate shipping costs",
+                  "weightWarning": "Shipping information, including weight and dimensions, must be added for each variant to accurately calculate shipping costs.",
                   "names": {
                         "color": "Color",
                         "weight": "Weight",

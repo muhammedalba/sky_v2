@@ -143,6 +143,13 @@
             "noCustomComponentsDesc": "يتم استخدام المكونات العامة الافتراضية.",
             "addFirstComponent": "أضف أول مكون مخصص",
             "inheritedDefaults": "موروثة من الإعدادات العامة",
+            "shippingInfo": "معلومات الشحن",
+            "shippingWeightGrams": "الوزن (غ)",
+            "shippingLengthMm": "الطول (مم)",
+            "shippingWidthMm": "العرض (مم)",
+            "shippingHeightMm": "الارتفاع (مم)",
+            "shippingPackageType": "نوع الحزمة",
+            "shippingQtyPerPackage": "الوحدات في الحزمة",
             "addVariant": "إضافة متغير",
             "validation": {
                   "required": "هذا الحقل مطلوب",
@@ -189,7 +196,7 @@
                   "selectUnit": "اختر الوحدة",
                   "noUnitsAvailable": "لا توجد وحدات متاحة",
                   "duplicateAttributeError": "هذه الخاصية موجودة بالفعل، يرجى إضافة القيم الجديدة للخاصية الحالية بدلاً من إنشاء واحدة جديدة.",
-                  "weightWarning": "يجب إضافة الوزن من أجل حساب سعر الشحن",
+                  "weightWarning": "يجب اضافة معلومات الشحن من وزن وابعاد المنتج لكل متغير لحساب سعر الشحن بدقة",
                   "names": {
                         "color": "اللون",
                         "weight": "الوزن",

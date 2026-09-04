@@ -4,10 +4,29 @@ import { Brand } from '@/features/brands/types';
 import { Supplier } from '@/features/suppliers/types';
 import { FileAsset } from '@/shared/types/file-asset';
 
-
 export interface ProductAttributeValue {
   value: string | number;
   unit?: string;
+}
+
+export type PackageType = 'box' | 'bag' | 'pallet' | 'roll' | 'envelope' | 'drum' | 'gallon' | 'board' | 'piece' | 'custom';
+
+export interface ShippingDimensions {
+  /** Length in millimeters */
+  lengthMm?: number;
+  /** Width in millimeters */
+  widthMm?: number;
+  /** Height in millimeters */
+  heightMm?: number;
+}
+
+export interface ShippingProfile {
+  /** Weight of one sellable unit in grams (canonical unit). E.g. 20000 = 20 kg. */
+  weightGrams: number;
+  dimensions?: ShippingDimensions;
+  packageType: PackageType;
+  /** Number of sellable units that fit in one shipping package */
+  quantityPerPackage: number;
 }
 
 export interface ProductVariant {
@@ -20,6 +39,8 @@ export interface ProductVariant {
   stock: number;
   sold?: number;
   attributes: Record<string, ProductAttributeValue>;
+  /** Dedicated logistics/shipping metadata, separate from customer-facing attributes */
+  shippingProfile?: ShippingProfile;
   components?: Record<string, unknown>[];
   label?: string;
   image?: FileAsset | string;

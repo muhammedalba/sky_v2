@@ -20,7 +20,17 @@ import FormStickyHeader from "@/shared/ui/dashboard/FormStickyHeader";
 import AttributeBuilder, {
   AttributeDefinition,
 } from "./shared/AttributeBuilder";
-import VariantTable, { VariantRow } from "./shared/VariantTable";
+import VariantTable, { VariantRow, ShippingProfileRow } from "./shared/VariantTable";
+
+const formatShippingProfile = (sp?: ShippingProfileRow) => {
+  if (!sp) return undefined;
+  return {
+    weightGrams: sp.weightGrams ?? 0,
+    dimensions: sp.dimensions,
+    packageType: sp.packageType || "box",
+    quantityPerPackage: sp.quantityPerPackage ?? 1,
+  };
+};
 import { ProductBasicInfo } from "./shared/ProductBasicInfo";
 import { ProductStatusPanel } from "./shared/ProductStatusPanel";
 import { ProductMediaPanel } from "./shared/ProductMediaPanel";
@@ -212,6 +222,7 @@ export default function EditProductForm({
       attributes: v.attributes || {},
       components:
         (v.components as { name: string; value: number; unit: string }[]) || [],
+      shippingProfile: v.shippingProfile,
       label: v.label,
       isActive: v.isActive,
     })),
@@ -234,6 +245,7 @@ export default function EditProductForm({
       attributes: v.attributes || {},
       components:
         (v.components as { name: string; value: number; unit: string }[]) || [],
+      shippingProfile: v.shippingProfile,
       label: v.label,
       isActive: v.isActive,
     })),
@@ -353,6 +365,11 @@ export default function EditProductForm({
             price: 0,
             stock: 0,
             attributes: combo,
+            shippingProfile: {
+              packageType: "box",
+              quantityPerPackage: 1,
+              weightGrams: 0,
+            },
             isActive: true,
           };
         }),
@@ -387,7 +404,8 @@ export default function EditProductForm({
         v.stock !== orig.stock ||
         v.priceAfterDiscount !== orig.priceAfterDiscount ||
         v.isActive !== orig.isActive ||
-        JSON.stringify(v.components) !== JSON.stringify(orig.components)
+        JSON.stringify(v.components) !== JSON.stringify(orig.components) ||
+        JSON.stringify(v.shippingProfile) !== JSON.stringify(orig.shippingProfile)
       );
     });
 
@@ -401,6 +419,7 @@ export default function EditProductForm({
         stock: v.stock,
         isActive: v.isActive,
         components: v.components,
+        shippingProfile: formatShippingProfile(v.shippingProfile),
       })),
     );
 
@@ -413,6 +432,7 @@ export default function EditProductForm({
         stock: v.stock,
         attributes: v.attributes,
         components: v.components,
+        shippingProfile: formatShippingProfile(v.shippingProfile),
         label: v.label,
         isActive: v.isActive,
       })),

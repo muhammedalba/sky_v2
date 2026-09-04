@@ -22,6 +22,33 @@ const MeasurementValueSchema = z.object({
   unit: z.string(),
 });
 
+// ─── Shipping Profile schemas ─────────────────────────────
+export const shippingDimensionsSchema = z.object({
+  lengthMm: z.coerce.number().min(0.1, 'validation.positiveNumber').optional(),
+  widthMm: z.coerce.number().min(0.1, 'validation.positiveNumber').optional(),
+  heightMm: z.coerce.number().min(0.1, 'validation.positiveNumber').optional(),
+});
+
+export const packageTypeEnum = z.enum([
+  'box',
+  'bag',
+  'pallet',
+  'roll',
+  'envelope',
+  'drum',
+  'gallon',
+  'board',
+  'piece',
+  'custom',
+]);
+
+export const shippingProfileSchema = z.object({
+  weightGrams: z.coerce.number().min(0, 'validation.positiveNumber').default(0),
+  dimensions: shippingDimensionsSchema.optional(),
+  packageType: packageTypeEnum.default('box'),
+  quantityPerPackage: z.coerce.number().int().min(1, 'validation.positiveNumber').default(1),
+});
+
 // ─── Variant schemas ─────────────────────────────────────
 export const variantSchema = z.object({
   sku: z.string().optional(),
@@ -33,6 +60,7 @@ export const variantSchema = z.object({
     z.string(),
     z.union([z.string(), MeasurementValueSchema, z.any()])
   ).optional(),
+  shippingProfile: shippingProfileSchema.optional(),
   components: z.array(componentSchema).optional(),
   label: z.string().optional(),
   image: optionalImageSchema,
@@ -42,6 +70,7 @@ export const variantSchema = z.object({
 export const updateVariantSchema = variantSchema.extend({
   _id: z.string(),
 }).partial().required({ _id: true });
+
 
 const ALLOWED_PDF_TYPES = ['application/pdf'];
 const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10MB
