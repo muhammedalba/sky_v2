@@ -20,7 +20,10 @@ import FormStickyHeader from "@/shared/ui/dashboard/FormStickyHeader";
 import AttributeBuilder, {
   AttributeDefinition,
 } from "./shared/AttributeBuilder";
-import VariantTable, { VariantRow, ShippingProfileRow } from "./shared/VariantTable";
+import VariantTable, {
+  VariantRow,
+  ShippingProfileRow,
+} from "./shared/VariantTable";
 
 const formatShippingProfile = (sp?: ShippingProfileRow) => {
   if (!sp) return undefined;
@@ -62,7 +65,7 @@ export default function EditProductForm({
 }: EditProductFormProps) {
   const t = useTranslations("products.form");
   const tMessages = useTranslations("products.messages");
-  console.log(initialData);
+  console.log("initialData", initialData);
   const tError = (msg?: string) =>
     msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const toast = useToast();
@@ -163,9 +166,10 @@ export default function EditProductForm({
       variantsToCreate: [],
       variantsToUpdate: [],
       variantsToDelete: [],
-      imageCover: typeof initialData.imageCover === "object"
-        ? initialData.imageCover.url
-        : initialData.imageCover || "",
+      imageCover:
+        typeof initialData.imageCover === "object"
+          ? initialData.imageCover.url
+          : initialData.imageCover || "",
     },
   });
 
@@ -176,7 +180,7 @@ export default function EditProductForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-
+  console.log("errors", errors);
   // ─── Media State ─────────────────────────────────────
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(
@@ -405,7 +409,8 @@ export default function EditProductForm({
         v.priceAfterDiscount !== orig.priceAfterDiscount ||
         v.isActive !== orig.isActive ||
         JSON.stringify(v.components) !== JSON.stringify(orig.components) ||
-        JSON.stringify(v.shippingProfile) !== JSON.stringify(orig.shippingProfile)
+        JSON.stringify(v.shippingProfile) !==
+          JSON.stringify(orig.shippingProfile)
       );
     });
 
@@ -546,9 +551,11 @@ export default function EditProductForm({
 
     if (coverFile) formData.append("imageCover", coverFile);
     galleryFiles.forEach((f) => formData.append("images", f));
-    existingImages.forEach((img) => formData.append("images", JSON.stringify(img)));
+    existingImages.forEach((img) =>
+      formData.append("images", JSON.stringify(img)),
+    );
     if (pdfFile) formData.append("infoProductPdf", pdfFile);
- 
+
     try {
       await updateMutation.mutateAsync({ id: initialData._id, data: formData });
       toast.success(
