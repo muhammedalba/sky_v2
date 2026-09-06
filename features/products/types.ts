@@ -82,8 +82,7 @@ export interface Product {
   isActive?: boolean;
   isFeatured?: boolean;
   comparePrice?: number;
-  // manual?: string;
-  infoProductPdf?: string;
+  infoProductPdf?: FileAsset | string;
   ratingsAverage?: number;
   ratingsQuantity?: number;
   totalSold?: number;

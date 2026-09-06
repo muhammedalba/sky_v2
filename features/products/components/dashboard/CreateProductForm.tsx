@@ -274,7 +274,6 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       );
       router.push(`/${locale}/dashboard/products`);
     } catch (error: unknown) {
-      console.log("🚀 ~ handleCreate ~ error:", error);
       const msg =
         error instanceof Error
           ? error.message

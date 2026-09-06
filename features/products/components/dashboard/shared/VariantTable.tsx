@@ -10,7 +10,7 @@ import {
   TrashIcon,
   XIcon,
 } from "@/shared/ui/Icons";
-import type { PackageType } from "@/features/products/types";
+import type { PackageType, ProductAttributeValue } from "@/features/products/types";
 import { Select } from "@/shared/ui/Select";
 
 const PACKAGE_TYPE_OPTIONS: { value: PackageType; label: string }[] = [
@@ -38,7 +38,7 @@ export interface VariantRow {
   price: number;
   priceAfterDiscount?: number;
   stock: number;
-  attributes: Record<string, unknown>;
+  attributes: Record<string, string | number | ProductAttributeValue>;
   shippingProfile?: ShippingProfileRow;
   components?: { name: string; value: number; unit: string }[];
   label?: string;
@@ -55,6 +55,7 @@ interface VariantTableProps {
   onMarkForDelete?: (id: string) => void;
   onUnmarkDelete?: (id: string) => void;
   mode?: "create" | "edit";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors?: any;
 }
 
@@ -93,12 +94,14 @@ export default function VariantTable({
     }
   };
 
-  const getAttrLabel = (attrs: Record<string, any>) => {
+  const getAttrLabel = (
+    attrs: Record<string, string | number | ProductAttributeValue>,
+  ) => {
     return (
       Object.entries(attrs)
-        .map(([k, v]) => {
+        .map(([, v]) => {
           if (typeof v === "object" && v !== null && "value" in v) {
-            const val = v as { value: any; unit?: string };
+            const val = v as ProductAttributeValue;
             return `${val.value}-${val.unit ? ` ${val.unit}` : ""}`;
           }
           return v;

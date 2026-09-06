@@ -17,9 +17,9 @@ export const componentSchema = z.object({
 });
 
 // measurement value schema
-const MeasurementValueSchema = z.object({
-  value: z.number(),
-  unit: z.string(),
+export const MeasurementValueSchema = z.object({
+  value: z.union([z.number(), z.string()]),
+  unit: z.string().optional(),
 });
 
 // ─── Shipping Profile schemas ─────────────────────────────
@@ -58,7 +58,7 @@ export const variantSchema = z.object({
   stock: z.coerce.number().int().min(0, 'validation.stockMin').default(1),
   attributes: z.record(
     z.string(),
-    z.union([z.string(), MeasurementValueSchema, z.any()])
+    z.union([z.string(), z.number(), MeasurementValueSchema])
   ).optional(),
   shippingProfile: shippingProfileSchema.optional(),
   components: z.array(componentSchema).optional(),

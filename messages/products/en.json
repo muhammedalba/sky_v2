@@ -294,5 +294,9 @@
             "noProducts": "No products found",
             "deletedDesc": "All deleted products will appear here for restoration.",
             "activeDesc": "Start by adding your first product to your catalog."
+      },
+      "variants": {
+            "title": "Product Variants",
+            "noVariants": "No variants available"
       }
 }

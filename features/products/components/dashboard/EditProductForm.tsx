@@ -65,7 +65,6 @@ export default function EditProductForm({
 }: EditProductFormProps) {
   const t = useTranslations("products.form");
   const tMessages = useTranslations("products.messages");
-  console.log("initialData", initialData);
   const tError = (msg?: string) =>
     msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const toast = useToast();
@@ -180,7 +179,6 @@ export default function EditProductForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-  console.log("errors", errors);
   // ─── Media State ─────────────────────────────────────
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(

@@ -76,7 +76,7 @@ export default function ProductsPage() {
   const formatCurrency = useFormatCurrency();
 
   // get data
-  const { data, isLoading, refetch } = useProducts({
+  const { data, isLoading } = useProducts({
     page,
     limit: 10,
     ...apiParams,
@@ -157,11 +157,10 @@ export default function ProductsPage() {
         isDangerous: false,
         onConfirm: async () => {
           await deleteMutation(id);
-          refetch();
         },
       });
     },
-    [confirmDialog, t, deleteMutation, refetch],
+    [confirmDialog, t, deleteMutation],
   );
 
   // handle hard delete
@@ -173,19 +172,17 @@ export default function ProductsPage() {
         isDangerous: true,
         onConfirm: async () => {
           await hardDeleteMutation(id);
-          refetch();
         },
       });
     },
-    [confirmDialog, t, hardDeleteMutation, refetch],
+    [confirmDialog, t, hardDeleteMutation],
   );
   // handle restore
   const handleRestore = useCallback(
     async (id: string) => {
       await restoreMutation(id);
-      refetch();
     },
-    [restoreMutation, refetch],
+    [restoreMutation],
   );
   //  columns table
   const columns = useMemo(
@@ -511,14 +508,16 @@ export default function ProductsPage() {
           if (!product.variants || product.variants.length === 0) {
             return (
               <div className="text-sm text-muted-foreground py-2 text-center">
-                No variants available
+                {t("variants.noVariants", {
+                  defaultValue: "No variants available",
+                })}
               </div>
             );
           }
           return (
             <div className="bg-background rounded-xl ring-1 ring-border/50 p-4 shadow-sm">
               <h4 className="font-bold text-sm mb-3 text-foreground">
-                Product Variants
+                {t("variants.title", { defaultValue: "Product Variants" })}
               </h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">

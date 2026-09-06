@@ -119,7 +119,9 @@ export function useUpdateProduct() {
 
       // 3. Trigger Next.js ISR revalidation for page tags (product and products)
       try {
-        const slug = (updatedProduct as unknown as any)?.slug;
+        const slug =
+          updatedProduct?.product?.slug ??
+          (updatedProduct as unknown as { slug?: string })?.slug;
         if (slug) {
           await fetch("/api/revalidate-product", {
             method: "POST",

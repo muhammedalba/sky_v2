@@ -133,11 +133,11 @@ export function useProductFilters() {
       if (value === '' || value === null || value === undefined) return;
 
       // Skip weight params when unit is missing or range invalid
-      if (hasWeight && !filters.weight_unit || weightRangeInvalid) {
+      if ((hasWeight && !filters.weight_unit) || weightRangeInvalid) {
         if (['weight_min', 'weight_max', 'weight_unit'].includes(key)) return;
       }
       // Skip volume params when unit is missing or range invalid
-      if (hasVolume && !filters.volume_unit || volumeRangeInvalid) {
+      if ((hasVolume && !filters.volume_unit) || volumeRangeInvalid) {
         if (['volume_min', 'volume_max', 'volume_unit'].includes(key)) return;
       }
       // Skip price params when range invalid
