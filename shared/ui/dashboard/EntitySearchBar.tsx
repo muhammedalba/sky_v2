@@ -49,17 +49,41 @@ export default function EntitySearchBar({
 
   const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
 
-  // disable search on first render
-  const isMounted = useRef(false);
-
+  // Keep latest onSearch callback reference to avoid re-triggering the search effect when the parent
+  // re-renders or when URL query parameters (such as pagination) create a new callback reference.
+  const onSearchRef = useRef(onSearch);
   useEffect(() => {
-    if (isMounted.current) {
-      onSearch(debouncedSearchTerm);
-      isMounted.current = false;
-    } else {
-      isMounted.current = true;
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
+
+  // Track the initial render and the last executed search query to prevent redundant searches
+  const isFirstRender = useRef(true);
+  const lastSearchedRef = useRef(defaultValue);
+
+  // Synchronize lastSearchedRef when defaultValue changes from an external source (e.g. URL query reset)
+  useEffect(() => {
+    lastSearchedRef.current = defaultValue;
+  }, [defaultValue]);
+
+  /**
+   * Effect to trigger the search callback when the debounced term changes.
+   * - Ignores initial component mount.
+   * - Only triggers if debouncedSearchTerm is genuinely different from the last searched term.
+   * - Does not depend on onSearch reference, preventing pagination from resetting the search.
+   */
+  useEffect(() => {
+    // Skip firing search on initial mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
     }
-  }, [debouncedSearchTerm, onSearch]);
+
+    // Only fire when the search value has genuinely changed
+    if (debouncedSearchTerm !== lastSearchedRef.current) {
+      lastSearchedRef.current = debouncedSearchTerm;
+      onSearchRef.current(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm]);
 
   return (
     <div

@@ -71,7 +71,7 @@ export default function OrdersPage() {
     isLoading: isOrdersLoading,
     isRefetching,
   } = useOrders(queryParams);
-  console.log(ordersData);
+
   // stats - using filters dateRange only
   const statsQueryParams = useMemo(
     () => ({

@@ -171,7 +171,7 @@ export default function EntityDataTable<T extends { _id: string }>({
                         {emptyState?.title || tCommon('messages.noData')}
                       </p>
                       {emptyState?.description && (
-                        <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                        <p className="text-sm text-muted-foreground max-w-62.5 mx-auto">
                           {emptyState.description}
                         </p>
                       )}
