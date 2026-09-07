@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import {
   createProductSchema,
   CreateProductInput,
+  CreateProductFormInput,
 } from "@/features/products/product.schema";
 import { useCreateProduct } from "@/features/products/hooks/useProducts";
 import { useToast } from "@/shared/hooks/useToast";
@@ -51,9 +52,9 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const createMutation = useCreateProduct();
 
   // ─── Form setup ──────────────────────────────────────
-  const form = useForm<CreateProductInput>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(createProductSchema) as any,
+  const form = useForm<CreateProductFormInput, unknown, CreateProductInput>({
+ 
+    resolver: zodResolver(createProductSchema),
     defaultValues: {
       title: { en: "", ar: "" },
       description: { en: "", ar: "" },
@@ -77,6 +78,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
     register,
     setValue,
     watch,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
@@ -99,9 +101,9 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   ]);
 
   // ─── Watched values ───────────────────────────────────
-  const watchedCategory = watch("category");
-  const watchedBrand = watch("brand");
-  const watchedSupplier = watch("supplier");
+  const watchedCategory = useWatch({ control, name: "category" });
+  const watchedBrand = useWatch({ control, name: "brand" });
+  const watchedSupplier = useWatch({ control, name: "supplier" });
 
   // ─── Search states + data fetching (shared hook) ─────
   const options = useProductFormOptions(watchedCategory);
@@ -272,7 +274,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       toast.success(
         tMessages("createSuccess") || "Product created successfully",
       );
-      router.push(`/${locale}/dashboard/products`);
+      router.push(`/dashboard/products`);
     } catch (error: unknown) {
       const msg =
         error instanceof Error

@@ -148,6 +148,8 @@ export const editProductSchema = productBaseSchema.extend({
 
 export type ProductInput = z.infer<typeof createProductSchema>;
 export type CreateProductInput = z.infer<typeof createProductSchema>;
+export type CreateProductFormInput = z.input<typeof createProductSchema>;
 export type EditProductInput = z.infer<typeof editProductSchema>;
+export type EditProductFormInput = z.input<typeof editProductSchema>;
 export type VariantInput = z.infer<typeof variantSchema>;
 export type ComponentInput = z.infer<typeof componentSchema>;

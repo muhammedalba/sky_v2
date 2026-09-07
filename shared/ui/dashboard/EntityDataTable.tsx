@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, Fragment } from 'react';
+import React, { ReactNode, useState, Fragment } from "react";
 import {
   Table,
   TableBody,
@@ -6,14 +6,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/shared/ui/Table';
-import { Card } from '@/shared/ui/Card';
-import { Skeleton } from '@/shared/ui/Skeleton';
-import Pagination, { PaginationData } from '@/shared/ui/Pagination';
-import { BrandsIcon, ChevronLeftIcon, ChevronRightIcon } from "@/shared/ui/Icons";
-import { Button } from '@/shared/ui/Button';
-import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+} from "@/shared/ui/Table";
+import { Card } from "@/shared/ui/Card";
+import { Skeleton } from "@/shared/ui/Skeleton";
+import Pagination, { PaginationData } from "@/shared/ui/Pagination";
+import {
+  BrandsIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@/shared/ui/Icons";
+import { Button } from "@/shared/ui/Button";
+import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export interface Column<T> {
   header: string;
@@ -47,8 +51,7 @@ export default function EntityDataTable<T extends { _id: string }>({
   emptyState,
   expandableContent,
 }: EntityDataTableProps<T>) {
-
-  const tCommon = useTranslations('common');
+  const tCommon = useTranslations("common");
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   const toggleRow = (id: string) => {
@@ -65,16 +68,20 @@ export default function EntityDataTable<T extends { _id: string }>({
                 <TableHead
                   key={idx}
                   className={cn(
-                    'h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground/80',
-                    idx === 0 && 'ps-6',
-                    idx === columns.length - 1 && !expandableContent && 'pe-6 text-end',
+                    "h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground/80",
+                    idx === 0 && "ps-6",
+                    idx === columns.length - 1 &&
+                      !expandableContent &&
+                      "pe-6 text-end",
                     col.className,
                   )}
                 >
                   {col.header}
                 </TableHead>
               ))}
-              {expandableContent && <TableHead className="w-10 pe-6 text-end"></TableHead>}
+              {expandableContent && (
+                <TableHead className="w-10 pe-6 text-end"></TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -90,16 +97,14 @@ export default function EntityDataTable<T extends { _id: string }>({
                       <TableCell
                         key={idx}
                         className={cn(
-                          idx === 0 && 'ps-6',
-                          idx === columns.length - 1 && 'pe-6',
+                          idx === 0 && "ps-6",
+                          idx === columns.length - 1 && "pe-6",
                         )}
                       >
                         <Skeleton
                           className={cn(
-                            'h-6 rounded-lg',
-                            idx === 0
-                              ? 'w-14 h-14 rounded-2xl'
-                              : 'w-full',
+                            "h-6 rounded-lg",
+                            idx === 0 ? "w-14 h-14 rounded-2xl" : "w-full",
                           )}
                         />
                       </TableCell>
@@ -107,18 +112,53 @@ export default function EntityDataTable<T extends { _id: string }>({
                     {expandableContent && <TableCell></TableCell>}
                   </TableRow>
                 ))
-            ) : data?.length ? (
-              data.map((item, rowIdx) => (
+            ) : data?.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + (expandableContent ? 1 : 0)}
+                  className="h-64 text-center"
+                >
+                  <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="p-4 rounded-3xl bg-muted/30 ring-1 ring-border/20">
+                      {emptyState?.icon || (
+                        <BrandsIcon className="h-10 w-10 text-muted-foreground/40" />
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-lg font-bold title-gradient">
+                        {emptyState?.title || tCommon("messages.noData")}
+                      </p>
+                      {emptyState?.description && (
+                        <p className="text-sm text-muted-foreground max-w-62.5 mx-auto">
+                          {emptyState.description}
+                        </p>
+                      )}
+                    </div>
+                    {emptyState?.createLink && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="rounded-xl px-6 "
+                        onClick={emptyState.createLink}
+                      >
+                        {emptyState.createLabel || tCommon("buttons.create")}
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) :(
+              data?.map((item, rowIdx) => (
                 <Fragment key={item._id}>
-                  <TableRow
-                    className="group hover:bg-muted/40 transition-all duration-300 border-b border-border/20 last:border-0 h-20 relative overflow-hidden"
-                  >
+                  <TableRow className="group hover:bg-muted/40 transition-all duration-300 border-b border-border/20 last:border-0 h-20 relative overflow-hidden">
                     {columns.map((col, idx) => (
                       <TableCell
                         key={idx}
                         className={cn(
-                          idx === 0 && 'ps-6',
-                          idx === columns.length - 1 && !expandableContent && 'pe-6 text-end',
+                          idx === 0 && "ps-6",
+                          idx === columns.length - 1 &&
+                            !expandableContent &&
+                            "pe-6 text-end",
                           col.className,
                         )}
                       >
@@ -157,41 +197,7 @@ export default function EntityDataTable<T extends { _id: string }>({
                   )}
                 </Fragment>
               ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length + (expandableContent ? 1 : 0)} className="h-64 text-center">
-                  <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95 duration-500">
-                    <div className="p-4 rounded-3xl bg-muted/30 ring-1 ring-border/20">
-                      {emptyState?.icon || (
-                        <BrandsIcon className="h-10 w-10 text-muted-foreground/40" />
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-lg font-bold title-gradient">
-                        {emptyState?.title || tCommon('messages.noData')}
-                      </p>
-                      {emptyState?.description && (
-                        <p className="text-sm text-muted-foreground max-w-62.5 mx-auto">
-                          {emptyState.description}
-                        </p>
-                      )}
-                    </div>
-                    {emptyState?.createLink && (
-
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="rounded-xl px-6 "
-                        onClick={emptyState.createLink}
-                      >
-                        {emptyState.createLabel || tCommon('buttons.create')}
-                      </Button>
-
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
+            )} 
           </TableBody>
         </Table>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import {  useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
@@ -40,6 +40,7 @@ import { Tooltip } from "@/shared/ui/Tooltip";
 import { Permissions } from "@/features/roles/types";
 import Can from "@/components/auth/Can";
 import { StockBadge } from "@/features/cart/components/StockBadge";
+import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 
 type ViewTab =
   | "isActive"
@@ -50,7 +51,7 @@ type ViewTab =
   | "sort"
   | "unlimited_stock";
 
-// نقل الثوابت خارج المكون لمنع إعادة تخصيص الذاكرة
+// Moving fundamental constants to memory reallocation
 const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
   isActive: {},
   deleted: { isDeleted: "true" },
@@ -62,19 +63,17 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
 };
 
 export default function ProductsPage() {
-
+  // hooks
+  const t = useTranslations("products");
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
+  const router = useRouter();
+  const getTrans = useTrans();
+  const confirmDialog = useConfirmDialog();
+  const formatCurrency = useFormatCurrency();
+  const { apiParams } = useProductFilters();
 
   const page = Number(getQueryParam("page", "1"));
   const viewTab = getQueryParam("tab", "isActive") as ViewTab;
-  const { apiParams } = useProductFilters();
-
-  const t = useTranslations("products");
-  const router = useRouter();
-  const confirmDialog = useConfirmDialog();
-  const getTrans = useTrans();
-  const formatCurrency = useFormatCurrency();
-
   // get data
   const { data, isLoading } = useProducts({
     page,
@@ -403,9 +402,7 @@ export default function ProductsPage() {
                       size="icon"
                       className="h-8 w-8 text-primary rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary/70 hover:border-primary/20 transition-all"
                       onClick={() =>
-                        router.push(
-                          `/dashboard/products/${product.slug}/edit`,
-                        )
+                        router.push(`/dashboard/products/${product.slug}/edit`)
                       }
                       disabled={
                         deleteProductPending ||
@@ -520,15 +517,15 @@ export default function ProductsPage() {
                 {t("variants.title", { defaultValue: "Product Variants" })}
               </h4>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-muted/50 text-muted-foreground text-xs uppercase font-semibold">
+                <table className="w-full text-sm ">
+                  <thead className="bg-muted text-muted-foreground text-xs uppercase font-semibold">
                     <tr>
-                      <th className="px-4 py-2 rounded-l-lg">
+                      <th className="px-4 py-2 text-start">
                         {t("fields.sku")}
                       </th>
-                      <th className="px-4 py-2">{t("fields.attributes")}</th>
-                      <th className="px-4 py-2">{t("fields.price")}</th>
-                      <th className="px-4 py-2 rounded-r-lg">
+                      <th className="px-4 py-2 text-start">{t("fields.attributes")}</th>
+                      <th className="px-4 py-2 text-start">{t("fields.price")}</th>
+                      <th className="px-4 py-2 text-start">
                         {t("fields.stock")}
                       </th>
                     </tr>
@@ -543,20 +540,8 @@ export default function ProductsPage() {
                           {variant.sku || "-"}
                         </td>
                         <td className="px-4 py-2">
-                          {Object.entries(variant.attributes || {}).map(
-                            ([key, value]) => (
-                              <span
-                                key={key}
-                                className="inline-block bg-muted px-2 py-0.5 rounded text-[10px] mr-1"
-                              >
-                                {key}:{" "}
-                                {typeof value === "string" ||
-                                typeof value === "number"
-                                  ? value
-                                  : JSON.stringify(value)}
-                              </span>
-                            ),
-                          )}
+
+                          <VariantAttributes attributes={variant.attributes} />
                         </td>
                         <td className="px-4 py-2 font-semibold">
                           {formatCurrency(variant.price)}

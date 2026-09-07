@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -176,6 +176,7 @@ export default function EditProductForm({
     register,
     setValue,
     watch,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
@@ -254,9 +255,9 @@ export default function EditProductForm({
   );
 
   // ─── Watched values ───────────────────────────────────
-  const watchedCategory = watch("category");
-  const watchedBrand = watch("brand");
-  const watchedSupplier = watch("supplier");
+  const watchedCategory = useWatch({ control, name: "category" });
+  const watchedBrand = useWatch({ control, name: "brand" });
+  const watchedSupplier = useWatch({ control, name: "supplier" });
 
   // ─── Search states + data fetching (shared hook) ─────
   const options = useProductFormOptions(watchedCategory);
@@ -614,7 +615,11 @@ export default function EditProductForm({
           <div className="lg:col-span-2 space-y-6">
             <ProductBasicInfo
               register={register}
-              errors={errors as any}
+              errors={
+                errors as unknown as Parameters<
+                  typeof ProductBasicInfo
+                >[0]["errors"]
+              }
               tError={tError}
               watch={watch}
               setValue={setValue}

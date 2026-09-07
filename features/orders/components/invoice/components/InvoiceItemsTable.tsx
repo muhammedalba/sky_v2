@@ -2,6 +2,7 @@ import React from "react";
 import { OrderItem } from "@/features/orders/types";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { getLocalizedValue } from "../utils/invoiceUtils";
+import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 
 interface InvoiceItemsTableProps {
   items?: OrderItem[];
@@ -54,27 +55,11 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
                       {titleEn}
                     </div>
                   )}
-                  {typeof item.variantId === "object" &&
-                    item.variantId?.attributes && (
-                      <div className="flex flex-wrap gap-1 mt-1 max-w-50">
-                        {Object.entries(item.variantId.attributes).map(
-                          ([key, val]) => {
-                            const valStr =
-                              typeof val === "object" && val !== null
-                                ? (val.value ?? JSON.stringify(val))
-                                : val;
-                            return (
-                              <span
-                                key={key}
-                                className="inline-flex items-center px-1 py-0.5 rounded-md text-[8px] bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap"
-                              >
-                                {key}: {String(valStr)}
-                              </span>
-                            );
-                          },
-                        )}
-                      </div>
-                    )}
+                  <VariantAttributes
+                    attributes={item.variantId?.attributes}
+                    className="mt-1 max-w-50"
+                    badgeClassName="px-1 py-0.5 text-[8px]"
+                  />
                 </td>
                 <td className="p-1.5 border-l border-black font-medium">
                   {itemQty}

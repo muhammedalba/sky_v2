@@ -7,6 +7,7 @@ import { useTrans } from "@/shared/hooks/useTrans";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 
 interface OrderProductsTableProps {
   order: Order;
@@ -62,27 +63,10 @@ const formatCurrency = useFormatCurrency();
                         <span className="font-semibold text-foreground truncate max-w-37.5">
                           {getTrans(item.productId?.title)}
                         </span>
-                        {typeof item.variantId === "object" &&
-                          item.variantId?.attributes && (
-                            <div className="flex flex-wrap gap-1 mt-1 max-w-50">
-                              {Object.entries(item.variantId.attributes).map(
-                                ([key, val]) => {
-                                  const valStr =
-                                    typeof val === "object" && val !== null
-                                      ? (val.value ?? JSON.stringify(val))
-                                      : val;
-                                  return (
-                                    <span
-                                      key={key}
-                                      className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap"
-                                    >
-                                      {key}: {String(valStr)}
-                                    </span>
-                                  );
-                                },
-                              )}
-                            </div>
-                          )}
+                        <VariantAttributes
+                          attributes={item.variantId?.attributes}
+                          className="mt-1 max-w-50"
+                        />
                       </div>
                     </td>
                     <td className="p-3 text-muted-foreground font-mono">
