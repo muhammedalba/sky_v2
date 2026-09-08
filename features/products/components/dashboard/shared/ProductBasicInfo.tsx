@@ -1,6 +1,6 @@
 'use client';
 
-import { UseFormRegister } from 'react-hook-form';
+import { UseFormRegister, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
@@ -85,8 +85,10 @@ interface ProductBasicInfoProps {
     uses?: { en?: { message?: string }; ar?: { message?: string } };
   };
   tError: (msg?: string) => string | undefined;
-  watch?: any;
-  setValue?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  watch?: UseFormWatch<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setValue?: UseFormSetValue<any>;
 }
 
 /**
@@ -142,7 +144,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
             {...register('description.en')}
             error={tError(errors?.description?.en?.message)}
             label={t('descEn')}
-            className="rounded-xl min-h-[100px]"
+            className="rounded-xl min-h-25"
             showAiAction
             aiActionTooltip={t('aiTranslateImprove')}
           />
@@ -154,7 +156,7 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
             {...register('description.ar')}
             error={tError(errors?.description?.ar?.message)}
             label={t('descAr')}
-            className="rounded-xl min-h-[100px]"
+            className="rounded-xl min-h-25"
             showAiAction
             aiActionTooltip={t('aiTranslateImprove')}
           />

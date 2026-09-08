@@ -19,7 +19,10 @@ import FormStickyHeader from "@/shared/ui/dashboard/FormStickyHeader";
 import AttributeBuilder, {
   AttributeDefinition,
 } from "./shared/AttributeBuilder";
-import VariantTable, { VariantRow, ShippingProfileRow } from "./shared/VariantTable";
+import VariantTable, {
+  VariantRow,
+  ShippingProfileRow,
+} from "./shared/VariantTable";
 
 const formatShippingProfile = (sp?: ShippingProfileRow) => {
   if (!sp) return undefined;
@@ -45,15 +48,14 @@ interface CreateProductFormProps {
 export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const t = useTranslations("products.form");
   const tMessages = useTranslations("products.messages");
-  const tError = (msg?: string) =>
-    msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const toast = useToast();
   const router = useRouter();
   const createMutation = useCreateProduct();
+  const tError = (msg?: string) =>
+    msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
 
   // ─── Form setup ──────────────────────────────────────
   const form = useForm<CreateProductFormInput, unknown, CreateProductInput>({
- 
     resolver: zodResolver(createProductSchema),
     defaultValues: {
       title: { en: "", ar: "" },
@@ -109,8 +111,60 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
   const options = useProductFormOptions(watchedCategory);
 
   // ─── Variant generation from attributes ──────────────
+  /**
+   * Regenerates product variants based on the provided attribute definitions.
+   *
+   * This function:
+   * 1. Generates all possible attribute combinations using `cartesian(attrs)`.
+   * 2. If no combinations exist → creates a single simple variant.
+   * 3. If combinations exist → creates a variant for each combination.
+   * 4. Automatically generates a SKU for each variant based on attribute values + current date.
+   * 5. Sets default values for price, stock, shipping profile, and activation state.
+   *
+   * @param attrs - Array of attribute definitions used to generate variant combinations.
+   *
+   * @example
+   * // Example 1: No attributes → one simple variant
+   * regenerateVariants([]);
+   * // Result:
+   * // [
+   * //   {
+   * //     sku: "",
+   * //     price: 0,
+   * //     stock: 0,
+   * //     attributes: {},
+   * //     shippingProfile: { packageType: "box", quantityPerPackage: 1, weightGrams: 0 },
+   * //     isActive: true
+   * //   }
+   * // ]
+   *
+   * @example
+   * // Example 2: String attributes
+   * regenerateVariants([
+   *   { name: "color", type: "string", allowedValues: ["Red", "Blue"] },
+   *   { name: "size", type: "string", allowedValues: ["S", "M"] }
+   * ]);
+   * // Resulting variants:
+   * // SKU examples:
+   * // RED-S-20260908
+   * // RED-M-20260908
+   * // BLUE-S-20260908
+   * // BLUE-M-20260908
+   *
+   * @example
+   * // Example 3: Number attributes
+   * regenerateVariants([
+   *   { name: "weight", type: "number", allowedValues: [10, 20], allowedUnits: ["kg"] },
+   *   { name: "color", type: "string", allowedValues: ["Black"] }
+   * ]);
+   * // SKU examples:
+   * // 10-KG-BLACK-20260908
+   * // 20-KG-BLACK-20260908
+   */
   const regenerateVariants = useCallback((attrs: AttributeDefinition[]) => {
     const combos = cartesian(attrs);
+
+    // If no attribute combinations exist → create a single simple variant
     if (combos.length === 0) {
       setVariants([
         {
@@ -128,9 +182,13 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       ]);
       return;
     }
+
+    // Generate variants from attribute combinations
     setVariants(
       combos.map((combo) => {
+        // Build SKU parts from attribute values
         const skuParts = Object.values(combo).map((v) => {
+          // Number attribute (e.g., { value: 20, unit: "kg" })
           if (
             typeof v === "object" &&
             v !== null &&
@@ -139,13 +197,18 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
           ) {
             return `${v.value}-${v.unit}`.toUpperCase().trim();
           }
+          // String attribute (e.g., "Red Shirt")
           return String(v).toUpperCase().replace(/\s+/g, "-").trim();
         });
+
+        // Add date to SKU (YYYYMMDD)
         const dateStr = new Date()
           .toISOString()
           .split("T")[0]
           .replace(/-/g, "");
         skuParts.push(dateStr);
+
+        // Final variant object
         return {
           sku: skuParts.join("-"),
           price: 0,
@@ -315,7 +378,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
         saveLabel={t("publish")}
         formId="create-product-form"
         isSubmitting={isSubmitting || createMutation.isPending}
-        backUrl={`/${locale}/dashboard/products`}
+        backUrl={`/dashboard/products`}
       />
 
       <div className="mt-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

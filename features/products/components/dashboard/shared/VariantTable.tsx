@@ -10,7 +10,10 @@ import {
   TrashIcon,
   XIcon,
 } from "@/shared/ui/Icons";
-import type { PackageType, ProductAttributeValue } from "@/features/products/types";
+import type {
+  PackageType,
+  ProductAttributeValue,
+} from "@/features/products/types";
 import { Select } from "@/shared/ui/Select";
 
 const PACKAGE_TYPE_OPTIONS: { value: PackageType; label: string }[] = [
@@ -73,6 +76,9 @@ export default function VariantTable({
   const tError = (msg?: string) =>
     msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  const [expandedShippingIdx, setExpandedShippingIdx] = useState<number | null>(
+    null,
+  );
 
   const updateVariant = (
     index: number,
@@ -142,6 +148,7 @@ export default function VariantTable({
               const isUnrestorable =
                 variant._id && unrestorableIds.includes(variant._id);
               const isExpanded = expandedIdx === idx;
+              const isExpandedShipping = expandedShippingIdx === idx;
 
               return (
                 <React.Fragment key={variant._id || idx}>
@@ -156,44 +163,61 @@ export default function VariantTable({
                           {variant.label || getAttrLabel(variant.attributes)}
                         </span>
                         <div className="flex gap-1.5 flex-wrap">
-                          {Object.entries(variant.attributes).map(([k, v]) => (
-                            <span
-                              key={k}
-                              className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground font-medium border border-border/40"
-                            >
-                              {k}:{" "}
-                              {typeof v === "object" &&
+                          {Object.entries(variant.attributes).map(([k, v]) => {
+                            const attrVal =
+                              typeof v === "object" &&
                               v !== null &&
                               "value" in v
-                                ? `${(v as any).value}${(v as any).unit ? ` ${(v as any).unit}` : ""}`
-                                : String(v)}
-                            </span>
-                          ))}
+                                ? (v as ProductAttributeValue)
+                                : null;
+
+                            return (
+                              <span
+                                key={k}
+                                className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground font-medium border border-border/40"
+                              >
+                                {k}:{" "}
+                                {attrVal
+                                  ? `${attrVal.value}${attrVal.unit ? ` ${attrVal.unit}` : ""}`
+                                  : String(v)}
+                              </span>
+                            );
+                          })}
 
                           {/* Shipping Information Badge */}
-                          {variant.shippingProfile?.weightGrams !== undefined && variant.shippingProfile.weightGrams > 0 ? (
+                          {variant.shippingProfile?.weightGrams !== undefined &&
+                          variant.shippingProfile.weightGrams > 0 ? (
                             <button
                               type="button"
-                              onClick={() => setExpandedIdx(isExpanded ? null : idx)}
+                              onClick={() =>
+                                setExpandedShippingIdx(
+                                  expandedShippingIdx ? null : idx,
+                                )
+                              }
                               className="text-[10px] bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md font-medium border border-sky-500/20 hover:bg-sky-500/20 transition-colors flex items-center gap-1"
                               title={t("shippingInfo")}
                             >
-                              <BoxIcon className="w-3 h-3" />
-                              <span>
-                                {variant.shippingProfile.weightGrams >= 1000
-                                  ? `${(variant.shippingProfile.weightGrams / 1000).toFixed(2).replace(/\.?0+$/, "")} kg`
-                                  : `${variant.shippingProfile.weightGrams} g`}
-                              </span>
                               {variant.shippingProfile.dimensions?.lengthMm ? (
                                 <span className="opacity-75">
-                                  ({variant.shippingProfile.dimensions.lengthMm}×{variant.shippingProfile.dimensions.widthMm || 0}×{variant.shippingProfile.dimensions.heightMm || 0} mm)
+                                  ({variant.shippingProfile.dimensions.lengthMm}
+                                  ×
+                                  {variant.shippingProfile.dimensions.widthMm ||
+                                    0}
+                                  ×
+                                  {variant.shippingProfile.dimensions
+                                    .heightMm || 0}{" "}
+                                  mm)
                                 </span>
                               ) : null}
                             </button>
                           ) : (
                             <button
                               type="button"
-                              onClick={() => setExpandedIdx(isExpanded ? null : idx)}
+                              onClick={() =>
+                                setExpandedShippingIdx(
+                                  expandedShippingIdx ? null : idx,
+                                )
+                              }
                               className="text-[10px] bg-amber-500/10 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-md font-medium border border-amber-500/20 hover:bg-amber-500/20 transition-colors flex items-center gap-1"
                               title={t("shippingInfo")}
                             >
@@ -212,7 +236,7 @@ export default function VariantTable({
                         }
                         placeholder="SKU-123"
                         disabled={!!isDeleted}
-                        className="h-9 min-w-[120px] bg-background text-xs font-mono"
+                        className="h-9 min-w-30 bg-background text-xs font-mono"
                         error={tError(errors?.[idx]?.sku?.message)}
                       />
                     </td>
@@ -273,7 +297,7 @@ export default function VariantTable({
                             setExpandedIdx(isExpanded ? null : idx)
                           }
                           className={`p-2 rounded-lg transition-all ${isExpanded ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" : "bg-muted text-muted-foreground hover:bg-border"}`}
-                          title={`${t("shippingInfo")} & ${t("variantComponents")}`}
+                          title={`${t("variantComponents")}`}
                         >
                           <BoxIcon className="w-4 h-4" />
                         </button>
@@ -304,25 +328,22 @@ export default function VariantTable({
                       </div>
                     </td>
                   </tr>
-
-                  {/* Expanded Details Section: Shipping + Components */}
-                  {isExpanded && !isDeleted && (
-                    <tr className="animate-in fade-in slide-in-from-top-2 duration-300">
-                      <td
-                        colSpan={6}
-                        className="px-6 py-6 bg-muted/20 border-b border-border/20"
-                      >
-                        <div className="space-y-8">
-                          {/* ── Shipping Information ─────────────────── */}
-                          <div>
-                            <div className="flex items-center gap-2 mb-5">
-                              <div className="w-1.5 h-4 bg-sky-500 rounded-full" />
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
-                                {t("shippingInfo")}
-                              </h4>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-6">
-                              {/* Weight */}
+                  {isExpandedShipping && !isDeleted && (
+                    <tr
+                      className={`group transition-colors ${isDeleted ? "bg-destructive/5" : "hover:bg-muted/30"} ${isExpanded ? "bg-muted/20" : ""}`}
+                    >
+                      <td colSpan={6} className="px-6 py-4">
+                        {/* ── Shipping Information ─────────────────── */}
+                        <div>
+                          <div className="flex items-center gap-2 mb-5">
+                            <div className="w-1.5 h-4 bg-sky-500 rounded-full" />
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                              {t("shippingInfo")}
+                            </h4>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-6">
+                            {/* Weight */}
+                            <div className="">
                               <Input
                                 label={t("shippingWeightGrams")}
                                 type="number"
@@ -347,8 +368,20 @@ export default function VariantTable({
                                 }}
                                 placeholder="e.g. 500"
                                 className="h-10 rounded-xl bg-background"
+                                error={tError(errors?.[idx]?.shippingProfile?.weightGrams?.message)}
                               />
-                              {/* Dimensions */}
+                              {variant.shippingProfile?.weightGrams &&
+                                variant.shippingProfile?.weightGrams > 0 && (
+                                  <p className="mt-1 text-xs text-muted-foreground text-start px-3">
+                                    {variant.shippingProfile?.weightGrams >=
+                                    1000
+                                      ? `${(variant.shippingProfile.weightGrams / 1000).toFixed(2).replace(/\.?0+$/, "")} kg`
+                                      : `${variant.shippingProfile?.weightGrams} g`}
+                                  </p>
+                                )}
+                            </div>
+                            {/* Dimensions */}
+                            <div className="">
                               <Input
                                 label={t("shippingLengthMm")}
                                 type="number"
@@ -374,108 +407,143 @@ export default function VariantTable({
                                 }}
                                 placeholder="mm"
                                 className="h-10 rounded-xl bg-background"
+                                error={tError(errors?.[idx]?.shippingProfile?.dimensions?.lengthMm?.message)}
                               />
-                              <Input
-                                label={t("shippingWidthMm")}
-                                type="number"
-                                value={
-                                  variant.shippingProfile?.dimensions?.widthMm?.toString() ||
-                                  ""
-                                }
-                                onChange={(e) => {
-                                  const sp = {
-                                    ...(variant.shippingProfile || {
-                                      packageType: "box" as PackageType,
-                                      quantityPerPackage: 1,
-                                    }),
-                                  };
-                                  sp.dimensions = {
-                                    ...sp.dimensions,
-                                    widthMm:
-                                      e.target.value === ""
-                                        ? undefined
-                                        : Number(e.target.value),
-                                  };
-                                  updateVariant(idx, "shippingProfile", sp);
-                                }}
-                                placeholder="mm"
-                                className="h-10 rounded-xl bg-background"
-                              />
-                              <Input
-                                label={t("shippingHeightMm")}
-                                type="number"
-                                value={
-                                  variant.shippingProfile?.dimensions?.heightMm?.toString() ||
-                                  ""
-                                }
-                                onChange={(e) => {
-                                  const sp = {
-                                    ...(variant.shippingProfile || {
-                                      packageType: "box" as PackageType,
-                                      quantityPerPackage: 1,
-                                    }),
-                                  };
-                                  sp.dimensions = {
-                                    ...sp.dimensions,
-                                    heightMm:
-                                      e.target.value === ""
-                                        ? undefined
-                                        : Number(e.target.value),
-                                  };
-                                  updateVariant(idx, "shippingProfile", sp);
-                                }}
-                                placeholder="mm"
-                                className="h-10 rounded-xl bg-background"
-                              />
-                              {/* Package Type */}
-                              <div className="flex flex-col gap-1.5">
-                                <Select
-                                  options={PACKAGE_TYPE_OPTIONS}
-                                  label={t("shippingPackageType")}
-                                  value={
-                                    variant.shippingProfile?.packageType ||
-                                    "box"
+                              {variant.shippingProfile?.dimensions?.lengthMm ? (
+                                <p className="mt-1 text-xs text-muted-foreground text-start px-3">
+                                  {
+                                    variant.shippingProfile?.dimensions
+                                      ?.lengthMm
                                   }
-                                  onChange={(e) => {
-                                    const sp = {
-                                      ...(variant.shippingProfile || {
-                                        weightGrams: 0,
-                                        quantityPerPackage: 1,
-                                      }),
-                                    };
-                                    sp.packageType = e.target
-                                      .value as PackageType;
-                                    updateVariant(idx, "shippingProfile", sp);
-                                  }}
-                                  className="h-10 rounded-xl bg-background border border-border/40 text-sm px-3 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                                />
-                              </div>
-                              {/* Qty per package */}
-                              <Input
-                                label={t("shippingQtyPerPackage")}
-                                type="number"
+                                  ×
+                                  {variant.shippingProfile?.dimensions
+                                    ?.widthMm || 0}
+                                  ×
+                                  {variant.shippingProfile?.dimensions
+                                    ?.heightMm || 0}
+                                  <i> mm</i>
+                                </p>
+                              ) : null}
+                            </div>
+
+                            <Input
+                              label={t("shippingWidthMm")}
+                              type="number"
+                              value={
+                                variant.shippingProfile?.dimensions?.widthMm?.toString() ||
+                                ""
+                              }
+                              onChange={(e) => {
+                                const sp = {
+                                  ...(variant.shippingProfile || {
+                                    packageType: "box" as PackageType,
+                                    quantityPerPackage: 1,
+                                  }),
+                                };
+                                sp.dimensions = {
+                                  ...sp.dimensions,
+                                  widthMm:
+                                    e.target.value === ""
+                                      ? undefined
+                                      : Number(e.target.value),
+                                };
+                                updateVariant(idx, "shippingProfile", sp);
+                              }}
+                              placeholder="mm"
+                              className="h-10 rounded-xl bg-background"
+                              error={tError(errors?.[idx]?.shippingProfile?.dimensions?.widthMm?.message)}
+                            />
+                            <Input
+                              label={t("shippingHeightMm")}
+                              type="number"
+                              value={
+                                variant.shippingProfile?.dimensions?.heightMm?.toString() ||
+                                ""
+                              }
+                              onChange={(e) => {
+                                const sp = {
+                                  ...(variant.shippingProfile || {
+                                    packageType: "box" as PackageType,
+                                    quantityPerPackage: 1,
+                                  }),
+                                };
+                                sp.dimensions = {
+                                  ...sp.dimensions,
+                                  heightMm:
+                                    e.target.value === ""
+                                      ? undefined
+                                      : Number(e.target.value),
+                                };
+                                updateVariant(idx, "shippingProfile", sp);
+                              }}
+                              placeholder="mm"
+                              className="h-10 rounded-xl bg-background"
+                              error={tError(errors?.[idx]?.shippingProfile?.dimensions?.heightMm?.message)}
+                            />
+
+                            {/* Package Type */}
+                            <div className="flex flex-col gap-1.5">
+                              <Select
+                                options={PACKAGE_TYPE_OPTIONS}
+                                label={t("shippingPackageType")}
                                 value={
-                                  variant.shippingProfile?.quantityPerPackage?.toString() ||
-                                  "1"
+                                  variant.shippingProfile?.packageType || "box"
                                 }
                                 onChange={(e) => {
                                   const sp = {
                                     ...(variant.shippingProfile || {
-                                      packageType: "box" as PackageType,
                                       weightGrams: 0,
+                                      quantityPerPackage: 1,
                                     }),
                                   };
-                                  sp.quantityPerPackage =
-                                    e.target.value === ""
-                                      ? 1
-                                      : Number(e.target.value);
+                                  sp.packageType = e.target
+                                    .value as PackageType;
                                   updateVariant(idx, "shippingProfile", sp);
                                 }}
-                                placeholder="1"
-                                className="h-10 rounded-xl bg-background"
+                                error={tError(errors?.[idx]?.shippingProfile?.packageType?.message)}
+                                className="h-10 rounded-xl bg-background border border-border/40 text-sm px-3 focus:outline-none focus:ring-1 focus:ring-primary/50"
                               />
                             </div>
+                            {/* Qty per package */}
+                            <Input
+                              label={t("shippingQtyPerPackage")}
+                              type="number"
+                              value={
+                                variant.shippingProfile?.quantityPerPackage?.toString() ||
+                                "1"
+                              }
+                              onChange={(e) => {
+                                const sp = {
+                                  ...(variant.shippingProfile || {
+                                    packageType: "box" as PackageType,
+                                    weightGrams: 0,
+                                  }),
+                                };
+                                sp.quantityPerPackage =
+                                  e.target.value === ""
+                                    ? 1
+                                    : Number(e.target.value);
+                                updateVariant(idx, "shippingProfile", sp);
+                              }}
+                              placeholder="1"
+                              className="h-10 rounded-xl bg-background"
+                              error={tError(errors?.[idx]?.shippingProfile?.quantityPerPackage?.message)}
+                            />
                           </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* Expanded Details Section: Shipping + Components */}
+                  {isExpanded && !isDeleted && (
+                    <tr className="animate-in fade-in slide-in-from-top-2 duration-300">
+                      <td
+                        colSpan={6}
+                        className="px-6 py-6 bg-muted/20 border-b border-border/20"
+                      >
+                        <div className="space-y-8">
+                          {/* ── Shipping Information ─────────────────── */}
 
                           {/* ── Components ────────────────────────────── */}
                           <div>

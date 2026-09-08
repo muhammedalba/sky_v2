@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, use } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
@@ -62,7 +62,8 @@ const TAB_FILTER_PARAMS: Record<ViewTab, Record<string, string>> = {
   unlimited_stock: { isUnlimitedStock: "true" },
 };
 
-export default function ProductsPage() {
+export default function ProductsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   // hooks
   const t = useTranslations("products");
   const { getQueryParam, setQueryParam, setQueryParams } = useQueryState();
@@ -192,7 +193,7 @@ export default function ProductsPage() {
         render: (product: Product, index: number) => (
           <>
             <Link
-              href={`/dashboard/products/${product.slug}/edit`}
+              href={`${locale}/dashboard/products/${product.slug}/edit`}
               className="flex items-center gap-3"
             >
               <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
@@ -447,6 +448,7 @@ export default function ProductsPage() {
     ],
     [
       t,
+      locale,
       router,
       getTrans,
       updateMutation,
