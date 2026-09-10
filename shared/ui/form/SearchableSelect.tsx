@@ -83,7 +83,7 @@ export function SearchableSelect({
   }, [value]);
 
   return (
-    <div className={`relative space-y-2 mt-7 ${className}`} ref={wrapperRef}>
+    <div className={`relative space-y-2   ${className}`} ref={wrapperRef}>
       <Input
         icon={icon}
         iconColor={iconColor}

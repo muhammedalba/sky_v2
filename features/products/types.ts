@@ -72,7 +72,7 @@ export interface Product {
     allowedValues?: string[];
   }[];
   variants?: ProductVariant[];
-  imageCover?: FileAsset | string;
+  imageCover?: FileAsset ;
   images?: (FileAsset | string)[];
   category: Category | string;
   SubCategories?: SubCategory[];
@@ -82,7 +82,7 @@ export interface Product {
   isActive?: boolean;
   isFeatured?: boolean;
   comparePrice?: number;
-  infoProductPdf?: FileAsset | string;
+  infoProductPdf?: FileAsset ;
   ratingsAverage?: number;
   ratingsQuantity?: number;
   totalSold?: number;

@@ -265,20 +265,12 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
       );
       return;
     }
-    setGalleryFiles((prev) => [...prev, file]);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setGalleryPreviews((prev) => [
-          ...prev,
-          {
-            url: e.target?.result as string,
-            publicId: file.name,
-          },
-        ]);
-      }
-    };
-    reader.readAsDataURL(file);
+    const objectUrl = URL.createObjectURL(file);
+  setGalleryFiles((prev) => [...prev, file]);
+  setGalleryPreviews((prev) => [
+    ...prev,
+    { url: objectUrl, publicId: file.name },
+    ]);
   };
 
   const handleGalleryRemove = (index: number) => {
@@ -385,10 +377,10 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
         <form
           id="create-product-form"
           onSubmit={handleSubmit(onSubmit, onInvalidSubmit)}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 lg:grid-cols-4 gap-8"
         >
           {/* ═══ LEFT COLUMN ═══ */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <ProductBasicInfo
               register={register}
               errors={errors}
@@ -430,6 +422,7 @@ export default function CreateProductForm({ locale }: CreateProductFormProps) {
               onGalleryRemove={handleGalleryRemove}
               pdfFile={pdfFile}
               onPdfChange={setPdfFile}
+              onPdfRemove={() => setPdfFile(null)}
             />
 
             <ProductStatusPanel register={register} />

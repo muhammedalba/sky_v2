@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import {
   editProductSchema,
   EditProductInput,
+  EditProductFormInput,
 } from "@/features/products/product.schema";
 import { useUpdateProduct } from "@/features/products/hooks/useProducts";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -24,16 +25,6 @@ import VariantTable, {
   VariantRow,
   ShippingProfileRow,
 } from "./shared/VariantTable";
-
-const formatShippingProfile = (sp?: ShippingProfileRow) => {
-  if (!sp) return undefined;
-  return {
-    weightGrams: sp.weightGrams ?? 0,
-    dimensions: sp.dimensions,
-    packageType: sp.packageType || "box",
-    quantityPerPackage: sp.quantityPerPackage ?? 1,
-  };
-};
 import { ProductBasicInfo } from "./shared/ProductBasicInfo";
 import { ProductStatusPanel } from "./shared/ProductStatusPanel";
 import { ProductMediaPanel } from "./shared/ProductMediaPanel";
@@ -48,41 +39,91 @@ interface EditProductFormProps {
   initialVariants?: ProductVariant[];
 }
 
+const formatShippingProfile = (sp?: ShippingProfileRow) => {
+  if (!sp) return undefined;
+  return {
+    weightGrams: sp.weightGrams ?? 0,
+    dimensions: sp.dimensions,
+    packageType: sp.packageType || "box",
+    quantityPerPackage: sp.quantityPerPackage ?? 1,
+  };
+};
 /**
- * مكون `EditProductForm`
+ * `EditProductForm` Component
  *
- * هذا المكون هو المسؤول عن واجهة "تعديل المنتج" في لوحة التحكم. يتعامل مع بيانات المنتج الأساسية،
- * الصور، التصنيفات، والأهم من ذلك: إدارة المتغيرات (Variants) والسمات (Attributes) المعقدة.
+ * This component handles the "Edit Product" interface within the dashboard. It manages core product data,
+ * images, categories, and—most importantly—the management of complex variants and attributes.
  *
- * ملاحظات للمطورين:
- * - لإضافة حقول جديدة، تأكد من إضافتها في `product.schema.ts`، و`defaultValues` للنموذج، ودالة `onSubmit` لربطها بـ FormData.
- * - تعتمد حالة `variantsToUpdate` على مقارنة التغييرات مع النسخة الأصلية `originalVariants`.
+ * Developer Notes:
+ * - To add new fields, ensure they are included in `product.schema.ts`, the form's `defaultValues`, and the `onSubmit` function to map them to `FormData`.
+ * - The `variantsToUpdate` state relies on comparing changes against the original `originalVariants`.
  */
 export default function EditProductForm({
   locale,
   initialData,
   initialVariants = [],
 }: EditProductFormProps) {
+  // hooks
   const t = useTranslations("products.form");
   const tMessages = useTranslations("products.messages");
-  const tError = (msg?: string) =>
-    msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const toast = useToast();
   const router = useRouter();
   const getTrans = useTrans();
   const updateMutation = useUpdateProduct();
+  // ─── State for existing PDF file (unchanged for now) ─────────
+  // ─── Media State ─────────────────────────────────────
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(
+    typeof initialData.imageCover === "object"
+      ? initialData.imageCover.url
+      : initialData.imageCover || null,
+  );
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<FileAsset[]>(
+    (initialData.images as FileAsset[]) || [],
+  );
+  const [existingImages, setExistingImages] = useState<FileAsset[]>(
+    (initialData.images as FileAsset[]) || [],
+  );
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
 
-  // ─── التهيئة واستخراج البيانات الأولية (Derived Initial Values) ─────────
-  // يتم هنا التأكد من استخراج البيانات من `initialData` وتحويلها لتلائم صيغة حقول النموذج
+  // ─── SubCategory selection state ─────────────────────
+  const [selectedSubCategories, setSelectedSubCategories] = useState<
+    SearchOption[]
+  >(
+    ((initialData?.SubCategories as SubCategory[]) || []).map((sc) => ({
+      _id: typeof sc === "object" ? sc._id : String(sc),
+      name:
+        typeof sc === "object" ? sc.name : { en: "Selected", ar: "تم التحديد" },
+    })),
+  );
+
+  /**
+   * A helper function that takes an object (such as a brand or category) and extracts the name,
+   * whether it is a simple string or a multilingual object using translation.
+   */
+  const getLabel = (obj: unknown): string => {
+    if (!obj || typeof obj !== "object") return "";
+    const item = obj as { name: string | { en: string; ar: string } };
+    if (!item.name) return "";
+    if (typeof item.name === "string") return item.name;
+    return getTrans(item.name as { en: string; ar: string });
+  };
+  const tError = (msg?: string) =>
+    msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
+  const defaultVal = (initialData?: string | { en: string; ar: string }) => {
+    if (typeof initialData === "object") return initialData;
+    return { en: String(initialData || ""), ar: "" };
+  };
+
+  // ─── Initialization and Extraction of Derived Initial Values ​​─────────
+  // Here, data is extracted from `initialData` and converted to match the form field format.
   const defaultTitle = useMemo(() => {
-    if (typeof initialData.title === "object") return initialData.title;
-    return { en: String(initialData.title || ""), ar: "" };
+    return defaultVal(initialData.title);
   }, [initialData.title]);
 
   const defaultDesc = useMemo(() => {
-    if (typeof initialData.description === "object")
-      return initialData.description;
-    return { en: String(initialData.description || ""), ar: "" };
+    return defaultVal(initialData.description);
   }, [initialData.description]);
 
   const initialCategoryId = useMemo(() => {
@@ -104,22 +145,10 @@ export default function EditProductForm({
       : initialData.supplier._id;
   }, [initialData.supplier]);
 
-  /**
-   * دالة مساعدة تأخذ كائناً (مثل الماركة أو التصنيف) وتستخرج منه الاسم،
-   * سواء كان سلسلة نصية بسيطة أو كائناً متعدد اللغات باستخدام الترجمة.
-   */
-  const getLabel = (obj: unknown): string => {
-    if (!obj || typeof obj !== "object") return "";
-    const item = obj as { name: string | { en: string; ar: string } };
-    if (!item.name) return "";
-    if (typeof item.name === "string") return item.name;
-    return getTrans(item.name as { en: string; ar: string });
-  };
-
-  // 🌟 استعادة السمات والبيانات من المتغيرات الموجودة 🌟
-  // خاصة للسمات الرقمية (Number): نستخرج جميع القيم الرقمية المستخدمة
-  // في المتغيرات الحالية `initialVariants` ونضعها في `allowedValues`
-  // لكي تظهر بشكل صحيح في منشئ السمات (Attribute Builder).
+  // 🌟 Recovering tags and data from the existing product 🌟
+  // Specifically for numeric attributes: we extract all numeric values ​​used
+  // in the current state (`initialVariants`) and place them into `allowedValues`
+  // so they are correctly recognized by the Attribute Builder.
   const initialAttributes = useMemo(() => {
     const attrs = initialData.allowedAttributes || [];
     return attrs.map((attr) => {
@@ -142,9 +171,8 @@ export default function EditProductForm({
   }, [initialData.allowedAttributes, initialVariants]);
 
   // ─── Form setup ──────────────────────────────────────
-  const form = useForm<EditProductInput>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(editProductSchema) as any,
+  const form = useForm<EditProductFormInput, unknown, EditProductInput>({
+    resolver: zodResolver(editProductSchema),
     defaultValues: {
       title: defaultTitle as { en: string; ar: string },
       description: defaultDesc as { en: string; ar: string },
@@ -180,36 +208,6 @@ export default function EditProductForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-  // ─── Media State ─────────────────────────────────────
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(
-    typeof initialData.imageCover === "object"
-      ? initialData.imageCover.url
-      : initialData.imageCover || null,
-  );
-  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
-  const [galleryPreviews, setGalleryPreviews] = useState<FileAsset[]>(
-    (initialData.images as FileAsset[]) || [],
-  );
-  const [existingImages, setExistingImages] = useState<FileAsset[]>(
-    (initialData.images as FileAsset[]) || [],
-  );
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-
-  // ─── SubCategory selection state ─────────────────────
-  const [selectedSubCategories, setSelectedSubCategories] = useState<
-    SearchOption[]
-  >(
-    ((initialData?.SubCategories as unknown as SubCategory[]) || []).map(
-      (sc) => ({
-        _id: typeof sc === "object" ? sc._id : String(sc),
-        name:
-          typeof sc === "object"
-            ? sc.name
-            : { en: "Selected", ar: "تم التحديد" },
-      }),
-    ) as SearchOption[],
-  );
 
   // ─── Attribute & Variant State ───────────────────────
   const [attributes, setAttributes] =
@@ -262,13 +260,13 @@ export default function EditProductForm({
   // ─── Search states + data fetching (shared hook) ─────
   const options = useProductFormOptions(watchedCategory);
 
-  // ─── إعادة توليد المتغيرات عند تعديل السمات (Core Variant Logic) ────
+  // ─── Regenerating Variants Upon Attribute Modification (Core Variant Logic) ────
   /**
-   * تُستدعى هذه الدالة كلما قام المستخدم بتعديل السمات (إضافة/حذف سمة، أو إضافة/حذف قيمة).
-   * 1. تحفظ السمات الجديدة وتبني خريطة بالقيم المسموحة.
-   * 2. تفحص المتغيرات الحالية: إذا كانت تعتمد على سمة أو قيمة تم حذفها، يتم نقلها للمحذوفات تلقائياً.
-   * 3. تولد احتمالات المتغيرات الجديدة `cartesian` بناءً على السمات الجديدة.
-   * 4. تستبعد الاحتمالات الموجودة مسبقاً وتضيف المتبقي كمتغيرات جديدة.
+   * This function is called whenever the user modifies attributes (adding/deleting an attribute or adding/deleting a value).
+   * 1. Saves the new attributes and builds a map of allowed values.
+   * 2. Checks existing variants: if a variant relies on an attribute or value that has been deleted, it is automatically moved to the "deleted" list.
+   * 3. Generates new Cartesian variant combinations based on the updated attributes.
+   * 4. Excludes pre-existing combinations and adds the remaining ones as new variants.
    */
   const handleAttributesChange = useCallback(
     (newAttrs: AttributeDefinition[]) => {
@@ -391,10 +389,11 @@ export default function EditProductForm({
     setValue("allowedAttributes", attributes);
   }, [attributes, setValue]);
 
-  // ─── مزامنة حالات المتغيرات مع النموذج (Form Synchronization) ────
-  // نظراً لأن المتغيرات تدار عبر `useState` منفصلة، يعمل هذا الخطاف كجسر
-  // لتحديث قيم `react-hook-form` تلقائياً وإرسالها مع النموذج.
-  // يتم التحقق من أي تعديل (في السعر أو المخزون الخ) بمقارنة `existingVariants` بـ `originalVariants`.
+  // ─── Synchronizing Variant States with the Form ────
+  // Since variants are managed via separate `useState` hooks, this hook acts as a bridge
+  // to automatically update `react-hook-form` values ​​and submit them with the form.
+  // Any modifications (to price, stock, etc.) are detected by comparing `existingVariants`
+  // with `originalVariants`.
   useEffect(() => {
     const changed = existingVariants.filter((v) => {
       if (!v._id) return false;
@@ -451,10 +450,10 @@ export default function EditProductForm({
     setValue,
   ]);
 
-  // ─── إدارة الوسائط والصور (Gallery Handlers) ───────────────────────
+  // ─── (Gallery Handlers) ───────────────────────
   /**
-   * تضيف صورة جديدة لمعرض الصور بحد أقصى 3 صور.
-   * تقوم بتوليد رابط معاينة محلي باستخدام FileReader لعرض الصورة فوراً.
+   * Adds a new image to the image gallery with a maximum limit of 3 images.
+   * Generates a local preview URL using FileReader to display the image immediately.
    */
   const handleGalleryAdd = (file: File) => {
     if (galleryPreviews.length >= 3) {
@@ -465,25 +464,17 @@ export default function EditProductForm({
       );
       return;
     }
+    const objectUrl = URL.createObjectURL(file);
     setGalleryFiles((prev) => [...prev, file]);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setGalleryPreviews((prev) => [
-          ...prev,
-          {
-            url: e.target?.result as string,
-            publicId: file.name,
-          },
-        ]);
-      }
-    };
-    reader.readAsDataURL(file);
+    setGalleryPreviews((prev) => [
+      ...prev,
+      { url: objectUrl, publicId: file.name },
+    ]);
   };
 
   /**
-   * تحذف صورة من المعرض بناءً على الفهرس.
-   * تفرّق بين الصور الموجودة مسبقاً (روابط) والصور المرفوعة حديثاً (ملفات).
+   * Deletes an image from the gallery based on its index.
+   * Distinguishes between pre-existing images (URLs) and newly uploaded ones (files).
    */
   const handleGalleryRemove = (index: number) => {
     const target = galleryPreviews[index];
@@ -500,12 +491,12 @@ export default function EditProductForm({
     setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ─── الإرسال والحفظ (Submit) ─────────────────────────────────────────
+  // ─── Submission and Saving (Submit) ─────────────────────────────────────────
   /**
-   * دالة الإرسال الرئيسية.
-   * - تتحقق من وجود صورة غلاف.
-   * - تُجهز `FormData` لإرسال البيانات والملفات معاً.
-   * - تفصل المتغيرات في عمليات إنشاء، تحديث، وحذف.
+   * Main submission function.
+   * - Checks for the presence of a cover image.
+   * - Prepares `FormData` to send data and files together.
+   * - Separates variables for create, update, and delete operations.
    */
   const onSubmit = async (data: EditProductInput) => {
     const formData = new FormData();
@@ -688,6 +679,7 @@ export default function EditProductForm({
               onGalleryRemove={handleGalleryRemove}
               pdfFile={pdfFile}
               onPdfChange={setPdfFile}
+              onPdfRemove={() => setPdfFile(null)}
               existingPdfLabel={
                 initialData.infoProductPdf ? "Current PDF attached" : undefined
               }

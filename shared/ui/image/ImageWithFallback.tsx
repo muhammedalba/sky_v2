@@ -22,7 +22,7 @@ export default function ImageWithFallback({
   const [error, setError] = useState(false);
   const resolvedSrc = getImageUrl(src);
 
-  if (error || !resolvedSrc || resolvedSrc === "") {
+  if (error || !resolvedSrc || resolvedSrc === null) {
     return (
       <div
         className={cn(

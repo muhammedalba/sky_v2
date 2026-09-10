@@ -240,7 +240,7 @@ export function ProductFiltersBar() {
               getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
               onSearch={(term: string) => setCategorySearch(term)}
               onSelect={(id: string | number) => setFilters({ category: String(id), SubCategories: '' })}
-              className="h-10"
+              className="h-10 mt-7"
             />
             <SearchableSelect
               label="Search Brands"
@@ -251,7 +251,7 @@ export function ProductFiltersBar() {
               getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
               onSearch={(term: string) => setBrandSearch(term)}
               onSelect={(id: string | number) => setFilter('brand', String(id))}
-              className="h-10 my-5"
+              className="h-10 my-5 mt-7"
             />
             <SearchableSelect
               icon={Layers}
@@ -262,7 +262,7 @@ export function ProductFiltersBar() {
               getDisplayValue={(opt: SearchOption) => getTrans(opt.name as LocalizedString)}
               onSearch={(term: string) => setSubCategorySearch(term)}
               onSelect={(id: string | number) => setFilter('SubCategories', String(id))}
-              className="h-10"
+              className="h-10 mt-7"
             />
           </FilterSection>
 

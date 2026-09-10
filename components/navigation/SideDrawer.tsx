@@ -39,9 +39,9 @@ function DrawerCategoryItem({
           onClick={onClose}
           className="flex-1 flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent/50 transition-colors group"
         >
-          {category.image && (
+          {category.image?.url && (
             <Image
-              src={category.image}
+              src={category.image.url}
               alt=""
               width={32}
               height={32}

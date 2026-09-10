@@ -6,6 +6,7 @@ import { Link } from "@/navigation";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import { FileAsset } from "@/shared/types/file-asset";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -19,7 +20,7 @@ export interface CategoryItem {
   _id: string;
   name: string;
   slug?: string;
-  image?: string;
+  image?: FileAsset;
   SubCategories?: SubCategoryItem[];
 }
 
@@ -190,9 +191,9 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
               : "bg-muted/10  text-foreground/80 ",
           )}
         >
-          {category.image && (
+          {category.image?.url && (
             <ImageWithFallback
-              src={category.image}
+              src={category.image.url}
               alt={`category: ${category.name}`}
               width={20}
               height={20}
@@ -235,9 +236,9 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
             onClick={closeDropdown}
             className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary/8 text-sm font-bold text-primary transition-colors mb-1 border-b border-border/20 pb-2"
           >
-            {category.image && (
+            {category.image?.url && (
               <ImageWithFallback
-                src={category.image}
+                src={category.image.url}
                 alt={category.name}
                 width={20}
                 height={20}

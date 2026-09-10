@@ -8,7 +8,7 @@ import { SettingsIcon } from "@/shared/ui/Icons";
 interface ProductStatusPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>;
-  /** Initial checked states — used only in Edit mode (create uses schema defaults). */
+
   defaultValues?: {
     isUnlimitedStock?: boolean;
     isFeatured?: boolean;
@@ -24,15 +24,15 @@ export function ProductStatusPanel({ register, defaultValues }: ProductStatusPan
   const t = useTranslations('products.form');
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
-      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
+    <div className="rounded-xl border border-border/50 bg-card space-y-5">
+      <div className="bg-accent/60 rounded-t-lg p-4 flex items-center gap-2 border-b border-border/40 pb-4">
         <SettingsIcon className="w-5 h-5 text-muted-foreground" />
         <div>
-          <h3 className="font-bold text-sm">{t('statusSettings')}</h3>
+          <h3 className="font-bold text-sm title-gradient">{t('statusSettings')}</h3>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 p-4">
         <Switch
           {...register('isUnlimitedStock')}
           label={t('unlimitedStock')}

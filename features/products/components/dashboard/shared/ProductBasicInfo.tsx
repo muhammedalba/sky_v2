@@ -102,16 +102,16 @@ export function ProductBasicInfo({ register, errors, tError, watch, setValue }: 
   const usesAr = watch?.('uses.ar') || [];
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
-      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <EditIcon className="w-5 h-5 text-muted-foreground" />
+    <div className="rounded-xl border border-border/50 bg-card  space-y-5">
+      <div className="flex items-center gap-2 border-b border-border/40 p-4 bg-accent/60 rounded-t-xl">
+        <EditIcon className="w-5 h-5 text-primary" />
         <div>
-          <h3 className="font-bold text-sm">{t('basicInformation')}</h3>
+          <h3 className="font-bold text-sm title-gradient">{t('basicInformation')}</h3>
           <p className="text-xs text-muted-foreground">{t('basicDesc')}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
         <div className="space-y-2">
           <Input
             icon={EditIcon}

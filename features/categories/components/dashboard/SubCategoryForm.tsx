@@ -137,6 +137,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
         error={tError(errors.category?.message)}
         initialDisplayValue={initialCategoryLabel}
         createLink={`/${locale}/dashboard/categories`}
+        className='mt-4'
       />
 
       <div className="flex gap-3 pt-4">

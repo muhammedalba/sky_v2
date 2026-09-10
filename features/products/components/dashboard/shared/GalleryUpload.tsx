@@ -1,7 +1,7 @@
 "use client";
 
 import  { useState } from "react";
-import { ChevronDownIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
+import { CarouselIcon, ChevronDownIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
 import Image from "next/image";
 import { FileAsset } from "@/shared/types/file-asset";
 
@@ -22,13 +22,14 @@ export default function GalleryUpload({
 }: GalleryUploadProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   return (
-    <div className="space-y-3 pt-4 border-t border-border/40">
+    <div className="space-y-3  border-t border-border/40">
       <div
-        className="flex items-center justify-between cursor-pointer group"
+        className="flex items-center justify-between cursor-pointer group p-4 bg-accent/60 "
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2">
-          <h4 className="font-bold text-xs text-muted-foreground uppercase tracking-wider">
+          <CarouselIcon className="w-6 h-6 text-destructive/60" />
+          <h4 className="font-bold text-xs title-gradient uppercase tracking-wider">
             {t("galleryImages")}
           </h4>
           {previews.length > 0 && (
@@ -45,7 +46,7 @@ export default function GalleryUpload({
       </div>
 
       {isExpanded ? (
-        <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300 p-4">
           <p className="text-xs text-muted-foreground">{t("galleryDesc")}</p>
           <div className="flex flex-wrap gap-3">
             {previews.map((src, idx) => (
@@ -86,7 +87,7 @@ export default function GalleryUpload({
           </div>
         </div>
       ) : previews.length > 0 ? (
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex items-center gap-2 p-4">
           <div className="flex -space-x-3 overflow-hidden">
             {previews.slice(0, 4).map((src, i) => (
               <Image

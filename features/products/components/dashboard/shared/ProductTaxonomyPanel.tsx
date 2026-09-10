@@ -44,22 +44,22 @@ interface ProductTaxonomyPanelProps {
   initialCategoryLabel?: string | undefined;
 
   // Data + search callbacks from useProductFormOptions
-  categoriesData: any;
+  categoriesData: { data?: SearchOption[] } | undefined;
   isCategoriesFetching: boolean;
   onCategorySearch: (term: string) => void;
   onCategoryOpen: () => void;
 
-  brandsData: any;
+  brandsData: { data?: SearchOption[] } | undefined;
   isBrandsFetching: boolean;
   onBrandSearch: (term: string) => void;
   onBrandOpen: () => void;
 
-  suppliersData: any;
+  suppliersData: { data?: SearchOption[] } | undefined;
   isSuppliersFetching: boolean;
   onSupplierSearch: (term: string) => void;
   onSupplierOpen: () => void;
 
-  subCategoriesData: any;
+  subCategoriesData: { data?: SearchOption[] } | undefined;
   isSubCategoriesFetching: boolean;
   onSubCategorySearch: (term: string) => void;
   onSubCategoryOpen: () => void;
@@ -107,16 +107,18 @@ export function ProductTaxonomyPanel({
   const getTrans = useTrans();
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
-      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <CategoriesIcon className="w-5 h-5 text-muted-foreground" />
+    <div className="rounded-xl border border-border/50 bg-card ">
+      <div className="flex items-center gap-2 border-b border-border/50 bg-accent/60 rounded-t-lg p-4">
+        <CategoriesIcon className="w-5 h-5 text-warning" />
         <div>
-          <h3 className="font-bold text-sm">{t("taxonomy")}</h3>
+          <h3 className="font-bold text-sm title-gradient">{t("taxonomy")}</h3>
           <p className="text-xs text-muted-foreground">{t("taxonomyDesc")}</p>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div
+        className="space-y-4 p-4"
+      >
         {/* Brand */}
         <SearchableSelect
           icon={BrandsIcon}
@@ -133,6 +135,7 @@ export function ProductTaxonomyPanel({
           onSelect={onBrandChange}
           initialDisplayValue={initialBrandLabel}
           createLink={`/${locale}/dashboard/brands`}
+          className="mt-1"
         />
 
         {/* Supplier */}

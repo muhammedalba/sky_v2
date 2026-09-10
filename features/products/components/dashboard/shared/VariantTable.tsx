@@ -535,7 +535,7 @@ export default function VariantTable({
                     </tr>
                   )}
 
-                  {/* Expanded Details Section: Shipping + Components */}
+                  {/* Expanded Details Section: Components */}
                   {isExpanded && !isDeleted && (
                     <tr className="animate-in fade-in slide-in-from-top-2 duration-300">
                       <td
@@ -543,8 +543,6 @@ export default function VariantTable({
                         className="px-6 py-6 bg-muted/20 border-b border-border/20"
                       >
                         <div className="space-y-8">
-                          {/* ── Shipping Information ─────────────────── */}
-
                           {/* ── Components ────────────────────────────── */}
                           <div>
                             <div className="flex items-center justify-between mb-5">

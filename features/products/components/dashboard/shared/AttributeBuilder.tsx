@@ -406,17 +406,17 @@ export default function AttributeBuilder({
   );
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card shadow-sm p-6 space-y-5">
-      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <CheckIcon className="w-5 h-5 text-muted-foreground" />
-        <h3 className="font-bold text-sm">{t("title")}</h3>
+    <div className="rounded-xl border border-border/50 bg-card  space-y-5 ">
+      <div className="flex items-center gap-2 border-b border-border/40  bg-accent/60 rounded-t-xl p-4">
+        <CheckIcon className="w-5 h-5 text-primary" />
+        <h3 className="font-bold text-sm title-gradient">{t("title")}</h3>
       </div>
       <ErrorMessage
         message={t("weightWarning")}
         showIcon
-        className=" items-start gap-3 p-4 md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning"
+        className=" items-start gap-3 p-4 m-4 md:text-sm font-medium leading-relaxed  bg-warning/5 border border-warning/30 text-warning"
       />
-      <div className="space-y-6">
+      <div className="space-y-6 p-4">
         {attributes.map((attr, index) => (
           <AttributeRow
             key={attr.id || index} // استخدام ID إذا توفر

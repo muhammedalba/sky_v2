@@ -21,6 +21,7 @@ const badgeVariants = cva(
         warning:
           "border-transparent bg-warning/10 text-warning/80  hover:bg-warning/80 hover:text-warning-foreground",
         outline: " px-4 py-2 rounded-full bg-foreground/5 border border-white/10 backdrop-blur-md",
+
       },
     },
     defaultVariants: {

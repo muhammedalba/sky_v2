@@ -73,10 +73,17 @@ const ProductCard = ({ item, commonT }: Props) => {
       if (Array.isArray(item.uses)) {
         // حالة قديمة: مصفوفة مباشرة
         uses = item.uses as string[];
-      } else if (typeof item.uses === 'object' && ('en' in item.uses || 'ar' in item.uses)) {
+      } else if (
+        typeof item.uses === "object" &&
+        ("en" in item.uses || "ar" in item.uses)
+      ) {
         // حالة all_langs=true: كائن { en: string[], ar: string[] }
         const localizedUses = item.uses as { en?: string[]; ar?: string[] };
-        uses = localizedUses[locale as 'en' | 'ar'] ?? localizedUses.en ?? localizedUses.ar ?? [];
+        uses =
+          localizedUses[locale as "en" | "ar"] ??
+          localizedUses.en ??
+          localizedUses.ar ??
+          [];
       }
     }
 
@@ -128,7 +135,7 @@ const ProductCard = ({ item, commonT }: Props) => {
   );
 
   return (
-    <Card className="group flex flex-col bg-accent/40 hover:shadow-xl transition-all duration-500 rounded-4xl overflow-hidden border-border/50 h-full relative hover:scale-[1.01]">
+    <Card className="group flex flex-col bg-accent/40 hover:shadow-sm transition-all duration-500 rounded-4xl overflow-hidden  h-full relative hover:scale-[1.01]">
       <div className="aspect-square relative overflow-hidden flex items-center justify-center">
         <div
           dir={"ltr"}
@@ -158,32 +165,25 @@ const ProductCard = ({ item, commonT }: Props) => {
         </div>
 
         <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
-          <Badge
-            variant={"warning"}
-            className="text-[10px] bg-warning text-warning-foreground font-black tracking-wider uppercase px-2.5 py-1 rounded-md shadow-sm"
-          >
-            {item.isFeatured ? commonT("featured") : " "}
-          </Badge>
+          <div className=" text-[10px] bg-warning text-warning-foreground font-black tracking-wider uppercase px-2.5 py-1">{item.isFeatured ? commonT("featured") : " "}</div>
         </div>
 
-        {item.imageCover ? (
+        {item.imageCover?.url && (
           <ImageWithFallback
-            src={item.imageCover}
+            src={item.imageCover.url}
             alt={getTrans(item.title)}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-contain group-hover:scale-110 transition-transform duration-500 "
             loading="lazy"
           />
-        ) : (
-          <PackageIcon className="w-24 h-24 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
         )}
       </div>
 
       {/* product details */}
       <div className=" flex flex-col grow justify-between">
         <div className="w-full px-6 flex-1 bg-background flex-col flex justify-between">
-          {/* category badges */}
+          {/* category badges 
           <div className="border-b border-border/40 flex flex-wrap items-center pb-3 gap-2">
             <Badge
               variant="default"
@@ -191,7 +191,7 @@ const ProductCard = ({ item, commonT }: Props) => {
             >
               {categoryName}
             </Badge>
-          </div>
+          </div>*/}
 
           {/* product title */}
           <h3 className="text-lg font-semibold text-foreground/90 my-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">

@@ -30,9 +30,9 @@ export default function SidebarHeader({ Collapsed = false, onNavigate, }: { Coll
           <ImageWithFallback
             src={settings.logo || "/assets/images/auth-logo.png"}
             alt={`${siteName} Logo`}
-            width={40}
-            height={40}
-            className="object-contain"
+            width={500}
+            height={300}
+            className="object-contain w-auto h-auto"
           />
         </div>
         {!isCollapsed && (

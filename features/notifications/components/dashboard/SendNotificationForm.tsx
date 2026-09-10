@@ -159,6 +159,7 @@ export default function SendNotificationForm() {
                   placeholder={t('selectUserPlaceholder')}
                   icon={UserIcon}
                   label={t('selectUser')}
+                  className='mt-5'
                   getDisplayValue={(opt) => typeof opt.name === 'string' ? opt.name : opt.name?.en || ''}
                 />
               </div>
