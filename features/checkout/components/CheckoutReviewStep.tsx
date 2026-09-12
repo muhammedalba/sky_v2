@@ -1,7 +1,7 @@
 "use client";
 
 import  { useMemo } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2Icon as CheckCircle2, Loader2Icon as Loader2 } from "@/shared/ui/Icons";
 import { useFormContext, useWatch } from "react-hook-form";
 import { CheckoutFormValues } from "../schemas/checkout.schema";
 

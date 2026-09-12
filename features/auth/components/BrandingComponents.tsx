@@ -1,17 +1,17 @@
-import { LucideIcon } from 'lucide-react';
+import { type IconProps } from '@/shared/ui/Icons';
 import { cn } from '@/lib/utils';
 
 // --- Types ---
 
 export interface FeaturePillProps {
-  icon?: LucideIcon;
+  icon?: React.ComponentType<IconProps>;
   label: string;
   iconColor?: string;
   className?: string;
 }
 
 export interface PreviewStatCardProps {
-  icon: LucideIcon;
+  icon: React.ComponentType<IconProps>;
   badgeText: string;
   value: string;
   label: string;

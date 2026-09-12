@@ -17,6 +17,7 @@ export default function ImageWithFallback({
   alt,
   fallback,
   className,
+  fill,
   ...props
 }: ImageWithFallbackProps) {
   const [error, setError] = useState(false);
@@ -27,6 +28,7 @@ export default function ImageWithFallback({
       <div
         className={cn(
           "flex items-center justify-center bg-secondary/50",
+          fill && "absolute inset-0 w-full h-full",
           className,
         )}
       >
@@ -42,6 +44,10 @@ export default function ImageWithFallback({
       src={resolvedSrc}
       alt={alt}
       className={className}
+      fill={fill}
+      loader={() => {
+        return "/assets/images/default.png";
+      }}
       onError={() => setError(true)}
       {...props}
     />

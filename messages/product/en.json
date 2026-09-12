@@ -1,0 +1,64 @@
+{
+  "linkCopied": "Link copied successfully!",
+  "badges": {
+    "bestSeller": "Best Seller",
+    "discount": "{percent}% off",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "readyToShip": "Ready to Ship"
+  },
+  "gallery": {
+    "addToWishlist": "Add to Wishlist",
+    "shareProduct": "Share Product",
+    "prevImage": "Previous Image",
+    "nextImage": "Next Image"
+  },
+  "info": {
+    "ratingsCount": "({count} reviews)",
+    "brand": "Brand",
+    "category": "Category",
+    "subCategory": "Sub-category",
+    "startingFrom": "Starting from"
+  },
+  "actions": {
+    "buyNow": "Buy Now",
+    "needHelp": "Need help?",
+    "contactSupport": "Contact Support"
+  },
+  "documentation": {
+    "title": "Technical Documentation",
+    "pdfLabel": "Product Data Sheet (PDF)",
+    "pdfDesc": "Technical specifications and installation guide"
+  },
+  "uses": {
+    "title": "Uses & Features"
+  },
+  "tabs": {
+    "order": "Order Now",
+    "reviews": "Reviews"
+  },
+  "order": {
+    "chooseSpecs": "Choose Product Specifications",
+    "quantity": "Quantity",
+    "yourSelection": "Your Selection",
+    "noSelection": "No selection yet",
+    "unitPrice": "Unit Price",
+    "totalPrice": "Total Price"
+  },
+  "reviews": {
+    "title": "Customer Reviews",
+    "empty": "No reviews yet."
+  },
+  "units": {
+    "box": "Box",
+    "bag": "Bag",
+    "pallet": "Pallet",
+    "roll": "Roll",
+    "envelope": "Envelope",
+    "drum": "Drum",
+    "gallon": "Gallon",
+    "board": "Board",
+    "piece": "Piece",
+    "custom": "Unit"
+  }
+}

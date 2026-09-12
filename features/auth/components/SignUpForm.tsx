@@ -1,21 +1,28 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { useRegister } from '@/features/auth/hooks/useAuth';
-import { registerSchema, type RegisterInput } from '@/features/auth/auth.schema';
-import { Button } from '@/shared/ui/Button';
-import { useToast } from '@/shared/hooks/useToast';
-import { User, Mail, Lock } from 'lucide-react';
-import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
-import { SocialLoginSection } from './AuthClientComponents';
-import { useSettings } from '@/app/providers/SettingsProvider';
-import { SmartForm } from '@/shared/ui/form/SmartForm';
-import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRegister } from "@/features/auth/hooks/useAuth";
+import {
+  registerSchema,
+  type RegisterInput,
+} from "@/features/auth/auth.schema";
+import { Button } from "@/shared/ui/Button";
+import { useToast } from "@/shared/hooks/useToast";
+import {
+  UserIcon as User,
+  MailIcon as Mail,
+  LockIcon as Lock,
+} from "@/shared/ui/Icons";
+import { AuthHeader, AuthFooter, AuthMobileLogo } from "./AuthSharedComponents";
+import { SocialLoginSection } from "./AuthClientComponents";
+import { useSettings } from "@/app/providers/SettingsProvider";
+import { SmartForm } from "@/shared/ui/form/SmartForm";
+import { SmartInput, SmartPasswordInput } from "@/shared/ui/form/SmartFields";
 
 export default function SignUpForm({ locale }: { locale: string }) {
   const router = useRouter();
-  const t = useTranslations('auth');
+  const t = useTranslations("auth");
   const toast = useToast();
   const settings = useSettings();
   const isRegistrationDisabled = !settings.allowRegistration;
@@ -24,7 +31,7 @@ export default function SignUpForm({ locale }: { locale: string }) {
 
   const onSubmit = async (data: RegisterInput) => {
     if (isRegistrationDisabled) {
-      toast.error(t('registrationDisabled'));
+      toast.error(t("registrationDisabled"));
       return;
     }
     const formDataToSubmit = new FormData();
@@ -32,33 +39,73 @@ export default function SignUpForm({ locale }: { locale: string }) {
       formDataToSubmit.append(key, value as string);
     });
     await registerMutation.mutateAsync(formDataToSubmit);
-    toast.success(t('signupSuccess'));
+    toast.success(t("signupSuccess"));
     router.push(`/login?signup=success`);
   };
 
   return (
     <div className="w-full space-y-6">
-      <AuthMobileLogo subtitle={t('constructionPortal')} className="lg:hidden" />
+      <AuthMobileLogo
+        subtitle={t("constructionPortal")}
+        className="lg:hidden"
+      />
 
-      <AuthHeader title={t('createAccount')} description={t('signupDescription')} />
+      <AuthHeader
+        title={t("createAccount")}
+        description={t("signupDescription")}
+      />
 
       <SmartForm
         schema={registerSchema}
-        defaultValues={{ name: '', email: '', password: '', confirmPassword: '' }}
+        defaultValues={{
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        }}
         onSubmit={onSubmit}
-        successMessage={isRegistrationDisabled ? t('registrationDisabled') : undefined}
-        networkErrorMessage={isRegistrationDisabled ? t('registrationDisabled') :t('serverError')}
+        successMessage={
+          isRegistrationDisabled ? t("registrationDisabled") : undefined
+        }
+        networkErrorMessage={
+          isRegistrationDisabled ? t("registrationDisabled") : t("serverError")
+        }
         isRegistrationDisabled
       >
         <div className="space-y-4">
-          <SmartInput name="name" label={t('name')} icon={User} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
-          <SmartInput name="email" label={t('email')} icon={Mail} type="email" disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
+          <SmartInput
+            name="name"
+            label={t("name")}
+            icon={User}
+            disabled={registerMutation.isPending || isRegistrationDisabled}
+            className="h-12"
+          />
+          <SmartInput
+            name="email"
+            label={t("email")}
+            icon={Mail}
+            type="email"
+            disabled={registerMutation.isPending || isRegistrationDisabled}
+            className="h-12"
+          />
 
           <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-3">
             <div className="">
-              <SmartPasswordInput name="password" label={t('password')} icon={Lock} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
+              <SmartPasswordInput
+                name="password"
+                label={t("password")}
+                icon={Lock}
+                disabled={registerMutation.isPending || isRegistrationDisabled}
+                className="h-12"
+              />
             </div>
-            <SmartPasswordInput name="confirmPassword" label={t('confirmPassword')} icon={Lock} disabled={registerMutation.isPending || isRegistrationDisabled} className="h-12" />
+            <SmartPasswordInput
+              name="confirmPassword"
+              label={t("confirmPassword")}
+              icon={Lock}
+              disabled={registerMutation.isPending || isRegistrationDisabled}
+              className="h-12"
+            />
           </div>
         </div>
 
@@ -69,13 +116,20 @@ export default function SignUpForm({ locale }: { locale: string }) {
           isLoading={registerMutation.isPending}
           disabled={registerMutation.isPending || isRegistrationDisabled}
         >
-          {t('signupButton')}
+          {t("signupButton")}
         </Button>
       </SmartForm>
 
-      <SocialLoginSection dividerText={t('orContinueWith')} disabled={isRegistrationDisabled} />
+      <SocialLoginSection
+        dividerText={t("orContinueWith")}
+        disabled={isRegistrationDisabled}
+      />
 
-      <AuthFooter text={t('alreadyHaveAccount')} linkText={t('loginLink')} linkHref={`/${locale}/login`} />
+      <AuthFooter
+        text={t("alreadyHaveAccount")}
+        linkText={t("loginLink")}
+        linkHref={`/${locale}/login`}
+      />
     </div>
   );
 }

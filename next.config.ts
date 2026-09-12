@@ -1,3 +1,4 @@
+import path from "path";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "./lib/env";
@@ -6,6 +7,13 @@ const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["172.20.10.7"],
+  // Pin the workspace root to this app: the parent folder also has a
+  // package-lock.json (root "run both client+server" convenience script),
+  // which otherwise makes Turbopack infer the wrong root and fail to
+  // resolve dependencies like tailwindcss.
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   /**
    * Reverse Proxy configuration to resolve Third-Party Cookie restrictions.
    *

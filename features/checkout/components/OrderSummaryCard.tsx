@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Tag, ShieldCheck, Lock } from "lucide-react";
+import { TagIcon as Tag, ShieldCheckIcon as ShieldCheck, LockIcon as Lock } from "@/shared/ui/Icons";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { CouponValidationResult } from "@/features/cart/hooks/useCart";
 import ErrorMessage from "@/shared/ui/ErrorMessage";

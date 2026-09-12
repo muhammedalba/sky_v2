@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, memo, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftIcon as ChevronLeft, ChevronRightIcon as ChevronRight } from "@/shared/ui/Icons";
 import { Link } from "@/navigation";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -66,9 +66,9 @@ const ScrollArrow = memo(function ScrollArrow({
       )}
     >
       {showLeftArrow ? (
-        <ChevronLeft size={16} strokeWidth={2.5} />
+        <ChevronLeft className="w-4 h-4" />
       ) : (
-        <ChevronRight size={16} strokeWidth={2.5} />
+        <ChevronRight className="w-4 h-4" />
       )}
     </button>
   );
@@ -204,10 +204,8 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
           <span>{category.name}</span>
           {hasSubs && (
             <ChevronRight
-              size={14}
-              strokeWidth={2}
               className={cn(
-                "transition-transform duration-200",
+                "w-3.5 h-3.5 transition-transform duration-200",
                 open && "rotate-90",
               )}
             />

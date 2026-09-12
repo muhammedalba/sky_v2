@@ -7,7 +7,7 @@ import {
 } from "@/features/auth/auth.schema";
 import { Button } from "@/shared/ui/Button";
 import { useTranslations } from "next-intl";
-import { Lock } from "lucide-react";
+import { LockIcon as Lock } from "@/shared/ui/Icons";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/shared/hooks/useToast";
 import { SmartForm } from "@/shared/ui/form/SmartForm";

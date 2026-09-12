@@ -19,22 +19,22 @@ import { Link } from "@/navigation";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import {
-  SlidersHorizontal,
-  Search,
-  X,
-  ChevronDown,
-  Tag,
-  Briefcase,
-  Coins,
-  RotateCcw,
-  ShoppingBag,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
-  TrendingUp,
-  Award,
-  Filter,
-} from "lucide-react";
+  SlidersHorizontalIcon as SlidersHorizontal,
+  SearchIcon as Search,
+  XIcon as X,
+  ChevronDownIcon as ChevronDown,
+  TagIcon as Tag,
+  BriefcaseIcon as Briefcase,
+  CoinsIcon as Coins,
+  RotateCcwIcon as RotateCcw,
+  ShoppingBagIcon as ShoppingBag,
+  ChevronLeftIcon as ChevronLeft,
+  ChevronRightIcon as ChevronRight,
+  SparklesIcon as Sparkles,
+  TrendingUpIcon as TrendingUp,
+  AwardIcon as Award,
+  FilterIcon as Filter,
+} from "@/shared/ui/Icons";
 import ProductCard from "@/components/ProductCard";
 
 export default function ProductsClient() {

@@ -3,12 +3,11 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/shared/ui/Input';
 import PasswordInput from '@/shared/ui/PasswordInput';
-import { LucideIcon } from 'lucide-react';
 
 interface BaseFieldProps {
   name: string;
   label: string;
-  icon?: LucideIcon;
+  icon?: React.ComponentType<{ className?: string }>;
   className?: string;
   disabled?: boolean;
   errorNamespace?: string;

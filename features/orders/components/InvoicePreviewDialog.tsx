@@ -4,8 +4,7 @@ import React, { useRef, useState, useCallback, useEffect } from "react";
 import Modal from "@/shared/ui/Modal";
 import { Button } from "@/shared/ui/Button";
 import { Order } from "@/features/orders/types";
-import { DownloadIcon, SpinnerIcon } from "@/shared/ui/Icons";
-import { Printer as PrinterIcon } from "lucide-react";
+import { DownloadIcon, SpinnerIcon, PrinterIcon } from "@/shared/ui/Icons";
 import { useSettings } from "@/features/settings/hooks/useSettings";
 
 import { useInvoiceData } from "./invoice/hooks/useInvoiceData";

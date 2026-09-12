@@ -1,6 +1,7 @@
 import common from './messages/common/en.json';
 import dashboard from './messages/dashboard/en.json';
 import products from './messages/products/en.json';
+import product from './messages/product/en.json';
 import categories from './messages/categories/en.json';
 import orders from './messages/orders/en.json';
 import users from './messages/users/en.json';
@@ -34,6 +35,7 @@ type Messages = {
   taxes: typeof common.taxes;
   dashboard: typeof dashboard;
   products: typeof products;
+  product: typeof product;
   categories: typeof categories;
   orders: typeof orders;
   users: typeof users;

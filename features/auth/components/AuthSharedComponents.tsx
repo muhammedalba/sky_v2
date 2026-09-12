@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Lock } from 'lucide-react';
+import { LockIcon as Lock } from '@/shared/ui/Icons';
 import Link from 'next/link';
 import { FeaturePill } from './BrandingComponents';
 import Image from 'next/image';

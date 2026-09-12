@@ -41,25 +41,26 @@ export function formatCurrency(
   // 2. Adjust currency amount based on language.
   // If Arabic: use base currency directly.
   // If English/other: divide by exchange rate (e.g., 37.5 / 3.75 = 10 USD)
-  let finalAmount = amountInBaseCurrency;
+  let finalAmount = Number(amountInBaseCurrency) || 0;
   if (!isArabic && exchangeRate && exchangeRate > 0) {
-    finalAmount = amountInBaseCurrency / exchangeRate;
+    finalAmount = finalAmount / exchangeRate;
   }
 
-  // 3. Determine currency code: base currency code for Arabic, USD for others
-  const code = isArabic ? currencyCode || "SAR" : "USD";
-
-  // 4. Determine format locale
-  const formatLocale = isArabic ? "ar-SA" : "en-US";
-
-  // 5. Return the formatted currency string
-  return new Intl.NumberFormat(formatLocale, {
-    style: "currency",
-    currency: code,
-    currencyDisplay: "symbol",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2, // Ensures exact 2 decimal places
+  // 3. Format number with clean grouping and dynamic decimals (no trailing .00 if whole integer)
+  const isInteger = Number.isInteger(finalAmount);
+  const formattedNumber = new Intl.NumberFormat(isArabic ? "ar-SA-u-nu-latn" : "en-US", {
+    minimumFractionDigits: isInteger ? 0 : 2,
+    maximumFractionDigits: 2,
   }).format(finalAmount);
+
+  // 4. Return formatted currency with clean modern label
+  if (isArabic) {
+    const symbol = !currencyCode || currencyCode === "SAR" ? "ر.س" : currencyCode;
+    return `${formattedNumber} ${symbol}`;
+  }
+
+  const code = currencyCode || "USD";
+  return `${formattedNumber} ${code}`;
 }
 
 /**

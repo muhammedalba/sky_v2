@@ -11,13 +11,13 @@ import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import { 
-  X, 
-  ShoppingBag, 
-  Minus, 
-  Plus, 
-  AlertCircle, 
-  CheckCircle2 
-} from "lucide-react";
+  XIcon as X, 
+  ShoppingBagIcon as ShoppingBag, 
+  MinusIcon as Minus, 
+  PlusIcon as Plus, 
+  AlertCircleIcon as AlertCircle, 
+  CheckCircle2Icon as CheckCircle2 
+} from "@/shared/ui/Icons";
 
 interface QuickAddModalProps {
   isOpen: boolean;

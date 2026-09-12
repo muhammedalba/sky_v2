@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon as ChevronDown } from "@/shared/ui/Icons";
 import { Link } from "@/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -67,10 +67,8 @@ function DrawerCategoryItem({
             aria-label={expanded ? "Collapse" : "Expand"}
           >
             <ChevronDown
-              size={16}
-              strokeWidth={2}
               className={cn(
-                "transition-transform duration-200",
+                "w-4 h-4 transition-transform duration-200",
                 expanded && "rotate-180",
               )}
             />

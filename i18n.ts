@@ -11,6 +11,8 @@ const loaders: Record<string, (locale: string) => Promise<unknown>> = {
     import(`./messages/dashboard/${locale}.json`).then((m) => m.default),
   products: (locale) =>
     import(`./messages/products/${locale}.json`).then((m) => m.default),
+  product: (locale) =>
+    import(`./messages/product/${locale}.json`).then((m) => m.default),
   categories: (locale) =>
     import(`./messages/categories/${locale}.json`).then((m) => m.default),
   orders: (locale) =>

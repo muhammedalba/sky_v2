@@ -1,16 +1,15 @@
-'use client';
+"use client";
 
-import  { memo } from 'react';
-import { useParams, usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { memo } from "react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-const Breadcrumbs = () => {
-  const { locale } = useParams();
+const Breadcrumbs = ({ locale }: { locale: string }) => {
   const pathname = usePathname();
 
   const paths = pathname
-    .split('/')
-    .filter((s) => s && s !== locale && s !== 'dashboard')
+    .split("/")
+    .filter((s) => s && s !== locale && s !== "dashboard")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1));
 
   return (
@@ -23,18 +22,23 @@ const Breadcrumbs = () => {
           <span className="text-muted-foreground/40">/</span>
           <div className="flex items-center gap-1 overflow-hidden">
             {paths.map((crumb, i) => (
-              <div key={i} className="flex items-center gap-1 whitespace-nowrap">
-                <span 
+              <div
+                key={i}
+                className="flex items-center gap-1 whitespace-nowrap"
+              >
+                <span
                   className={cn(
                     "text-sm font-medium transition-colors",
-                    i === paths.length - 1 
-                      ? "text-foreground font-semibold" 
-                      : "text-muted-foreground hover:text-foreground"
+                    i === paths.length - 1
+                      ? "text-foreground font-semibold"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {crumb}
                 </span>
-                {i < paths.length - 1 && <span className="text-muted-foreground/40">/</span>}
+                {i < paths.length - 1 && (
+                  <span className="text-muted-foreground/40">/</span>
+                )}
               </div>
             ))}
           </div>

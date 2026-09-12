@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import StepWizard from "@/shared/ui/StepWizard";
-import { LogInIcon, Loader2 } from "lucide-react";
+import { LogInIcon, Loader2Icon as Loader2 } from "@/shared/ui/Icons";
 import { Button } from "@/shared/ui/Button";
 import { AuthHeader, AuthMobileLogo } from "./AuthSharedComponents";
 

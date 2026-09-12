@@ -1,0 +1,64 @@
+{
+  "linkCopied": "تم نسخ الرابط بنجاح!",
+  "badges": {
+    "bestSeller": "الأكثر مبيعاً",
+    "discount": "خصم {percent}%",
+    "inStock": "متوفر بالمخزون",
+    "outOfStock": "غير متوفر",
+    "readyToShip": "جاهز للشحن"
+  },
+  "gallery": {
+    "addToWishlist": "إضافة للمفضلة",
+    "shareProduct": "مشاركة المنتج",
+    "prevImage": "الصورة السابقة",
+    "nextImage": "الصورة التالية"
+  },
+  "info": {
+    "ratingsCount": "({count} تقييم)",
+    "brand": "البراند",
+    "category": "التصنيف",
+    "subCategory": "التصنيف الفرعي",
+    "startingFrom": "ابتداءً من"
+  },
+  "actions": {
+    "buyNow": "اشترِ الآن",
+    "needHelp": "تحتاج مساعدة؟",
+    "contactSupport": "تواصل مع الدعم"
+  },
+  "documentation": {
+    "title": "التوثيق الفني",
+    "pdfLabel": "نشرة بيانات المنتج (PDF)",
+    "pdfDesc": "المواصفات الفنية ودليل التركيب"
+  },
+  "uses": {
+    "title": "طرق الاستخدام والمميزات"
+  },
+  "tabs": {
+    "order": "اطلب الآن",
+    "reviews": "التقييمات"
+  },
+  "order": {
+    "chooseSpecs": "اختر مواصفات المنتج",
+    "quantity": "الكمية",
+    "yourSelection": "اختياراتك",
+    "noSelection": "لا يوجد اختيار",
+    "unitPrice": "سعر الوحدة",
+    "totalPrice": "السعر الإجمالي"
+  },
+  "reviews": {
+    "title": "تعليقات العملاء",
+    "empty": "لا توجد تعليقات بعد."
+  },
+  "units": {
+    "box": "صندوق",
+    "bag": "كيس",
+    "pallet": "طبلية",
+    "roll": "لفة",
+    "envelope": "ظرف",
+    "drum": "برميل",
+    "gallon": "جالون",
+    "board": "لوح",
+    "piece": "قطعة",
+    "custom": "وحدة"
+  }
+}

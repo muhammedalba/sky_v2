@@ -13,16 +13,16 @@ import EntitySearchBar from '@/shared/ui/dashboard/EntitySearchBar';
 import { FilterDrawer } from '@/shared/ui/FilterDrawer';
 import { SettingsIcon } from '@/shared/ui/Icons';
 import {
-  Hash,
-  Palette,
-  Tag,
-  Briefcase,
-  Layers,
-  DollarSign,
-  Scale,
-  Box,
-  TrendingUp,
-} from 'lucide-react';
+  HashIcon as Hash,
+  PaletteIcon as Palette,
+  TagIcon as Tag,
+  BriefcaseIcon as Briefcase,
+  LayersIcon as Layers,
+  DollarSignIcon as DollarSign,
+  ScaleIcon as Scale,
+  BoxIcon as Box,
+  TrendingUpIcon as TrendingUp,
+} from '@/shared/ui/Icons';
 import { WEIGHT_UNITS, VOLUME_UNITS, ADVANCED_FILTER_KEYS } from '@/shared/constants/product-constants';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';

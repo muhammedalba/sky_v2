@@ -10,10 +10,10 @@ export default function Topbar({ locale }: { locale: string }) {
         {/* Toggle & Breadcrumbs */}
         <div className="flex-1 flex items-center gap-4 overflow-hidden">
           <SidebarToggle />
-          <Breadcrumbs />
+          <Breadcrumbs locale={locale} />
         </div>
 
-        {/* Actions & User */}
+        {/* Actions & User */} 
         <div className="flex items-center gap-3">
           <TopbarActions />
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext, useWatch } from "react-hook-form";
-import { MapPin, ArrowRight, Loader2 } from "lucide-react";
+import { MapPinIcon as MapPin, ArrowRightIcon as ArrowRight, Loader2Icon as Loader2 } from "@/shared/ui/Icons";
 import { Input } from "@/shared/ui/Input";
 import { Select } from "@/shared/ui/Select";
 import {

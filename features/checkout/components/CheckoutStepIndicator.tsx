@@ -1,4 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2Icon as CheckCircle2 } from "@/shared/ui/Icons";
 
 import { useTranslations } from "next-intl";
 
@@ -14,7 +14,7 @@ export function CheckoutStepIndicator({
   const steps = [
     t("steps.shipping_info"),
     t("steps.shipping_and_payment"),
-    t("steps.review_and_confirm")
+    t("steps.review_and_confirm"),
   ];
 
   return (

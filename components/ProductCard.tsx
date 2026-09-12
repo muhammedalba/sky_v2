@@ -4,7 +4,7 @@ import { Button } from "@/shared/ui/Button";
 import {
   EyeIcon,
   HeartIcon,
-  PackageIcon,
+  ArrowLeftIcon,
   ShoppingCartIcon,
   StarIcon,
 } from "@/shared/ui/Icons";
@@ -14,7 +14,6 @@ import { truncate } from "@/lib/utils";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import Badge from "@/shared/ui/Badge";
 import { Tooltip } from "@/shared/ui/Tooltip";
-import { ArrowLeftIcon } from "lucide-react";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { memo, useMemo, useCallback, useState } from "react";
@@ -249,7 +248,7 @@ const ProductCard = ({ item, commonT }: Props) => {
               className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-700 hover:text-primary hover:scale-105 group-hover:gap-2.5 transition-all"
             >
               {commonT("details")}
-              <ArrowLeftIcon size={16} />
+              <ArrowLeftIcon className="w-4 h-4" />
             </Link>
             <span className="block w-full">
               <Button

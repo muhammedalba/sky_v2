@@ -1,17 +1,26 @@
-'use client';
-import { useMemo, useCallback, useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
-import { Badge } from '@/shared/ui/Badge';
-import { Button } from '@/shared/ui/Button';
-import { Calendar as CalendarIcon, Filter, RotateCcw, CheckCircle2 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { formatDate } from '@/lib/utils';
-import { type DateRange } from 'react-day-picker';
+"use client";
+import { useMemo, useCallback, useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { Badge } from "@/shared/ui/Badge";
+import { Button } from "@/shared/ui/Button";
+import {
+  CalendarIcon,
+  FilterIcon as Filter,
+  RotateCcwIcon as RotateCcw,
+  CheckCircle2Icon as CheckCircle2,
+} from "@/shared/ui/Icons";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { formatDate } from "@/lib/utils";
+import { type DateRange } from "react-day-picker";
+
 export interface DateRangeParams {
   startDate?: string;
   endDate?: string;
-
 }
 
 export interface DateRangeFilterProps {
@@ -20,8 +29,77 @@ export interface DateRangeFilterProps {
   isLoading?: boolean;
 }
 
-export function DateRangeFilter({ onApply, onReset, isLoading }: DateRangeFilterProps) {
-  const t = useTranslations('dashboard.dateFilter');
+// ✅ مكون مستقل خارج DateRangeFilter لتجنب إعادة إنشائه في كل render
+interface FilterActionsProps {
+  isLoading?: boolean;
+  isValid: boolean;
+  isActive: boolean;
+  hasDate: boolean;
+  start: string;
+  end: string;
+  applyLabel: string;
+  resetLabel: string;
+  onApply: () => void;
+  onReset: () => void;
+}
+
+function FilterActions({
+  isLoading,
+  isValid,
+  isActive,
+  hasDate,
+  start,
+  end,
+  applyLabel,
+  resetLabel,
+  onApply,
+  onReset,
+}: FilterActionsProps) {
+  return (
+    <>
+      <Button
+        size="sm"
+        isLoading={isLoading}
+        onClick={onApply}
+        disabled={!isValid || isLoading}
+        className="gap-1.5 h-9"
+      >
+        {isActive ? (
+          <CheckCircle2 className="w-3.5 h-3.5" />
+        ) : (
+          <Filter className="w-3.5 h-3.5" />
+        )}
+        {applyLabel}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={onReset}
+        disabled={!hasDate || isLoading}
+        className="gap-1.5 h-9"
+      >
+        <RotateCcw className="w-3.5 h-3.5" />
+        {!isActive && resetLabel}
+      </Button>
+      {isActive && start && end && (
+        <Badge
+          variant="secondary"
+          className="bg-primary/10 text-primary border-primary/20 text-xs gap-1"
+        >
+          <CheckCircle2 className="w-3 h-3" />
+          {start} → {end}
+        </Badge>
+      )}
+    </>
+  );
+}
+
+export function DateRangeFilter({
+  onApply,
+  onReset,
+  isLoading,
+}: DateRangeFilterProps) {
+  const t = useTranslations("dashboard.dateFilter");
   const locale = useLocale();
   const [date, setDate] = useState<DateRange | undefined>();
   const [isActive, setIsActive] = useState(false);
@@ -30,18 +108,18 @@ export function DateRangeFilter({ onApply, onReset, isLoading }: DateRangeFilter
   // 1. تحسين حساب قيم التواريخ باستخدام useMemo
   const { start, end, isValid } = useMemo(() => {
     if (!date?.from || !date?.to) {
-      const s = date?.from ? date.from.toLocaleDateString('en-CA') : ''; // en-CA يعطي YYYY-MM-DD
-      return { start: s, end: '', isValid: false };
+      const s = date?.from ? date.from.toLocaleDateString("en-CA") : ""; // en-CA يعطي YYYY-MM-DD
+      return { start: s, end: "", isValid: false };
     }
 
     // تنسيق سريع للتواريخ YYYY-MM-DD
-    const s = date.from.toLocaleDateString('en-CA');
-    const e = date.to.toLocaleDateString('en-CA');
+    const s = date.from.toLocaleDateString("en-CA");
+    const e = date.to.toLocaleDateString("en-CA");
 
     return {
       start: s,
       end: e,
-      isValid: date.from <= date.to
+      isValid: date.from <= date.to,
     };
   }, [date]);
 
@@ -60,25 +138,18 @@ export function DateRangeFilter({ onApply, onReset, isLoading }: DateRangeFilter
     onReset();
   }, [onReset]);
 
-  // مكون فرعي لعرض حالة الفلتر لتجنب تكرار الكود في الـ JSX
-  const FilterActions = () => (
-    <>
-      <Button size="sm" isLoading={isLoading} onClick={handleApply} disabled={!isValid || isLoading} className="gap-1.5 h-9">
-        {isActive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Filter className="w-3.5 h-3.5" />}
-        {t('apply')}
-      </Button>
-      <Button size="sm" variant="outline" onClick={handleReset} disabled={!date?.from && !date?.to || isLoading} className="gap-1.5 h-9">
-        <RotateCcw className="w-3.5 h-3.5" />
-        {!isActive && t('reset')}
-      </Button>
-      {isActive && start && end && (
-        <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs gap-1">
-          <CheckCircle2 className="w-3 h-3" />
-          {start} → {end}
-        </Badge>
-      )}
-    </>
-  );
+  const filterActionsProps: FilterActionsProps = {
+    isLoading,
+    isValid,
+    isActive,
+    hasDate: !!date?.from || !!date?.to,
+    start,
+    end,
+    applyLabel: t("apply"),
+    resetLabel: t("reset"),
+    onApply: handleApply,
+    onReset: handleReset,
+  };
 
   return (
     <div className="sticky top-16 z-20 flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-background border border-border/50 shadow-sm">
@@ -92,9 +163,13 @@ export function DateRangeFilter({ onApply, onReset, isLoading }: DateRangeFilter
               >
                 <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
                 {date?.from ? (
-                  date.to ? `${formatDate(date.from, locale)} → ${formatDate(date.to, locale)}` : formatDate(date.from, locale)
+                  date.to ? (
+                    `${formatDate(date.from, locale)} → ${formatDate(date.to, locale)}`
+                  ) : (
+                    formatDate(date.from, locale)
+                  )
                 ) : (
-                  <span>{t('label') || "Select a date range"}</span>
+                  <span>{t("label") || "Select a date range"}</span>
                 )}
               </Button>
             </PopoverTrigger>
@@ -113,19 +188,21 @@ export function DateRangeFilter({ onApply, onReset, isLoading }: DateRangeFilter
                 className="w-full"
               />
               <div className="p-2 flex justify-between items-center bg-muted">
-                <FilterActions />
+                <FilterActions {...filterActionsProps} />
               </div>
             </PopoverContent>
           </Popover>
         </div>
 
         <div className="hidden sm:flex flex-1 justify-end gap-2 items-center">
-          <FilterActions />
+          <FilterActions {...filterActionsProps} />
         </div>
       </div>
 
       {!isValid && date?.from && date?.to && (
-        <p className="w-full text-xs text-destructive mt-1">⚠ {t('invalidRange')}</p>
+        <p className="w-full text-xs text-destructive mt-1">
+          ⚠ {t("invalidRange")}
+        </p>
       )}
     </div>
   );

@@ -7,7 +7,7 @@ import { LoginResponseData } from '@/features/auth/types';
 import { checkUserPermission } from '@/lib/auth';
 import Link from 'next/link';
 import { Button } from '@/shared/ui/Button';
-import { Lock, Mail } from 'lucide-react';
+import { LockIcon as Lock, MailIcon as Mail } from '@/shared/ui/Icons';
 import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
 import { SocialLoginSection } from './AuthClientComponents';
 import { SmartForm } from '@/shared/ui/form/SmartForm';

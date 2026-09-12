@@ -7,7 +7,7 @@ import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
 import { Product } from '@/types';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useTrans } from '@/shared/hooks/useTrans';
-import { Star, ShoppingBag, Eye, TrendingUp } from 'lucide-react';
+import { StarIcon as Star, ShoppingBagIcon as ShoppingBag, EyeIcon as Eye, TrendingUpIcon as TrendingUp } from '@/shared/ui/Icons';
 
 interface ProductCardProps {
   product: Product;

@@ -93,6 +93,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     home: allMessages.home,
     contact: allMessages.contact,
     products: allMessages.products,
+    product: allMessages.product,
     categories: allMessages.categories,
     subCategories: allMessages.subCategories,
     cart: allMessages.cart,

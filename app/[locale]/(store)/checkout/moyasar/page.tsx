@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { useToast } from "@/shared/hooks/useToast";
 import { apiClient } from "@/lib/api/client";
-import { ShieldCheckIcon, CreditCardIcon, AlertCircleIcon } from "lucide-react";
+import { ShieldCheckIcon, CreditCardIcon, AlertCircleIcon } from "@/shared/ui/Icons";
 import { useActivePaymentMethods } from "@/features/checkout/hooks/useCheckout";
 
 declare global {

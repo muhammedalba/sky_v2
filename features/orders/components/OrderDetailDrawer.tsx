@@ -22,7 +22,7 @@ import {
   TruckIcon,
   TagIcon,
 } from "@/shared/ui/Icons";
-import { FileText as StickyNoteIcon } from "lucide-react";
+import { FileTextIcon as StickyNoteIcon } from "@/shared/ui/Icons";
 import { useTrans } from "@/shared/hooks/useTrans";
 import OrderTimeline from "./OrderTimeline";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";

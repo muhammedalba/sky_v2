@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2Icon as CheckCircle2, AlertCircleIcon as AlertCircle } from "@/shared/ui/Icons";
 
 export function StockBadge({
   stock,
