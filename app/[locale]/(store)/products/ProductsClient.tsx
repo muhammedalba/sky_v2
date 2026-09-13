@@ -36,6 +36,7 @@ import {
   FilterIcon as Filter,
 } from "@/shared/ui/Icons";
 import ProductCard from "@/components/ProductCard";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 
 export default function ProductsClient() {
   const locale = useLocale();
@@ -482,7 +483,7 @@ export default function ProductsClient() {
               id="category-track"
               className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scroll-smooth custom-scrollbar select-none"
             >
-              {categoriesList.map((cat) => {
+              {[...categoriesList, ...categoriesList].map((cat) => {
                 const catName = getTrans(cat.name);
                 const isActive = selectedCategory === cat._id;
                 const initials = catName
@@ -510,19 +511,17 @@ export default function ProductsClient() {
                   >
                     {/* Category Image Circle/Square */}
                     <div
-                      className={`relative aspect-square w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 mb-3 flex items-center justify-center transition-all duration-300 shadow-xs ${
+                      className={`relative aspect-square w-full rounded-full  overflow-hidden border-2 mb-3 flex items-center justify-center transition-all duration-300 shadow-xs ${
                         isActive
                           ? "border-primary ring-4 ring-primary/10 scale-95 shadow-md shadow-primary/10"
                           : "border-border/60 bg-card group-hover/cat:border-primary/45 group-hover/cat:scale-[1.03] group-hover/cat:shadow-md"
                       }`}
                     >
                       {cat.image ? (
-                        <img
-                          src={
-                            typeof cat.image === "object"
-                              ? cat.image?.url
-                              : cat.image
-                          }
+                        <ImageWithFallback
+                          src={cat.image}
+                          width={100}
+                          height={100}
                           alt={catName}
                           className="object-cover w-full h-full transition-transform duration-500 group-hover/cat:scale-110"
                         />

@@ -95,7 +95,7 @@ export default function ProductDetailsClient({
   const hasVariants = variants.length > 0;
 
   const [activeTab, setActiveTab] = useState<"order" | "reviews">(
-    (product?.variantCount ?? 0) > 1 ? "order" : "reviews",
+    (product?.variantCount ?? 0) > 1 ? "order" : "order",
   );
 
   // الخصائص الافتراضية لأول متغير متاح
@@ -407,7 +407,8 @@ export default function ProductDetailsClient({
 
         {/* Order / Reviews Tabs Section */}
         <div className="mt-10">
-          {product.variantCount > 1 && (
+          {/* now is not avialbe  this section*/}
+          {/* {product.variantCount > 1 && (
             <ScrollReveal animation="slide-right" className="inline-flex items-center gap-1 rounded-sm p-2 bg-muted/60 border border-border/40 mb-6 w-full">
               <button
                 type="button"
@@ -440,9 +441,9 @@ export default function ProductDetailsClient({
                 )}
               </button>
             </ScrollReveal>
-          )}
+          )} */}
 
-          {activeTab === "order" ? (
+          {activeTab === "order" && (product?.variantCount ?? 0) > 1 ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-muted/60 p-5">
               <ProductVariantSelector
                 attributeGroups={attributeGroups}
@@ -467,12 +468,12 @@ export default function ProductDetailsClient({
                 getAttributeLabel={(key) => getAttributeLabel(key, isAr)}
               />
             </div>
-          ) : (
+          ) :activeTab === "reviews" ? (
             <ProductReviewsTab
               ratingsAverage={product.ratingsAverage}
               ratingsQuantity={product.ratingsQuantity}
             />
-          )}
+          ): null}
         </div>
 
         {/* Similar Products */}
