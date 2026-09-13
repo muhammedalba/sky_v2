@@ -2,71 +2,63 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useBrands } from "@/features/brands/hooks/useBrands";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useMemo } from "react";
-import { Brand } from "@/types";
+import { Category } from "@/types";
 import Badge from "@/shared/ui/Badge";
 import { ShieldIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
-const EMPTY_BRANDS: Brand[] = [];
+import { useCategories } from "@/features/categories/hooks/useCategories";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+const EMPTY_CATEGORIES: Category[] = [];
 
-interface TrustedByProps {
-  mode?: "text" | "image";
-  duration?: string;
-}
-
-export default function TrustedBy({
-  mode = "image",
-  duration = "90s",
-}: TrustedByProps = {}) {
+export default function CategoriesSlide() {
   const t = useTranslations("home");
   const getTrans = useTrans();
-  const { data: brandsResponse, isLoading } = useBrands({ all_langs: false });
-  const brands = brandsResponse?.data || EMPTY_BRANDS;
+  const { data: categoriesResponse, isLoading } = useCategories({
+    all_langs: false,
+  });
+  const categories = categoriesResponse?.data || EMPTY_CATEGORIES;
 
   // 2. useMemo to save heavy DOM elements in memory
   const marqueeContent = useMemo(() => {
-    if (!brands.length) return null;
+    if (!categories.length) return null;
 
     // use 6 groups instead of 7 (even number).
     // because the animation moves by 50%, the even number ensures that the movement ends at the beginning of a complete group, preventing interruption (Seamless Loop).
     return Array.from({ length: 6 }, (_, index) => (
       <div
         key={index}
-        className="flex gap-5 shrink-0 items-center"
+        className="flex gap-x-5 shrink-0 items-center"
         // 3.Accessibility: hide repeated groups from screen readers
         aria-hidden={index > 0 ? "true" : "false"}
       >
-        {brands.map((brand) => (
+        {categories.map((category) => (
           <div
-            key={brand._id}
-            className="flex items-center justify-center min-w-30"
+            key={category._id}
+            className="flex items-center justify-center h-28 w-28 rounded-full"
           >
-            {mode === "image" && brand.image ? (
-              <Image
-                src={
-                  typeof brand.image === "string"
-                    ? brand.image
-                    : brand.image?.url
-                }
-                alt={getTrans(brand.name)}
+            {category.image ? (
+              <ImageWithFallback
+                src={category.image}
+                alt={getTrans(category.name)}
                 width={150}
-                height={48}
-                className="h-12 object-contain max-w-37.5"
+                height={150}
+                className=" object-contain w-full h-full rounded-full "
                 loading="lazy"
               />
+              
             ) : (
               <div className="px-8 py-5 rounded-2xl bg-card border border-border/40 shadow-2xs hover:border-primary/25 hover:shadow-md transition-all shrink-0 flex items-center justify-center min-w-40 h-20">
                 <span className="text-sm sm:text-base font-extrabold uppercase tracking-widest text-muted-foreground/80 hover:text-primary transition-colors">
-                  {getTrans(brand.name)}
+                  {getTrans(category.name)}
                   {/* <Image
                     src={
-                      typeof brand.image === "string"
-                        ? brand.image
-                        : brand.image?.url
+                      typeof category.image === "string"
+                        ? category.image
+                        : category.image?.url
                     }
-                    alt={getTrans(brand.name)}
+                    alt={getTrans(category.name)}
                     width={150}
                     height={48}
                     className="h-12 object-contain max-w-37.5"
@@ -79,9 +71,9 @@ export default function TrustedBy({
         ))}
       </div>
     ));
-  }, [brands, getTrans, mode]);
+  }, [categories, getTrans]);
 
-  if (isLoading || brands.length === 0) return null;
+  if (isLoading || categories.length === 0) return null;
 
   return (
     <section className="py-16 sm:py-24  bg-background overflow-hidden relative z-10">
@@ -95,19 +87,16 @@ export default function TrustedBy({
             className="p-1 px-4 rounded-full text-xs sm:text-sm md:text-md font-black   shrink-0 text-center hover:bg-success/10 hover:text-success "
           >
             <ShieldIcon className="w-5 h-5 text-success me-1" />
-            {t("trust.approved_distributors")}
+           تسوق حسب الفئة
           </Badge>
           <div className="flex flex-col items-center gap-2">
             <p className="title-gradient text-md sm:text-xl md:text-3xl  font-black   shrink-0 text-center">
-              {t("trust.label")}
+              مواد عالية الأداء تلبي كافة احتياجات البناء.{" "}
             </p>
             <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 mx-auto" />
           </div>
           <div className="w-full relative flex overflow-hidden mask-image-fade">
-            <div
-              style={{ animationDuration: duration }}
-              className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500"
-            >
+            <div className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500">
               {marqueeContent}
             </div>
           </div>

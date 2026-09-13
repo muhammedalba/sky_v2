@@ -14,7 +14,14 @@ import { useCategories } from "@/features/categories/hooks/useCategories";
 import { useSubCategories } from "@/features/categories/hooks/useSubCategories";
 import { useBrands } from "@/features/brands/hooks/useBrands";
 import { useCarousel } from "@/features/marketing/hooks/useCarousel";
-import { Product, Category, SubCategory, Brand, Carousel } from "@/types";
+import {
+  Product,
+  Category,
+  SubCategory,
+  Brand,
+  Carousel,
+  LocalizedString,
+} from "@/types";
 import { Link } from "@/navigation";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -25,6 +32,8 @@ import {
   ChevronDownIcon as ChevronDown,
   TagIcon as Tag,
   BriefcaseIcon as Briefcase,
+  LayersIcon as Layers,
+  PaletteIcon as Palette,
   CoinsIcon as Coins,
   RotateCcwIcon as RotateCcw,
   ShoppingBagIcon as ShoppingBag,
@@ -35,8 +44,16 @@ import {
   AwardIcon as Award,
   FilterIcon as Filter,
 } from "@/shared/ui/Icons";
-import ProductCard from "@/components/ProductCard";
+import SimilarProductCard from "@/components/SimilarProductCard";
+import { Dropdown, DropdownItem } from "@/shared/ui/CustomDropdown";
+import { FilterDrawer } from "@/shared/ui/FilterDrawer";
+import {
+  SearchableSelect,
+  SearchOption,
+} from "@/shared/ui/form/SearchableSelect";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import CategoriesSlide from "./[slug]/components/CategoriesSlide";
+import TrustedBy from "@/components/home/TrustedBy";
 
 export default function ProductsClient() {
   const locale = useLocale();
@@ -57,7 +74,13 @@ export default function ProductsClient() {
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
+  const [color, setColor] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("-createdAt");
+
+  // Local search terms for the filter drawer's SearchableSelect fields
+  const [categorySearch, setCategorySearch] = useState("");
+  const [subCategorySearch, setSubCategorySearch] = useState("");
+  const [brandSearch, setBrandSearch] = useState("");
 
   // Sync state with URL search and category query parameter changes during render to avoid cascading effects
   const currentSearch = searchParams?.get("search") || "";
@@ -85,6 +108,7 @@ export default function ProductsClient() {
   const debouncedSearch = useDebounce(localSearch, 500);
   const debouncedMinPrice = useDebounce(minPrice, 600);
   const debouncedMaxPrice = useDebounce(maxPrice, 600);
+  const debouncedColor = useDebounce(color, 500);
 
   const priceRangeMin = debouncedMinPrice
     ? Number(debouncedMinPrice)
@@ -106,6 +130,7 @@ export default function ProductsClient() {
     if (selectedBrand) params.brand = selectedBrand;
     if (priceRangeMin !== undefined) params["pricerange[min]"] = priceRangeMin;
     if (priceRangeMax !== undefined) params["pricerange[max]"] = priceRangeMax;
+    if (debouncedColor) params.color = debouncedColor;
     return params;
   }, [
     page,
@@ -115,6 +140,7 @@ export default function ProductsClient() {
     selectedBrand,
     priceRangeMin,
     priceRangeMax,
+    debouncedColor,
     sortBy,
   ]);
 
@@ -177,26 +203,63 @@ export default function ProductsClient() {
     return () => clearInterval(interval);
   }, [carouselSlides]);
 
-  // Reset Filters
-  const handleClearAll = () => {
-    setLocalSearch("");
+  // ─── Active Filters Count (for the Filter button badge) ─
+  const activeFilterCount = useMemo(() => {
+    return [
+      selectedCategory,
+      selectedSubCategory,
+      selectedBrand,
+      minPrice,
+      maxPrice,
+      color,
+    ].filter((v) => !!v).length;
+  }, [
+    selectedCategory,
+    selectedSubCategory,
+    selectedBrand,
+    minPrice,
+    maxPrice,
+    color,
+  ]);
+
+  // ─── Filtered options for the SearchableSelect fields ───
+  const filteredCategoryOptions = useMemo(
+    () =>
+      categoriesList.filter((c) =>
+        getTrans(c.name).toLowerCase().includes(categorySearch.toLowerCase()),
+      ) as unknown as SearchOption[],
+    [categoriesList, categorySearch, getTrans],
+  );
+  const filteredSubCategoryOptions = useMemo(
+    () =>
+      subCategoriesList.filter((c) =>
+        getTrans(c.name)
+          .toLowerCase()
+          .includes(subCategorySearch.toLowerCase()),
+      ) as unknown as SearchOption[],
+    [subCategoriesList, subCategorySearch, getTrans],
+  );
+  const filteredBrandOptions = useMemo(
+    () =>
+      brandsList.filter((b) =>
+        getTrans(b.name).toLowerCase().includes(brandSearch.toLowerCase()),
+      ) as unknown as SearchOption[],
+    [brandsList, brandSearch, getTrans],
+  );
+
+  const handleClearAllFilters = () => {
     setSelectedCategory("");
     setSelectedSubCategory("");
     setSelectedBrand("");
     setMinPrice("");
     setMaxPrice("");
-    setSortBy("-createdAt");
+    setColor("");
+    setCategorySearch("");
+    setSubCategorySearch("");
+    setBrandSearch("");
     setPage(1);
   };
 
-  const hasActiveFilters = !!(
-    debouncedSearch ||
-    selectedCategory ||
-    selectedSubCategory ||
-    selectedBrand ||
-    minPrice ||
-    maxPrice
-  ); // Localization labels
   const trans = {
     heroTitle:
       locale === "ar"
@@ -230,9 +293,16 @@ export default function ProductsClient() {
     allCategories: locale === "ar" ? "جميع الأقسام" : "All Categories",
     brands: locale === "ar" ? "العلامات التجارية" : "Brands",
     allBrands: locale === "ar" ? "جميع العلامات" : "All Brands",
+    subCategories: locale === "ar" ? "الفئات الفرعية" : "Sub Categories",
     priceRange: locale === "ar" ? "نطاق الأسعار" : "Price Range",
     minPrice: locale === "ar" ? "الأدنى" : "Min",
     maxPrice: locale === "ar" ? "الأقصى" : "Max",
+    color: locale === "ar" ? "اللون" : "Color",
+    colorPlaceholder:
+      locale === "ar" ? "مثال: أحمر، أزرق..." : "e.g. red, blue",
+    activeFilters: locale === "ar" ? "فلاتر نشطة" : "active",
+    noActiveFilters:
+      locale === "ar" ? "لا توجد فلاتر نشطة" : "No active filters",
     clearAll: locale === "ar" ? "إعادة ضبط" : "Clear All",
     resultsCount: locale === "ar" ? "منتج تم العثور عليه" : "products found",
     noProducts: locale === "ar" ? "لا توجد نتائج مطابقة" : "No products found",
@@ -270,35 +340,6 @@ export default function ProductsClient() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-all duration-300 relative overflow-hidden">
-      {/* Dynamic Keyframes inject to support smooth infinite marquees */}
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes marquee-rtl {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(50%); }
-        }
-        .animate-marquee-left {
-          display: flex;
-          width: max-content;
-          animation: marquee 35s linear infinite;
-        }
-        .animate-marquee-right {
-          display: flex;
-          width: max-content;
-          animation: marquee-rtl 35s linear infinite;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: hsl(var(--primary) / 0.15);
-          border-radius: 10px;
-        }
-      `}</style>
-
       {/* Amethyst and Violet gradient glowing backdrops */}
       <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-3xl pointer-events-none z-0" />
       <div className="absolute top-[100vh] left-1/4 w-[35rem] h-[35rem] bg-accent/5 rounded-full blur-3xl pointer-events-none z-0" />
@@ -427,841 +468,223 @@ export default function ProductsClient() {
           )}
         </div>
       </section>
+      {/*CategoriesSlide  */}
+      <CategoriesSlide />
 
-      {/* ─── 2. SHOP BY CATEGORY SECTION (VISUAL SLIDER) ─── */}
-      {categoriesList.length > 0 && (
-        <section className="py-12 sm:py-16 border-b border-border/30 bg-muted/5 relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary fill-current animate-pulse" />
-                  {locale === "ar"
-                    ? "تصفح بالأقسام والفئات"
-                    : "Shop by Category"}
-                </h2>
-                <p className="text-xs text-muted-foreground mt-1 font-medium">
-                  {locale === "ar"
-                    ? "اختر الفئة المفضلة للوصول السريع لقطع الغيار والمعدات الفاخرة."
-                    : "Select a collection to filter active premium equipment instantly."}
-                </p>
-              </div>
-
-              {/* Scroll controller helpers */}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    const el = document.getElementById("category-track");
-                    if (el)
-                      el.scrollBy({
-                        left: locale === "ar" ? 250 : -250,
-                        behavior: "smooth",
-                      });
-                  }}
-                  className="p-2 rounded-xl border border-border/60 bg-background hover:bg-muted text-foreground transition-all active:scale-95"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => {
-                    const el = document.getElementById("category-track");
-                    if (el)
-                      el.scrollBy({
-                        left: locale === "ar" ? -250 : 250,
-                        behavior: "smooth",
-                      });
-                  }}
-                  className="p-2 rounded-xl border border-border/60 bg-background hover:bg-muted text-foreground transition-all active:scale-95"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Horizontal sliding track */}
-            <div
-              id="category-track"
-              className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scroll-smooth custom-scrollbar select-none"
-            >
-              {[...categoriesList, ...categoriesList].map((cat) => {
-                const catName = getTrans(cat.name);
-                const isActive = selectedCategory === cat._id;
-                const initials = catName
-                  ? catName.slice(0, 2).toUpperCase()
-                  : "CG";
-
-                return (
-                  <div
-                    key={cat._id}
-                    onClick={() => {
-                      setSelectedCategory(isActive ? "" : cat._id);
-                      setSelectedSubCategory("");
-                      setPage(1);
-                      // Smooth scroll down to the product catalog section
-                      const target =
-                        document.getElementById("products-showroom");
-                      if (target) {
-                        target.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start",
-                        });
-                      }
-                    }}
-                    className="group/cat cursor-pointer flex-shrink-0 w-24 sm:w-32 transition-all duration-300 relative text-center"
-                  >
-                    {/* Category Image Circle/Square */}
-                    <div
-                      className={`relative aspect-square w-full rounded-full  overflow-hidden border-2 mb-3 flex items-center justify-center transition-all duration-300 shadow-xs ${
-                        isActive
-                          ? "border-primary ring-4 ring-primary/10 scale-95 shadow-md shadow-primary/10"
-                          : "border-border/60 bg-card group-hover/cat:border-primary/45 group-hover/cat:scale-[1.03] group-hover/cat:shadow-md"
-                      }`}
-                    >
-                      {cat.image ? (
-                        <ImageWithFallback
-                          src={cat.image}
-                          width={100}
-                          height={100}
-                          alt={catName}
-                          className="object-cover w-full h-full transition-transform duration-500 group-hover/cat:scale-110"
-                        />
-                      ) : (
-                        // Absolute Fallback Gradient containing initials
-                        <div className="absolute inset-0 bg-linear-to-tr from-primary/10 via-accent/5 to-muted-foreground/5 flex items-center justify-center text-primary font-black text-base sm:text-xl tracking-wider select-none">
-                          {initials}
-                        </div>
-                      )}
-
-                      {/* Interactive overlay tint */}
-                      <div
-                        className={`absolute inset-0 transition-opacity duration-300 ${
-                          isActive
-                            ? "bg-primary/5"
-                            : "bg-black/0 group-hover/cat:bg-black/5"
-                        }`}
-                      />
-                    </div>
-
-                    {/* Category Title & Count */}
-                    <div className="px-1">
-                      <p
-                        className={`text-xs sm:text-sm font-extrabold truncate transition-colors duration-300 ${
-                          isActive
-                            ? "text-primary font-black"
-                            : "text-foreground group-hover/cat:text-primary"
-                        }`}
-                      >
-                        {catName}
-                      </p>
-
-                      {cat.productsCount !== undefined && (
-                        <span className="text-[9px] sm:text-[10px] text-muted-foreground font-semibold inline-block mt-0.5 bg-muted/50 px-2 py-0.5 rounded-full border border-border/20">
-                          {cat.productsCount}{" "}
-                          {locale === "ar" ? "منتج" : "items"}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ─── 5. SEARCH & ADVANCED PRODUCTS CATALOG ─────────── */}
-      <section id="products-showroom" className="py-16 sm:py-24 relative z-10">
+      {/* ─── 2. ALL PRODUCTS SECTION ───────────────────────── */}
+      <section className="relative py-10 sm:py-14 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center md:text-left rtl:md:text-right mb-12">
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight flex items-center justify-center md:justify-start gap-2">
-              <ShoppingBag className="w-7 h-7 text-primary" />
-              {trans.allProducts}
-            </h2>
-            <div className="w-16 h-1 bg-primary rounded-full mt-3 mx-auto md:mx-0" />
-          </div>
-
-          {/* Catalog Controls Row */}
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between pb-8 mb-8 border-b border-border/40">
-            {/* Advanced Live Search Input */}
-            <div className="relative w-full md:w-[26rem] group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <Input
-                placeholder={trans.searchPlaceholder}
-                className="pl-10 h-11 rounded-xl bg-card border-border/50 focus-visible:ring-primary/20 shadow-2xs text-xs sm:text-sm font-medium"
-                value={localSearch}
-                onChange={(e) => {
-                  setLocalSearch(e.target.value);
-                  setPage(1);
-                }}
-              />
-              {localSearch && (
-                <button
-                  onClick={() => {
-                    setLocalSearch("");
-                    setPage(1);
-                  }}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted text-muted-foreground"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black title-gradient">
+                {trans.allProducts}
+              </h2>
+              {!!mainCatalogData?.meta?.pagination?.totalResults && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {mainCatalogData.meta.pagination.totalResults}{" "}
+                  {trans.resultsCount}
+                </p>
               )}
             </div>
 
-            <div className="flex items-center justify-between w-full md:w-auto gap-4">
-              {/* Mobile Filter trigger */}
-              <Button
-                onClick={() => setIsMobileDrawerOpen(true)}
-                variant="outline"
-                className="h-11 px-4 lg:hidden rounded-xl border-border/50 gap-2 font-bold bg-card"
+            {/* Toolbar: Sort by + Filter */}
+            <div className="flex items-center justify-end gap-3">
+              <Dropdown
+                trigger={
+                  <span className="inline-flex items-center gap-2 h-11 px-4 rounded-xl border border-input bg-background text-sm font-semibold hover:bg-accent transition-colors">
+                    {trans.sortByLabel}:{" "}
+                    <span className="text-primary">
+                      {trans.sorts.find((s) => s.value === sortBy)?.label}
+                    </span>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
+                }
+                width="w-56"
               >
-                <SlidersHorizontal className="w-4 h-4 text-primary" />
-                {trans.filtersTitle}
-                {hasActiveFilters && (
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                {trans.sorts.map((opt) => (
+                  <DropdownItem
+                    key={opt.value}
+                    onClick={() => {
+                      setSortBy(opt.value);
+                      setPage(1);
+                    }}
+                    className={
+                      opt.value === sortBy
+                        ? "font-semibold text-primary"
+                        : undefined
+                    }
+                  >
+                    {opt.label}
+                  </DropdownItem>
+                ))}
+              </Dropdown>
+
+              <Button
+                variant="outline"
+                className="h-11 px-4 gap-2 relative"
+                onClick={() => setIsMobileDrawerOpen(true)}
+              >
+                <Filter className="w-4 h-4" />
+                {commonT("filter")}
+                {activeFilterCount > 0 && (
+                  <span className="absolute -top-2 -right-2 rtl:-right-auto rtl:-left-2 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-black shadow-md">
+                    {activeFilterCount}
+                  </span>
                 )}
               </Button>
-
-              {/* Advanced Sorting selector */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-muted-foreground/80 whitespace-nowrap hidden sm:inline uppercase tracking-wider">
-                  {trans.sortByLabel}:
-                </span>
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value);
-                      setPage(1);
-                    }}
-                    className="appearance-none h-11 pl-4 pr-10 rounded-xl bg-card border border-border/50 text-xs sm:text-sm font-bold text-foreground focus:outline-none focus:border-primary/30 shadow-2xs cursor-pointer"
-                  >
-                    {trans.sorts.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Grid Layout containing sidebar + catalog */}
-          <div className="grid grid-cols-12 gap-8 items-start">
-            {/* Desktop Left sticky filters sidebar */}
-            <aside className="hidden lg:block lg:col-span-3 bg-card border border-border/50 rounded-2xl p-6 shadow-2xs sticky top-36 z-20">
-              <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
-                <h3 className="font-extrabold text-sm uppercase tracking-wider flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-primary" />
-                  {trans.filtersTitle}
-                </h3>
-                {hasActiveFilters && (
-                  <button
-                    onClick={handleClearAll}
-                    className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    {trans.clearAll}
-                  </button>
-                )}
-              </div>
-
-              {/* Dynamic Expandable Filters */}
-              <div className="space-y-6">
-                {/* Categories selector block */}
-                <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-primary" />
-                    {trans.categories}
-                  </label>
-                  <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar font-medium">
-                    <button
-                      onClick={() => {
-                        setSelectedCategory("");
-                        setSelectedSubCategory("");
-                        setPage(1);
-                      }}
-                      className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs sm:text-sm transition-all ${
-                        !selectedCategory
-                          ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                          : "hover:bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {trans.allCategories}
-                    </button>
-                    {categoriesList.map((cat) => {
-                      const catName = getTrans(cat.name);
-                      return (
-                        <button
-                          key={cat._id}
-                          onClick={() => {
-                            setSelectedCategory(cat._id);
-                            setSelectedSubCategory("");
-                            setPage(1);
-                          }}
-                          className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs sm:text-sm transition-all truncate block ${
-                            selectedCategory === cat._id
-                              ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                              : "hover:bg-muted text-muted-foreground"
-                          }`}
-                          title={catName}
-                        >
-                          {catName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* SubCategories selector block */}
-                {selectedCategory && subCategoriesList.length > 0 && (
-                  <div className="space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
-                    <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                      <Tag className="w-3.5 h-3.5 text-primary" />
-                      {locale === "ar" ? "الأقسام الفرعية" : "Subcategories"}
-                    </label>
-                    <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar font-medium">
-                      <button
-                        onClick={() => {
-                          setSelectedSubCategory("");
-                          setPage(1);
-                        }}
-                        className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs sm:text-sm transition-all ${
-                          !selectedSubCategory
-                            ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                            : "hover:bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {locale === "ar"
-                          ? "كل الأقسام الفرعية"
-                          : "All Subcategories"}
-                      </button>
-                      {subCategoriesList.map((sub) => {
-                        const subName = getTrans(sub.name);
-                        return (
-                          <button
-                            key={sub._id}
-                            onClick={() => {
-                              setSelectedSubCategory(sub._id);
-                              setPage(1);
-                            }}
-                            className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs sm:text-sm transition-all truncate block ${
-                              selectedSubCategory === sub._id
-                                ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                                : "hover:bg-muted text-muted-foreground"
-                            }`}
-                            title={subName}
-                          >
-                            {subName}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Brands selector block */}
-                <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-primary" />
-                    {trans.brands}
-                  </label>
-                  <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar font-medium">
-                    <button
-                      onClick={() => {
-                        setSelectedBrand("");
-                        setPage(1);
-                      }}
-                      className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs sm:text-sm transition-all ${
-                        !selectedBrand
-                          ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                          : "hover:bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {trans.allBrands}
-                    </button>
-                    {brandsList.map((brand) => {
-                      const bName = getTrans(brand.name);
-                      return (
-                        <button
-                          key={brand._id}
-                          onClick={() => {
-                            setSelectedBrand(brand._id);
-                            setPage(1);
-                          }}
-                          className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs sm:text-sm transition-all truncate block ${
-                            selectedBrand === brand._id
-                              ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                              : "hover:bg-muted text-muted-foreground"
-                          }`}
-                          title={bName}
-                        >
-                          {bName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Price range textboxes */}
-                <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                    <Coins className="w-3.5 h-3.5 text-primary" />
-                    {trans.priceRange}
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input
-                      type="number"
-                      placeholder={trans.minPrice}
-                      value={minPrice}
-                      onChange={(e) => {
-                        setMinPrice(e.target.value);
-                        setPage(1);
-                      }}
-                      className="h-10 text-xs text-center rounded-xl bg-muted/40 border-border/40 font-bold"
-                    />
-                    <Input
-                      type="number"
-                      placeholder={trans.maxPrice}
-                      value={maxPrice}
-                      onChange={(e) => {
-                        setMaxPrice(e.target.value);
-                        setPage(1);
-                      }}
-                      className="h-10 text-xs text-center rounded-xl bg-muted/40 border-border/40 font-bold"
-                    />
-                  </div>
-                </div>
-              </div>
-            </aside>
-
-            {/* Catalog Grid Panel (col-span-9) */}
-            <main className="col-span-12 lg:col-span-9">
-              {/* Product grid or skeletons loading states */}
-              {isCatalogLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
-                  {Array(6)
-                    .fill(0)
-                    .map((_, i) => (
-                      <div
-                        key={i}
-                        className="bg-card border border-border/40 rounded-3xl p-5 space-y-4 shadow-2xs"
-                      >
-                        <Skeleton className="aspect-square w-full rounded-2xl animate-pulse" />
-                        <Skeleton className="h-4 w-1/3 animate-pulse" />
-                        <Skeleton className="h-6 w-3/4 animate-pulse" />
-                        <Skeleton className="h-4 w-1/2 animate-pulse" />
-                      </div>
-                    ))}
-                </div>
-              ) : mainCatalogData?.data?.length ? (
-                <>
-                  <div className="flex items-center gap-2 mb-6">
-                    <span className="px-2.5 py-1 text-xs font-black text-primary bg-primary/10 border border-primary/20 rounded-md">
-                      {mainCatalogData?.meta?.total || 0}
-                    </span>
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
-                      {trans.resultsCount}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 animate-in fade-in duration-500">
-                    {mainCatalogData.data.map((product: Product) => (
-                      <ProductCard
-                        key={product._id}
-                        item={product}
-                        commonT={commonT}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                // Elegant Empty Search State
-                <div className="text-center py-24 bg-card border border-border/45 rounded-3xl shadow-2xs">
-                  <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/25">
-                    <Filter className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-black mb-1.5">
-                    {trans.noProducts}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed font-medium">
-                    {trans.noProductsDesc}
-                  </p>
-                  {hasActiveFilters && (
-                    <Button
-                      onClick={handleClearAll}
-                      variant="outline"
-                      className="mt-6 font-extrabold rounded-xl border-primary/25 hover:bg-primary/5 text-primary text-xs"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5 mr-1.5 rtl:ml-1.5 rtl:mr-0" />
-                      {trans.clearAll}
-                    </Button>
-                  )}
-                </div>
-              )}
-
-              {/* Pagination controls with smooth anchor scrolling */}
-              {mainCatalogData?.meta?.pagination &&
-                mainCatalogData.meta.pagination.numberOfPages > 1 && (
-                  <div className="mt-16 flex justify-center">
-                    <Pagination
-                      pagination={mainCatalogData.meta.pagination}
-                      onPageChange={(p) => {
-                        setPage(p);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                    />
-                  </div>
-                )}
-            </main>
-          </div>
-        </div>
-      </section>
-      {/* ─── 3. BEST SELLING PRODUCTS ──────────────────────── */}
-      {bestSellersList.length > 0 && (
-        <section className="py-16 sm:py-20 border-b border-border/30 relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header info */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-3">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-black flex items-center gap-2">
-                  <TrendingUp className="w-6 h-6 text-primary" />
-                  {trans.bestSellers}
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 font-medium max-w-lg">
-                  {trans.bestSellersDesc}
-                </p>
-              </div>
-            </div>
-
-            {/* Grid display */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {bestSellersList.map((item) => (
-                <ProductCard key={item._id} item={item} commonT={commonT} />
+          {/* Products Grid */}
+          {isCatalogLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-80 w-full rounded-2xl" />
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* ─── 4. FEATURED PRODUCTS (ASYMMETRIC SPOTLIGHT) ───── */}
-      {featuredList.length > 0 && (
-        <section className="py-16 sm:py-20 bg-muted/15 border-b border-border/30 relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-3">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-black flex items-center gap-2">
-                  <Award className="w-6 h-6 text-amber-500" />
-                  {trans.featuredTitle}
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 font-medium max-w-lg">
-                  {trans.featuredDesc}
-                </p>
-              </div>
+          ) : mainCatalogData?.data?.length ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+              {(mainCatalogData.data as Product[]).map((item) => (
+                <SimilarProductCard key={item._id} item={item} />
+              ))}
             </div>
-
-            {/* Asymmetric Spotlight Layout: Double width first featured card */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
-              {/* Col-span-6 (Main spotlight showcase banner) */}
-              <div className="md:col-span-6 flex flex-col justify-between bg-linear-to-tr from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-6 sm:p-10 relative overflow-hidden group">
-                <div className="absolute -right-10 -bottom-10 w-60 h-60 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="relative z-10 space-y-4">
-                  <div className="inline-flex px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-extrabold uppercase tracking-widest">
-                    {locale === "ar" ? "العرض الأقوى" : "Golden Choice"}
-                  </div>
-                  <h3 className="text-2xl sm:text-4xl font-black text-foreground leading-tight tracking-tight">
-                    {getTrans(featuredList[0].title)}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md line-clamp-3 font-medium">
-                    {getTrans(featuredList[0].description)}
-                  </p>
-                </div>
-
-                <div className="mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10 pt-6 border-t border-border/40">
-                  <div className="flex flex-col">
-                    <span className="text-[11px] text-muted-foreground font-bold">
-                      {locale === "ar" ? "تبدأ من" : "Starting at"}
-                    </span>
-                    <span className="text-2xl font-black text-foreground">
-                      {formatCurrency(featuredList[0].priceRange?.min || 0)}
-                    </span>
-                  </div>
-                  <Link
-                    href={`/products/${featuredList[0]._id}`}
-                    className="inline-flex items-center justify-center rounded-xl h-11 font-extrabold px-6 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/15 transition-all text-xs"
-                  >
-                    {locale === "ar" ? "اكتشف التفاصيل" : "Explore Component"}
-                  </Link>
-                </div>
-              </div>
-
-              {/* Col-span-6 (Right side, containing the remaining 2 products in standard luxury grids) */}
-              <div className="md:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                {featuredList.slice(1, 3).map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    item={product}
-                    commonT={commonT}
-                  />
-                ))}
-              </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-lg font-bold text-foreground">
+                {trans.noProducts}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {trans.noProductsDesc}
+              </p>
             </div>
-          </div>
-        </section>
-      )}
-      {/* ─── 6. BRANDS ECOSYSTEM SECTION ───────────────────── */}
-      {brandsList.length > 0 && (
-        <section className="py-16 sm:py-24 border-t border-border/30 bg-muted/5 overflow-hidden relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-muted-foreground/60">
-              {trans.trustedBrands}
-            </h2>
-            <div className="w-12 h-0.5 bg-primary/30 rounded-full mt-2.5 mx-auto" />
-          </div>
+          )}
 
-          <div className="hover:[animation-play-state:paused] flex select-none cursor-pointer">
-            <div
-              className={
-                locale === "ar"
-                  ? "animate-marquee-left gap-10"
-                  : "animate-marquee-right gap-10"
-              }
-            >
-              {[...brandsList, ...brandsList].map((brand, idx) => {
-                const bName = getTrans(brand.name);
-                return (
-                  <div
-                    key={`${brand._id}-${idx}`}
-                    onClick={() => {
-                      setSelectedBrand(brand._id);
-                      setPage(1);
-                    }}
-                    className="px-8 py-5 rounded-2xl bg-card border border-border/40 shadow-2xs hover:border-primary/25 hover:shadow-md transition-all shrink-0 flex items-center justify-center min-w-40 h-20"
-                  >
-                    <span className="text-sm sm:text-base font-extrabold uppercase tracking-widest text-muted-foreground/80 hover:text-primary transition-colors">
-                      {bName}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ─── 7. MOBILE FILTER DRAWER SHEET DIALOG ──────────── */}
-      {isMobileDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
-          {/* Backdrop Mask */}
-          <div
-            onClick={() => setIsMobileDrawerOpen(false)}
-            className="fixed inset-0 bg-black/45 backdrop-blur-xs transition-opacity"
-          />
-
-          {/* Sliding sheet container */}
-          <div className="relative w-80 max-w-full bg-background border-l rtl:border-l-0 rtl:border-r border-border/50 h-full p-6 shadow-2xl flex flex-col z-10 animate-in slide-in-from-right rtl:slide-in-from-left duration-300">
-            <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
-              <h3 className="font-extrabold text-sm uppercase tracking-wider flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-primary" />
-                {trans.filtersTitle}
-              </h3>
-              <button
-                onClick={() => setIsMobileDrawerOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Scrollable Filters list */}
-            <div className="flex-1 overflow-y-auto space-y-6 pb-6 pr-1 custom-scrollbar">
-              {/* Categories */}
-              <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-primary" />
-                  {trans.categories}
-                </label>
-                <div className="space-y-1 font-medium">
-                  <button
-                    onClick={() => {
-                      setSelectedCategory("");
-                      setSelectedSubCategory("");
-                      setPage(1);
-                    }}
-                    className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs transition-all ${
-                      !selectedCategory
-                        ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                        : "hover:bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {trans.allCategories}
-                  </button>
-                  {categoriesList.map((cat) => {
-                    const catName = getTrans(cat.name);
-                    return (
-                      <button
-                        key={cat._id}
-                        onClick={() => {
-                          setSelectedCategory(cat._id);
-                          setSelectedSubCategory("");
-                          setPage(1);
-                        }}
-                        className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs transition-all truncate block ${
-                          selectedCategory === cat._id
-                            ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                            : "hover:bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {catName}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* SubCategories */}
-              {selectedCategory && subCategoriesList.length > 0 && (
-                <div className="space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
-                  <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-primary" />
-                    {locale === "ar" ? "الأقسام الفرعية" : "Subcategories"}
-                  </label>
-                  <div className="space-y-1 font-medium">
-                    <button
-                      onClick={() => {
-                        setSelectedSubCategory("");
-                        setPage(1);
-                      }}
-                      className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs transition-all ${
-                        !selectedSubCategory
-                          ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                          : "hover:bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {locale === "ar"
-                        ? "كل الأقسام الفرعية"
-                        : "All Subcategories"}
-                    </button>
-                    {subCategoriesList.map((sub) => {
-                      const subName = getTrans(sub.name);
-                      return (
-                        <button
-                          key={sub._id}
-                          onClick={() => {
-                            setSelectedSubCategory(sub._id);
-                            setPage(1);
-                          }}
-                          className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs transition-all truncate block ${
-                            selectedSubCategory === sub._id
-                              ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                              : "hover:bg-muted text-muted-foreground"
-                          }`}
-                          title={subName}
-                        >
-                          {subName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Brands */}
-              <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                  <Briefcase className="w-3.5 h-3.5 text-primary" />
-                  {trans.brands}
-                </label>
-                <div className="space-y-1 font-medium">
-                  <button
-                    onClick={() => {
-                      setSelectedBrand("");
-                      setPage(1);
-                    }}
-                    className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs transition-all ${
-                      !selectedBrand
-                        ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                        : "hover:bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {trans.allBrands}
-                  </button>
-                  {brandsList.map((brand) => {
-                    const bName = getTrans(brand.name);
-                    return (
-                      <button
-                        key={brand._id}
-                        onClick={() => {
-                          setSelectedBrand(brand._id);
-                          setPage(1);
-                        }}
-                        className={`w-full text-left rtl:text-right px-3 py-2 rounded-xl text-xs transition-all truncate block ${
-                          selectedBrand === brand._id
-                            ? "bg-primary/10 text-primary font-bold border border-primary/20"
-                            : "hover:bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {bName}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Price Ranges */}
-              <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase text-muted-foreground/80 tracking-wider flex items-center gap-1.5">
-                  <Coins className="w-3.5 h-3.5 text-primary" />
-                  {trans.priceRange}
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="number"
-                    placeholder={trans.minPrice}
-                    value={minPrice}
-                    onChange={(e) => {
-                      setMinPrice(e.target.value);
-                      setPage(1);
-                    }}
-                    className="h-10 text-xs text-center rounded-xl bg-muted/40 border-border/40 font-bold"
-                  />
-                  <Input
-                    type="number"
-                    placeholder={trans.maxPrice}
-                    value={maxPrice}
-                    onChange={(e) => {
-                      setMaxPrice(e.target.value);
-                      setPage(1);
-                    }}
-                    className="h-10 text-xs text-center rounded-xl bg-muted/40 border-border/40 font-bold"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Actions inside mobile drawer */}
-            <div className="pt-4 border-t border-border/40 flex items-center gap-2">
-              {hasActiveFilters && (
-                <Button
-                  onClick={handleClearAll}
-                  variant="destructive"
-                  className="flex-1 rounded-xl h-11 font-bold text-xs"
-                >
-                  {trans.clearAll}
-                </Button>
-              )}
-              <Button
-                onClick={() => setIsMobileDrawerOpen(false)}
-                className="flex-1 rounded-xl h-11 font-bold text-xs shadow-md shadow-primary/15"
-              >
-                {locale === "ar" ? "تطبيق الفلاتر" : "Apply"}
-              </Button>
-            </div>
-          </div>
+          {/* Pagination */}
+          {mainCatalogData?.meta?.pagination && (
+            <Pagination
+              pagination={mainCatalogData.meta.pagination}
+              onPageChange={(p) => setPage(p)}
+            />
+          )}
         </div>
-      )}
+      </section>
+      {/* 2. TRUST INDICATORS (Above the Fold - Static Import) */}
+      <TrustedBy mode="text" duration="18اشىيث0s" />
+      {/* ─── Filter Drawer ──────────────────────────────────── */}
+      <FilterDrawer
+        isOpen={isMobileDrawerOpen}
+        onClose={() => setIsMobileDrawerOpen(false)}
+        title={trans.filtersTitle}
+        activeCount={activeFilterCount}
+        subtitle={
+          activeFilterCount > 0
+            ? `${activeFilterCount} ${trans.activeFilters}`
+            : trans.noActiveFilters
+        }
+        footer={
+          <div className="flex items-center gap-3 w-full">
+            <Button
+              variant="destructive"
+              onClick={handleClearAllFilters}
+              className="flex-1 h-11 font-bold rounded-xl"
+            >
+              {commonT("clearAll")}
+            </Button>
+            <Button
+              onClick={() => setIsMobileDrawerOpen(false)}
+              className="flex-1 h-11 font-bold rounded-xl shadow-md shadow-primary/20"
+            >
+              {commonT("applyFilters")}
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-6">
+          <FilterSection title={trans.categories}>
+            <SearchableSelect
+              label={trans.categories}
+              icon={Tag}
+              value={selectedCategory}
+              options={filteredCategoryOptions}
+              getDisplayValue={(opt) => getTrans(opt.name as LocalizedString)}
+              onSearch={setCategorySearch}
+              onSelect={(id) => {
+                setSelectedCategory(id);
+                setSelectedSubCategory("");
+              }}
+              className="mt-2"
+            />
+            <SearchableSelect
+              label={trans.subCategories}
+              icon={Layers}
+              value={selectedSubCategory}
+              options={filteredSubCategoryOptions}
+              getDisplayValue={(opt) => getTrans(opt.name as LocalizedString)}
+              onSearch={setSubCategorySearch}
+              onSelect={(id) => setSelectedSubCategory(id)}
+              className="mt-5"
+            />
+            <SearchableSelect
+              label={trans.brands}
+              icon={Briefcase}
+              value={selectedBrand}
+              options={filteredBrandOptions}
+              getDisplayValue={(opt) => getTrans(opt.name as LocalizedString)}
+              onSearch={setBrandSearch}
+              onSelect={(id) => setSelectedBrand(id)}
+              className="mt-5"
+            />
+          </FilterSection>
+
+          <FilterSection title={trans.priceRange}>
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                type="number"
+                icon={Coins}
+                label={trans.minPrice}
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="h-10"
+              />
+              <Input
+                type="number"
+                icon={Coins}
+                label={trans.maxPrice}
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="h-10"
+              />
+            </div>
+          </FilterSection>
+
+          <FilterSection title={trans.color}>
+            <Input
+              icon={Palette}
+              placeholder={trans.colorPlaceholder}
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="h-10"
+            />
+          </FilterSection>
+        </div>
+      </FilterDrawer>
+    </div>
+  );
+}
+
+function FilterSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-3">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        {title}
+      </h3>
+      <div className="space-y-3">{children}</div>
     </div>
   );
 }
