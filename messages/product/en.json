@@ -11,14 +11,21 @@
     "addToWishlist": "Add to Wishlist",
     "shareProduct": "Share Product",
     "prevImage": "Previous Image",
-    "nextImage": "Next Image"
+    "nextImage": "Next Image",
+    "zoomImage": "Zoom Image"
   },
   "info": {
     "ratingsCount": "({count} reviews)",
     "brand": "Brand",
     "category": "Category",
     "subCategory": "Sub-category",
-    "startingFrom": "Starting from"
+    "startingFrom": "Starting from",
+    "sku": "SKU"
+  },
+  "notFound": {
+    "title": "Product Not Available or Not Found",
+    "description": "Sorry, we could not find the product you are looking for. It might have been removed or the link is incorrect.",
+    "backToProducts": "Browse All Products"
   },
   "actions": {
     "buyNow": "Buy Now",
@@ -32,6 +39,10 @@
   },
   "uses": {
     "title": "Uses & Features"
+  },
+  "similar": {
+    "title": "You Might Also Like",
+    "viewDetails": "View Details"
   },
   "tabs": {
     "order": "Order Now",

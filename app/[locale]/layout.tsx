@@ -16,6 +16,8 @@ import { Permissions } from "@/features/roles/types";
 import MaintenanceGuard from "@/components/MaintenanceGuard";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import CartDrawer from "@/features/cart/components/CartDrawer";
+import { getImageUrl } from "@/shared/utils/image.util";
+
 
 /**
  * Enterprise SEO Engine
@@ -45,15 +47,15 @@ export async function generateMetadata({
     },
     description,
     icons: {
-      icon: settings.favicon || "/favicon.ico",
-      shortcut: settings.favicon || "/favicon.ico",
-      apple: settings.favicon || "/apple-touch-icon.png",
+      icon: getImageUrl(settings.favicon) || "/favicon.ico",
+      shortcut: getImageUrl(settings.favicon) || "/favicon.ico",
+      apple: getImageUrl(settings.favicon) || "/apple-touch-icon.png",
     },
     openGraph: {
       title,
       description,
       siteName: title,
-      images: settings.logo ? [settings.logo] : [],
+      images: getImageUrl(settings.logo) ? [{ url: getImageUrl(settings.logo)! }] : [],
       type: "website",
     },
     robots: {
@@ -122,7 +124,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "Store",
     name: finalSettings.siteName?.[locale as "ar" | "en"] || "SkyGalaxy",
-    image: finalSettings.logo || "",
+    image: getImageUrl(finalSettings.logo),
     description: finalSettings.siteDescription?.[locale as "ar" | "en"] || "",
   };
 

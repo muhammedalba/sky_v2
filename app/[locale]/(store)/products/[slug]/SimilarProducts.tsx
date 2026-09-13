@@ -11,20 +11,16 @@ import { Button } from "@/shared/ui/Button";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import QuickAddModal from "@/components/QuickAddModal";
 import { Product } from "@/types";
-import {
-  StarIcon,
-  HeartIcon,
-  ShoppingCartIcon,
-  ArrowRightIcon,
-  Share2Icon,
-} from "@/shared/ui/Icons";
+import { StarIcon, ShoppingCartIcon, ArrowRightIcon } from "@/shared/ui/Icons";
 import Badge from "@/shared/ui/Badge";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 interface SimilarProductsProps {
   product: Product;
 }
 
 export default function SimilarProducts({ product }: SimilarProductsProps) {
+  const t = useTranslations("product");
   const categoryId =
     (typeof product.category === "object"
       ? product.category?._id
@@ -57,22 +53,28 @@ export default function SimilarProducts({ product }: SimilarProductsProps) {
   if (relatedProducts.length === 0) return null;
 
   return (
-    <div className="mt-14 bg-background w-full p-7">
+    <ScrollReveal
+      animation="slide-up"
+      className="mt-14 bg-background w-full p-7"
+    >
       <h2 className="text-2xl sm:text-3xl font-black text-center title-gradient mb-8">
-        قد يعجبك أيضاً
+        {t("similar.title")}
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-        {relatedProducts.map((item) => (
-          <SimilarProductCard key={item._id} item={item} />
+        {relatedProducts.map((item, i) => (
+          <ScrollReveal key={item._id} animation="fade" delay={i * 100}>
+            <SimilarProductCard key={item._id} item={item} />
+          </ScrollReveal>
         ))}
       </div>
-    </div>
+    </ScrollReveal>
   );
 }
 
 function SimilarProductCard({ item }: { item: Product }) {
   const getTrans = useTrans();
   const formatCurrency = useFormatCurrency();
+  const t = useTranslations("product");
   const commonT = useTranslations("common.buttons");
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const { mutate: addToCart, isPending: adding } = useAddToCart();
@@ -153,13 +155,14 @@ function SimilarProductCard({ item }: { item: Product }) {
 
   return (
     <div className="group relative bg-background rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300">
+      
       <Link
         href={`/products/${item.slug}`}
         className="relative aspect-4/3 block overflow-hidden bg-secondary/10"
       >
         {item.isFeatured && (
           <span className="absolute top-3 rtl:right-3 ltr:left-3 z-10 bg-warning text-warning-foreground text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-md shadow-sm">
-            الأكثر مبيعاً
+            {t("badges.bestSeller")}
           </span>
         )}
         {item.imageCover?.url && (
@@ -172,25 +175,6 @@ function SimilarProductCard({ item }: { item: Product }) {
           />
         )}
       </Link>
-
-      <div className="absolute top-3 rtl:left-3 ltr:right-3 z-10 flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={(e) => e.preventDefault()}
-          aria-label="إضافة للمفضلة"
-          className="w-8 h-8 rounded-full bg-background/80 backdrop-blur-md border border-border/50 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
-        >
-          <HeartIcon className="w-3.5 h-3.5" />
-        </button>
-        <button
-          type="button"
-          onClick={(e) => e.preventDefault()}
-          aria-label="مشاركة"
-          className="w-8 h-8 rounded-full bg-background/80 backdrop-blur-md border border-border/50 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
-        >
-          <Share2Icon className="w-3.5 h-3.5" />
-        </button>
-      </div>
 
       <div className="p-4 space-y-2.5">
         <div className="flex items-start justify-between gap-2">
@@ -216,13 +200,13 @@ function SimilarProductCard({ item }: { item: Product }) {
           </p>
         )}
 
-           {marqueeContent && (
-            <div className="w-full relative flex overflow-hidden mask-image-fade my-2">
-              <div className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500">
-                {marqueeContent}
-              </div>
+        {marqueeContent && (
+          <div className="w-full relative flex overflow-hidden mask-image-fade my-2">
+            <div className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500">
+              {marqueeContent}
             </div>
-          )}
+          </div>
+        )}
 
         <div className="flex items-end gap-2 pt-1">
           <span className="text-base font-bold text-primary">
@@ -247,7 +231,7 @@ function SimilarProductCard({ item }: { item: Product }) {
           </Button>
           <Link
             href={`/products/${item.slug}`}
-            aria-label="عرض التفاصيل"
+            aria-label={t("similar.viewDetails")}
             className="w-9 h-9 shrink-0 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
           >
             <ArrowRightIcon className="w-4 h-4 rtl:rotate-180" />

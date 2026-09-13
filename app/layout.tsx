@@ -4,6 +4,7 @@ import Script from "next/script";
 import { getFontVariables } from "@/lib/fonts";
 import { getLocale } from "next-intl/server";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
+import { getImageUrl } from "@/shared/utils/image.util";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = (await getLocale()) ?? "ar";
@@ -25,9 +26,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     icons: {
-      icon: settings.favicon?.url || "/favicon.ico",
-      shortcut: settings.favicon?.url || "/favicon.ico",
-      apple: settings.favicon?.url || "/apple-touch-icon.png",
+      icon: getImageUrl(settings.favicon?.url) || "/favicon.ico",
+      shortcut: getImageUrl(settings.favicon?.url) || "/favicon.ico",
+      apple: getImageUrl(settings.favicon?.url) || "/apple-touch-icon.png",
     },
     openGraph: {
       title,
@@ -36,10 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: settings.logo
         ? [
             {
-              url:
-                typeof settings.logo === "object"
-                  ? settings.logo?.url
-                  : settings.logo,
+              url: getImageUrl(settings.logo) || "/assets/images/logo.png",
             },
           ]
         : [],
@@ -53,10 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: settings.logo
         ? [
             {
-              url:
-                typeof settings.logo === "object"
-                  ? settings.logo?.url
-                  : settings.logo,
+              url: getImageUrl(settings.logo) || "/assets/images/logo.png",
             },
           ]
         : [],

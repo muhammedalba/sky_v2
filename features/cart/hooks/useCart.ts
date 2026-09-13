@@ -28,7 +28,6 @@ export function useCart() {
       return response?.data ?? null;
     },
     enabled: !!user,
-   
   });
 }
 
@@ -45,7 +44,7 @@ export function useCart() {
  *
  * @returns The mutation result object for the add-to-cart operation.
  */
-export function useAddToCart() {
+export function useAddToCart(openDrawer: boolean = true) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { data: user } = useMe();
@@ -88,15 +87,19 @@ export function useAddToCart() {
         });
       }
       toast.success("Added to cart");
-      openCartDrawer();
+      if (openDrawer) {
+        openCartDrawer();
+      }
     },
     onError: (error: Error) => {
       if (error.message === "GUEST_CHECKOUT_DISABLED") {
-        const isAr = typeof window !== 'undefined' && window.location.pathname.split('/')[1] === 'ar';
+        const isAr =
+          typeof window !== "undefined" &&
+          window.location.pathname.split("/")[1] === "ar";
         toast.error(
           isAr
             ? "الشراء كزائر معطل حالياً. يرجى تسجيل الدخول للإضافة إلى السلة."
-            : "Guest checkout is currently disabled. Please login to add items to your cart."
+            : "Guest checkout is currently disabled. Please login to add items to your cart.",
         );
       } else {
         toast.error(error.message || "Failed to add to cart");
@@ -118,7 +121,7 @@ export function useAddToCart() {
 export function useUpdateCartQuantity() {
   const queryClient = useQueryClient();
   const toast = useToast();
-  
+
   return useMutation({
     mutationFn: async (data: {
       productId: string;
@@ -154,7 +157,13 @@ export function useRemoveFromCart() {
   const queryClient = useQueryClient();
   const toast = useToast();
   return useMutation({
-    mutationFn: async ({ productId, variantId }: { productId: string; variantId?: string }) => {
+    mutationFn: async ({
+      productId,
+      variantId,
+    }: {
+      productId: string;
+      variantId?: string;
+    }) => {
       const response = await cartApi.removeItem(productId, variantId);
       return response.data;
     },
@@ -246,7 +255,6 @@ export interface CouponValidationResult {
     CouponId: string;
     couponType: string;
     discount: number;
-
   } | null;
 }
 
@@ -266,4 +274,3 @@ export function useCouponValidation() {
     },
   });
 }
-

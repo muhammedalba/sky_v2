@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { ScrollReveal } from "./ScrollReveal";
 
 /**
  * Formats individual attribute value into human-readable string.
@@ -44,14 +45,16 @@ export function formatAttributeValue(val: unknown): string {
  * Useful for tooltips, logs, exports, or plain-text representations.
  */
 export function formatVariantAttributesText(
-  attributes?: Record<string, unknown> | null
+  attributes?: Record<string, unknown> | null,
+  getLabel?: (key: string) => string
 ): string {
   if (!attributes || typeof attributes !== "object") return "";
 
   return Object.entries(attributes)
     .map(([k, v]) => {
       const formatted = formatAttributeValue(v);
-      return formatted ? `${k}: ${formatted}` : "";
+      const label = getLabel ? getLabel(k) : k;
+      return formatted ? `${label}: ${formatted}` : "";
     })
     .filter(Boolean)
     .join(", ");
@@ -61,6 +64,7 @@ export interface VariantAttributesProps {
   attributes?: Record<string, unknown> | null;
   className?: string;
   badgeClassName?: string;
+  getLabel?: (key: string) => string;
 }
 
 /**
@@ -70,6 +74,7 @@ export function VariantAttributes({
   attributes,
   className,
   badgeClassName,
+  getLabel,
 }: VariantAttributesProps) {
   if (
     !attributes ||
@@ -81,20 +86,22 @@ export function VariantAttributes({
 
   return (
     <div className={cn("flex flex-wrap gap-1", className)}>
-      {Object.entries(attributes).map(([key, val]) => {
+      {Object.entries(attributes).map(([key, val],index) => {
         const valStr = formatAttributeValue(val);
         if (!valStr) return null;
 
+        const label = getLabel ? getLabel(key) : key;
+
         return (
-          <span
+          <ScrollReveal animation="fade" delay={index * 500} 
             key={key}
             className={cn(
               "inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap",
               badgeClassName
             )}
           >
-            {key}: {valStr}
-          </span>
+            {label}: {valStr}
+          </ScrollReveal>
         );
       })}
     </div>

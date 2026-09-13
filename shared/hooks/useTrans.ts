@@ -7,7 +7,7 @@ import { LocalizedString } from '@/types';
  */
 export function useTrans() {
   const locale = useLocale();
-  const getTrans = (content: LocalizedString | undefined | null): string => {
+  const getTrans = (content: LocalizedString | string | undefined | null): string => {
     if (!content) return '-';
     if (typeof content === 'string') {
       return content;

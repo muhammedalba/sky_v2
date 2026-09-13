@@ -30,7 +30,7 @@ export function Breadcrumb({
   showHome = true,
   homeHref = "/",
   homeLabel,
-  separator = <span className="text-border select-none shrink-0">/</span>,
+  separator = <span className="text-muted-foreground/50 select-none shrink-0">/</span>,
   className,
 }: BreadcrumbProps) {
   const locale = useLocale();
@@ -50,7 +50,7 @@ export function Breadcrumb({
     <nav
       aria-label="Breadcrumb"
       className={cn(
-        "flex items-center gap-2 text-xs text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap no-scrollbar",
+        "flex items-center gap-1 text-xs text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap no-scrollbar",
         className
       )}
     >
@@ -59,11 +59,11 @@ export function Breadcrumb({
           const isLast = index === allItems.length - 1;
 
           return (
-            <li key={index} className="flex items-center gap-2">
+            <li key={index} className="flex items-center gap-1">
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-foreground transition-colors capitalize "
                 >
                   {item.label}
                 </Link>
@@ -77,7 +77,8 @@ export function Breadcrumb({
                   )}
                   aria-current={isLast ? "page" : undefined}
                 >
-                  {item.label}
+                  {item.label.split('-').join(' ').slice(0, 15) + '...'}
+
                 </span>
               )}
 

@@ -37,7 +37,7 @@ export default function OrderDetailsPage({
   const queryClient = useQueryClient();
 
   const { data: order, isLoading, refetch } = useOrder(id);
-  console.log(order);
+
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const t = useTranslations("orders");
   const formatCurrency = useFormatCurrency();

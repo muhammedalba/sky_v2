@@ -11,14 +11,21 @@
     "addToWishlist": "إضافة للمفضلة",
     "shareProduct": "مشاركة المنتج",
     "prevImage": "الصورة السابقة",
-    "nextImage": "الصورة التالية"
+    "nextImage": "الصورة التالية",
+    "zoomImage": "تكبير الصورة"
   },
   "info": {
     "ratingsCount": "({count} تقييم)",
     "brand": "البراند",
     "category": "التصنيف",
     "subCategory": "التصنيف الفرعي",
-    "startingFrom": "ابتداءً من"
+    "startingFrom": "ابتداءً من",
+    "sku": "رمز المنتج"
+  },
+  "notFound": {
+    "title": "المنتج غير متوفر أو غير موجود",
+    "description": "عذراً، لم نتمكن من العثور على المنتج الذي تبحث عنه، ربما تمت إزالته أو أن الرابط غير صحيح.",
+    "backToProducts": "تصفح كافة المنتجات"
   },
   "actions": {
     "buyNow": "اشترِ الآن",
@@ -32,6 +39,10 @@
   },
   "uses": {
     "title": "طرق الاستخدام والمميزات"
+  },
+  "similar": {
+    "title": "قد يعجبك أيضاً",
+    "viewDetails": "عرض التفاصيل"
   },
   "tabs": {
     "order": "اطلب الآن",

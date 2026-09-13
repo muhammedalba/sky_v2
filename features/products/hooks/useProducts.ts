@@ -47,27 +47,23 @@ export function useProducts(
 
 export function useProduct(
   id: string,
-  options?: { all_langs: boolean },
-): UseQueryResult<ProductWithVariants, Error>;
-export function useProduct(
-  id: string,
-  options?: { all_langs?: false },
-): UseQueryResult<Product, Error>;
-export function useProduct(
-  id: string,
-  options?: { all_langs?: boolean },
-): UseQueryResult<any, Error> {
+  options?: { all_langs?: boolean; initialData?: ProductWithVariants | null },
+): UseQueryResult<ProductWithVariants, Error> {
   const all_langs = options?.all_langs ?? false;
   const locale = useLocale();
-  return useQuery({
+  return useQuery<ProductWithVariants, Error>({
     queryKey: ["products", id, locale, { all_langs }],
     queryFn: async () => {
       const params = all_langs ? { all_langs: "true" } : undefined;
       const response = await productsApi.getOne(id, params);
-      return response.data;
+      return response.data as unknown as ProductWithVariants;
     },
     enabled: !!id,
     throwOnError: true,
+    // ✅ إذا وُجدت بيانات أولية من SSR، لا يُرسَل أي طلب عند أول تحميل
+    initialData: options?.initialData ?? undefined,
+    // يتطابق مع مدة الكاش على السيرفر (1 ساعة)
+    staleTime: 60 * 60 * 1000,
   });
 }
 

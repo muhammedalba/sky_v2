@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { useLocale } from "next-intl";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { cn } from "@/lib/utils";
+import { ScrollReveal } from "./ScrollReveal";
 
 export interface PriceProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, "prefix"> {
@@ -80,7 +81,7 @@ export function Price({
   }, [isArabic, currencyCode, settings?.currencyCode]);
 
   return (
-    <span
+    <ScrollReveal animation="slide-up"
       className={cn("inline-flex items-baseline gap-1 font-bold", className)}
       {...props}
     >
@@ -105,7 +106,7 @@ export function Price({
           {suffix}
         </span>
       )}
-    </span>
+    </ScrollReveal>
   );
 }
 
