@@ -13,7 +13,7 @@ interface ImageWithFallbackProps extends Omit<ImageProps, "src"> {
 }
 
 export default function ImageWithFallback({
-  src = "",
+  src,
   alt,
   fallback,
   className,
@@ -45,9 +45,6 @@ export default function ImageWithFallback({
       alt={alt}
       className={className}
       fill={fill}
-      loader={() => {
-        return "/assets/images/default.png";
-      }}
       onError={() => setError(true)}
       {...props}
     />
