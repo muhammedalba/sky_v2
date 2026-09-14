@@ -27,7 +27,13 @@ const TARGET_Y = [30, 50, 70]; // height at which each connector enters the circ
 // segment before the line kinks and angles diagonally into the circle.
 const BEND_FRACTION = 0.45;
 
-type Line = { dotX: number; y1: number; bendX: number; edgeX: number; y2: number };
+type Line = {
+  dotX: number;
+  y1: number;
+  bendX: number;
+  edgeX: number;
+  y2: number;
+};
 
 const LEFT_LINES: Line[] = ROW_Y.map((y, i) => ({
   dotX: DOT_X.left,
@@ -53,7 +59,7 @@ export default function WhyDifferenceSection() {
   });
 
   return (
-    <section className="py-20 md:py-28 bg-background relative overflow-hidden">
+    <section className="py-20 md:py-28 bg-muted/50 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal
           animation="fade"
@@ -71,8 +77,8 @@ export default function WhyDifferenceSection() {
         <div className="flex flex-col items-center gap-10 lg:hidden">
           <CenterCircle />
           <div className="flex flex-col items-center gap-8 max-w-sm text-center">
-            {LEFT_FEATURES.map((key) => (
-              <FeatureText key={key} {...feature(key)} align="center" />
+            {LEFT_FEATURES.map((key, i) => (
+              <FeatureText key={key} {...feature(key)} align="center" i={i} />
             ))}
           </div>
         </div>
@@ -115,7 +121,7 @@ export default function WhyDifferenceSection() {
                 transform: "translateY(-50%)",
               }}
             >
-              <FeatureText {...feature(key)} align="right" />
+              <FeatureText {...feature(key)} align="right" i={i} />
             </div>
           ))}
 
@@ -129,7 +135,7 @@ export default function WhyDifferenceSection() {
                 transform: "translateY(-50%)",
               }}
             >
-              <FeatureText {...feature(key)} align="left" />
+              <FeatureText {...feature(key)} align="left" i={i} />
             </div>
           ))}
 
@@ -149,7 +155,11 @@ function Dot({ x, y }: { x: number; y: number }) {
   return (
     <span
       className="absolute w-2.5 h-2.5 rounded-full bg-primary z-10"
-      style={{ left: `${x}%`, top: `${y}%`, transform: "translate(-50%, -50%)" }}
+      style={{
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: "translate(-50%, -50%)",
+      }}
     />
   );
 }
@@ -158,35 +168,54 @@ function FeatureText({
   title,
   desc,
   align,
+  i,
 }: {
   title: string;
   desc: string;
   align: "left" | "right" | "center";
+  i: number;
 }) {
   return (
-    <div
+    <ScrollReveal
+      delay={i * 800}
+      animation={`slide-${align === "center" ? "up" : align === "right" ? "left" : "right"}`}
       className={
-        align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left"
+        align === "center"
+          ? "text-center"
+          : align === "right"
+            ? "text-right"
+            : "text-left"
       }
     >
       <h4 className="text-lg font-black title-gradient mb-1">{title}</h4>
       <p className="text-sm text-muted-foreground font-medium">{desc}</p>
-    </div>
+    </ScrollReveal>
   );
 }
 
 function CenterCircle() {
   return (
-    <div className="relative w-56 h-56 md:w-72 md:h-72 rounded-full bg-primary/5 ring-8 ring-primary/5 flex items-center justify-center shrink-0">
+    <ScrollReveal
+      animation="fade"
+      delay={300}
+      className="relative w-56 h-56 md:w-72 md:h-72 rounded-full bg-primary/5 ring-8 ring-primary/5 flex items-center justify-center shrink-0"
+    >
       <div className="relative w-[calc(100%-1.5rem)] h-[calc(100%-1.5rem)] rounded-full overflow-hidden shadow-xl ring-4 ring-background">
         <Image
-          src="/assets/images/auth-logo.png"
+          src="/assets/images/logo.webp"
           alt=""
           fill
-          className="object-cover"
+          className="object-cover block dark:hidden"
+          sizes="288px"
+        />
+        <Image
+          src="/assets/images/logo-dark.webp"
+          alt=""
+          fill
+          className="object-cover hidden dark:block"
           sizes="288px"
         />
       </div>
-    </div>
+    </ScrollReveal>
   );
 }

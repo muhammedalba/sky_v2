@@ -40,12 +40,7 @@ const StatsHighlightSection = dynamic(
     loading: () => <div className="h-48 animate-pulse bg-background" />,
   },
 );
-const WhyChooseUsSection = dynamic(
-  () => import("./sections/WhyChooseUsSection"),
-  {
-    loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
-  },
-);
+
 const TestimonialsSection = dynamic(
   () => import("./sections/TestimonialsSection"),
   {
@@ -61,7 +56,7 @@ const FeaturedProjectsSection = dynamic(
 
 export default function HomeClient() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen max-w-350 mx-auto">
       {/* 1. HERO SECTION (Above the Fold - Static Import) */}
       <HeroSection />
 
@@ -83,11 +78,10 @@ export default function HomeClient() {
       {/* 5b. WHY IS THE DIFFERENCE (Below the Fold - Dynamic Import) */}
       <WhyDifferenceSection />
 
+
+
       {/* 5c. STATS HIGHLIGHT (Below the Fold - Dynamic Import) */}
       <StatsHighlightSection />
-
-      {/* 6. WHY CHOOSE US (Below the Fold - Dynamic Import) */}
-      <WhyChooseUsSection />
 
       {/* 7. CUSTOMER TESTIMONIALS (Below the Fold - Dynamic Import) */}
       <TestimonialsSection />

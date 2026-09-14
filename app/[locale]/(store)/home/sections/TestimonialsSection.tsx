@@ -49,9 +49,9 @@ export default function TestimonialsSection() {
 
             return (
               <ScrollReveal key={testimonial.id} delay={i * 100} className="flex gap-5 shrink-0 items-center">
-                <Card className="p-8 max-w-md bg-secondary/30 rounded-3xl border border-border/50 shadow-sm relative h-full flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">  
+                <Card className="p-8 max-w-md  rounded-3xl border border-border/50  relative h-full flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">  
                   {/* أيقونة الاقتباس بالخلفية */}
-                  <ActivityIcon className="absolute top-6 left-6 w-12 h-12 text-primary/5 group-hover:text-primary/10 transition-colors rotate-180" />
+                  <ActivityIcon className="absolute top-6 left-6 w-12 h-12 text-primary/10 group-hover:text-primary/10 transition-colors rotate-180" />
                   
                   <div className="flex gap-1 text-warning mb-6">
                     {[1, 2, 3, 4, 5].map((s) => (

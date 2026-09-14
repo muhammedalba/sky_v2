@@ -28,7 +28,7 @@
   "descriptionPlaceholderAr": "e.g. الدفع عبر البطاقة الائتمانية",
   "descriptionPlaceholderEn": "e.g. Pay via Credit Card",
   "icon": "Icon URL",
-  "iconPlaceholder": "e.g. https://example.com/icon.png",
+  "iconPlaceholder": "e.g. https://example.com/icon.webp",
   "feesAndSupportedRegions": "Fees & Supported Regions",
   "manageFeesAndCurrencies": "Manage fees, currencies and countries",
   "fixedFee": "Fixed Fee",

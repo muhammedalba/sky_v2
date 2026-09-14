@@ -135,7 +135,7 @@ export default function StoreFooter() {
               <div className="relative p-1 rounded-xl bg-card border border-border/60 shadow-sm group-hover:border-primary/30 transition-all duration-300">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center ">
                   <ImageWithFallback
-                    src={settings.logo || "/assets/images/auth-logo.png"}
+                    src={settings.logo || "/assets/images/auth-logo.webp"}
                     alt={`${siteName} Logo`}
                     width={500}
                     height={300}

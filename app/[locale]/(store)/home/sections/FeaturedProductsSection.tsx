@@ -16,7 +16,6 @@ const SKELETON_ITEMS = [1, 2, 3, 4];
 
 export default function FeaturedProductsSection() {
   const t = useTranslations("home");
-  const commonT = useTranslations("common.buttons");
   const {
     data: productsData,
     isLoading,
@@ -31,7 +30,7 @@ export default function FeaturedProductsSection() {
   }
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section className="py-24 bg-muted/50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* 3. عرض الترويسة بشكل دائم لتحسين الـ UX وتقليل الـ Layout Shift */}

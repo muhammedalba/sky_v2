@@ -170,7 +170,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             <Link href={`/home`} className="flex  items-center  shrink-0 group">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center  group-hover:scale-110 transition-transform duration-500">
                 <ImageWithFallback
-                  src={settings.logo || "/assets/images/auth-logo.png"}
+                  src={settings.logo || "/assets/images/auth-logo.webp"}
                   alt={`${siteName} Logo`}
                   width={500}
                   height={300}

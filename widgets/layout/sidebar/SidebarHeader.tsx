@@ -1,26 +1,37 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useUIStore } from '@/store/ui-store';
-import { cn, truncate } from '@/lib/utils';
-import { env } from '@/lib/env';
-import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
-import { useSettings } from '@/app/providers/SettingsProvider';
-import { useLocale } from 'next-intl';
+import Link from "next/link";
+import { useUIStore } from "@/store/ui-store";
+import { cn, truncate } from "@/lib/utils";
+import { env } from "@/lib/env";
+import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import { useSettings } from "@/app/providers/SettingsProvider";
+import { useLocale } from "next-intl";
 
-export default function SidebarHeader({ Collapsed = false, onNavigate, }: { Collapsed?: boolean; onNavigate?: () => void }) {
+export default function SidebarHeader({
+  Collapsed = false,
+  onNavigate,
+}: {
+  Collapsed?: boolean;
+  onNavigate?: () => void;
+}) {
   const locale = useLocale();
   const settings = useSettings();
   const { sidebarCollapsed } = useUIStore();
   const isCollapsed = sidebarCollapsed && Collapsed;
 
-  /** 
+  /**
    * SidebarHeader Component
    * Unified header for admin and store sidebars
    */
   const siteName = settings.siteName?.en || env.APP_NAME;
   return (
-    <div className={cn("h-20 flex w-full items-center transition-all duration-500", isCollapsed ? "justify-center px-0" : "px-3")}>
+    <div
+      className={cn(
+        "h-20 flex w-full items-center transition-all duration-500",
+        isCollapsed ? "justify-center px-0" : "px-3",
+      )}
+    >
       <Link
         href={`/${locale}/`}
         className="flex items-center gap-2 group  "
@@ -28,7 +39,7 @@ export default function SidebarHeader({ Collapsed = false, onNavigate, }: { Coll
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center  group-hover:scale-110 transition-transform duration-500">
           <ImageWithFallback
-            src={settings.logo || "/assets/images/auth-logo.png"}
+            src={settings.logo || "/assets/images/auth-logo.webp"}
             alt={`${siteName} Logo`}
             width={500}
             height={300}

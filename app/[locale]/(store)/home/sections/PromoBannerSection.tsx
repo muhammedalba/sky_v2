@@ -11,14 +11,11 @@ export default function PromoBannerSection() {
   const t = useTranslations("home");
 
   return (
-    // dir="ltr": the background artwork (mobile.png / Desktop.png) has a fixed
+    // dir="ltr": the background artwork (mobile.webp / Desktop.webp) has a fixed
     // dark-to-light gradient baked in from left to right, so the layout stays
     // physically left/right regardless of locale instead of mirroring for RTL.
-    <section
-      dir="ltr"
-      className="p-7 "
-    >
-      <div className="relative rounded-lg overflow-hidden bg-[#c9dbf5] bg-[url('/assets/images/mobile.png')] md:bg-[url('/assets/images/Desktop.png')] bg-cover bg-top md:bg-center bg-no-repeat max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-20 md:py-28 flex flex-col md:flex-row md:items-center gap-12 md:gap-10">
+    <section dir="ltr" className="p-7 ">
+      <div className="relative rounded-lg overflow-hidden bg-[#c9dbf5] bg-[url('/assets/images/mobile.webp')] md:bg-[url('/assets/images/Desktop.webp')] bg-cover bg-top md:bg-center bg-no-repeat max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-20 md:py-28 flex flex-col md:flex-row md:items-center gap-12 md:gap-10">
         <ScrollReveal
           delay={100}
           animation="slide-right"
@@ -54,7 +51,7 @@ export default function PromoBannerSection() {
         >
           <div className="relative w-full max-w-sm md:max-w-none aspect-4/3 rounded-[1.75rem] overflow-hidden shadow-2xl">
             <Image
-              src="/assets/images/wholesale-building.png"
+              src="/assets/images/wholesale-building.webp"
               alt={t("promo.title")}
               fill
               className="object-cover"

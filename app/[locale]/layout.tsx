@@ -18,7 +18,6 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 import CartDrawer from "@/features/cart/components/CartDrawer";
 import { getImageUrl } from "@/shared/utils/image.util";
 
-
 /**
  * Enterprise SEO Engine
  * Dynamic Metadata Generation based on active locale and global settings
@@ -49,13 +48,15 @@ export async function generateMetadata({
     icons: {
       icon: getImageUrl(settings.favicon) || "/favicon.ico",
       shortcut: getImageUrl(settings.favicon) || "/favicon.ico",
-      apple: getImageUrl(settings.favicon) || "/apple-touch-icon.png",
+      apple: getImageUrl(settings.favicon) || "/apple-touch-icon.webp",
     },
     openGraph: {
       title,
       description,
       siteName: title,
-      images: getImageUrl(settings.logo) ? [{ url: getImageUrl(settings.logo)! }] : [],
+      images: getImageUrl(settings.logo)
+        ? [{ url: getImageUrl(settings.logo)! }]
+        : [],
       type: "website",
     },
     robots: {

@@ -28,7 +28,7 @@
   "descriptionPlaceholderAr": "مثال: الدفع عن طريق البطاقة الائتمانية",
   "descriptionPlaceholderEn": "مثال: Pay via Credit Card",
   "icon": "أيقونة الدفع",
-  "iconPlaceholder": "مثال: https://example.com/icon.png",
+  "iconPlaceholder": "مثال: https://example.com/icon.webp",
   "feesAndSupportedRegions": "الرسوم والمناطق المدعومة",
   "manageFeesAndCurrencies": "إدارة الرسوم، العملات، والدول المدعومة",
   "fixedFee": "رسوم ثابتة",

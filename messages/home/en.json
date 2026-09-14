@@ -95,24 +95,6 @@
       }
     }
   },
-  "why": {
-    "title": "Why Choose Sky Galaxy?",
-    "description": "We are not just suppliers; we are partners in your project's success. We ensure you get the best materials that extend building life and raise efficiency.",
-    "features": {
-      "quality": {
-        "title": "Internationally Certified Quality",
-        "desc": "Our materials comply with the highest Gulf and international standards."
-      },
-      "pricing": {
-        "title": "Competitive Prices",
-        "desc": "We connect you with the best factories to offer premium quality at a cost that fits your budget."
-      },
-      "logistics": {
-        "title": "Integrated Logistics Support",
-        "desc": "A fleet ready to deliver your orders to any location within the Kingdom accurately."
-      }
-    }
-  },
   "stats": {
     "years": "Years of Experience",
     "projects": "Completed Projects",

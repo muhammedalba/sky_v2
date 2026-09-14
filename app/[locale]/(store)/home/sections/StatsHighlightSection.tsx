@@ -16,9 +16,9 @@ export default function StatsHighlightSection() {
   const t = useTranslations("home");
 
   return (
-    <section className="py-16 md:py-20 bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
+    <section className="py-4 md:py-6 bg-background">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 ">
           {STATS.map((stat, i) => {
             const Icon = stat.icon;
             return (
@@ -26,7 +26,7 @@ export default function StatsHighlightSection() {
                 key={stat.labelKey}
                 animation="slide-up"
                 delay={i * 100}
-                className="flex items-center gap-4"
+                className="flex items-center justify-center gap-4"
               >
                 <div className="w-16 h-16 rounded-e-full bg-primary/10 flex items-center justify-center shrink-0">
                   <Icon className="w-7 h-7 text-primary" />

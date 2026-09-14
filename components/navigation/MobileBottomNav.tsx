@@ -47,10 +47,10 @@ const BottomNavItem = memo(function BottomNavItem({
           className={cn(
             'relative flex h-15.5 w-15.5',
             'items-center justify-center',
-            '-translate-y-6',
-            'rounded-3xl',
+            '-translate-y-8',
+            'rounded-full',
             'bg-linear-to-br from-primary to-primary/80',
-            'border border-white/20',
+          
             'shadow-[0_10px_30px_rgba(var(--primary-rgb),0.4)]',
             'backdrop-blur-xl',
             // Spring Animation
@@ -58,17 +58,12 @@ const BottomNavItem = memo(function BottomNavItem({
             'active:scale-90 hover:scale-105 hover:-translate-y-7'
           )}
         >
-          <div
-            className={cn(
-              'absolute inset-0 rounded-3xl',
-              'bg-primary/40 blur-xl mix-blend-screen'
-            )}
-          />
+         
 
           <div className="relative z-10 flex flex-col items-center justify-center">
-            <Icon
+            {/* <Icon
               className="size-5 text-white drop-shadow-md"
-            />
+            /> */}
             <span className=" text-[10px] font-bold text-white tracking-wide">
               {label}
             </span>
@@ -216,7 +211,7 @@ export default function MobileBottomNav() {
           >
             <div
               className={cn(
-                'relative h-full mx-1.5 rounded-2xl',
+                'relative h-full mx-2 rounded-3xl',
                 'bg-linear-to-b from-primary/15 to-primary/5 dark:from-primary/20 dark:to-primary/5',
                 'border border-primary/20',
                 'shadow-[0_4px_16px_rgba(var(--primary-rgb),0.1)]'

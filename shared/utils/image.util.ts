@@ -7,7 +7,7 @@ import { FileAsset } from "../types/file-asset";
  * @returns The resolved image URL string, or an empty string if null/undefined.
  */
 export function getImageUrl(image?: FileAsset | string | null): string | null {
-  if (!image) return '/assets/images/default.png';
+  if (!image) return "/assets/images/default.webp";
   if (typeof image === "string") return image;
   return image.url || null;
 }

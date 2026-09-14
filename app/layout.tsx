@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: {
       icon: getImageUrl(settings.favicon?.url) || "/favicon.ico",
       shortcut: getImageUrl(settings.favicon?.url) || "/favicon.ico",
-      apple: getImageUrl(settings.favicon?.url) || "/apple-touch-icon.png",
+      apple: getImageUrl(settings.favicon?.url) || "/apple-touch-icon.webp",
     },
     openGraph: {
       title,
@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: settings.logo
         ? [
             {
-              url: getImageUrl(settings.logo) || "/assets/images/logo.png",
+              url: getImageUrl(settings.logo) || "/assets/images/logo.webp",
             },
           ]
         : [],
@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: settings.logo
         ? [
             {
-              url: getImageUrl(settings.logo) || "/assets/images/logo.png",
+              url: getImageUrl(settings.logo) || "/assets/images/logo.webp",
             },
           ]
         : [],

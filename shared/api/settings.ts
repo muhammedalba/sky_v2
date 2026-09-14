@@ -68,8 +68,14 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     ar: "متجر إلكتروني احترافي",
     en: "Professional E-commerce Store",
   },
-  logo: { url: "/assets/images/auth-logo.png", publicId: "/assets/images/auth-logo.png" },
-  favicon: { url: "/assets/images/favicon.ico", publicId: "/assets/images/favicon.ico" },
+  logo: {
+    url: "/assets/images/auth-logo.webp",
+    publicId: "/assets/images/auth-logo.webp",
+  },
+  favicon: {
+    url: "/assets/images/favicon.ico",
+    publicId: "/assets/images/favicon.ico",
+  },
   metaTitle: { ar: "سكاي جالاكسي", en: "Sky Galaxy" },
   metaDescription: {
     ar: "متجر إلكتروني احترافي",

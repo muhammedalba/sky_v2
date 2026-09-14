@@ -11,9 +11,9 @@ import Badge from "@/shared/ui/Badge";
 
 // Placeholder photos until real project photography is supplied.
 const PROJECTS = [
-  { key: "residences", image: "/assets/images/Project-1.png" },
-  { key: "logistics", image: "/assets/images/Project-2.png" },
-  { key: "towers", image: "/assets/images/Project-3.png" },
+  { key: "residences", image: "/assets/images/Project-1.webp" },
+  { key: "logistics", image: "/assets/images/Project-2.webp" },
+  { key: "towers", image: "/assets/images/Project-3.webp" },
 ] as const;
 
 export default function FeaturedProjectsSection() {
@@ -26,10 +26,13 @@ export default function FeaturedProjectsSection() {
           animation="fade"
           className="flex flex-col items-center text-center gap-4 mb-16"
         >
-          <Badge variant="default" className="rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest">
+          <Badge
+            variant="default"
+            className="rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest"
+          >
             {t("projects.badge")}
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight title-gradient">
             {t("projects.title")}
           </h2>
           <p className="text-lg text-muted-foreground font-medium max-w-xl">
@@ -39,8 +42,12 @@ export default function FeaturedProjectsSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {PROJECTS.map((project, i) => (
-            <ScrollReveal key={project.key} delay={i * 100} animation="slide-up">
-              <GlowCard className="relative aspect-4/5 rounded-3xl overflow-hidden group cursor-pointer">
+            <ScrollReveal
+              key={project.key}
+              delay={i * 100}
+              animation="slide-up"
+            >
+              <GlowCard className="relative aspect-5/5 rounded-3xl overflow-hidden group cursor-pointer">
                 <Image
                   src={project.image}
                   alt={t(`projects.items.${project.key}.title`)}

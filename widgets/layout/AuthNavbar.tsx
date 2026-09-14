@@ -3,7 +3,13 @@
 import { Link } from "@/navigation";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { DashboardIcon, MenuIcon, PhoneIcon, ProductsIcon, XIcon } from "@/shared/ui/Icons";
+import {
+  DashboardIcon,
+  MenuIcon,
+  PhoneIcon,
+  ProductsIcon,
+  XIcon,
+} from "@/shared/ui/Icons";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -92,7 +98,7 @@ export default function AuthNavbar() {
               className="flex items-center gap-3 group relative z-110"
             >
               <Image
-                src="/assets/images/auth-logo.png"
+                src="/assets/images/auth-logo.webp"
                 alt={`${appName} Logo`}
                 width={50}
                 height={50}

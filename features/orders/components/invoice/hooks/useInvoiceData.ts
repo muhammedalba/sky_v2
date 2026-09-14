@@ -78,7 +78,7 @@ export function useInvoiceData(
     const siteNameAr = getLocalizedValue(settings?.siteName, "ar") || "متجري";
     const siteNameEn =
       getLocalizedValue(settings?.siteName, "en") || "My Store";
-    const siteLogo = settings?.logo || "/assets/images/logo.png";
+    const siteLogo = settings?.logo || "/assets/images/auth-logo.webp";
     const crNo = settings?.businessAddress?.crNo || "-";
     const vatNo = settings?.businessAddress?.vatNo || "-";
 
