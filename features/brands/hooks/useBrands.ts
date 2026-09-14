@@ -17,6 +17,8 @@ export function useBrands(
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
+    // يتطابق مع next: { revalidate: 300 } في page.tsx
+    staleTime: 5 * 60 * 1000,
   });
 }
 

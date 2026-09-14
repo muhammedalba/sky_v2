@@ -13,68 +13,108 @@ interface SearchBarProps {
   useLiveSearch?: boolean;
 }
 
+/**
+ * SearchBar — only visible on /products pages.
+ *
+ * Behaviour:
+ *  - Uses "keywords" param (matches useProductFilters convention).
+ *  - Live-search: debounces 400 ms then pushes URL, scrolls to #all-products.
+ *  - Form submit: pushes URL immediately + scrolls.
+ *  - Route change (navigate away): clears the input.
+ *  - Locale-safe: uses router.push("/products") which next-intl localizes.
+ */
 export default function SearchBar({
   className,
   useLiveSearch = false,
 }: SearchBarProps) {
   const searchParams = useSearchParams();
-  const [query, setQuery] = useState(() => searchParams?.get("search") || "");
-  const [isFocused, setIsFocused] = useState(false);
+  const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("store.nav");
-  const debouncedQuery = useDebounce(query, 400);
-  const pathname = usePathname();
-  const isProductsPage = pathname.includes("/products");
- 
-  // Sync state with URL search query changes during render to avoid cascading effects
-  const currentSearch = searchParams?.get("search") || "";
-  const [prevSearch, setPrevSearch] = useState(currentSearch);
-  if (currentSearch !== prevSearch) {
-    setQuery(currentSearch);
-    setPrevSearch(currentSearch);
-  }
 
+  const isProductsPage = pathname.includes("/products");
+
+  // ─── State ─────────────────────────────────────────────────────────────────
+  // Initialize from URL so refreshing the page keeps the value
+  const [query, setQuery] = useState(
+    () => searchParams?.get("keywords") || "",
+  );
+  const [isFocused, setIsFocused] = useState(false);
+  const debouncedQuery = useDebounce(query, 400);
   const isMounted = useRef(false);
 
+  // ─── Sync: URL → input (e.g. browser back/forward) ─────────────────────────
+  const urlKeywords = searchParams?.get("keywords") || "";
+  const [prevKeywords, setPrevKeywords] = useState(urlKeywords);
+  if (urlKeywords !== prevKeywords) {
+    setQuery(urlKeywords);
+    setPrevKeywords(urlKeywords);
+  }
+
+  // ─── Clear input when navigating away from products page ───────────────────
+  // Done during render (not in an effect) to avoid cascading render warnings
+  const [prevIsProducts, setPrevIsProducts] = useState(isProductsPage);
+  if (!isProductsPage && prevIsProducts) {
+    setQuery("");
+    setPrevIsProducts(false);
+  } else if (isProductsPage && !prevIsProducts) {
+    setPrevIsProducts(true);
+  }
+
+  // ─── Live-search: push URL + scroll to catalog ─────────────────────────────
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
       return;
     }
+    // لا تُنفّذ أي شيء إذا كان المستخدم ليس في صفحة المنتجات
+    if (!isProductsPage) return;
+    if (!useLiveSearch) return;
 
-    if (useLiveSearch) {
-      const urlSearch = searchParams?.get("search") || "";
+    const urlSearch = searchParams?.get("keywords") || "";
+    if (debouncedQuery.trim() === urlSearch) return;
 
-      // If debounced query matches URL, it means the sync is already complete
-      if (debouncedQuery.trim() === urlSearch) {
-        return;
-      }
-
-      const params = new URLSearchParams(searchParams?.toString() || "");
-      if (debouncedQuery.trim()) {
-        params.set("search", debouncedQuery.trim());
-      } else {
-        params.delete("search");
-      }
-
-      params.delete("page"); // Reset page on new search
-
-      const newUrl = `/products${params.toString() ? `?${params.toString()}` : ""}`;
-      router.push(newUrl);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    if (debouncedQuery.trim()) {
+      params.set("keywords", debouncedQuery.trim());
+    } else {
+      params.delete("keywords");
     }
-  }, [debouncedQuery, router, searchParams, useLiveSearch]);
+    params.delete("search"); // clean up old param alias
+    params.delete("page");   // reset pagination
+
+    router.push(`/products?${params.toString()}`);
+
+    // Scroll to "All Products" catalog section after a short delay
+    setTimeout(() => {
+      document
+        .getElementById("all-products")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+  }, [debouncedQuery, isProductsPage, router, searchParams, useLiveSearch]);
+
+  // ─── Early return: only render on /products pages ──────────────────────────
   if (!isProductsPage) return null;
 
-  const handleSubmit = (e:  React.SubmitEvent<HTMLFormElement>) => {
+  // ─── Form submit ────────────────────────────────────────────────────────────
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const params = new URLSearchParams(searchParams?.toString() || "");
     if (query.trim()) {
-      params.set("search", query.trim());
+      params.set("keywords", query.trim());
     } else {
-      params.delete("search");
+      params.delete("keywords");
     }
+    params.delete("search");
     params.delete("page");
-    router.push(`/products${params.toString() ? `?${params.toString()}` : ""}`);
+
+    router.push(`/products?${params.toString()}`);
+
+    setTimeout(() => {
+      document
+        .getElementById("all-products")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
   };
 
   return (
@@ -102,7 +142,6 @@ export default function SearchBar({
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none min-w-0"
           autoComplete="off"
         />
-        
       </div>
     </form>
   );

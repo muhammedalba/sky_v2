@@ -86,7 +86,26 @@ export default function TestimonialsSection() {
 
   
   return (
-    <section className="py-24 bg-background">
+    <section className="py-40 relative overflow-hidden">
+      {/* الخلفية المنحنية (الأقواس من الأعلى والأسفل) */}
+      <div className="absolute inset-0  bg-primary/10">
+        <svg
+          className="absolute top-0 inset-x-0 w-full h-20 md:h-28 text-background"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none" 
+          aria-hidden="true"
+        >
+          <path d="M0,0 L0,40 Q720,150 1440,40 L1440,0 Z" fill="currentColor" />
+        </svg>
+        <svg
+          className="absolute bottom-0 inset-x-0 w-full h-20 md:h-15 text-background"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path d="M0,120 L0,80 Q720,-30 1440,80 L1440,120 Z" fill="currentColor" />
+        </svg>
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal animation="slide-up">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">

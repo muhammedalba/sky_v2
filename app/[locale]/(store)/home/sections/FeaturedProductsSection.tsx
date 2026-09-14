@@ -9,6 +9,7 @@ import { Product } from "@/types";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import ProductCard from "@/components/ProductCard";
 import Badge from "@/shared/ui/Badge";
+import SimilarProductCard from "@/components/SimilarProductCard";
 
 // 1. استخراج مصفوفة التحميل خارج المكون لتجنب إعادة إنشائها في كل ريندر
 const SKELETON_ITEMS = [1, 2, 3, 4];
@@ -40,7 +41,7 @@ export default function FeaturedProductsSection() {
               <Badge variant="success" className="px-3 py-1 text-xs font-black tracking-widest uppercase">
                 {t("customer_favorite.featured")}
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-black title-gradient tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-black title-gradient tracking-tight">
                 {t("customer_favorite.title")}
               </h2>
                <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 me-auto" />
@@ -68,7 +69,7 @@ export default function FeaturedProductsSection() {
                 // تصميم الهيكل المؤقت (Skeleton) ليطابق تقريباً أبعاد بطاقة المنتج (ProductCard)
                 <div
                   key={`skeleton-${i}`}
-                  className="w-full min-h-112.5 bg-secondary/40 animate-pulse rounded-[2rem] border border-border/30"
+                  className="w-full min-h-112.5 bg-secondary/40 animate-pulse rounded-4xl border border-border/30"
                 />
               ))
             : products.map((item: Product, i: number) => (
@@ -77,7 +78,7 @@ export default function FeaturedProductsSection() {
                   animation="slide-up" 
                   delay={i * 100}
                 >
-                  <ProductCard item={item} commonT={commonT} />
+                  <SimilarProductCard item={item}  />
                 </ScrollReveal>
               ))}
         </div>

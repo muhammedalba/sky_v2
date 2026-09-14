@@ -28,6 +28,18 @@ const PromoBannerSection = dynamic(
     loading: () => <div className="h-64 animate-pulse bg-background" />,
   },
 );
+const WhyDifferenceSection = dynamic(
+  () => import("./sections/WhyDifferenceSection"),
+  {
+    loading: () => <div className="h-96 animate-pulse bg-background" />,
+  },
+);
+const StatsHighlightSection = dynamic(
+  () => import("./sections/StatsHighlightSection"),
+  {
+    loading: () => <div className="h-48 animate-pulse bg-background" />,
+  },
+);
 const WhyChooseUsSection = dynamic(
   () => import("./sections/WhyChooseUsSection"),
   {
@@ -67,6 +79,12 @@ export default function HomeClient() {
 
       {/* 5. PROMO BANNER (Below the Fold - Dynamic Import) */}
       <PromoBannerSection />
+
+      {/* 5b. WHY IS THE DIFFERENCE (Below the Fold - Dynamic Import) */}
+      <WhyDifferenceSection />
+
+      {/* 5c. STATS HIGHLIGHT (Below the Fold - Dynamic Import) */}
+      <StatsHighlightSection />
 
       {/* 6. WHY CHOOSE US (Below the Fold - Dynamic Import) */}
       <WhyChooseUsSection />

@@ -34,16 +34,22 @@ export interface FilterErrors {
 export function useProductFilters() {
   const { getQueryParam, setQueryParams } = useQueryState();
 
+  const page = Number(getQueryParam("page", 1)) || 1;
+  const sortBy = getQueryParam("sort", "-createdAt") || "-createdAt";
+
   const filters = useMemo<ProductFilters>(
     () => ({
-      keywords: getQueryParam("keywords", ""),
+      keywords: getQueryParam("keywords", "") || getQueryParam("search", ""),
       skuSearch: getQueryParam("skuSearch", ""),
       color: getQueryParam("color", ""),
       "pricerange[min]": getQueryParam("pricerange[min]", ""),
       "pricerange[max]": getQueryParam("pricerange[max]", ""),
       category: getQueryParam("category", ""),
       brand: getQueryParam("brand", ""),
-      SubCategories: getQueryParam("SubCategories", ""),
+      SubCategories:
+        getQueryParam("SubCategories", "") ||
+        getQueryParam("subCategory", "") ||
+        getQueryParam("subcategories", ""),
       weight_min: getQueryParam("weight_min", ""),
       weight_max: getQueryParam("weight_max", ""),
       weight_unit: getQueryParam("weight_unit", ""),
@@ -71,9 +77,24 @@ export function useProductFilters() {
     [setQueryParams],
   );
 
+  const setPage = useCallback(
+    (p: number) => {
+      setQueryParams({ page: p });
+    },
+    [setQueryParams],
+  );
+
+  const setSortBy = useCallback(
+    (s: string) => {
+      setQueryParams({ sort: s, page: 1 });
+    },
+    [setQueryParams],
+  );
+
   const resetFilters = useCallback(() => {
-    const defaultFilters: Record<keyof ProductFilters, null> = {
+    const defaultFilters: Record<string, null> = {
       keywords: null,
+      search: null,
       skuSearch: null,
       color: null,
       "pricerange[min]": null,
@@ -81,6 +102,8 @@ export function useProductFilters() {
       category: null,
       brand: null,
       SubCategories: null,
+      subCategory: null,
+      subcategories: null,
       weight_min: null,
       weight_max: null,
       weight_unit: null,
@@ -190,6 +213,10 @@ export function useProductFilters() {
     filters,
     apiParams,
     filterErrors,
+    page,
+    sortBy,
+    setPage,
+    setSortBy,
     setFilter,
     setFilters,
     resetFilters,

@@ -25,5 +25,42 @@
             "quickLinks": "Quick Links",
             "support": "Support & Help",
             "shopInfo": "Shop Info"
+      },
+      "productsPage": {
+            "heroTitle": "Construction & Insulation Materials",
+            "heroDesc": "Explore the widest range of waterproofing, thermal insulation, and adhesive materials trusted by leading contractors across the Kingdom.",
+            "featuredSpotlight": "Featured Spotlight",
+            "bestSellers": "Best Sellers",
+            "bestSellersDesc": "Top-recommended products by engineers and construction teams.",
+            "featuredTitle": "Our Featured Selection",
+            "featuredDesc": "A curated collection of high-performance materials for major construction projects.",
+            "recentlyViewedTitle": "Recently Viewed",
+            "recentlyViewedDesc": "Products you've browsed during your current visit.",
+            "allProducts": "All Products",
+            "searchPlaceholder": "Search by name or specifications...",
+            "sortByLabel": "Sort By",
+            "filtersTitle": "Filter Options",
+            "categories": "Categories",
+            "allCategories": "All Categories",
+            "brands": "Brands",
+            "allBrands": "All Brands",
+            "subCategories": "Sub Categories",
+            "priceRange": "Price Range",
+            "minPrice": "Min",
+            "maxPrice": "Max",
+            "color": "Color",
+            "colorPlaceholder": "e.g. red, blue...",
+            "activeFilters": "active filters",
+            "noActiveFilters": "No active filters",
+            "resultsCount": "products found",
+            "noProducts": "No matching results",
+            "noProductsDesc": "Try adjusting your search term or price range.",
+            "sorts": {
+                  "newest": "Newest First",
+                  "bestSelling": "Best Sellers",
+                  "priceLowHigh": "Price: Low to High",
+                  "priceHighLow": "Price: High to Low",
+                  "topRated": "Top Rated"
+            }
       }
 }

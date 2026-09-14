@@ -1,12 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useMemo } from "react";
 import { Category } from "@/types";
-import Badge from "@/shared/ui/Badge";
-import { ShieldIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { useCategories } from "@/features/categories/hooks/useCategories";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
@@ -16,7 +13,7 @@ export default function CategoriesSlide() {
   const t = useTranslations("home");
   const getTrans = useTrans();
   const { data: categoriesResponse, isLoading } = useCategories({
-    all_langs: false,
+    limit: 100,
   });
   const categories = categoriesResponse?.data || EMPTY_CATEGORIES;
 
@@ -47,23 +44,10 @@ export default function CategoriesSlide() {
                 className=" object-contain w-full h-full rounded-full "
                 loading="lazy"
               />
-              
             ) : (
               <div className="px-8 py-5 rounded-2xl bg-card border border-border/40 shadow-2xs hover:border-primary/25 hover:shadow-md transition-all shrink-0 flex items-center justify-center min-w-40 h-20">
                 <span className="text-sm sm:text-base font-extrabold uppercase tracking-widest text-muted-foreground/80 hover:text-primary transition-colors">
                   {getTrans(category.name)}
-                  {/* <Image
-                    src={
-                      typeof category.image === "string"
-                        ? category.image
-                        : category.image?.url
-                    }
-                    alt={getTrans(category.name)}
-                    width={150}
-                    height={48}
-                    className="h-12 object-contain max-w-37.5"
-                    loading="lazy"
-                  /> */}
                 </span>
               </div>
             )}
@@ -76,22 +60,18 @@ export default function CategoriesSlide() {
   if (isLoading || categories.length === 0) return null;
 
   return (
-    <section className="py-16 sm:py-24  bg-background overflow-hidden relative z-10">
+    <section className="py-5 sm:py-16  bg-background overflow-hidden relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal
           animation="slide-up"
           className="flex flex-col items-center gap-8"
         >
-          <Badge
-            variant={"success"}
-            className="p-1 px-4 rounded-full text-xs sm:text-sm md:text-md font-black   shrink-0 text-center hover:bg-success/10 hover:text-success "
-          >
-            <ShieldIcon className="w-5 h-5 text-success me-1" />
-           تسوق حسب الفئة
-          </Badge>
+          <h3 className="text-xl md:text-4xl font-black title-gradient tracking-tight text-center  ">
+            {t("categoriesSlide.title")}
+          </h3>
           <div className="flex flex-col items-center gap-2">
-            <p className="title-gradient text-md sm:text-xl md:text-3xl  font-black   shrink-0 text-center">
-              مواد عالية الأداء تلبي كافة احتياجات البناء.{" "}
+            <p className="text-muted-foreground text-sm md:text-lg lg:text-xl font-bold  text-center">
+              {t("categoriesSlide.description")}
             </p>
             <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 mx-auto" />
           </div>

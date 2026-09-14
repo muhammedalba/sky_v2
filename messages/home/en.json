@@ -34,6 +34,7 @@
     "description": "Everything you need for your project from specialized insulation and construction materials, categorized for easy access.",
     "view_all": "View All Categories",
     "featured_label": "Most Requested Categories",
+    "new_product": "New Product",
     "shop_category": "Shop Category",
     "items": {
       "waterproofing": {
@@ -63,6 +64,36 @@
     "description": "We offer special prices and payment facilities for large projects and engineering firms, with full commitment to supply schedules and quality specifications.",
     "cta_quote": "Request Project Quote",
     "cta_catalog": "Download Catalog (PDF)"
+  },
+  "whyDifference": {
+    "badge": "Why Choose Us",
+    "title": "The Difference Is in the Details",
+    "features": {
+      "support": {
+        "title": "Professional Support",
+        "desc": "Expert team ready to assist you at every step."
+      },
+      "range": {
+        "title": "Wide Product Range",
+        "desc": "Everything you need under one roof."
+      },
+      "partnership": {
+        "title": "Long-Term Partnership",
+        "desc": "We build trust through consistency, reliability, and long-term commitment."
+      },
+      "delivery": {
+        "title": "Fast Delivery",
+        "desc": "On-time delivery to any site across the Kingdom."
+      },
+      "quality": {
+        "title": "Certified Quality",
+        "desc": "Products that meet international and Gulf specifications."
+      },
+      "pricing": {
+        "title": "Competitive Pricing",
+        "desc": "Wholesale prices with flexible payment options for every project."
+      }
+    }
   },
   "why": {
     "title": "Why Choose Sky Galaxy?",
@@ -109,7 +140,25 @@
   "projects": {
     "badge": "Our Portfolio",
     "title": "Successfully Supplied Projects",
-    "view_all": "View All Projects"
+    "description": "Quality materials. Reliable supply. Strong partnerships.",
+    "view_all": "View All Projects",
+    "items": {
+      "residences": {
+        "location": "Riyadh, KSA",
+        "title": "Al Faisaliah Residences",
+        "desc": "Insulation, waterproofing & MEP package"
+      },
+      "logistics": {
+        "location": "Jeddah, KSA",
+        "title": "Jeddah Logistics Hub",
+        "desc": "Structural steel & cement supply"
+      },
+      "towers": {
+        "location": "Dammam, KSA",
+        "title": "Corniche Business Towers",
+        "desc": "Facade fixings & finishing materials"
+      }
+    }
   },
   "about_section": {
     "badge": "About Us",
@@ -136,5 +185,9 @@
     "viewDetails": "→ View Details ",
     "dismissAria": "Dismiss announcement",
     "bannerAriaLabel": "Promotional announcement banner"
+  },
+  "categoriesSlide": {
+    "title": "Shop by Category",
+    "description": "A wide selection of high-performance construction materials to meet all your project needs."
   }
 }

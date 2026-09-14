@@ -11,6 +11,10 @@ export const productsApi = {
   ...baseCrud,
   restore: (id: string) => apiClient.patch(`${ENDPOINTS.BASE}/${id}/restore`),
   hardDelete: (id: string) => apiClient.delete(`${ENDPOINTS.BASE}/${id}/permanent`),
+  getManyByIds: (ids: string[], params?: Record<string, unknown>) =>
+    apiClient.get<ApiResponse<Product[]>>(`${ENDPOINTS.BASE}/by-ids`, {
+      params: { ids: ids.join(','), ...params },
+    }) as unknown as Promise<ApiResponse<Product[]>>,
   getStats: (params?: { startDate?: string; endDate?: string }): Promise<ApiResponse<ProductStatisticsData>> => {
     const query: Record<string, string> = {};
     // Convert YYYY-MM-DD → ISO datetime for accurate range (start of day / end of day)

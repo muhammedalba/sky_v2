@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use, useMemo, useCallback } from "react";
+import { useState, use, useMemo, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useProduct } from "@/features/products/hooks/useProducts";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
@@ -30,6 +30,7 @@ import {
 } from "./components/ProductSkeletons";
 import SimilarProducts from "./SimilarProducts";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import { useRecentlyViewedStore } from "@/store/recently-viewed-store";
 
 // بعض المتغيرات تُخزَّن قيمة الخاصية كنص مباشر (e.g. "Coarse 331 TX") وبعضها ككائن { value, unit }
 function normalizeAttr(attrData: unknown): { value: string; unit?: string } {
@@ -93,6 +94,12 @@ export default function ProductDetailsClient({
   const product = payload?.product;
   const variants = useMemo(() => payload?.variants || [], [payload?.variants]);
   const hasVariants = variants.length > 0;
+
+  // Record this product in the "Recently Viewed" list (persisted to localStorage)
+  const addRecentlyViewed = useRecentlyViewedStore((state) => state.addProduct);
+  useEffect(() => {
+    if (product?._id) addRecentlyViewed(product._id);
+  }, [product?._id, addRecentlyViewed]);
 
   const [activeTab, setActiveTab] = useState<"order" | "reviews">(
     (product?.variantCount ?? 0) > 1 ? "order" : "order",

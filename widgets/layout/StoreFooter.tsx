@@ -42,7 +42,7 @@ export default function StoreFooter() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
       >
         {/* Step 1: Premium Highlights Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-12 mb-12 border-b border-border/50">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 mb-12 border-b border-border/50">
           <ScrollReveal
             animation="slide-left"
             className="flex items-center gap-4 p-5 rounded-2xl bg-card border border-border/60 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-300"
@@ -51,7 +51,7 @@ export default function StoreFooter() {
               <TruckIcon className="h-6 w-6 text-warning" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-foreground">
+              <h4 className="font-bold text-sm title-gradient">
                 {locale === "ar" ? "شحن سريع وموثوق" : "Fast & Secure Shipping"}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
@@ -70,7 +70,7 @@ export default function StoreFooter() {
               <ShieldIcon className="h-6 w-6 text-success" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-foreground">
+              <h4 className="font-bold text-sm title-gradient">
                 {locale === "ar" ? "ضمان وأمان 100%" : "100% Secure Checkout"}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
@@ -89,15 +89,33 @@ export default function StoreFooter() {
               <HeadphoneIcon className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-foreground">
+              <h4 className="font-bold text-sm title-gradient">
                 {locale === "ar"
                   ? "دعم فني متواصل 24/7"
                   : "Premium Support 24/7"}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
                 {locale === "ar"
-                  ? "مستعدون لمساعدتك بأي وقت"
-                  : "Dedicated team to assist you anytime"}
+                  ? "فريق متخصص لمساعدتك في اختيار المنتج المناسب"
+                  : "A dedicated team ready to help you pick the right product"}
+              </p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal
+            animation="slide-right"
+            className="flex items-center gap-4 p-5 rounded-2xl bg-card border border-border/60 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-300"
+          >
+            <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+              <HeadphoneIcon className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm title-gradient">
+                {locale === "ar" ? "تسعير الكميات" : "Bulk Pricing"}
+              </h4>
+              <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
+                {locale === "ar"
+                  ? "خصومات تنافسية عند الطلب بكميات كبيرة"
+                  : "Competitive discounts on large-volume orders"}
               </p>
             </div>
           </ScrollReveal>

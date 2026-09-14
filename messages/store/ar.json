@@ -25,5 +25,42 @@
             "quickLinks": "روابط سريعة",
             "support": "الدعم والمساعدة",
             "shopInfo": "معلومات المتجر"
+      },
+      "productsPage": {
+            "heroTitle": "عالم مواد البناء والعزل",
+            "heroDesc": "استكشف أوسع تشكيلة من مواد العزل المائي والحراري والمواد اللاصقة المعتمدة لدى كبرى شركات المقاولات في المملكة.",
+            "featuredSpotlight": "أبرز المنتجات",
+            "bestSellers": "الأكثر طلباً",
+            "bestSellersDesc": "منتجات موصى بها من المهندسين وفرق التنفيذ.",
+            "featuredTitle": "مختاراتنا المتميزة",
+            "featuredDesc": "تشكيلة فريدة بأداء متطور تلبي احتياجات مشاريع البناء الكبرى.",
+            "recentlyViewedTitle": "شاهدتها مؤخراً",
+            "recentlyViewedDesc": "المنتجات التي تصفحتها في زيارتك الحالية.",
+            "allProducts": "جميع المنتجات",
+            "searchPlaceholder": "ابحث بالاسم أو المواصفات...",
+            "sortByLabel": "ترتيب حسب",
+            "filtersTitle": "خيارات التصفية",
+            "categories": "الأقسام",
+            "allCategories": "جميع الأقسام",
+            "brands": "العلامات التجارية",
+            "allBrands": "جميع العلامات",
+            "subCategories": "الفئات الفرعية",
+            "priceRange": "نطاق الأسعار",
+            "minPrice": "الأدنى",
+            "maxPrice": "الأقصى",
+            "color": "اللون",
+            "colorPlaceholder": "مثال: أحمر، أزرق...",
+            "activeFilters": "فلاتر نشطة",
+            "noActiveFilters": "لا توجد فلاتر نشطة",
+            "resultsCount": "منتج",
+            "noProducts": "لا توجد نتائج مطابقة",
+            "noProductsDesc": "يرجى تعديل مصطلح البحث أو نطاق الأسعار.",
+            "sorts": {
+                  "newest": "الأحدث أولاً",
+                  "bestSelling": "الأكثر مبيعاً",
+                  "priceLowHigh": "السعر: من الأقل للأعلى",
+                  "priceHighLow": "السعر: من الأعلى للأقل",
+                  "topRated": "الأعلى تقييماً"
+            }
       }
 }

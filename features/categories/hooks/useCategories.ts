@@ -18,6 +18,9 @@ export function useCategories(
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
     throwOnError: true,
+    // يتطابق مع next: { revalidate: 300 } في page.tsx
+    // يمنع إعادة الـ fetch فور الـ hydration بعد SSR prefetch
+    staleTime: 5 * 60 * 1000,
   });
 }
 

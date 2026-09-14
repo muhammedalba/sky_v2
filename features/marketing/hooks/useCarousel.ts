@@ -12,6 +12,8 @@ export function useCarousel(params?: { page?: number; limit?: number, keywords?:
       const response = await carouselApi.getAll(params);
       return response;
     },
+    // يتطابق مع next: { revalidate: 600 } في page.tsx
+    staleTime: 10 * 60 * 1000,
   });
 }
 

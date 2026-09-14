@@ -27,7 +27,7 @@ export interface UseProductsParams {
   sold_max?: string | number;
   isDeleted?: string | boolean;
   fields?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export function useProducts(
@@ -42,6 +42,9 @@ export function useProducts(
       return response;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
+    // يتطابق مع next: { revalidate: 60 } في page.tsx
+    // يمنع إعادة الـ fetch فور الـ hydration بعد SSR prefetch
+    staleTime: 60 * 1000,
   });
 }
 
