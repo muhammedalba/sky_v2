@@ -51,9 +51,9 @@ export default function TrustedBy({
                     : brand.image?.url
                 }
                 alt={getTrans(brand.name)}
-                width={150}
-                height={48}
-                className="h-12 object-contain max-w-37.5"
+                width={200}
+                height={200}
+                className="h-20 object-contain max-w-37.5"
                 loading="lazy"
               />
             ) : (
@@ -97,12 +97,12 @@ export default function TrustedBy({
             <ShieldIcon className="w-5 h-5 text-success me-1" />
             {t("trust.approved_distributors")}
           </Badge>
-          <div className="flex flex-col items-center gap-2">
+          {/* <div className="flex flex-col items-center gap-2">
             <p className="title-gradient text-md sm:text-xl md:text-3xl  font-black   shrink-0 text-center">
               {t("trust.label")}
             </p>
             <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 mx-auto" />
-          </div>
+          </div> */}
           <div className="w-full relative flex overflow-hidden mask-image-fade">
             <div
               style={{ animationDuration: duration }}
