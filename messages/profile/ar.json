@@ -12,15 +12,13 @@
   "tabs": {
     "profile": "الملف الشخصي",
     "orders": "طلباتي",
-    "addresses": "عناوين الشحن",
     "settings": "الإعدادات",
     "general": "عام",
     "security": "الأمان"
   },
   "sections": {
     "profile_summary": "ملخص الحساب",
-    "recent_orders": "الطلبات الأخيرة",
-    "address_book": "دفتر العناوين"
+    "recent_orders": "الطلبات الأخيرة"
   },
   "stats": {
     "total_orders": "إجمالي الطلبات",
@@ -30,7 +28,6 @@
   "actions": {
     "edit_profile": "تعديل الملف الشخصي",
     "view_all_orders": "عرض كل الطلبات",
-    "add_address": "إضافة عنوان جديد",
     "logout": "تسجيل الخروج"
   },
   "status": {

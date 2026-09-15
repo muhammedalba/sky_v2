@@ -11,15 +11,13 @@
   "tabs": {
     "profile": "Profile",
     "orders": "My Orders",
-    "addresses": "Addresses",
     "settings": "Settings",
     "general": "General",
     "security": "Security"
   },
   "sections": {
     "profile_summary": "Profile Summary",
-    "recent_orders": "Recent Orders",
-    "address_book": "Address Book"
+    "recent_orders": "Recent Orders"
   },
   "stats": {
     "total_orders": "Total Orders",
@@ -29,7 +27,6 @@
   "actions": {
     "edit_profile": "Edit Profile",
     "view_all_orders": "View All Orders",
-    "add_address": "Add New Address",
     "logout": "Logout"
   },
   "status": {

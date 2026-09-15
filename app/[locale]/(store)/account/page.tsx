@@ -11,7 +11,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { formatEmail } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
-type ActiveTabType = "overview" | "profile" | "addresses" | "security";
+type ActiveTabType = "overview" | "profile"  | "security";
 
 export default function AccountPage() {
   const t = useTranslations("profile");
@@ -184,17 +184,6 @@ export default function AccountPage() {
               <span className="flex-1 truncate">{t("tabs.profile")}</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab("addresses")}
-              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-150 text-start ${
-                activeTab === "addresses"
-                  ? "bg-primary/10 text-primary border-l-4 border-primary"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              }`}
-            >
-              <HomeIcon className="w-4.5 h-4.5 shrink-0" />
-              <span className="flex-1 truncate">{t("tabs.addresses")}</span>
-            </button>
 
             <button
               onClick={() => setActiveTab("security")}
@@ -394,76 +383,6 @@ export default function AccountPage() {
                 </motion.div>
               )}
 
-              {/* TAB 3: ADDRESSES */}
-              {activeTab === "addresses" && (
-                <motion.div
-                  key="addresses"
-                  variants={tabVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="space-y-6"
-                >
-                  <div className="flex items-center justify-between gap-4 flex-wrap pb-3 border-b border-border/40">
-                    <div>
-                      <h2 className="text-lg font-bold text-foreground">
-                        {t("sections.address_book")}
-                      </h2>
-                      <p className="text-xs text-muted-foreground">
-                        {locale === "ar"
-                          ? "إدارة مواقع وعناوين التوصيل الخاصة بك"
-                          : "Manage your primary e-commerce shipping addresses"}
-                      </p>
-                    </div>
-                    <Button className="h-9 px-4 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 text-xs gap-1.5">
-                      <PlusIcon className="w-4 h-4" />
-                      {t("actions.add_address")}
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {mockAddresses.map((address) => (
-                      <Card
-                        key={address.id}
-                        className="p-5 border-border/60 bg-card rounded-2xl shadow-sm hover:border-primary/30 transition-all flex flex-col justify-between"
-                      >
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                              {address.type}
-                            </span>
-                            <div className="flex items-center gap-1">
-                              <button className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all">
-                                <EditIcon className="w-3.5 h-3.5" />
-                              </button>
-                              <button className="w-8 h-8 rounded-lg hover:bg-destructive/10 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all">
-                                <TrashIcon className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="text-sm font-bold text-foreground">
-                              {address.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground leading-relaxed">
-                              {address.details}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {address.city}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="pt-4 mt-4 border-t border-border/40 flex items-center gap-2 text-xs text-muted-foreground">
-                          <MailIcon className="w-3.5 h-3.5 shrink-0" />
-                          <span>{address.phone}</span>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
 
               {/* TAB 4: SECURITY */}
               {activeTab === "security" && (
