@@ -9,20 +9,24 @@ import {
 } from "@/shared/ui/form/SearchableSelect";
 import { Category, SubCategory, Brand, LocalizedString } from "@/types";
 import { useTrans } from "@/shared/hooks/useTrans";
-import { ProductFilters } from "@/features/products/hooks/useProductFilters";
+import {
+  ProductFilters,
+  FilterErrors,
+} from "@/features/products/hooks/useProductFilters";
 import {
   TagIcon as Tag,
   BriefcaseIcon as Briefcase,
   LayersIcon as Layers,
-  PaletteIcon as Palette,
   CoinsIcon as Coins,
 } from "@/shared/ui/Icons";
+import ColorSwatchFilter from "@/features/products/components/shared/ColorSwatchFilter";
 
 interface ProductsFilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   activeFilterCount: number;
   filters: ProductFilters;
+  filterErrors: FilterErrors;
   categoriesList: Category[];
   subCategoriesList: SubCategory[];
   brandsList: Brand[];
@@ -52,6 +56,7 @@ export default function ProductsFilterDrawer({
   onClose,
   activeFilterCount,
   filters,
+  filterErrors,
   categoriesList,
   subCategoriesList,
   brandsList,
@@ -67,8 +72,12 @@ export default function ProductsFilterDrawer({
   const [brandSearch, setBrandSearch] = useState("");
 
   const [prevFilters, setPrevFilters] = useState(filters);
-  const [localMinPrice, setLocalMinPrice] = useState(filters["pricerange[min]"] || "");
-  const [localMaxPrice, setLocalMaxPrice] = useState(filters["pricerange[max]"] || "");
+  const [localMinPrice, setLocalMinPrice] = useState(
+    filters["pricerange[min]"] || "",
+  );
+  const [localMaxPrice, setLocalMaxPrice] = useState(
+    filters["pricerange[max]"] || "",
+  );
   const [localColor, setLocalColor] = useState(filters.color || "");
 
   if (prevFilters !== filters) {
@@ -104,6 +113,15 @@ export default function ProductsFilterDrawer({
     }, 500);
   };
 
+  const handleColorSwatchClick = (newColor: string) => {
+    if (debounceTimersRef.current.color) {
+      clearTimeout(debounceTimersRef.current.color);
+      delete debounceTimersRef.current.color;
+    }
+    setLocalColor(newColor);
+    setFilter("color", newColor || null);
+  };
+
   const filteredCategoryOptions = useMemo(
     () =>
       categoriesList.filter((c) =>
@@ -114,7 +132,9 @@ export default function ProductsFilterDrawer({
   const filteredSubCategoryOptions = useMemo(
     () =>
       subCategoriesList.filter((c) =>
-        getTrans(c.name).toLowerCase().includes(subCategorySearch.toLowerCase()),
+        getTrans(c.name)
+          .toLowerCase()
+          .includes(subCategorySearch.toLowerCase()),
       ) as unknown as SearchOption[],
     [subCategoriesList, subCategorySearch, getTrans],
   );
@@ -127,7 +147,9 @@ export default function ProductsFilterDrawer({
   );
 
   const handleClear = () => {
-    Object.values(debounceTimersRef.current).forEach((timer) => clearTimeout(timer));
+    Object.values(debounceTimersRef.current).forEach((timer) =>
+      clearTimeout(timer),
+    );
     setLocalMinPrice("");
     setLocalMaxPrice("");
     setLocalColor("");
@@ -167,6 +189,14 @@ export default function ProductsFilterDrawer({
       }
     >
       <div className="space-y-6">
+        <FilterSection title={t("color")}>
+          <ColorSwatchFilter
+            value={localColor}
+            onSelectSwatch={handleColorSwatchClick}
+            onCustomColorChange={(val) => handlePriceOrColorChange("color", val)}
+            placeholder={t("colorPlaceholder")}
+          />
+        </FilterSection>
         <FilterSection title={t("categories")}>
           <SearchableSelect
             label={t("categories")}
@@ -207,31 +237,34 @@ export default function ProductsFilterDrawer({
           <div className="grid grid-cols-2 gap-3">
             <Input
               type="number"
+              min="0"
               icon={Coins}
               label={t("minPrice")}
               value={localMinPrice}
-              onChange={(e) => handlePriceOrColorChange("pricerange[min]", e.target.value)}
+              onChange={(e) =>
+                handlePriceOrColorChange("pricerange[min]", e.target.value)
+              }
               className="h-10"
+              error={filterErrors.price_range ? " " : undefined}
             />
             <Input
               type="number"
+              min="0"
               icon={Coins}
               label={t("maxPrice")}
               value={localMaxPrice}
-              onChange={(e) => handlePriceOrColorChange("pricerange[max]", e.target.value)}
+              onChange={(e) =>
+                handlePriceOrColorChange("pricerange[max]", e.target.value)
+              }
               className="h-10"
+              error={filterErrors.price_range ? " " : undefined}
             />
           </div>
-        </FilterSection>
-
-        <FilterSection title={t("color")}>
-          <Input
-            icon={Palette}
-            placeholder={t("colorPlaceholder")}
-            value={localColor}
-            onChange={(e) => handlePriceOrColorChange("color", e.target.value)}
-            className="h-10"
-          />
+          {filterErrors.price_range && (
+            <p className="text-xs text-destructive mt-1 animate-in fade-in duration-300">
+              {t("minExceedsMax")}
+            </p>
+          )}
         </FilterSection>
       </div>
     </FilterDrawer>

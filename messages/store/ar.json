@@ -50,6 +50,7 @@
             "maxPrice": "الأقصى",
             "color": "اللون",
             "colorPlaceholder": "مثال: أحمر، أزرق...",
+            "minExceedsMax": "القيمة الدنيا لا يمكن أن تكون أكبر من القيمة القصوى",
             "activeFilters": "فلاتر نشطة",
             "noActiveFilters": "لا توجد فلاتر نشطة",
             "resultsCount": "منتج",

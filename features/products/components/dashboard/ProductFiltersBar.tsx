@@ -22,11 +22,26 @@ import {
   ScaleIcon as Scale,
   BoxIcon as Box,
   TrendingUpIcon as TrendingUp,
+  CheckIcon as Check,
 } from '@/shared/ui/Icons';
 import { WEIGHT_UNITS, VOLUME_UNITS, ADVANCED_FILTER_KEYS } from '@/shared/constants/product-constants';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
+import { cn } from '@/lib/utils';
+
+const COLOR_SWATCHES: {
+  value: string;
+  swatchClass: string;
+  light?: boolean;
+}[] = [
+  { value: 'Black', swatchClass: 'bg-black' },
+  { value: 'Blue', swatchClass: 'bg-blue-600' },
+  { value: 'Grey', swatchClass: 'bg-gray-200', light: true },
+  { value: 'Red', swatchClass: 'bg-red-500' },
+  { value: 'Green', swatchClass: 'bg-emerald-700' },
+  { value: 'Yellow', swatchClass: 'bg-yellow-300', light: true },
+];
 
 export function ProductFiltersBar() {
   const t = useTranslations('products');
@@ -116,6 +131,20 @@ export function ProductFiltersBar() {
     },
     [setFilter]
   );
+
+  // Handle color swatch click
+  const handleColorSwatchClick = useCallback((swatchValue: string) => {
+    if (debounceTimersRef.current.color) {
+      clearTimeout(debounceTimersRef.current.color);
+      delete debounceTimersRef.current.color;
+    }
+    const newValue =
+      inputs.color.trim().toLowerCase() === swatchValue.toLowerCase()
+        ? ''
+        : swatchValue;
+    setInputs((prev) => ({ ...prev, color: newValue }));
+    setFilter('color', newValue || null);
+  }, [inputs.color, setFilter]);
 
   // Active filters count
   const activeFilterCount = useMemo(() => {
@@ -220,13 +249,47 @@ export function ProductFiltersBar() {
               icon={Hash}
               className="h-10"
             />
+          </FilterSection>
+
+          <FilterSection title={t('filters.color', { defaultValue: 'Color' })}>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {COLOR_SWATCHES.map((swatch) => {
+                const isSelected =
+                  inputs.color.trim().toLowerCase() === swatch.value.toLowerCase();
+                return (
+                  <button
+                    key={swatch.value}
+                    type="button"
+                    aria-label={swatch.value}
+                    aria-pressed={isSelected}
+                    onClick={() => handleColorSwatchClick(swatch.value)}
+                    className={cn(
+                      'relative h-8 w-8 rounded-full border transition-transform hover:scale-110',
+                      swatch.swatchClass,
+                      swatch.light ? 'border-border' : 'border-transparent',
+                      isSelected &&
+                        'ring-2 ring-offset-2 ring-primary ring-offset-background',
+                    )}
+                  >
+                    {isSelected && (
+                      <Check
+                        className={cn(
+                          'absolute inset-0 m-auto h-4 w-4',
+                          swatch.light ? 'text-foreground' : 'text-white',
+                        )}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
             <Input
-              label="e.g. red, blue"
-              inputWrapperClass="mt-5"
-              value={inputs.color}
-              onChange={(e) => handleFieldChange('color', 'color', e.target.value)}
               icon={Palette}
-              className="h-10"
+              placeholder={t('filters.colorPlaceholder', { defaultValue: 'e.g. red, blue...' })}
+              value={inputs.color}
+              maxLength={30}
+              onChange={(e) => handleFieldChange('color', 'color', e.target.value)}
+              className="h-10 mt-3"
             />
           </FilterSection>
 
@@ -272,6 +335,7 @@ export function ProductFiltersBar() {
                 label="Min Price"
                 icon={DollarSign}
                 type="number"
+                min="0"
                 value={inputs.minPrice}
                 onChange={(e) => handleFieldChange('pricerange[min]', 'minPrice', e.target.value)}
                 className="h-10"
@@ -281,6 +345,7 @@ export function ProductFiltersBar() {
                 label="Max price"
                 icon={DollarSign}
                 type="number"
+                min="0"
                 value={inputs.maxPrice}
                 onChange={(e) => handleFieldChange('pricerange[max]', 'maxPrice', e.target.value)}
                 className="h-10"
@@ -298,6 +363,7 @@ export function ProductFiltersBar() {
             <div className="grid grid-cols-2 gap-3">
               <Input
                 type="number"
+                min="0"
                 icon={Scale}
                 label="Min"
                 value={inputs.weightMin}
@@ -307,6 +373,7 @@ export function ProductFiltersBar() {
               />
               <Input
                 type="number"
+                min="0"
                 icon={Scale}
                 label="Max"
                 value={inputs.weightMax}
@@ -338,6 +405,7 @@ export function ProductFiltersBar() {
             <div className="grid grid-cols-2 gap-3">
               <Input
                 type="number"
+                min="0"
                 label="Min"
                 icon={Box}
                 value={inputs.volumeMin}
@@ -347,6 +415,7 @@ export function ProductFiltersBar() {
               />
               <Input
                 type="number"
+                min="0"
                 label="Max"
                 icon={Box}
                 value={inputs.volumeMax}
@@ -377,6 +446,7 @@ export function ProductFiltersBar() {
             <div className="grid grid-cols-2 gap-3">
               <Input
                 type="number"
+                min="0"
                 label="Min"
                 icon={TrendingUp}
                 value={inputs.soldMin}
@@ -386,6 +456,7 @@ export function ProductFiltersBar() {
               />
               <Input
                 type="number"
+                min="0"
                 label="Max"
                 icon={TrendingUp}
                 value={inputs.soldMax}

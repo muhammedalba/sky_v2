@@ -15,6 +15,8 @@ import {
 } from "@/shared/ui/Icons";
 import ProductsGrid from "./ProductsGrid";
 import ProductsGridSkeleton from "./ProductsGridSkeleton";
+import { DEFAULT_CATALOG_PARAMS } from "@/features/products/storefrontQueryDefaults";
+import SearchBar from "@/components/navigation/SearchBar";
 
 // ─── Stable empty reference ───────────────────────────────────────────────────
 const EMPTY_ARRAY: never[] = [];
@@ -40,8 +42,11 @@ function CatalogGrid({ queryParams, onPageChange, t }: CatalogGridProps) {
   return (
     <>
       {!!data?.meta?.pagination?.totalResults && (
-        <p className="text-sm text-muted-foreground -mt-2 mb-4">
-          {data.meta.pagination.totalResults} {t("resultsCount")}
+        <p className="text-sm text-muted-foreground pb-3 -mt-2 md:-mt-5 ">
+          <span className="text-primary ps-1 pe-2">
+          ( {data.meta.pagination.totalResults} )
+          </span>
+          {t("resultsCount")}
         </p>
       )}
 
@@ -102,9 +107,15 @@ export default function ProductsCatalogSection({
     [filters],
   );
 
-  // Must match DEFAULT_CATALOG_PARAMS in page.tsx for the SSR cache hit
+  // page/sortBy default to DEFAULT_CATALOG_PARAMS (see useProductFilters), so
+  // on first render this matches the SSR-prefetched query key exactly.
   const productQueryParams = useMemo(
-    () => ({ page, limit: 9, sort: sortBy, ...apiParams }),
+    () => ({
+      page,
+      limit: DEFAULT_CATALOG_PARAMS.limit,
+      sort: sortBy,
+      ...apiParams,
+    }),
     [page, sortBy, apiParams],
   );
 
@@ -120,12 +131,15 @@ export default function ProductsCatalogSection({
     <section id="all-products" className="relative py-10 sm:py-14 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Toolbar: always visible, no Suspense ──────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
           <h2 className="text-2xl sm:text-3xl font-black title-gradient">
             {t("allProducts")}
           </h2>
-
-          <div className="flex items-center justify-end gap-3">
+          {/* ── Mobile Search Bar: only visible on mobile screens ── */}
+          <div className="md:hidden mb-3">
+            <SearchBar useLiveSearch={true} className="w-full" />
+          </div>
+          <div className="flex items-center justify-between md:justify-end gap-3">
             {/* Sort dropdown */}
             <Dropdown
               trigger={
@@ -159,7 +173,7 @@ export default function ProductsCatalogSection({
 
             {/* Filter button */}
             <Button
-              variant="outline"
+              variant="default"
               className="h-11 px-4 gap-2 relative"
               onClick={onOpenFilter}
             >

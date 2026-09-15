@@ -20,6 +20,12 @@ import HeroCarousel from "./components/HeroCarousel";
 import ProductsSectionHeader from "./components/ProductsSectionHeader";
 import ProductsGrid from "./components/ProductsGrid";
 import ProductsCatalogSection from "./components/ProductsCatalogSection";
+import {
+  DEFAULT_BEST_SELLERS_PARAMS,
+  DEFAULT_FEATURED_PARAMS,
+  DEFAULT_CATEGORIES_PARAMS,
+  DEFAULT_BRANDS_PARAMS,
+} from "@/features/products/storefrontQueryDefaults";
 
 const ProductsFilterDrawer = dynamic(
   () => import("./components/ProductsFilterDrawer"),
@@ -37,20 +43,18 @@ export default function ProductsClient() {
 
   // Only need filters + setFilter + resetFilters here;
   // page/sortBy/setSortBy/setPage/apiParams live in ProductsCatalogSection
-  const { filters, setFilter, resetFilters } = useProductFilters();
+  const { filters, filterErrors, setFilter, resetFilters } = useProductFilters();
 
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // ─── Data Fetching ───────────────────────────────────────
-  const { data: bestSellersData } = useProducts({ sort: "-totalSold", limit: 4 });
-  const { data: featuredData } = useProducts({ isFeatured: true, limit: 4 });
-  const { data: categoriesData } = useCategories({ limit: 100 });
+  const { data: bestSellersData } = useProducts(DEFAULT_BEST_SELLERS_PARAMS);
+  const { data: featuredData } = useProducts(DEFAULT_FEATURED_PARAMS);
+  const { data: categoriesData } = useCategories(DEFAULT_CATEGORIES_PARAMS);
   const { data: subCategoriesData } = useSubCategories(
     { category: filters.category || undefined, limit: 100 },
-    // لا ترسل الطلب إلا إذا اختار المستخدم تصنيفًا
-    { enabled: !!filters.category },
   );
-  const { data: brandsData } = useBrands({ limit: 100 });
+  const { data: brandsData } = useBrands(DEFAULT_BRANDS_PARAMS);
   // Carousel يجلب بياناته بنفسه من داخل HeroCarousel
 
   const categoriesList = useMemo(() => (categoriesData?.data || EMPTY_ARRAY) as Category[], [categoriesData?.data]);
@@ -167,6 +171,7 @@ export default function ProductsClient() {
         onClose={() => setIsMobileDrawerOpen(false)}
         activeFilterCount={activeFilterCount}
         filters={filters}
+        filterErrors={filterErrors}
         categoriesList={categoriesList}
         subCategoriesList={subCategoriesList}
         brandsList={brandsList}

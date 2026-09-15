@@ -2,6 +2,7 @@
 
 import { useMemo, useCallback } from "react";
 import { useQueryState } from "@/shared/hooks/useQueryState";
+import { DEFAULT_CATALOG_PARAMS } from "@/features/products/storefrontQueryDefaults";
 
 export interface ProductFilters {
   keywords: string;
@@ -34,8 +35,12 @@ export interface FilterErrors {
 export function useProductFilters() {
   const { getQueryParam, setQueryParams } = useQueryState();
 
-  const page = Number(getQueryParam("page", 1)) || 1;
-  const sortBy = getQueryParam("sort", "-createdAt") || "-createdAt";
+  const page =
+    Number(getQueryParam("page", DEFAULT_CATALOG_PARAMS.page)) ||
+    DEFAULT_CATALOG_PARAMS.page;
+  const sortBy =
+    getQueryParam("sort", DEFAULT_CATALOG_PARAMS.sort) ||
+    DEFAULT_CATALOG_PARAMS.sort;
 
   const filters = useMemo<ProductFilters>(
     () => ({

@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { env } from "@/lib/env";
 import ProductDetailsClient from "./ProductDetailsClient";
 
@@ -7,29 +8,38 @@ interface ProductPageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
 
-// cache() يضمن أن الدالة تُنفَّذ مرة واحدة فقط per request حتى لو استُدعيت من generateMetadata والـ page معاً
+/**
+ * cache() يضمن أن الدالة تُنفَّذ مرة واحدة فقط per request حتى لو استُدعيت من
+ * generateMetadata والـ page معاً.
+ *
+ * تُرجع null فقط عندما يكون المنتج غير موجود فعليًا (404) حتى يستدعي المستدعي
+ * notFound() ويحصل الطالب على استجابة 404 حقيقية. أي فشل آخر (خطأ شبكة أو 5xx)
+ * يُرمى كاستثناء بدلًا من إخفائه، لتُعرض صفحة الخطأ بدل صفحة "غير موجود" خطأً.
+ */
 const getProductData = cache(async (slug: string, locale: string) => {
   const endpoint = `${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}/${slug}`;
 
-  try {
-    const response = await fetch(endpoint, {
-      next: {
-        revalidate: 3600, // Cache for 1 hour
-        tags: [`product-${slug}-${locale}`, "products"],
-      },
-      headers: {
-        "Content-Type": "application/json",
-        "accept-language": locale,
-      },
-    });
+  const response = await fetch(endpoint, {
+    next: {
+      revalidate: 3600, // Cache for 1 hour
+      tags: [`product-${slug}-${locale}`, "products"],
+    },
+    headers: {
+      "Content-Type": "application/json",
+      "accept-language": locale,
+    },
+  });
 
-    if (!response.ok) return null;
-    const responseData = await response.json();
-    return responseData.data || null;
-  } catch (error) {
-    console.error(`[ProductMetadata] Failed to fetch product ${slug}:`, error);
-    return null;
+  if (response.status === 404) return null;
+
+  if (!response.ok) {
+    throw new Error(
+      `[ProductMetadata] Failed to fetch product ${slug}: ${response.status} ${response.statusText}`,
+    );
   }
+
+  const responseData = await response.json();
+  return responseData.data || null;
 });
 
 export async function generateMetadata({
@@ -80,6 +90,9 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
   // 3. استخدام نفس الدالة هنا مرة أخرى
   // سحر Next.js: هذا لن يقوم بطلب جديد للـ API! سيستخدم النتيجة المخبأة من طلب generateMetadata
   const product = await getProductData(slug, locale);
+
+  // المنتج غير موجود فعليًا → 404 حقيقي بدل عرض واجهة "غير موجود" مع status 200
+  if (!product) notFound();
 
   // 4. تمرير البيانات كـ Initial Data للمكون العميل لكي لا يضطر لجلبها من الصفر
   return (

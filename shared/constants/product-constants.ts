@@ -37,6 +37,21 @@ export const ADVANCED_FILTER_KEYS = [
   'weight_unit', 'volume_min', 'volume_max', 'volume_unit', 'sold_min', 'sold_max'
 ] as const;
 
+export interface ColorSwatch {
+  value: string;
+  swatchClass: string;
+  light?: boolean;
+}
+
+export const COLOR_SWATCHES: readonly ColorSwatch[] = [
+  { value: 'Black', swatchClass: 'bg-black' },
+  { value: 'Blue', swatchClass: 'bg-blue-600' },
+  { value: 'Grey', swatchClass: 'bg-gray-200', light: true },
+  { value: 'Red', swatchClass: 'bg-red-500' },
+  { value: 'Green', swatchClass: 'bg-emerald-700' },
+  { value: 'Yellow', swatchClass: 'bg-yellow-300', light: true },
+] as const;
+
 // استخراج نوع (Type) للأسماء المسموحة لزيادة الحماية (اختياري ولكن مفيد)
 
 // VariantComponent enum

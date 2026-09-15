@@ -7,53 +7,25 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 import { env } from '@/lib/env';
+import {
+  DEFAULT_CATALOG_PARAMS,
+  DEFAULT_BEST_SELLERS_PARAMS,
+  DEFAULT_FEATURED_PARAMS,
+  DEFAULT_CATEGORIES_PARAMS,
+  DEFAULT_BRANDS_PARAMS,
+  DEFAULT_CAROUSEL_PARAMS,
+} from '@/features/products/storefrontQueryDefaults';
 
 interface Props {
   params: Promise<{ locale: string }>;
 }
 
-// ─── Server-side Prefetch Helpers ────────────────────────────────────────────
-
-/** Default params that ProductsClient uses for the main catalog on first render */
-const DEFAULT_CATALOG_PARAMS      = { page: 1, limit: 9, sort: '-createdAt' };
-const DEFAULT_BEST_SELLERS_PARAMS = { sort: '-totalSold', limit: 4 };
-const DEFAULT_FEATURED_PARAMS     = { isFeatured: true, limit: 4 };
-const DEFAULT_CATEGORIES_PARAMS   = { limit: 100 };
-const DEFAULT_BRANDS_PARAMS       = { limit: 100 };
-const DEFAULT_CAROUSEL_PARAMS     = { isActive: true };
-
-async function prefetchProducts(
-  queryClient: QueryClient,
-  locale: string,
-  params: Record<string, unknown>,
-  queryKey: unknown[],
-) {
-  const url = new URL(`${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}`);
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
-  });
-
-  try {
-    await queryClient.prefetchQuery({
-      queryKey,
-      queryFn: async () => {
-        const res = await fetch(url.toString(), {
-          next: { revalidate: 60, tags: ['products'] },
-          headers: { 'Content-Type': 'application/json', 'accept-language': locale },
-        });
-        if (!res.ok) return null;
-        return res.json();
-      },
-    });
-  } catch {
-    // Prefetch failures are non-fatal — client will fetch normally
-  }
-}
+// ─── Server-side Prefetch Helper ─────────────────────────────────────────────
 
 /**
- * Generic helper: fetches any list endpoint and stores it in the QueryClient.
- * Uses Next.js Data Cache via fetch() so repeated requests within revalidate
- * window never hit the origin.
+ * Fetches any list endpoint and stores it in the QueryClient.
+ * Uses Next.js Data Cache via fetch() so repeated requests within the
+ * revalidate window never hit the origin.
  */
 async function prefetchList(
   queryClient: QueryClient,
@@ -81,8 +53,10 @@ async function prefetchList(
         return res.json();
       },
     });
-  } catch {
-    // non-fatal — client will fetch normally on hydration
+  } catch (error) {
+    // Prefetch failures are non-fatal — client will fetch normally on hydration,
+    // but we still want visibility into recurring SSR failures.
+    console.error(`[ProductsPage] Prefetch failed for ${queryKey.join('/')}:`, error);
   }
 }
 
@@ -121,18 +95,32 @@ export default async function ProductsPage({ params }: Props) {
   const queryClient = new QueryClient();
 
   // Prefetch ALL 6 queries that ProductsClient fires on mount, in parallel.
-  // Query keys must exactly match what the hooks use: [name, locale, params]
+  // Query keys must exactly match what the hooks use: [name, locale, params] —
+  // the params objects come from the shared storefrontQueryDefaults module so
+  // both sides stay in sync by construction rather than by comment.
   await Promise.all([
     // ── Products ──────────────────────────────────────────────────
-    prefetchProducts(queryClient, locale, DEFAULT_CATALOG_PARAMS, [
-      'products', locale, DEFAULT_CATALOG_PARAMS,
-    ]),
-    prefetchProducts(queryClient, locale, DEFAULT_BEST_SELLERS_PARAMS, [
-      'products', locale, DEFAULT_BEST_SELLERS_PARAMS,
-    ]),
-    prefetchProducts(queryClient, locale, DEFAULT_FEATURED_PARAMS, [
-      'products', locale, DEFAULT_FEATURED_PARAMS,
-    ]),
+    prefetchList(
+      queryClient, locale,
+      env.ENDPOINTS.PRODUCTS.BASE,
+      DEFAULT_CATALOG_PARAMS,
+      ['products', locale, DEFAULT_CATALOG_PARAMS],
+      60, ['products'],
+    ),
+    prefetchList(
+      queryClient, locale,
+      env.ENDPOINTS.PRODUCTS.BASE,
+      DEFAULT_BEST_SELLERS_PARAMS,
+      ['products', locale, DEFAULT_BEST_SELLERS_PARAMS],
+      60, ['products'],
+    ),
+    prefetchList(
+      queryClient, locale,
+      env.ENDPOINTS.PRODUCTS.BASE,
+      DEFAULT_FEATURED_PARAMS,
+      ['products', locale, DEFAULT_FEATURED_PARAMS],
+      60, ['products'],
+    ),
     // ── Categories ────────────────────────────────────────────────
     prefetchList(
       queryClient, locale,

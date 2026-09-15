@@ -50,6 +50,7 @@
             "maxPrice": "Max",
             "color": "Color",
             "colorPlaceholder": "e.g. red, blue...",
+            "minExceedsMax": "Min value cannot be greater than max",
             "activeFilters": "active filters",
             "noActiveFilters": "No active filters",
             "resultsCount": "products found",

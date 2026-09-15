@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useCarousel } from "@/features/marketing/hooks/useCarousel";
 import { Carousel } from "@/types";
+import { DEFAULT_CAROUSEL_PARAMS } from "@/features/products/storefrontQueryDefaults";
 import {
   ChevronLeftIcon as ChevronLeft,
   ChevronRightIcon as ChevronRight,
@@ -28,7 +29,7 @@ function HeroCarouselSkeleton() {
 export default function HeroCarousel() {
   const t = useTranslations("store.productsPage");
   const getTrans = useTrans();
-  const { data: carouselData, isLoading } = useCarousel({ isActive: true });
+  const { data: carouselData, isLoading } = useCarousel(DEFAULT_CAROUSEL_PARAMS);
   const slides = (carouselData?.data || []) as Carousel[];
   const [activeSlide, setActiveSlide] = useState(0);
 

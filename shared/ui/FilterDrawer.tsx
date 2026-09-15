@@ -116,7 +116,8 @@ export function FilterDrawer({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            type="button"
+            className="p-2 rounded-xl cursor-pointer hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors shrink-0"
             aria-label="Close filters"
           >
             <XIcon className="w-5 h-5" />
