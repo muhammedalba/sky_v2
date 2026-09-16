@@ -30,6 +30,50 @@ export function useOrders(params?: OrderQueryParams) {
   });
 }
 
+export function useMyOrders(
+  params?: OrderQueryParams,
+  options?: { enabled?: boolean },
+) {
+  return useQuery({
+    queryKey: ["orders", "my-orders", params],
+    queryFn: async () => {
+      const response = (await ordersApi.getMyOrders(
+        params as Record<string, unknown>,
+      )) as unknown as ApiResponse<Order[]>;
+      return response;
+    },
+    enabled: options?.enabled,
+    // Matches the backend's own response cache for this route
+    // (@CacheTTL(30000) on GET /order/my-orders) — switching tabs back and
+    // forth within this window reuses the cached result instead of firing
+    // a new request each time.
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
+    throwOnError: true,
+  });
+}
+
+export function useMyOrder(id: string) {
+  return useQuery({
+    queryKey: ["orders", "my-orders", id],
+    queryFn: async () => {
+      const response = (await ordersApi.getMyOrder(
+        id,
+      )) as unknown as ApiResponse<Order>;
+      return response.data;
+    },
+    enabled: !!id,
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
+    // Not found / not-owned is an expected, recoverable outcome for a
+    // detail page (stale link, typo'd id) — surface it via `isError` so the
+    // page can render a friendly empty state instead of crashing to the
+    // nearest error boundary.
+    throwOnError: false,
+    retry: false,
+  });
+}
+
 export function useOrder(id: string) {
   return useQuery({
     queryKey: ["orders", id],

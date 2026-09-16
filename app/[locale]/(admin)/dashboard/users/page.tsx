@@ -271,7 +271,7 @@ export default function UsersPage() {
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-primary/5 border border-primary/10 group-hover/orders:bg-primary/10 group-hover/orders:border-primary/20 transition-all duration-300">
               <OrdersIcon className="w-4 h-4 text-primary opacity-70" />
               <span className="text-sm font-black text-primary">
-                {user.totalOrders || 0}
+                {user.totalOrder || 0}
               </span>
             </div>
             <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">

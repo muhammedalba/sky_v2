@@ -16,6 +16,8 @@ export interface PaginationMeta {
   totalResults: string;
   nextPage?: number;
   prevPage?: number;
+  /** Only present on GET /order/my-orders — count of the user's orders currently in an active status. */
+  activeCount?: number;
 }
 
 export interface ApiResponse<T = unknown> {

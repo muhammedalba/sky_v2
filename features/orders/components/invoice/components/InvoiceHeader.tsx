@@ -1,9 +1,11 @@
+import { FileAsset } from "@/shared/types/file-asset";
+import { getImageUrl } from "@/shared/utils/image.util";
 import React from "react";
 
 interface InvoiceHeaderProps {
   siteNameAr: string;
   siteNameEn: string;
-  siteLogo: string;
+  siteLogo: FileAsset | string;
   crNo: string;
   vatNo: string;
 }
@@ -35,7 +37,7 @@ export const InvoiceHeader: React.FC<InvoiceHeaderProps> = ({
       <div className="flex flex-col items-center justify-center text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={siteLogo}
+          src={getImageUrl(siteLogo) || ""}
           alt={`${siteNameAr} Logo`}
           className="h-16 w-auto object-contain mb-1"
         />

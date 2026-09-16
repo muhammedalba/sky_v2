@@ -18,12 +18,12 @@ export default function ProfilePage() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <Skeleton className="h-[400px] w-full rounded-xl" />
-            <Skeleton className="h-[300px] w-full rounded-xl" />
+            <Skeleton className="h-100 w-full rounded-xl" />
+            <Skeleton className="h-75 w-full rounded-xl" />
           </div>
           <div className="space-y-8">
-            <Skeleton className="h-[350px] w-full rounded-xl" />
-          </div>
+            <Skeleton className="h-87.5 w-full rounded-xl" />
+          </div> 
         </div>
       </div>
     );

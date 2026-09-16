@@ -8,6 +8,14 @@
   "changePassword": "Change Password",
   "changePasswordDescription": "Update your password to secure your account",
   "passwordSecurityNote": "Make sure to use a strong password containing letters, numbers, and symbols for maximum security.",
+  "guest": "Guest",
+  "notifications": "Notifications",
+  "ordersTabDescription": "All of your current and past orders",
+  "nav": {
+    "ariaLabel": "Account navigation",
+    "sectionLabel": "Navigation",
+    "dashboard": "Dashboard"
+  },
   "tabs": {
     "profile": "Profile",
     "orders": "My Orders",
@@ -17,7 +25,8 @@
   },
   "sections": {
     "profile_summary": "Profile Summary",
-    "recent_orders": "Recent Orders"
+    "recent_orders": "Recent Orders",
+    "recent_orders_description": "Track your active and historical orders"
   },
   "stats": {
     "total_orders": "Total Orders",

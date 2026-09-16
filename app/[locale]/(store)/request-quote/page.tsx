@@ -20,7 +20,6 @@ import {
   XIcon,
 } from "@/shared/ui/Icons";
 import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 const quoteSchema = z.object({
@@ -164,13 +163,11 @@ export default function RequestQuotePage() {
           <div className="lg:col-span-8">
             <ScrollReveal animation="slide-left" delay={200}>
               <Card className="p-8 lg:p-12 shadow-2xl border-border/50 rounded-[2.5rem] bg-card/50 backdrop-blur-xl relative overflow-hidden">
-                <AnimatePresence mode="wait">
-                  {success ? (
-                    <motion.div
+                {success ? (
+                    <ScrollReveal
                       key="success"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
+                      animation="fade"
+                      duration={300}
                       className="py-16 text-center space-y-6"
                     >
                       <div className="w-24 h-24 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
@@ -192,13 +189,10 @@ export default function RequestQuotePage() {
                           ? "إرسال طلب آخر"
                           : "Send Another Request"}
                       </Button>
-                    </motion.div>
+                    </ScrollReveal>
                   ) : (
-                    <motion.form
-                      key="form"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                    <ScrollReveal key="form" animation="fade" duration={300}>
+                    <form
                       onSubmit={handleSubmit(onSubmit)}
                       className="space-y-8"
                     >
@@ -358,9 +352,9 @@ export default function RequestQuotePage() {
                         {isSubmitting ? t("form.submitting") : t("form.submit")}
                         <ChevronRightIcon className="w-6 h-6 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform" />
                       </Button>
-                    </motion.form>
+                    </form>
+                    </ScrollReveal>
                   )}
-                </AnimatePresence>
               </Card>
             </ScrollReveal>
           </div>

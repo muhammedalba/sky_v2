@@ -8,6 +8,14 @@ const baseCrud = createCrudApi<Order>(ENDPOINTS.BASE);
 
 export const ordersApi = {
   ...baseCrud,
+  getMyOrders: (params?: Record<string, unknown>) =>
+    apiClient.get<ApiResponse<Order[]>>(ENDPOINTS.MY_ORDERS, {
+      params,
+    }) as unknown as Promise<ApiResponse<Order[]>>,
+  getMyOrder: (id: string) =>
+    apiClient.get<ApiResponse<Order>>(
+      `${ENDPOINTS.MY_ORDERS}/${id}`,
+    ) as unknown as Promise<ApiResponse<Order>>,
   updateStatus: (id: string, data: Record<string, unknown>) =>
     apiClient.patch<ApiResponse<Order>>(`${ENDPOINTS.BASE}/${id}`, data),
   updateOrderDetails: (id: string, data: FormData) =>

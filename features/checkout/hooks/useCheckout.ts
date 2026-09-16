@@ -7,6 +7,7 @@ import { locationsApi, checkoutApi, paymentsApi } from "../api";
 import { useToast } from "@/shared/hooks/useToast";
 import { useLocale } from "next-intl";
 import { isAxiosError } from "axios";
+import { queryKeys } from "@/lib/api/query-keys";
 
 export type AddressPayload = Record<string, unknown>;
 
@@ -230,6 +231,7 @@ export function useRemoveCoupon() {
 export function usePlaceOrder() {
   const toast = useToast();
   const locale = useLocale();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: FormData) => {
@@ -237,6 +239,11 @@ export function usePlaceOrder() {
       return res.data;
     },
     onSuccess: () => {
+      // The new order isn't reflected yet in the cached order list/user
+      // counter (useMyOrders and useMe both cache for a while) — force a
+      // refresh so the account page shows it immediately.
+      queryClient.invalidateQueries({ queryKey: ["orders", "my-orders"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.me() });
       toast.success(locale === "ar" ? "تم تقديم طلبك بنجاح!" : "Order placed successfully!");
     },
     onError: (error: Error | unknown) => {

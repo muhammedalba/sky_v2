@@ -10,7 +10,7 @@ import { Textarea } from '@/shared/ui/Textarea';
 import { Card } from '@/shared/ui/Card';
 import { CheckIcon, MailIcon, SpinnerIcon } from "@/shared/ui/Icons";
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollReveal } from '@/shared/ui/ScrollReveal';
 import { useSettings } from '@/app/providers/SettingsProvider';
 
 const contactSchema = z.object({
@@ -175,40 +175,35 @@ export default function ContactPage() {
           {/* Right Form Card (lg:col-span-8) */}
           <div className="lg:col-span-8">
             <Card className="p-6 sm:p-8 lg:p-10 border-border/60 bg-card rounded-3xl shadow-sm backdrop-blur-md relative overflow-hidden">
-              <AnimatePresence mode="wait">
-                {success ? (
-                  <motion.div
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex flex-col items-center justify-center text-center py-12"
+              {success ? (
+                <ScrollReveal
+                  key="success"
+                  animation="fade"
+                  duration={300}
+                  className="flex flex-col items-center justify-center text-center py-12"
+                >
+                  <div className="w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                    <CheckIcon className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                    {t('form.success')}
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                    {locale === 'ar'
+                      ? 'شكراً لتواصلك معنا. سنقوم بالرد عليك في أقرب وقت ممكن.'
+                      : "We've received your message. A support representative will get back to you shortly."}
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="mt-8 h-10 px-5 rounded-xl font-semibold border-border hover:bg-muted transition-all"
+                    onClick={() => setSuccess(false)}
                   >
-                    <div className="w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                      <CheckIcon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-2">
-                      {t('form.success')}
-                    </h3>
-                    <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                      {locale === 'ar' 
-                        ? 'شكراً لتواصلك معنا. سنقوم بالرد عليك في أقرب وقت ممكن.' 
-                        : "We've received your message. A support representative will get back to you shortly."}
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-8 h-10 px-5 rounded-xl font-semibold border-border hover:bg-muted transition-all" 
-                      onClick={() => setSuccess(false)}
-                    >
-                      {locale === 'ar' ? 'إرسال رسالة أخرى' : 'Send another message'}
-                    </Button>
-                  </motion.div>
-                ) : (
-                  <motion.form
-                    key="form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    {locale === 'ar' ? 'إرسال رسالة أخرى' : 'Send another message'}
+                  </Button>
+                </ScrollReveal>
+              ) : (
+                <ScrollReveal key="form" animation="fade" duration={300}>
+                  <form
                     onSubmit={handleSubmit(onSubmit)}
                     className="space-y-6"
                   >
@@ -274,17 +269,17 @@ export default function ContactPage() {
                       )}
                     </div>
 
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={isSubmitting}
                       className="w-full h-12 text-sm font-bold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-sm flex items-center justify-center gap-2"
                     >
                       {isSubmitting && <SpinnerIcon className="w-4 h-4 text-primary-foreground" />}
                       {isSubmitting ? t('form.submitting') : t('form.submit')}
                     </Button>
-                  </motion.form>
-                )}
-              </AnimatePresence>
+                  </form>
+                </ScrollReveal>
+              )}
             </Card>
           </div>
 

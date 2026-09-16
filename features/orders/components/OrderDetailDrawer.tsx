@@ -25,6 +25,8 @@ import {
 import { FileTextIcon as StickyNoteIcon } from "@/shared/ui/Icons";
 import { useTrans } from "@/shared/hooks/useTrans";
 import OrderTimeline from "./OrderTimeline";
+import OrderInfoCard from "./OrderInfoCard";
+import OrderTotalsSummary from "./OrderTotalsSummary";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 
 interface OrderDetailDrawerProps {
@@ -59,83 +61,6 @@ export default function OrderDetailDrawer({
       .filter(Boolean)
       .join(" , ");
   }, [order?.shippingAddress, getTrans, t]);
-
-  // Constructing timeline based on order lifecycle fields
-  const timelineSteps = useMemo(() => {
-    if (!order) return [];
-
-    const steps = [
-      {
-        key: "pending_payment",
-        time: order.createdAt,
-        isCompleted: !!order.createdAt,
-      },
-      {
-        key: "pending",
-        time: order.checkedOutAt || order.createdAt,
-        isCompleted: [
-          "pending",
-          "processing",
-          "shipped",
-          "delivered",
-          "completed",
-        ].includes(order.status),
-      },
-      {
-        key: "processing",
-        time:
-          order.processingAt ||
-          (order.paymentStatus?.toLocaleUpperCase() === "PAID"
-            ? order.updatedAt
-            : undefined),
-        isCompleted: [
-          "processing",
-          "shipped",
-          "delivered",
-          "completed",
-        ].includes(order.status),
-      },
-      {
-        key: "shipped",
-        time: ["shipped", "delivered", "completed"].includes(order.status)
-          ? order.updatedAt
-          : undefined,
-        isCompleted: ["shipped", "delivered", "completed"].includes(
-          order.status,
-        ),
-      },
-      {
-        key: "delivered",
-        time: ["delivered", "completed"].includes(order.status)
-          ? order.updatedAt
-          : undefined,
-        isCompleted: ["delivered", "completed"].includes(order.status),
-      },
-      {
-        key: "completed",
-        time: order.completedAt,
-        isCompleted: order.status === "completed",
-      },
-    ];
-
-    if (order.status === "cancelled" || order.cancelledAt) {
-      steps.push({
-        key: "cancelled",
-        time: order.cancelledAt || order.updatedAt,
-        isCompleted: true,
-      });
-    }
-
-    if (order.status === "expired") {
-      steps.push({
-        key: "expired",
-        time: order.updatedAt,
-        isCompleted: true,
-      });
-    }
-
-    return steps;
-  }, [order]);
 
   if (!order) return null;
 
@@ -220,96 +145,64 @@ export default function OrderDetailDrawer({
             </Card>
 
             {/* Shipping Address Card */}
-            <Card className="border-border/30 bg-secondary/10">
-              <CardContent className="p-4 flex gap-3">
-                <div className="h-10 w-10 rounded-full shrink-0 bg-muted/40 flex items-center justify-center">
-                  <MapPinIcon className="w-5 h-5 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    {t("shippingAddress")}
-                  </h4>
-                  {formattedAddress ? (
-                    <p className="text-xs font-medium text-muted-foreground mt-1 leading-relaxed">
-                      {formattedAddress}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-muted-foreground mt-1 italic">
-                      {t("noAddress")}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <OrderInfoCard icon={MapPinIcon} title={t("shippingAddress")}>
+              {formattedAddress ? (
+                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                  {formattedAddress}
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground italic">
+                  {t("noAddress")}
+                </p>
+              )}
+            </OrderInfoCard>
           </div>
 
           {/* Payment & Shipping Method Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Payment Method & Status */}
-            <Card className="border-border/30 bg-secondary/10">
-              <CardContent className="p-4 flex gap-3">
-                <div className="h-10 w-10 rounded-full shrink-0 bg-muted/40 flex items-center justify-center">
-                  <CreditCardIcon className="w-5 h-5 text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    {t("paymentMethod")}
-                  </h4>
-                  <p className="text-xs font-medium text-foreground mt-1 capitalize">
-                    {order.paymentMethodCode || order.paymentMethod || "—"}
-                  </p>
-                  <div className="mt-1">
-                    <span
-                      className={cn(
-                        "rounded-full px-2 py-0.5 font-semibold text-[9px] uppercase tracking-wider border-none",
-                        getPaymentStatusColor(order.paymentStatus || ""),
-                      )}
-                    >
-                      {order.paymentStatus
-                        ? t(
-                            `paymentStatus.${order.paymentStatus.toUpperCase()}`,
-                            { defaultValue: order.paymentStatus },
-                          )
-                        : "—"}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <OrderInfoCard icon={CreditCardIcon} title={t("paymentMethod")}>
+              <p className="text-xs font-medium text-foreground capitalize">
+                {order.paymentMethodCode || order.paymentMethod || "—"}
+              </p>
+              <div className="mt-1">
+                <span
+                  className={cn(
+                    "rounded-full px-2 py-0.5 font-semibold text-[9px] uppercase tracking-wider border-none",
+                    getPaymentStatusColor(order.paymentStatus || ""),
+                  )}
+                >
+                  {order.paymentStatus
+                    ? t(`paymentStatus.${order.paymentStatus.toUpperCase()}`, {
+                        defaultValue: order.paymentStatus,
+                      })
+                    : "—"}
+                </span>
+              </div>
+            </OrderInfoCard>
 
             {/* Shipping Method */}
-            <Card className="border-border/30 bg-secondary/10">
-              <CardContent className="p-4 flex gap-3">
-                <div className="h-10 w-10 rounded-full shrink-0 bg-muted/40 flex items-center justify-center">
-                  <TruckIcon className="w-5 h-5 text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    {t("shippingProvider")}
-                  </h4>
-                  <p className="text-xs font-medium text-foreground mt-1">
-                    {typeof order.shippingProviderId === "object" &&
-                    order.shippingProviderId
-                      ? order.shippingProviderId.name
-                      : order.shippingProviderId ||
-                        order.shippingMethod ||
-                        "Standard Shipping"}
-                  </p>
-                  {(order.shippingRateId?.estimatedDays ||
-                    order.deliveryDate) && (
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {order.shippingRateId?.estimatedDays
-                        ? t("delivery", {
-                            days: order.shippingRateId.estimatedDays,
-                          })
-                        : t("estimatedDelivery", {
-                            date: order.deliveryDate || "",
-                          })}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <OrderInfoCard icon={TruckIcon} title={t("shippingProvider")}>
+              <p className="text-xs font-medium text-foreground">
+                {typeof order.shippingProviderId === "object" &&
+                order.shippingProviderId
+                  ? order.shippingProviderId.name
+                  : order.shippingProviderId ||
+                    order.shippingMethod ||
+                    "Standard Shipping"}
+              </p>
+              {(order.shippingRateId?.estimatedDays || order.deliveryDate) && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {order.shippingRateId?.estimatedDays
+                    ? t("delivery", {
+                        days: order.shippingRateId.estimatedDays,
+                      })
+                    : t("estimatedDelivery", {
+                        date: order.deliveryDate || "",
+                      })}
+                </p>
+              )}
+            </OrderInfoCard>
           </div>
 
           {/* Extra Info (Notes, Coupon Code, Tracking Number) */}
@@ -410,62 +303,8 @@ export default function OrderDetailDrawer({
           </div>
 
           {/* Order Summary breakdown */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-bold text-foreground">
-              {t("orderSummary")}
-            </h4>
-            <Card className="border-border/30 bg-muted/5">
-              <CardContent className="p-4 space-y-2 text-xs">
-                <div className="flex justify-between text-muted-foreground">
-                  <span>{t("subtotal")}</span>
-                  <span className="tabular-nums font-semibold">
-                    {formatCurrency(order.totalPrice || 0)}
-                  </span>
-                </div>
-                {order.shippingAmount !== undefined && (
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>{t("shippingAmount")}</span>
-                    <span className="tabular-nums font-semibold">
-                      {formatCurrency(order.shippingAmount)}
-                    </span>
-                  </div>
-                )}
-                {order.discountAmount !== undefined &&
-                  order.discountAmount > 0 && (
-                    <div className="flex justify-between text-red-500 dark:text-red-400">
-                      <span>{t("discount")}</span>
-                      <span className="tabular-nums font-bold">
-                        -{formatCurrency(order.discountAmount)}
-                      </span>
-                    </div>
-                  )}
-                {order.taxAmount !== undefined && (
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>{t("taxAmount")}</span>
-                    <span className="tabular-nums font-semibold">
-                      {formatCurrency(order.taxAmount)}
-                    </span>
-                  </div>
-                )}
-                {order.paymentFees !== undefined && (
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>{t("paymentFees")}</span>
-                    <span className="tabular-nums font-semibold">
-                      {formatCurrency(order.paymentFees)}
-                    </span>
-                  </div>
-                )}
-                <div className="border-t border-border/40 my-2 pt-2 flex justify-between text-sm font-black text-foreground">
-                  <span>{t("grandTotal")}</span>
-                  <span className="tabular-nums text-primary text-base">
-                    {formatCurrency(order.grandTotal || order.totalPrice || 0)}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <OrderTotalsSummary order={order} />
 
-      
           {/* Order Lifecycle Timeline */}
           <OrderTimeline order={order} containerClassName='border-none shadow-none bg-transparent '/>
         </div>

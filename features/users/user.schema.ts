@@ -10,11 +10,17 @@ export const profileSchema = z.object({
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(6, 'invalidCurrentPassword'),
-  password: z.string().min(6, 'invalidPassword'),
+  password: z.string()
+    .min(6, 'invalidPassword')
+    .regex(/[A-Z]/, 'invalidPasswordComplexity')
+    .regex(/[0-9]/, 'invalidPasswordComplexity'),
   confirmPassword: z.string().min(6, 'invalidPassword'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'passwordMismatch',
   path: ['confirmPassword'],
+}).refine((data) => data.password !== data.currentPassword, {
+  message: 'passwordSameAsCurrent',
+  path: ['password'],
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;

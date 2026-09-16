@@ -9,6 +9,14 @@
   "changePassword": "تغيير كلمة المرور",
   "changePasswordDescription": "تحديث كلمة المرور الخاصة بك لتأمين حسابك",
   "passwordSecurityNote": "تأكد من استخدام كلمة مرور قوية تحتوي على أحرف وأرقام ورموز لضمان أقصى قدر من الأمان.",
+  "guest": "ضيف",
+  "notifications": "الإشعارات",
+  "ordersTabDescription": "جميع طلباتك الحالية والسابقة",
+  "nav": {
+    "ariaLabel": "أقسام الحساب",
+    "sectionLabel": "القائمة",
+    "dashboard": "لوحة التحكم"
+  },
   "tabs": {
     "profile": "الملف الشخصي",
     "orders": "طلباتي",
@@ -18,7 +26,8 @@
   },
   "sections": {
     "profile_summary": "ملخص الحساب",
-    "recent_orders": "الطلبات الأخيرة"
+    "recent_orders": "الطلبات الأخيرة",
+    "recent_orders_description": "تتبع حالة طلباتك الأخيرة والسابقة"
   },
   "stats": {
     "total_orders": "إجمالي الطلبات",

@@ -387,7 +387,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                   label={t("fields.name")}
                   icon={UserIcon}
                   placeholder=" "
-                  value={profileForm.watch("name")}
                   error={profileForm.formState.errors.name?.message}
                 />
 
@@ -416,7 +415,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                   <Button
                     type="submit"
                     isLoading={updateProfileMutation.isPending}
-                    className="min-w-[140px] font-bold"
+                    className="min-w-35 font-bold"
                   >
                     {t("buttons.saveChanges")}
                   </Button>
@@ -488,7 +487,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                       type="submit"
                       variant="secondary"
                       isLoading={changePasswordMutation.isPending}
-                      className="min-w-[160px] font-bold"
+                      className="min-w-40 font-bold"
                     >
                       {t("buttons.updatePassword")}
                     </Button>

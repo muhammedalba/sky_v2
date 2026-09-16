@@ -109,6 +109,7 @@ export const env = {
     },
     ORDERS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS || '/order',
+      MY_ORDERS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_MY_ORDERS || '/order/my-orders',
       STATS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_STATS || '/order/statistics',
       MARKETING_STATS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_MARKETING_STATS || '/order/marketing-statistics',
       COUPON: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_COUPON || '/order/applyCoupon',

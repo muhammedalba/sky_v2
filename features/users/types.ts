@@ -26,7 +26,7 @@ export interface User {
   verificationCode?: string;
   verificationExpires?: Date;
   lastLogin?: Date;
-  totalOrders?: number;
+  totalOrder?: number;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;

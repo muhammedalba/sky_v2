@@ -67,7 +67,8 @@
     "paymentMethod": "Payment Method",
     "shippingAddress": "Shipping Address",
     "items": "Items",
-    "date": "Date"
+    "date": "Date",
+    "orderNumber": "Order #"
   },
   "status": {
     "pending_payment": "Pending Payment",

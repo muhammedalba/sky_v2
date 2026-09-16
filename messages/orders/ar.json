@@ -67,7 +67,8 @@
     "paymentMethod": "طريقة الدفع",
     "shippingAddress": "عنوان الشحن",
     "items": "العناصر",
-    "date": "التاريخ"
+    "date": "التاريخ",
+    "orderNumber": "رقم الطلب"
   },
   "status": {
     "pending_payment": "بانتظار الدفع",
