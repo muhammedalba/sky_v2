@@ -77,7 +77,7 @@ export function Breadcrumb({
                   )}
                   aria-current={isLast ? "page" : undefined}
                 >
-                  {item.label.split('-').join(' ').slice(0, 15) + '...'}
+                  {item.label.split('-').join(' ').slice(0, 15) }
 
                 </span>
               )}

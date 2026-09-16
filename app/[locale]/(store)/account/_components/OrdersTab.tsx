@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/shared/ui/Card";
 import { Skeleton } from "@/shared/ui/Skeleton";
-import { ClockIcon, EyeIcon, PackageIcon } from "@/shared/ui/Icons";
+import { EyeIcon, PackageIcon } from "@/shared/ui/Icons";
 import { useMyOrders } from "@/features/orders/hooks/useOrders";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { cn, formatDateTime, getStatusColor } from "@/lib/utils";
@@ -15,9 +15,6 @@ import EntityDataTable, {
 import Pagination from "@/shared/ui/Pagination";
 import type { Order } from "@/types";
 import { OrderRow } from "./OrderRow";
-import ProductsSectionHeader from "../../products/components/ProductsSectionHeader";
-import ProductsGrid from "../../products/components/ProductsGrid";
-import { useRecentlyViewedProducts } from "@/features/products/hooks/useRecentlyViewedProducts";
 
 interface OrdersTabProps {
   locale: string;
@@ -25,9 +22,10 @@ interface OrdersTabProps {
 
 export function OrdersTab({ locale }: OrdersTabProps) {
   const t = useTranslations("profile");
+
   const tOrders = useTranslations("orders");
   const formatCurrency = useFormatCurrency();
-  const { products: recentlyViewedList } = useRecentlyViewedProducts();
+
   const [orderPage, setOrderPage] = useState(1);
   const { data: ordersResponse, isLoading: isLoadingOrders } = useMyOrders({
     page: orderPage,
@@ -163,25 +161,7 @@ export function OrdersTab({ locale }: OrdersTabProps) {
           }}
         />
       </div>
-      {/* ─── 2. RECENTLY VIEWED ──────────────────────────────── */}
-      {recentlyViewedList.length > 0 && (
-        <section className="relative py-10 sm:py-14 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ProductsSectionHeader
-              icon={ClockIcon}
-              title={t("recentlyViewedTitle")}
-              description={t("recentlyViewedDesc")}
-            />
-            <ProductsGrid
-              items={recentlyViewedList}
-              isLoading={false}
-              emptyTitle={t("noProducts")}
-              emptyDesc={t("noProductsDesc")}
-              withReveal
-            />
-          </div>
-        </section>
-      )}
+     
     </>
   );
 }

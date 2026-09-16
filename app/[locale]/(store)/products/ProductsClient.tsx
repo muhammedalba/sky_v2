@@ -55,7 +55,6 @@ export default function ProductsClient() {
     { category: filters.category || undefined, limit: 100 },
   );
   const { data: brandsData } = useBrands(DEFAULT_BRANDS_PARAMS);
-  // Carousel يجلب بياناته بنفسه من داخل HeroCarousel
 
   const categoriesList = useMemo(() => (categoriesData?.data || EMPTY_ARRAY) as Category[], [categoriesData?.data]);
   const subCategoriesList = useMemo(() => (subCategoriesData?.data || EMPTY_ARRAY) as SubCategory[], [subCategoriesData?.data]);
