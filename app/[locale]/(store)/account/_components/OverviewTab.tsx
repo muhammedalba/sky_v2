@@ -13,6 +13,7 @@ import {
 import { useMyOrders } from "@/features/orders/hooks/useOrders";
 import type { User } from "@/types";
 import { OrderRow } from "./OrderRow";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 interface OverviewTabProps {
   user: User;
@@ -20,7 +21,11 @@ interface OverviewTabProps {
   onViewAllOrders: () => void;
 }
 
-export function OverviewTab({ user, locale, onViewAllOrders }: OverviewTabProps) {
+export function OverviewTab({
+  user,
+  locale,
+  onViewAllOrders,
+}: OverviewTabProps) {
   const t = useTranslations("profile");
   const tOrders = useTranslations("orders");
 
@@ -46,16 +51,16 @@ export function OverviewTab({ user, locale, onViewAllOrders }: OverviewTabProps)
       value: totalOrdersCount,
       Icon: ShoppingCartIcon,
       colorFrom: "from-primary/5",
-      colorBg: "bg-primary/10 dark:bg-primary/20",
+      colorBg: "bg-primary/10",
       colorIcon: "text-primary",
     },
     {
       title: t("stats.active_orders"),
       value: activeOrdersCount,
       Icon: RefreshCwIcon,
-      colorFrom: "from-blue-500/5",
-      colorBg: "bg-blue-500/10 dark:bg-blue-500/20",
-      colorIcon: "text-blue-500",
+      colorFrom: "from-warning/5",
+      colorBg: "bg-warning/10",
+      colorIcon: "text-warning",
     },
   ];
 
@@ -63,31 +68,39 @@ export function OverviewTab({ user, locale, onViewAllOrders }: OverviewTabProps)
     <>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {stats.map((stat) => (
-          <StatCard key={stat.title} {...stat} />
+        {stats.map((stat, index) => (
+          <ScrollReveal
+            key={stat.title}
+            animation="slide-up"
+            delay={index * 200}
+          >
+            <StatCard {...stat} />
+          </ScrollReveal>
         ))}
       </div>
 
       {/* Recent Orders section */}
-      <Card className="p-6 border-border/60 bg-card shadow-sm rounded-2xl space-y-6">
-        <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-border/40">
-          <div>
-            <h2 className="text-lg font-bold text-foreground">
+      <Card className=" border-border/60 bg-card shadow-sm rounded-2xl space-y-6">
+        <div className="m-0 flex p-4 items-center justify-between flex-wrap gap-3  border-b border-border/40 bg-accent/70 rounded-t-xl">
+          <ScrollReveal animation="fade" delay={400}>
+            <h2 className="text-lg font-bold title-gradient">
               {t("sections.recent_orders")}
             </h2>
             <p className="text-xs text-muted-foreground">
               {t("sections.recent_orders_description")}
             </p>
-          </div>
+          </ScrollReveal>
           {totalOrdersCount > 5 && (
-            <Button
-              variant="ghost"
-              className="font-semibold text-primary hover:text-primary/90 text-sm gap-1"
-              onClick={onViewAllOrders}
-            >
-              {t("actions.view_all_orders")}
-              <ChevronRightIcon className="w-4 h-4 rtl:rotate-180" />
-            </Button>
+            <ScrollReveal animation="slide-left" delay={400}>
+              <Button
+                variant="ghost"
+                className="font-semibold text-primary hover:text-primary/90 text-sm gap-1"
+                onClick={onViewAllOrders}
+              >
+                {t("actions.view_all_orders")}
+                <ChevronRightIcon className="w-4 h-4 rtl:rotate-180" />
+              </Button>
+            </ScrollReveal>
           )}
         </div>
 
@@ -118,8 +131,15 @@ export function OverviewTab({ user, locale, onViewAllOrders }: OverviewTabProps)
           </p>
         ) : (
           <div className="divide-y divide-border/40">
-            {orders.map((order) => (
-              <OrderRow key={order._id} order={order} locale={locale} />
+            {orders?.map((order, i) => (
+              <ScrollReveal
+                key={order._id}
+                animation="slide-up"
+                delay={i * 200}
+                className="w-full p-4"
+              >
+                <OrderRow order={order} locale={locale} />
+              </ScrollReveal>
             ))}
           </div>
         )}

@@ -8,13 +8,14 @@ import { Skeleton } from "@/shared/ui/Skeleton";
 import { EyeIcon, PackageIcon } from "@/shared/ui/Icons";
 import { useMyOrders } from "@/features/orders/hooks/useOrders";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { cn, formatDateTime, getStatusColor } from "@/lib/utils";
+import { cn, formatDateTime, formatOrderNumber, getStatusColor } from "@/lib/utils";
 import EntityDataTable, {
   type Column,
 } from "@/shared/ui/dashboard/EntityDataTable";
 import Pagination from "@/shared/ui/Pagination";
 import type { Order } from "@/types";
 import { OrderRow } from "./OrderRow";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 interface OrdersTabProps {
   locale: string;
@@ -39,7 +40,7 @@ export function OrdersTab({ locale }: OrdersTabProps) {
       header: tOrders("fields.orderNumber"),
       render: (order) => (
         <span className="font-mono font-bold text-xs text-foreground bg-muted/40 px-2 py-1 rounded-md">
-          #{order._id.slice(-6).toUpperCase()}
+          #{formatOrderNumber(order)}
         </span>
       ),
     },
@@ -89,14 +90,14 @@ export function OrdersTab({ locale }: OrdersTabProps) {
 
   return (
     <>
-      <div className="px-1">
-        <h2 className="text-lg font-bold text-foreground">
+      <ScrollReveal animation="fade" className="ps-3 mb-6 w-full">
+        <h2 className="text-lg font-bold title-gradient">
           {t("tabs.orders")}
         </h2>
         <p className="text-xs text-muted-foreground">
           {t("ordersTabDescription")}
         </p>
-      </div>
+      </ScrollReveal>
 
       {/* Mobile: compact card list */}
       <div className="block md:hidden">
@@ -128,8 +129,16 @@ export function OrdersTab({ locale }: OrdersTabProps) {
             </p>
           ) : (
             <div className="divide-y divide-border/40">
-              {orders.map((order) => (
-                <OrderRow key={order._id} order={order} locale={locale} />
+              {orders?.map((order, i) => (
+               <ScrollReveal
+                key={order._id}
+                animation="slide-up"
+                delay={i * 200}
+                className="w-full p-4"
+              >
+                <OrderRow order={order} locale={locale} />
+              </ScrollReveal>
+                
               ))}
             </div>
           )}

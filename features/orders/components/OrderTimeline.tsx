@@ -15,6 +15,7 @@ import {
   CheckIcon,
   XIcon,
 } from '@/shared/ui/Icons';
+import { ScrollReveal } from '@/shared/ui/ScrollReveal';
 
 interface OrderTimelineProps {
   order: Order;
@@ -138,12 +139,12 @@ export default function OrderTimeline({ order, containerClassName }: OrderTimeli
   return (
     <Card className={`bg-background rounded-3xl overflow-hidden ${containerClassName} `}>
       <CardHeader className="pb-4 border-b border-border/30 bg-muted/70">
-        <div className="flex items-center justify-between">
+        <ScrollReveal animation="fade" className="flex items-center justify-between">
           <CardTitle className="text-base font-bold tracking-tight title-gradient flex items-center gap-2.5">
             <span className="flex h-2.5 w-2.5 rounded-full bg-primary" />
             {t('timeline')}
           </CardTitle>
-        </div>
+        </ScrollReveal>
       </CardHeader>
       <CardContent className="p-6 sm:p-8">
         <div className="relative space-y-8 sm:space-y-10">
@@ -154,7 +155,7 @@ export default function OrderTimeline({ order, containerClassName }: OrderTimeli
               step.key === 'cancelled' || step.key === 'expired';
 
             return (
-              <div
+              <ScrollReveal animation='slide-up' delay={idx * 2}
                 key={idx}
                 className="relative flex items-start gap-4 sm:gap-6 group"
               >
@@ -250,7 +251,7 @@ export default function OrderTimeline({ order, containerClassName }: OrderTimeli
                     )}
                   </div>
                 </div>
-              </div>
+              </ScrollReveal>
             );
           })}
         </div>

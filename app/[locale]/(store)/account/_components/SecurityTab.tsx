@@ -41,9 +41,9 @@ export function SecurityTab() {
   });
 
   return (
-    <Card className="p-6 border-border/60 bg-card shadow-sm rounded-2xl">
-      <div className="pb-4 mb-6 border-b border-border/40">
-        <h2 className="text-lg font-bold text-foreground">
+    <Card className="border-border/60 bg-card shadow-sm rounded-2xl">
+      <div className="pb-4 mb-6 border-b border-border/40 bg-accent/70 p-6 rounded-t-2xl">
+        <h2 className="text-lg font-bold title-gradient">
           {t("changePassword")}
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -52,7 +52,7 @@ export function SecurityTab() {
       </div>
 
       {/* Security notice */}
-      <div className="flex items-start gap-3 p-3.5 mb-6 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
+      <div className="flex items-start gap-3 px-3 py-5 mb-8 mx-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
         <ShieldIcon className="w-4 h-4 mt-0.5 shrink-0" />
         <p className="text-xs leading-relaxed">
           {t("passwordSecurityNote")}
@@ -64,7 +64,7 @@ export function SecurityTab() {
           onSubmit={passwordForm.handleSubmit((data) =>
             changePasswordMutation.mutate(data),
           )}
-          className="space-y-5"
+          className="space-y-5 p-4"
         >
           {/* current Password */}
           <PasswordInput

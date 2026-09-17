@@ -17,7 +17,7 @@ import { Tooltip } from "@/shared/ui/Tooltip";
 import { Checkbox } from "@/shared/ui/Checkbox";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { Order } from "@/types";
-import { cn, formatDate, formatRelativeTime, getPaymentStatusColor, getStatusColor } from "@/lib/utils";
+import { cn, formatDate, formatOrderNumber, formatRelativeTime, getPaymentStatusColor, getStatusColor } from "@/lib/utils";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import {
   EyeIcon,
@@ -368,7 +368,7 @@ export default function OrdersTable({
                 {/* Order ID */}
                 <TableCell>
                   <span className="font-mono font-bold text-xs text-foreground bg-muted/40 px-2 py-1 rounded-md">
-                    #{String(order.invoiceNumber ?? order._id?.slice(-4)).padStart(4, "0") }
+                    #{formatOrderNumber(order, 4)}
                   </span>
                 </TableCell>
 

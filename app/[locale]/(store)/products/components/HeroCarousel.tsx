@@ -29,7 +29,9 @@ function HeroCarouselSkeleton() {
 export default function HeroCarousel() {
   const t = useTranslations("store.productsPage");
   const getTrans = useTrans();
-  const { data: carouselData, isLoading } = useCarousel(DEFAULT_CAROUSEL_PARAMS);
+  const { data: carouselData, isLoading } = useCarousel(
+    DEFAULT_CAROUSEL_PARAMS,
+  );
   const slides = (carouselData?.data || []) as Carousel[];
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -43,29 +45,30 @@ export default function HeroCarousel() {
 
   const onPrev = () =>
     setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  const onNext = () =>
-    setActiveSlide((prev) => (prev + 1) % slides.length);
+  const onNext = () => setActiveSlide((prev) => (prev + 1) % slides.length);
   const onDotClick = (index: number) => setActiveSlide(index);
 
   if (isLoading) return <HeroCarouselSkeleton />;
 
   if (slides.length === 0) {
     return (
-      <div className="relative rounded-3xl overflow-hidden py-16 sm:py-24 px-6 sm:px-12 text-center bg-card border border-border/50 shadow-xs">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px] pointer-events-none" />
-        <h1 className="text-3xl sm:text-5xl font-black mb-4 title-gradient">
-          {t("heroTitle")}
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed font-medium">
-          {t("heroDesc")}
-        </p>
-      </div>
+      <>
+        <div className="relative mt-4 rounded-3xl overflow-hidden py-16 sm:py-24 px-6 sm:px-12 text-center bg-card border border-border/50 shadow-xs">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px] pointer-events-none" />
+          <h1 className="text-3xl sm:text-5xl font-black mb-4 title-gradient">
+            {t("heroTitle")}
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed font-medium">
+            {t("heroDesc")}
+          </p>
+        </div>
+      </>
     );
   }
 
   return (
     <div className="relative rounded-3xl overflow-hidden aspect-4/3 md:aspect-16/7 lg:aspect-21/9 border border-border/50 shadow-lg group/carousel">
-      {slides.map((slide, idx) => {
+      {slides?.map((slide, idx) => {
         const isActive = idx === activeSlide;
         const slideDesc = getTrans(slide.description);
         return (

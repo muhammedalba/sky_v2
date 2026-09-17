@@ -8,6 +8,7 @@ import {
   UserIcon,
 } from "@/shared/ui/Icons";
 import type { ActiveTabType } from "./types";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 interface AccountSidebarProps {
   activeTab: ActiveTabType;
@@ -31,59 +32,70 @@ export function AccountSidebar({
     <aside
       role="tablist"
       aria-label={t("nav.ariaLabel")}
-      className="lg:col-span-3 flex flex-col gap-1.5 bg-card text-card-foreground border border-border/60 rounded-2xl p-4 shadow-sm backdrop-blur-md"
+      className="lg:col-span-3 flex flex-col gap-1.5 bg-card text-card-foreground border border-border/60 rounded-2xl backdrop-blur-md"
     >
-      <p className="px-3 pt-1 pb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-        {t("nav.sectionLabel")}
-      </p>
-
-      <button
-        role="tab"
-        id="tab-overview"
-        aria-selected={activeTab === "overview"}
-        aria-controls="tabpanel-overview"
-        onClick={() => onTabChange("overview")}
-        className={tabButtonClass(activeTab === "overview")}
+      <ScrollReveal
+        animation="fade"
+         delay={300}
+        className="bg-accent/70 px-3 pt-3 pb-3 rounded-t-2xl"
       >
-        <DashboardIcon className="w-4.5 h-4.5 shrink-0" />
-        <span className="flex-1 truncate">{t("nav.dashboard")}</span>
-      </button>
-
-      <button
-        role="tab"
-        id="tab-profile"
-        aria-selected={activeTab === "profile"}
-        aria-controls="tabpanel-profile"
-        onClick={() => onTabChange("profile")}
-        className={tabButtonClass(activeTab === "profile")}
+        <p className=" text-[14px] font-bold  uppercase tracking-widest title-gradient ">
+          {t("nav.sectionLabel")}
+        </p>
+      </ScrollReveal>
+      <ScrollReveal
+        animation="slide-left"
+        delay={400}
+        className=" px-3 pt-3 pb-3 flex flex-col gap-1"
       >
-        <UserIcon className="w-4.5 h-4.5 shrink-0" />
-        <span className="flex-1 truncate">{t("tabs.profile")}</span>
-      </button>
+        <button
+          role="tab"
+          id="tab-overview"
+          aria-selected={activeTab === "overview"}
+          aria-controls="tabpanel-overview"
+          onClick={() => onTabChange("overview")}
+          className={tabButtonClass(activeTab === "overview")}
+        >
+          <DashboardIcon className="w-4.5 h-4.5 shrink-0 text-primary" />
+          <span className="flex-1 truncate">{t("nav.dashboard")}</span>
+        </button>
 
-      <button
-        role="tab"
-        id="tab-orders"
-        aria-selected={activeTab === "orders"}
-        aria-controls="tabpanel-orders"
-        onClick={() => onTabChange("orders")}
-        className={tabButtonClass(activeTab === "orders")}
-      >
-        <PackageIcon className="w-4.5 h-4.5 shrink-0" />
-        <span className="flex-1 truncate">{t("tabs.orders")}</span>
-      </button>
+        <button
+          role="tab"
+          id="tab-profile"
+          aria-selected={activeTab === "profile"}
+          aria-controls="tabpanel-profile"
+          onClick={() => onTabChange("profile")}
+          className={tabButtonClass(activeTab === "profile")}
+        >
+          <UserIcon className="w-4.5 h-4.5 shrink-0 text-destructive" />
+          <span className="flex-1 truncate">{t("tabs.profile")}</span>
+        </button>
 
-      <button
-        role="tab"
-        id="tab-security"
-        aria-selected={activeTab === "security"}
-        aria-controls="tabpanel-security"
-        onClick={() => onTabChange("security")}
-        className={tabButtonClass(activeTab === "security")}
-      >
-        <ShieldIcon className="w-4.5 h-4.5 shrink-0" />
-        <span className="flex-1 truncate">{t("tabs.security")}</span>
-      </button>
+        <button
+          role="tab"
+          id="tab-orders"
+          aria-selected={activeTab === "orders"}
+          aria-controls="tabpanel-orders"
+          onClick={() => onTabChange("orders")}
+          className={tabButtonClass(activeTab === "orders")}
+        >
+          <PackageIcon className="w-4.5 h-4.5 shrink-0 text-warning" />
+          <span className="flex-1 truncate">{t("tabs.orders")}</span>
+        </button>
+
+        <button
+          role="tab"
+          id="tab-security"
+          aria-selected={activeTab === "security"}
+          aria-controls="tabpanel-security"
+          onClick={() => onTabChange("security")}
+          className={tabButtonClass(activeTab === "security")}
+        >
+          <ShieldIcon className="w-4.5 h-4.5 shrink-0 text-success" />
+          <span className="flex-1 truncate">{t("tabs.security")}</span>
+        </button>
+      </ScrollReveal>
     </aside>
   );
 }

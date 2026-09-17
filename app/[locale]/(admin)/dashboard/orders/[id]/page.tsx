@@ -23,7 +23,7 @@ import OrderActions from "@/features/orders/components/OrderActions";
 import InvoicePreviewDialog from "@/features/orders/components/InvoicePreviewDialog";
 import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
 import { CouponsIcon, RefreshCwIcon, ShoppingBagIcon } from "@/shared/ui/Icons";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatOrderNumber } from "@/lib/utils";
 import Link from "next/link";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 
@@ -93,7 +93,7 @@ export default function OrderDetailsPage({
       {/* 1. Header */}
 
       <EntityPageHeader
-        title={t("order", { id: order?.invoiceNumber || order._id.slice(0, 8) })}
+        title={t("order", { id: formatOrderNumber(order) })}
         subtitle={t("placedOn", { date: formatDate(order.createdAt) })}
         totalResults={t("totalOrders", {
           count: order?.items?.length || 0,

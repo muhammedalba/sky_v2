@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { getImageUrl } from "../utils/image.util";
 
 interface DownloadFileOptions {
   /** Optional custom filename for the download */
@@ -17,6 +18,7 @@ export function useDownloadFile() {
       fileUrl: string | null | undefined,
       options?: DownloadFileOptions,
     ) => {
+      fileUrl = getImageUrl(fileUrl);
       if (!fileUrl) return;
 
       const { fileName, fallbackToNewTab = true } = options || {};

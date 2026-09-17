@@ -5,6 +5,7 @@ import { Badge } from "@/shared/ui/Badge";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import {
   cn,
+  formatOrderNumber,
   formatRelativeTime,
   getPaymentStatusColor,
   getStatusColor,
@@ -29,7 +30,7 @@ export default function OrderMobileCard({
     >
       <div className="flex items-center justify-between">
         <span className="font-mono font-bold text-xs text-foreground bg-muted/50 px-2 py-1 rounded-md">
-          #{order._id?.slice(0, 8).toUpperCase()}
+          #{formatOrderNumber(order)}
         </span>
         <span className="text-xs text-muted-foreground">
           {formatRelativeTime(order.createdAt, "en-US")}

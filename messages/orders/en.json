@@ -219,5 +219,9 @@
     "noPdfGenerated": "No PDF Invoice Generated",
     "noPdfDesc": "You can print or preview the HTML invoice receipt version.",
     "openPreview": "Open Invoice Preview"
+  },
+  "deliveryVerificationCode": {
+    "title": "Delivery Verification Code",
+    "description": "Share this code with the courier to confirm you received the order"
   }
 }

@@ -11,15 +11,14 @@ import { Category, SubCategory, Brand, Product } from "@/types";
 import {
   TrendingUpIcon as TrendingUp,
   AwardIcon as Award,
-  ClockIcon as Clock,
 } from "@/shared/ui/Icons";
-import { useRecentlyViewedProducts } from "@/features/products/hooks/useRecentlyViewedProducts";
 import dynamic from "next/dynamic";
 import CategoriesSlide from "./[slug]/components/CategoriesSlide";
 import HeroCarousel from "./components/HeroCarousel";
 import ProductsSectionHeader from "./components/ProductsSectionHeader";
 import ProductsGrid from "./components/ProductsGrid";
 import ProductsCatalogSection from "./components/ProductsCatalogSection";
+import RecentlyViewedSection from "./components/RecentlyViewedSection";
 import {
   DEFAULT_BEST_SELLERS_PARAMS,
   DEFAULT_FEATURED_PARAMS,
@@ -62,8 +61,6 @@ export default function ProductsClient() {
   const bestSellersList = useMemo(() => (bestSellersData?.data || EMPTY_ARRAY) as Product[], [bestSellersData?.data]);
   const featuredList = useMemo(() => (featuredData?.data || EMPTY_ARRAY) as Product[], [featuredData?.data]);
 
-  const { products: recentlyViewedList } = useRecentlyViewedProducts();
-
   // ─── Active Filters Count ────────────────────────────────
   const activeFilterCount = useMemo(
     () =>
@@ -82,10 +79,7 @@ export default function ProductsClient() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-all duration-300 relative overflow-hidden">
-      {/* Background glow decorations */}
-      <div className="absolute top-0 right-1/4 w-160 h-160 bg-primary/5 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="absolute top-[100vh] left-1/4 w-140 h-140 bg-accent/5 rounded-full blur-3xl pointer-events-none z-0" />
-
+    
       {/* ─── 1. HERO CAROUSEL ────────────────────────────────── */}
       <section className="relative pt-24 pb-8 overflow-hidden z-10 bg-linear-to-b from-muted/30 to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,24 +91,7 @@ export default function ProductsClient() {
       <CategoriesSlide />
 
       {/* ─── 2. RECENTLY VIEWED ──────────────────────────────── */}
-      {recentlyViewedList.length > 0 && (
-        <section className="relative py-10 sm:py-14 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ProductsSectionHeader
-              icon={Clock}
-              title={t("recentlyViewedTitle")}
-              description={t("recentlyViewedDesc")}
-            />
-            <ProductsGrid
-              items={recentlyViewedList}
-              isLoading={false}
-              emptyTitle={t("noProducts")}
-              emptyDesc={t("noProductsDesc")}
-              withReveal
-            />
-          </div>
-        </section>
-      )}
+      <RecentlyViewedSection />
 
       {/* ─── 3. BEST SELLERS ─────────────────────────────────── */}
       {bestSellersList.length > 0 && (

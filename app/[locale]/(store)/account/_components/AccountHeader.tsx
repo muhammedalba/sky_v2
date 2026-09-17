@@ -13,6 +13,7 @@ import {
 } from "@/shared/ui/Icons";
 import { formatEmail, formatRelativeTime } from "@/lib/utils";
 import type { User } from "@/features/users/types";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 interface AccountHeaderProps {
   user: User;
@@ -40,7 +41,7 @@ export function AccountHeader({
         <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-start">
           {/* Avatar block */}
           <div className="relative group">
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-3xl sm:text-4xl font-black shadow-inner overflow-hidden">
+            <ScrollReveal animation="fade" className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-3xl sm:text-4xl font-black shadow-inner overflow-hidden">
               {avatarUrl ? (
                 <ImageWithFallback
                   src={avatarUrl}
@@ -55,7 +56,7 @@ export function AccountHeader({
               ) : (
                 user?.name?.charAt(0)?.toUpperCase() || "U"
               )}
-            </div>
+            </ScrollReveal>
             <button
               type="button"
               onClick={onEditAvatar}
@@ -67,9 +68,9 @@ export function AccountHeader({
           </div>
 
           {/* User basic info */}
-          <div className="space-y-1">
+          <ScrollReveal animation="fade" className="space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              <h1 className="text-2xl font-bold tracking-tight title-gradient">
                 {user?.name || t("guest")}
               </h1>
               <span
@@ -92,14 +93,14 @@ export function AccountHeader({
                 {t("lastLogin")} {formatRelativeTime(user.lastLogin, locale)}
               </p>
             )}
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* Actions or secondary buttons */}
-        <div className="flex items-center gap-3">
+        <ScrollReveal animation="slide-up" className="flex items-center gap-3">
           <Link href={`/${locale}/notifications`}>
             <button className="h-10 px-4 rounded-xl border border-border bg-card text-foreground hover:bg-muted font-semibold text-sm transition-all flex items-center gap-2">
-              <BellIcon className="w-4 h-4" />
+              <BellIcon className="w-4 h-4 text-warning" />
               {t("notifications")}
             </button>
           </Link>
@@ -109,11 +110,11 @@ export function AccountHeader({
             className="h-10 px-4 rounded-xl border-border hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 font-semibold gap-2 text-sm transition-all"
             onClick={onLogout}
           >
-            <LogoutIcon className="w-4 h-4" />
+            <LogoutIcon className="w-4 h-4 text-destructive" />
             {t("actions.logout")}
           </Button>
-        </div>
-      </div>
+        </ScrollReveal>
+      </div >
     </div>
   );
 }

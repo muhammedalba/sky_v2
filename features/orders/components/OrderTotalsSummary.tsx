@@ -2,9 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/shared/ui/Card";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { cn } from "@/lib/utils";
 import type { Order } from "@/types";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import Price from "@/shared/ui/Price";
+import { ShoppingBagIcon } from "@/shared/ui/Icons";
 
 interface OrderTotalsSummaryProps {
   order: Order;
@@ -22,59 +24,87 @@ export default function OrderTotalsSummary({
   className,
 }: OrderTotalsSummaryProps) {
   const t = useTranslations("orders");
-  const formatCurrency = useFormatCurrency();
 
   return (
-    <Card className={cn("border-border/30 bg-muted/5", className)}>
-      <CardContent className="p-4 space-y-2 text-xs">
-        <h4 className="text-sm font-bold text-foreground mb-1">
-          {t("orderSummary")}
-        </h4>
-        <div className="flex justify-between text-muted-foreground">
-          <span>{t("subtotal")}</span>
-          <span className="tabular-nums font-semibold">
-            {formatCurrency(order.totalPrice || 0)}
-          </span>
+    <ScrollReveal animation="fade">
+      <Card className={cn("border-border/30 bg-muted/5", className)}>
+        <div className="w-full p-4 border-b bg-accent/70 flex gap-2 items-center">
+        <ShoppingBagIcon className="text-warning w-5 h-5"/>
+          <h4 className="text-sm font-bold title-gradient ">
+            {t("orderSummary")}
+          </h4>
         </div>
-        {!!order.shippingAmount && order.shippingAmount > 0 && (
-          <div className="flex justify-between text-muted-foreground">
-            <span>{t("shippingAmount")}</span>
-            <span className="tabular-nums font-semibold">
-              {formatCurrency(order.shippingAmount)}
+        <CardContent className="p-4 space-y-2 text-xs">
+          <div className="flex justify-between text-muted-foreground p-2">
+            <span>{t("subtotal")}</span>
+
+            <Price
+              className="tabular-nums font-semibold"
+              currencyClassName=" text-[1em]"
+              amount={order.totalPrice}
+            />
+          </div>
+          {!!order.shippingAmount && order.shippingAmount > 0 && (
+            <div className="flex justify-between text-muted-foreground p-2">
+              <span>{t("shippingAmount")}</span>
+              <span className="tabular-nums font-semibold">
+                <Price
+                  className="tabular-nums font-semibold"
+                  currencyClassName=" text-[1em]"
+                  amount={order.shippingAmount}
+                />
+              </span>
+            </div>
+          )}
+          {!!order.discountAmount && order.discountAmount > 0 && (
+            <div className="flex justify-between text-destructive p-2">
+              <span>{t("discount")}</span>
+              <span className="tabular-nums font-bold">
+                -
+                <Price
+                  className="tabular-nums font-semibold"
+                  currencyClassName=" text-[1em]"
+                  amount={order.discountAmount}
+                />
+              </span>
+            </div>
+          )}
+          {!!order.taxAmount && order.taxAmount > 0 && (
+            <div className="flex justify-between text-muted-foreground p-2">
+              <span>{t("taxAmount")}</span>
+              <span className="tabular-nums font-semibold">
+                <Price
+                  className="tabular-nums font-semibold"
+                  currencyClassName=" text-[1em]"
+                  amount={order.taxAmount}
+                />
+              </span>
+            </div>
+          )}
+          {!!order.paymentFees && order.paymentFees > 0 && (
+            <div className="flex justify-between text-muted-foreground p-2">
+              <span>{t("paymentFees")}</span>
+              <span className="tabular-nums font-semibold">
+                <Price
+                  className="tabular-nums font-semibold"
+                  currencyClassName=" text-[1em]"
+                  amount={order.paymentFees}
+                />
+              </span>
+            </div>
+          )}
+          <div className="border-t border-border/40 mt-2 pt-2 flex justify-between text-sm font-black text-foreground p-2">
+            <span>{t("grandTotal")}</span>
+            <span className="tabular-nums text-primary text-base">
+              <Price
+                className="tabular-nums font-semibold"
+                currencyClassName=" text-[1em]"
+                amount={order.grandTotal || order.totalPrice || 0}
+              />
             </span>
           </div>
-        )}
-        {!!order.discountAmount && order.discountAmount > 0 && (
-          <div className="flex justify-between text-red-500 dark:text-red-400">
-            <span>{t("discount")}</span>
-            <span className="tabular-nums font-bold">
-              -{formatCurrency(order.discountAmount)}
-            </span>
-          </div>
-        )}
-        {!!order.taxAmount && order.taxAmount > 0 && (
-          <div className="flex justify-between text-muted-foreground">
-            <span>{t("taxAmount")}</span>
-            <span className="tabular-nums font-semibold">
-              {formatCurrency(order.taxAmount)}
-            </span>
-          </div>
-        )}
-        {!!order.paymentFees && order.paymentFees > 0 && (
-          <div className="flex justify-between text-muted-foreground">
-            <span>{t("paymentFees")}</span>
-            <span className="tabular-nums font-semibold">
-              {formatCurrency(order.paymentFees)}
-            </span>
-          </div>
-        )}
-        <div className="border-t border-border/40 mt-2 pt-2 flex justify-between text-sm font-black text-foreground">
-          <span>{t("grandTotal")}</span>
-          <span className="tabular-nums text-primary text-base">
-            {formatCurrency(order.grandTotal || order.totalPrice || 0)}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </ScrollReveal>
   );
 }

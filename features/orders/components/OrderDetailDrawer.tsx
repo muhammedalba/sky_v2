@@ -11,6 +11,7 @@ import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import {
   cn,
   formatDate,
+  formatOrderNumber,
   formatRelativeTime,
   getPaymentStatusColor,
   getStatusColor,
@@ -72,11 +73,7 @@ export default function OrderDetailDrawer({
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 flex-wrap">
               <span className="font-mono font-black text-lg text-foreground bg-muted px-2.5 py-1 rounded-lg">
-                #
-                {String(order.invoiceNumber ?? order._id?.slice(-4)).padStart(
-                  4,
-                  "0",
-                )}
+                #{formatOrderNumber(order, 4)}
               </span>
               <span
                 className={cn(

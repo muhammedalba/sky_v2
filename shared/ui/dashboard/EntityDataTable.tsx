@@ -62,7 +62,7 @@ export default function EntityDataTable<T extends { _id: string }>({
     <Card className="border-none shadow-xl shadow-foreground/5 bg-background/50 backdrop-blur-md ring-1 ring-border/40 overflow-hidden rounded-3xl">
       <div className="overflow-x-auto">
         <Table className="border-none shadow-none rounded-none">
-          <TableHeader className="bg-muted/30 border-b border-border/40">
+          <TableHeader className="bg-accent/70 border-b border-border/40">
             <TableRow className="hover:bg-transparent border-none">
               {columns.map((col, idx) => (
                 <TableHead

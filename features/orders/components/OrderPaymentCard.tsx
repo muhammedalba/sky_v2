@@ -12,6 +12,7 @@ import { useDownloadFile } from "@/shared/hooks/useDownloadFile";
 import { useTranslations } from "next-intl";
 import Modal from "@/shared/ui/Modal";
 import { FileTextIcon, EyeIcon, ExternalLinkIcon, DownloadIcon } from "@/shared/ui/Icons";
+import { getImageUrl } from "@/shared/utils/image.util";
 
 interface OrderPaymentCardProps {
   order: Order;
@@ -26,7 +27,7 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
   const hasReceipt = Boolean(order.transferReceiptImg);
 
   const handleDownloadReceipt = () => {
-    const ext = order.transferReceiptImg?.split(".").pop()?.split("?")[0] || "jpg";
+    const ext =getImageUrl( order.transferReceiptImg)?.split(".").pop()?.split("?")[0] || "jpg";
     downloadFile(order.transferReceiptImg, {
       fileName: `receipt-${order.user?.name || "transfer"}.${ext}`,
     });

@@ -292,3 +292,19 @@ export function getActionBadgeVariant(
       return "outline";
   }
 }
+
+/**
+ * Formats an order's public-facing number for display, e.g. "0001".
+ * Prefers the sequential `invoiceNumber`, falling back to the last chars of `_id`.
+ *
+ * @param order - Object with an `_id` and optional `invoiceNumber`.
+ * @param idLength - Number of trailing `_id` characters to use as fallback (default 6).
+ * @returns Zero-padded, uppercase order number string (without the leading "#").
+ */
+export function formatOrderNumber(
+  order: { _id: string; invoiceNumber?: number | null },
+  idLength: number = 6,
+): string {
+  const source = order.invoiceNumber ?? order._id.slice(-idLength);
+  return String(source).toUpperCase().padStart(4, "0");
+}

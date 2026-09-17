@@ -11,7 +11,6 @@ import { Link, useRouter } from "@/navigation";
 import { ChevronLeftIcon } from "@/shared/ui/Icons";
 import { getAttributeLabel } from "@/shared/constants/product-constants";
 import { formatVariantAttributesText } from "@/shared/ui/VariantAttributes";
-import { cn } from "@/lib/utils";
 import { ProductVariant, ProductWithVariants } from "@/types";
 import { FileAsset } from "@/shared/types/file-asset";
 
@@ -31,8 +30,9 @@ import {
 import SimilarProducts from "./SimilarProducts";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { useRecentlyViewedStore } from "@/store/recently-viewed-store";
+import RecentlyViewedSection from "../components/RecentlyViewedSection";
 
-// بعض المتغيرات تُخزَّن قيمة الخاصية كنص مباشر (e.g. "Coarse 331 TX") وبعضها ككائن { value, unit }
+// some variables store the attribute value as plain text (e.g. "Coarse 331 TX") and others as an object { value, unit }
 function normalizeAttr(attrData: unknown): { value: string; unit?: string } {
   if (attrData === null || attrData === undefined) return { value: "" };
   if (typeof attrData === "object") {
@@ -105,13 +105,13 @@ export default function ProductDetailsClient({
     (product?.variantCount ?? 0) > 1 ? "order" : "order",
   );
 
-  // الخصائص الافتراضية لأول متغير متاح
+  // Default properties of the first available variable
   const defaultAttributes = useMemo(
     () => getInitialVariantAttributes(variants),
     [variants],
   );
 
-  // الخصائص النشطة الفعلية: تدمج الافتراضية مع اختيارات المستخدم
+  // Actual active properties: integrate defaults with user choices.
   const activeAttributes = useMemo(() => {
     return {
       ...defaultAttributes,
@@ -119,7 +119,7 @@ export default function ProductDetailsClient({
     };
   }, [defaultAttributes, selectedAttributes]);
 
-  // المتغير المحدد المطابق للاختيارات الحالية
+  //The variable that depends on current choices
   const selectedVariant = useMemo(() => {
     if (!hasVariants) return null;
 
@@ -135,7 +135,7 @@ export default function ProductDetailsClient({
     );
   }, [hasVariants, variants, activeAttributes]);
 
-  // تجميع خصائص المتغيرات (Attributes)
+  // Gathering the attributes of the variables (Attributes)
   const attributeGroups: AttributeGroup[] = useMemo(() => {
     if (!hasVariants || !product) return [];
 
@@ -270,7 +270,7 @@ export default function ProductDetailsClient({
   const currentDisplayImage =
     selectedVariant?.image || selectedImage || product.imageCover || "";
 
-  // حساب السعر
+  // Calculation of the price
   const displayPrice =
     selectedVariant?.priceAfterDiscount ||
     selectedVariant?.price ||
@@ -359,23 +359,23 @@ export default function ProductDetailsClient({
 
         {/* Mobile Compact Back Navigation */}
         <div className="flex sm:hidden items-center py-2 mb-2">
-              <ScrollReveal animation="fade">
-          <Link
-            href={categoryHref}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors group"
-          >
-            <ChevronLeftIcon className="w-4 h-4 rtl:rotate-180 text-primary group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 transition-transform" />
-            <span>
-              {categoryName && categoryName !== "-"
-                ? categoryName
-                : t("notFound.backToProducts")}
-            </span>
-          </Link></ScrollReveal>
+          <ScrollReveal animation="fade">
+            <Link
+              href={categoryHref}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              <ChevronLeftIcon className="w-4 h-4 rtl:rotate-180 text-primary group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 transition-transform" />
+              <span>
+                {categoryName && categoryName !== "-"
+                  ? categoryName
+                  : t("notFound.backToProducts")}
+              </span>
+            </Link>
+          </ScrollReveal>
         </div>
 
         {/* Gallery & Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          
           <ProductGallery
             title={title}
             images={allImages}
@@ -475,16 +475,18 @@ export default function ProductDetailsClient({
                 getAttributeLabel={(key) => getAttributeLabel(key, isAr)}
               />
             </div>
-          ) :activeTab === "reviews" ? (
+          ) : activeTab === "reviews" ? (
             <ProductReviewsTab
               ratingsAverage={product.ratingsAverage}
               ratingsQuantity={product.ratingsQuantity}
             />
-          ): null}
+          ) : null}
         </div>
 
         {/* Similar Products */}
         <SimilarProducts product={product} />
+        {/* RECENTLY VIEWED */}
+        <RecentlyViewedSection />
 
         {/* Image Lightbox Modal */}
         <ProductLightboxModal

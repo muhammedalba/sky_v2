@@ -13,15 +13,11 @@ import { ProfileTab } from "./_components/ProfileTab";
 import { OrdersTab } from "./_components/OrdersTab";
 import { SecurityTab } from "./_components/SecurityTab";
 import { VALID_TABS, type ActiveTabType } from "./_components/types";
-import ProductsSectionHeader from "../products/components/ProductsSectionHeader";
-import ProductsGrid from "../products/components/ProductsGrid";
-import { useRecentlyViewedProducts } from "@/features/products/hooks/useRecentlyViewedProducts";
-import { ClockIcon } from "@/shared/ui/Icons";
+import RecentlyViewedSection from "../products/components/RecentlyViewedSection";
 import Breadcrumb from "@/shared/ui/Breadcrumb";
 
 export default function AccountPage() {
   const t = useTranslations("profile");
-  const tProducts = useTranslations("store.productsPage");
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -43,7 +39,6 @@ export default function AccountPage() {
       scroll: false,
     });
   };
-  const { products: recentlyViewedList } = useRecentlyViewedProducts();
   const { user, logout, isLoading: isAuthLoading } = useAuth();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -120,7 +115,7 @@ export default function AccountPage() {
   const avatarUrl = localPreview !== null ? localPreview || null : serverAvatar;
 
   return (
-    <div className="min-h-screen pt-36 pb-20 bg-background text-foreground transition-colors duration-200">
+    <div className="min-h-screen pt-36 pb-20 bg-muted/30 text-foreground transition-colors duration-200">
       <div className="max-w-6xl mx-auto px-4">
         <ScrollReveal animation="fade">
           <Breadcrumb items={[{ label: t("title") }]} className="py-2" />
@@ -171,7 +166,6 @@ export default function AccountPage() {
                 key="profile"
                 animation="fade"
                 duration={700}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-6"
               >
                 <ProfileTab
                   user={user}
@@ -210,24 +204,7 @@ export default function AccountPage() {
           </main>
         </div>
         {/* ─── 2. RECENTLY VIEWED ──────────────────────────────── */}
-        {activeTab === "orders" && recentlyViewedList.length > 0 && (
-          <section className="relative py-10 sm:py-14 z-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <ProductsSectionHeader
-                icon={ClockIcon}
-                title={tProducts("recentlyViewedTitle")}
-                description={tProducts("recentlyViewedDesc")}
-              />
-              <ProductsGrid
-                items={recentlyViewedList}
-                isLoading={false}
-                emptyTitle={tProducts("noProducts")}
-                emptyDesc={tProducts("noProductsDesc")}
-                withReveal
-              />
-            </div>
-          </section>
-        )}
+        {activeTab === "orders" && <RecentlyViewedSection />}
       </div>
     </div>
   );

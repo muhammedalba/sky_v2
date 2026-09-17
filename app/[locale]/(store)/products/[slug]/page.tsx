@@ -9,13 +9,15 @@ interface ProductPageProps {
 }
 
 /**
- * cache() يضمن أن الدالة تُنفَّذ مرة واحدة فقط per request حتى لو استُدعيت من
- * generateMetadata والـ page معاً.
- *
- * تُرجع null فقط عندما يكون المنتج غير موجود فعليًا (404) حتى يستدعي المستدعي
- * notFound() ويحصل الطالب على استجابة 404 حقيقية. أي فشل آخر (خطأ شبكة أو 5xx)
- * يُرمى كاستثناء بدلًا من إخفائه، لتُعرض صفحة الخطأ بدل صفحة "غير موجود" خطأً.
- */
+* cache() ensures the function executes only once per request, even if called
+* by both generateMetadata and the page. 
+*
+* It returns null only when the product genuinely does not exist (404),
+* allowing the caller to invoke notFound() and trigger a true 404 response. 
+* Any other failure (such as a network error or 5xx) is thrown as an exception
+* rather than being suppressed, ensuring the correct error page is displayed
+* instead of an erroneous "Not Found" page. 
+*/
 const getProductData = cache(async (slug: string, locale: string) => {
   const endpoint = `${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}/${slug}`;
 
@@ -88,13 +90,13 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
   const { slug, locale } = await params;
 
   // 3. استخدام نفس الدالة هنا مرة أخرى
-  // سحر Next.js: هذا لن يقوم بطلب جديد للـ API! سيستخدم النتيجة المخبأة من طلب generateMetadata
+  //  Next.js: this will not make a new API request! It will use the cached result from generateMetadata request
   const product = await getProductData(slug, locale);
 
-  // المنتج غير موجود فعليًا → 404 حقيقي بدل عرض واجهة "غير موجود" مع status 200
+  // The product does not actually exist → 404 instead of showing the "not found" interface with status 200
   if (!product) notFound();
 
-  // 4. تمرير البيانات كـ Initial Data للمكون العميل لكي لا يضطر لجلبها من الصفر
+  //4. Passing data as initial data to the client component so it does not have to fetch it from scratch.
   return (
     <ProductDetailsClient key={slug} params={params} initialData={product} />
   );

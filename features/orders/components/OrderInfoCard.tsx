@@ -28,6 +28,7 @@ export default function OrderInfoCard({
 }: OrderInfoCardProps) {
   return (
     <Card className={cn("border-border/30 bg-secondary/10", className)}>
+      
       <CardContent className="p-4 flex gap-3">
         <div
           className={cn(
