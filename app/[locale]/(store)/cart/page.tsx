@@ -10,7 +10,6 @@ import {
 } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
 import { useMe } from "@/features/auth/hooks/useAuth";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
@@ -32,7 +31,6 @@ export default function CartPage() {
   // ======> Hooks <======
   const t = useTranslations("cart");
   const locale = useLocale();
-  const formatCurrency = useFormatCurrency();
   const isAr = locale === "ar";
 
   // ======> Data <======
@@ -249,7 +247,6 @@ export default function CartPage() {
                           idx={idx}
                           isAr={isAr}
                           isRemoving={isCartUpdating}
-                          formatCurrency={formatCurrency}
                           onRemove={handleRemoveItem}
                           onUpdateQty={handleUpdateQuantity}
                         />

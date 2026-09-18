@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Card, CardContent } from '@/shared/ui/Card';
 import { Badge } from '@/shared/ui/Badge';
-import { useFormatCurrency } from '@/shared/hooks/useFormatCurrency';
+import Price from '@/shared/ui/Price';
 import { Product } from '@/types';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 import { useTrans } from '@/shared/hooks/useTrans';
@@ -16,7 +16,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, locale }: ProductCardProps) {
   const getTrans = useTrans();
-  const formatCurrency = useFormatCurrency();
   const minPrice = product.priceRange?.min || 0;
   const maxPrice = product.priceRange?.max || 0;
   const hasRange = minPrice !== maxPrice;
@@ -134,15 +133,25 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
               {/* Dynamic Prices */}
               <div className="flex flex-col">
                 {hasDiscount && (
-                  <span className="text-[11px] line-through text-muted-foreground/60 font-semibold mb-0.5">
-                    {formatCurrency(product.comparePrice!)}
-                  </span>
+                  <s className="text-[11px] mb-0.5">
+                    <Price
+                      amount={product.comparePrice!}
+                      numberClassName="line-through text-muted-foreground/60 font-semibold"
+                      currencyClassName="line-through text-muted-foreground/60"
+                      animate={false}
+                    />
+                  </s>
                 )}
-                <span className="text-sm sm:text-base font-black text-foreground tracking-tight">
-                  {hasRange 
-                    ? `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}` 
-                    : formatCurrency(minPrice)
-                  }
+                <span className="text-sm sm:text-base font-black text-foreground tracking-tight inline-flex items-baseline gap-1">
+                  {hasRange ? (
+                    <>
+                      <Price amount={minPrice} animate={false} />
+                      <span className="text-muted-foreground">-</span>
+                      <Price amount={maxPrice} animate={false} />
+                    </>
+                  ) : (
+                    <Price amount={minPrice} animate={false} />
+                  )}
                 </span>
               </div>
 

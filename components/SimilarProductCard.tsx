@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import Price from "@/shared/ui/Price";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { Button } from "@/shared/ui/Button";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
@@ -15,7 +15,6 @@ import Badge from "@/shared/ui/Badge";
 
 export default function SimilarProductCard({ item }: { item: Product }) {
   const getTrans = useTrans();
-  const formatCurrency = useFormatCurrency();
   const t = useTranslations("product");
   const commonT = useTranslations("common.buttons");
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
@@ -151,13 +150,16 @@ export default function SimilarProductCard({ item }: { item: Product }) {
         )}
 
         <div className="flex items-end gap-2 pt-1">
-          <span className="text-base font-bold text-primary">
-            {formatCurrency(price)}
-          </span>
+          <Price amount={price} className="text-base text-primary" animate={false} />
           {hasDiscount && (
-            <span className="text-xs text-muted-foreground line-through">
-              {formatCurrency(oldPrice)}
-            </span>
+            <s className="text-xs">
+              <Price
+                amount={oldPrice}
+                numberClassName="text-muted-foreground"
+                currencyClassName="text-muted-foreground"
+                animate={false}
+              />
+            </s>
           )}
         </div>
 

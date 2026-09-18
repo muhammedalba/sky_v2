@@ -1,4 +1,10 @@
 {
+  "currencyToggle": {
+    "label": "Currency",
+    "automatic": "Automatic (by language)",
+    "base": "Base currency",
+    "usd": "US Dollar (USD)"
+  },
   "buttons": {
     "save": "Save",
     "saving": "Saving...",

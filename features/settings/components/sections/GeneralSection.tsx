@@ -11,12 +11,16 @@ import { DashboardIcon, DollarSignIcon, GlobeIcon, RefreshCwIcon, TagIcon } from
 import { Select } from '@/shared/ui/Select';
 import { SettingsInput } from '../../settings.schema';
 import { CURRENCY_SELECT_OPTIONS } from '@/shared/constants/currencies';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateTime } from '@/lib/utils';
 
 
 
 export default function GeneralSection() {
   const t = useTranslations('settings');
   const { register, setValue, control, formState: { errors } } = useFormContext<SettingsInput>();
+  const { data: liveSettings } = useSettings();
+  const exchangeRateUpdatedAt = liveSettings?.exchangeRateUpdatedAt;
 
   const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const code = e.target.value;
@@ -155,15 +159,22 @@ export default function GeneralSection() {
               className="rounded-xl h-11"
               icon={TagIcon}
             />
-            <Input
-              {...register('exchangeRate')}
-              type="number"
-              step="0.01"
-              label={t('general.exchangeRate')}
-              error={errors.exchangeRate?.message}
-              className="rounded-xl h-11"
-              icon={DollarSignIcon}
-            />
+            <div className="space-y-1.5">
+              <Input
+                {...register('exchangeRate')}
+                type="number"
+                step="0.001"
+                label={t('general.exchangeRate')}
+                error={errors.exchangeRate?.message}
+                className="rounded-xl h-11"
+                icon={DollarSignIcon}
+              />
+              <p className="text-xs text-muted-foreground px-1">
+                {exchangeRateUpdatedAt
+                  ? `${t('general.exchangeRateLastSync')}: ${formatDateTime(exchangeRateUpdatedAt)}`
+                  : t('general.exchangeRateNeverSynced')}
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>

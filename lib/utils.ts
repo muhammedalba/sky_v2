@@ -1,6 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
+﻿import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { env } from "./env";
 
 /**
  * Combines and merges Tailwind CSS classes dynamically, resolving conflicts.
@@ -14,54 +13,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Fallback exchange rate between SAR and USD (1 USD = 3.75 SAR).
+ * Re-exported for backward compatibility — the implementation now lives in
+ * `@/lib/currency` alongside `getCurrencyParts`, the shared conversion/symbol
+ * resolution logic also used by the `<Price>` component.
  */
-const FALLBACK_EXCHANGE_RATE = 3.75;
-
-/**
- * Formats a monetary amount into the appropriate localized currency string.
- * - For Arabic locales: Displays in the base currency (e.g. SAR).
- * - For English/other locales: Converts the base currency into USD by dividing by the exchange rate.
- *
- * @param amountInBaseCurrency - The original amount in the base currency (e.g., SAR).
- * @param locale - Active language locale (defaults to setting's default locale or "ar").
- * @param exchangeRate - Exchange rate for currency conversion (optional).
- * @param currencyCode - Specific currency code to use for Arabic locale (optional, defaults to "SAR").
- * @returns A formatted currency string (e.g., "$10.00" or "١٠٫٠٠ ر.س.‏").
- */
-export function formatCurrency(
-  amountInBaseCurrency: number,
-  locale: string = env.DEFAULT_LOCALE ?? "ar",
-  exchangeRate?: number,
-  currencyCode?: string,
-): string {
-  // 1. Check if the locale is Arabic
-  const isArabic = locale.startsWith("ar");
-
-  // 2. Adjust currency amount based on language.
-  // If Arabic: use base currency directly.
-  // If English/other: divide by exchange rate (e.g., 37.5 / 3.75 = 10 USD)
-  let finalAmount = Number(amountInBaseCurrency) || 0;
-  if (!isArabic && exchangeRate && exchangeRate > 0) {
-    finalAmount = finalAmount / exchangeRate;
-  }
-
-  // 3. Format number with clean grouping and dynamic decimals (no trailing .00 if whole integer)
-  const isInteger = Number.isInteger(finalAmount);
-  const formattedNumber = new Intl.NumberFormat(isArabic ? "ar-SA-u-nu-latn" : "en-US", {
-    minimumFractionDigits: isInteger ? 0 : 2,
-    maximumFractionDigits: 2,
-  }).format(finalAmount);
-
-  // 4. Return formatted currency with clean modern label
-  if (isArabic) {
-    const symbol = !currencyCode || currencyCode === "SAR" ? "ر.س" : currencyCode;
-    return `${formattedNumber} ${symbol}`;
-  }
-
-  const code = currencyCode || "USD";
-  return `${formattedNumber} ${code}`;
-}
+export { formatCurrency } from "./currency";
 
 /**
  * Formats a date object or string to display only year, month, and day.

@@ -457,7 +457,7 @@ export default function OrderDetailPage() {
                         />
                         <div className="text-xs text-muted-foreground mt-1 flex gap-1">
                           {t("qty")}: {item.quantity} ×
-                          <Price amount={item.price} />
+                          <Price amount={item.price} animate={false} />
                         </div>
                       </div>
                     </>
@@ -487,6 +487,7 @@ export default function OrderDetailPage() {
                       <Price
                         amount={item.price}
                         className="font-bold text-sm text-foreground shrink-0 tabular-nums"
+                        animate={false}
                       />
                     </ScrollReveal>
                   );

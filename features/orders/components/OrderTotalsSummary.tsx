@@ -42,6 +42,7 @@ export default function OrderTotalsSummary({
               className="tabular-nums font-semibold"
               currencyClassName=" text-[1em]"
               amount={order.totalPrice}
+              animate={false}
             />
           </div>
           {!!order.shippingAmount && order.shippingAmount > 0 && (
@@ -52,6 +53,7 @@ export default function OrderTotalsSummary({
                   className="tabular-nums font-semibold"
                   currencyClassName=" text-[1em]"
                   amount={order.shippingAmount}
+                  animate={false}
                 />
               </span>
             </div>
@@ -65,6 +67,7 @@ export default function OrderTotalsSummary({
                   className="tabular-nums font-semibold"
                   currencyClassName=" text-[1em]"
                   amount={order.discountAmount}
+                  animate={false}
                 />
               </span>
             </div>
@@ -77,6 +80,7 @@ export default function OrderTotalsSummary({
                   className="tabular-nums font-semibold"
                   currencyClassName=" text-[1em]"
                   amount={order.taxAmount}
+                  animate={false}
                 />
               </span>
             </div>
@@ -89,6 +93,7 @@ export default function OrderTotalsSummary({
                   className="tabular-nums font-semibold"
                   currencyClassName=" text-[1em]"
                   amount={order.paymentFees}
+                  animate={false}
                 />
               </span>
             </div>
@@ -100,6 +105,7 @@ export default function OrderTotalsSummary({
                 className="tabular-nums font-semibold"
                 currencyClassName=" text-[1em]"
                 amount={order.grandTotal || order.totalPrice || 0}
+                animate={false}
               />
             </span>
           </div>

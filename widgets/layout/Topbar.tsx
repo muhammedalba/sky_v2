@@ -1,6 +1,7 @@
 import SidebarToggle from './topbar/SidebarToggle';
 import Breadcrumbs from './topbar/Breadcrumbs';
 import TopbarActions from './topbar/TopbarActions';
+import CurrencyPreviewToggle from './topbar/CurrencyPreviewToggle';
 
 export default function Topbar({ locale }: { locale: string }) {
   return (
@@ -13,8 +14,9 @@ export default function Topbar({ locale }: { locale: string }) {
           <Breadcrumbs locale={locale} />
         </div>
 
-        {/* Actions & User */} 
+        {/* Actions & User */}
         <div className="flex items-center gap-3">
+          <CurrencyPreviewToggle />
           <TopbarActions />
         </div>
       </div>

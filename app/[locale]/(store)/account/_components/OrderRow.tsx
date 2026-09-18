@@ -55,6 +55,7 @@ export function OrderRow({ order, locale }: { order: Order; locale: string }) {
           <Price
             amount={order.grandTotal ?? order.totalPrice ?? 0}
             className="font-extrabold text-md text-foreground"
+            animate={false}
           />
   
         <div

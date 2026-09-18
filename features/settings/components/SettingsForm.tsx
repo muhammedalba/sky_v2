@@ -17,7 +17,7 @@ import SettingsSidebar from "./SettingsSidebar";
 import FormStickyHeader from "@/shared/ui/dashboard/FormStickyHeader";
 import { useToast } from "@/shared/hooks/useToast";
 
-// Axis 1: Lazy Loading للأقسام (باستثناء الأول)
+// Axis 1: Lazy Loading For the sections (except the first) 
 import GeneralSection from "./sections/GeneralSection";
 const SEOSection = dynamic(() => import("./sections/SEOSection"), {
   loading: () => <SectionSkeleton />,
@@ -159,12 +159,11 @@ export default function SettingsForm() {
 
   useEffect(() => {
     if (settings) {
-      // دمج البيانات مع القيم الافتراضية لضمان عدم وجود حقول undefined تكسر الـ Validation
+      //Merge data with default values ​​to ensure there are no `undefined` fields that break validation.
       reset({ ...SETTINGS_DEFAULTS, ...settings });
     }
   }, [settings, reset]);
 
-  // Axis 5: تثبيت مرجع onSubmit
   const onSubmit: SubmitHandler<SettingsInput> = useCallback(
     async (data) => {
       try {

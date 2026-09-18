@@ -18,6 +18,8 @@ export const settingsSchema = z.object({
   currencyCode: z.string().min(1, "errors.required"),
   currencySymbol: z.string().min(1, "errors.required"),
   exchangeRate: z.coerce.number().min(0, "errors.min").default(1),
+  // Read-only: last time exchangeRate was auto-synced from a live rate provider
+  exchangeRateUpdatedAt: z.union([z.string(), z.null()]).optional(),
 
   // SEO
   metaTitle: z.object({

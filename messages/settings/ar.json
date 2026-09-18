@@ -34,7 +34,9 @@
     "faviconDesc": "أيقونة تبويب المتصفح (32x32px).",
     "currencyCode": "رمز العملة (مثال: SAR)",
     "currencySymbol": "علامة العملة (مثال: ر.س)",
-    "exchangeRate": "سعر صرف الدولار"
+    "exchangeRate": "سعر صرف الدولار",
+    "exchangeRateLastSync": "آخر مزامنة تلقائية",
+    "exchangeRateNeverSynced": "لم تتم المزامنة التلقائية بعد"
   },
   "seo": {
     "title": "إعدادات SEO",

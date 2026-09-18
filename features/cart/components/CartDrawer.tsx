@@ -10,7 +10,7 @@ import {
   useUpdateCartQuantity,
 } from "@/features/cart/hooks/useCart";
 import { useMe } from "@/features/auth/hooks/useAuth";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import Price from "@/shared/ui/Price";
 import { useSettings } from "@/app/providers/SettingsProvider";
 // تم إزالة useTrans لأنه لم يكن مستخدماً في هذا المكون لتخفيف الاستيرادات
 import { Button } from "@/shared/ui/Button";
@@ -34,7 +34,6 @@ export default function CartDrawer() {
   //  hooks
   const locale = useLocale();
   const t = useTranslations("cart");
-  const formatCurrency = useFormatCurrency();
   // direction
   const isAr = locale === "ar";
 
@@ -229,7 +228,6 @@ export default function CartDrawer() {
                       isAr={isAr}
                       isRemoving={isCartUpdating}
                       isCompact={true}
-                      formatCurrency={formatCurrency}
                       onRemove={handleRemove}
                       onUpdateQty={handleUpdateQuantity}
                     />
@@ -246,7 +244,7 @@ export default function CartDrawer() {
             <div className="p-6 border-t border-border/50 bg-accent/40 space-y-4 pb-28 sm:pb-6">
               <div className="flex items-center justify-between font-black text-md">
                 <span>{t("summary.subtotal")} : </span>
-                <span className="text-primary">{formatCurrency(subtotal)}</span>
+                <Price amount={subtotal} className="text-primary" animate={false} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <Link href="/cart" onClick={closeCartDrawer} className="block">

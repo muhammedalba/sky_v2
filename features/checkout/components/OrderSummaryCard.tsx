@@ -24,6 +24,7 @@ import { useSettings } from "@/app/providers/SettingsProvider";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import Price from "@/shared/ui/Price";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
@@ -269,9 +270,11 @@ export function OrderSummaryCard({
                   × {item.quantity}
                 </p>
               </div>
-              <span className="text-sm font-bold text-foreground tabular-nums shrink-0">
-                {formatCurrency((price || 0) * (item.quantity || 1))}
-              </span>
+              <Price
+                amount={(price || 0) * (item.quantity || 1)}
+                className="text-sm text-foreground tabular-nums shrink-0"
+                animate={false}
+              />
             </div>
           );
         })}
@@ -287,9 +290,11 @@ export function OrderSummaryCard({
               <span className="text-muted-foreground">
                 {t("summary.subtotal")}
               </span>
-              <span className="font-semibold text-foreground tabular-nums">
-                {formatCurrency(summarySubtotal ?? subtotal)}
-              </span>
+              <Price
+                amount={summarySubtotal ?? subtotal}
+                className="font-semibold text-foreground tabular-nums"
+                animate={false}
+              />
             </div>
 
             {/* shippingCost */}
@@ -298,11 +303,13 @@ export function OrderSummaryCard({
                 {t("summary.shipping")}
               </span>
               <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-                {(summaryShippingCost ?? 0) > 0
-                  ? formatCurrency(summaryShippingCost!)
-                  : summaryShippingCost === 0
-                    ? t("summary.free")
-                    : t("summary.calculated_at_checkout")}
+                {(summaryShippingCost ?? 0) > 0 ? (
+                  <Price amount={summaryShippingCost!} animate={false} />
+                ) : summaryShippingCost === 0 ? (
+                  t("summary.free")
+                ) : (
+                  t("summary.calculated_at_checkout")
+                )}
               </span>
             </div>
             {/* tax */}
@@ -311,9 +318,11 @@ export function OrderSummaryCard({
                 {t("summary.tax")} ({String(summaryTaxPercentage ?? "")}%)
               </span>
               <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
-                {(summaryTaxAmount ?? 0) > 0
-                  ? formatCurrency(summaryTaxAmount!)
-                  : t("summary.calculated_at_checkout")}
+                {(summaryTaxAmount ?? 0) > 0 ? (
+                  <Price amount={summaryTaxAmount!} animate={false} />
+                ) : (
+                  t("summary.calculated_at_checkout")
+                )}
               </span>
             </div>
           </>
@@ -326,7 +335,7 @@ export function OrderSummaryCard({
               {t("summary.payment_fees")}
             </span>
             <span className="font-semibold">
-              {formatCurrency(summaryPaymentFees!)}
+              <Price amount={summaryPaymentFees!} animate={false} />
             </span>
           </div>
         )}
@@ -338,16 +347,22 @@ export function OrderSummaryCard({
               <Tag className="w-3.5 h-3.5" />
               {t("coupon.discount")}
               <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
-                {appliedCoupon?.couponDetails?.couponType === "percentage"
-                  ? `${appliedCoupon?.couponDetails?.discount} %`
-                  : formatCurrency(appliedCoupon?.couponDetails?.discount ?? 0)}
+                {appliedCoupon?.couponDetails?.couponType === "percentage" ? (
+                  `${appliedCoupon?.couponDetails?.discount} %`
+                ) : (
+                  <Price
+                    amount={appliedCoupon?.couponDetails?.discount ?? 0}
+                    animate={false}
+                  />
+                )}
               </span>
             </span>
-            <span className="font-bold text-success tabular-nums">
+            <span className="font-bold text-success tabular-nums inline-flex items-baseline">
               -
-              {formatCurrency(
-                parsedDiscountAmount || appliedCoupon?.discountAmount || 0,
-              )}
+              <Price
+                amount={parsedDiscountAmount || appliedCoupon?.discountAmount || 0}
+                animate={false}
+              />
             </span>
           </div>
         )}
@@ -362,20 +377,27 @@ export function OrderSummaryCard({
           <div className="text-end">
             {appliedCoupon ? (
               <div className="flex flex-col items-end">
-                <span className="text-xs text-muted-foreground line-through tabular-nums">
+                <s className="text-xs tabular-nums">
                   {/* Original price = final total + discount amount (mathematically guaranteed regardless of tax mode) */}
-                  {formatCurrency(
-                    (summaryTotalPrice ?? totalAmount) + parsedDiscountAmount,
-                  )}
-                </span>
-                <span className="text-xl font-black text-success tabular-nums leading-tight">
-                  {formatCurrency(totalAmount)}
-                </span>
+                  <Price
+                    amount={(summaryTotalPrice ?? totalAmount) + parsedDiscountAmount}
+                    numberClassName="text-muted-foreground"
+                    currencyClassName="text-muted-foreground"
+                    animate={false}
+                  />
+                </s>
+                <Price
+                  amount={totalAmount}
+                  className="text-xl text-success tabular-nums leading-tight"
+                  animate={false}
+                />
               </div>
             ) : (
-              <span className="text-xl font-black text-primary tabular-nums leading-tight">
-                {formatCurrency(totalAmount)}
-              </span>
+              <Price
+                amount={totalAmount}
+                className="text-xl text-primary tabular-nums leading-tight"
+                animate={false}
+              />
             )}
             {/* Tax inclusion notice — shown whenever server confirms whether tax is included or not */}
             {summaryTaxAmount !== undefined && checkoutMode && (

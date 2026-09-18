@@ -7,7 +7,7 @@ import { Product, ProductVariant } from "@/types";
 import { Button } from "@/shared/ui/Button";
 import { Badge } from "@/shared/ui/Badge";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import Price from "@/shared/ui/Price";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import { 
@@ -28,7 +28,6 @@ interface QuickAddModalProps {
 
 export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddModalProps) {
   const getTrans = useTrans();
-  const formatCurrency = useFormatCurrency();
   const locale = useLocale();
   const commonT = useTranslations("common");
   const { mutate: addToCart, isPending: adding } = useAddToCart();
@@ -232,13 +231,15 @@ export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddM
 
             {/* Price display */}
             <div className="flex items-end gap-3 p-4 rounded-2xl bg-accent/40 border border-border/20 w-fit">
-              <span className="text-lg font-black text-primary tracking-tight">
-                {formatCurrency(displayPrice)}
-              </span>
+              <Price amount={displayPrice} className="text-lg text-primary tracking-tight" />
               {hasDiscount && (
-                <span className="text-lg font-semibold text-muted-foreground/70 line-through mb-0.5">
-                  {formatCurrency(oldPrice)}
-                </span>
+                <s className="text-lg mb-0.5">
+                  <Price
+                    amount={oldPrice}
+                    numberClassName="text-muted-foreground/70 font-semibold"
+                    currencyClassName="text-muted-foreground/70"
+                  />
+                </s>
               )}
             </div>
 

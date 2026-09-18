@@ -30,7 +30,6 @@ import { useCart } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { useMe } from "@/features/auth/hooks/useAuth";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
 import { useSettings } from "@/app/providers/SettingsProvider";
@@ -66,7 +65,6 @@ export default function CheckoutPage() {
   const getTrans = useTrans();
   const toast = useToast();
   const { redirect } = usePaymentRedirector();
-  const formatCurrency = useFormatCurrency();
   const t = useTranslations("cart");
   /* ─── Local State for Non-Form Fields ──────────────────────────── */
   const [currentStep, setCurrentStep] = useState(0);
@@ -270,7 +268,6 @@ export default function CheckoutPage() {
                   selectedPayment={selectedPayment}
                   handlePaymentChange={handlePaymentChange}
                   isCODSupportedByCarrier={isCODSupportedByCarrier}
-                  formatCurrency={formatCurrency}
                   receiptFile={receiptFile}
                   setReceiptFile={setReceiptFile}
                   onBack={prevStep}

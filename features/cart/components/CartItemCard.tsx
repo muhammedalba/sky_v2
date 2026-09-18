@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
+import Price from "@/shared/ui/Price";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { getAttributeLabel } from "@/shared/constants/product-constants";
@@ -15,7 +16,6 @@ export function CartItemCard({
   isAr,
   isRemoving,
   isCompact = false,
-  formatCurrency,
   onRemove,
   onUpdateQty,
 }: {
@@ -24,7 +24,6 @@ export function CartItemCard({
   isAr: boolean;
   isRemoving: boolean;
   isCompact?: boolean;
-  formatCurrency: (n: number) => string;
   onRemove: (productId: string, variantId?: string) => void;
   onUpdateQty: (productId: string, variantId: string, newQty: number) => void;
 }) {
@@ -96,9 +95,9 @@ export function CartItemCard({
                 .join(" · ")}
             </p>
           )}
-          <p className="text-xs font-bold text-primary tabular-nums">
-            {formatCurrency(price)}
-            <span className="text-muted-foreground font-normal"> × {item.quantity}</span>
+          <p className="text-xs font-bold text-primary tabular-nums inline-flex items-baseline gap-1">
+            <Price amount={price} animate={false} />
+            <span className="text-muted-foreground font-normal">× {item.quantity}</span>
           </p>
         </div>
 
@@ -270,9 +269,11 @@ export function CartItemCard({
             </div>
 
             {/* Line total */}
-            <span className="text-base font-bold text-foreground tabular-nums">
-              {formatCurrency(lineTotal)}
-            </span>
+            <Price
+              amount={lineTotal}
+              className="text-base text-foreground tabular-nums"
+              animate={false}
+            />
           </div>
         </div>
       </div>

@@ -14,7 +14,7 @@ import { truncate } from "@/lib/utils";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import Badge from "@/shared/ui/Badge";
 import { Tooltip } from "@/shared/ui/Tooltip";
-import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import Price from "@/shared/ui/Price";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { memo, useMemo, useCallback, useState } from "react";
 import { useLocale } from "next-intl";
@@ -31,7 +31,6 @@ const STARS_ARRAY = [1, 2, 3, 4, 5];
 
 const ProductCard = ({ item, commonT }: Props) => {
   const getTrans = useTrans();
-  const formatCurrency = useFormatCurrency();
 
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const { mutate: addToCart, isPending: adding } = useAddToCart();
@@ -214,9 +213,11 @@ const ProductCard = ({ item, commonT }: Props) => {
         <div className="w-full p-6 pt-0 bg-accent/70">
           {/* price and rating */}
           <div className="border-t border-border/40 pt-2 flex items-end justify-between">
-            <div className="text-md font-black text-primary tracking-tight">
-              {formatCurrency(item.priceRange?.min || 0)}
-            </div>
+            <Price
+              amount={item.priceRange?.min || 0}
+              className="text-md text-primary tracking-tight"
+              animate={false}
+            />
 
             {/* star rating */}
             <div className="flex flex-col items-end gap-1">

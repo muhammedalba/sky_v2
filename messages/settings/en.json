@@ -34,7 +34,9 @@
     "faviconDesc": "Browser tab icon (32x32px).",
     "currencyCode": "Currency Code (e.g. SAR)",
     "currencySymbol": "Currency Symbol (e.g. ر.س)",
-    "exchangeRate": "Dollar Exchange Rate"
+    "exchangeRate": "Dollar Exchange Rate",
+    "exchangeRateLastSync": "Last auto-synced",
+    "exchangeRateNeverSynced": "Not auto-synced yet"
   },
   "seo": {
     "title": "SEO Settings",

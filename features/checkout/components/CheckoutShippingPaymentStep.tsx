@@ -16,6 +16,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useSettings } from "@/features/settings/hooks/useSettings";
+import Price from "@/shared/ui/Price";
 import { ActivePaymentMethod } from "../constants/paymentMethods";
 import { getPaymentIcon, getGatewayBadgeStyle } from "../utils/payment";
 
@@ -42,7 +43,6 @@ interface CheckoutShippingPaymentStepProps {
   selectedPayment: ActivePaymentMethod | undefined;
   handlePaymentChange: (id: string) => void;
   isCODSupportedByCarrier: boolean;
-  formatCurrency: (n: number) => string;
   receiptFile: File | null;
   setReceiptFile: (file: File | null) => void;
   isValid: boolean;
@@ -60,7 +60,6 @@ export function CheckoutShippingPaymentStep({
   selectedPayment,
   handlePaymentChange,
   isCODSupportedByCarrier,
-  formatCurrency,
   receiptFile,
   setReceiptFile,
   onBack,
@@ -163,9 +162,11 @@ export function CheckoutShippingPaymentStep({
                   </div>
                 </div>
                 <div className="font-bold text-foreground shrink-0 text-right">
-                  {option.totalShippingCost > 0
-                    ? formatCurrency(option.totalShippingCost)
-                    : t("shipping_payment.free")}
+                  {option.totalShippingCost > 0 ? (
+                    <Price amount={option.totalShippingCost} animate={false} />
+                  ) : (
+                    t("shipping_payment.free")
+                  )}
                 </div>
               </label>
             ))}
@@ -239,8 +240,8 @@ export function CheckoutShippingPaymentStep({
                         </span>
                       )}
                       {method.feeType === "fixed" && (
-                        <span className="text-xs text-muted-foreground ml-auto">
-                          +{formatCurrency(method.fixedFee)}
+                        <span className="text-xs text-muted-foreground ml-auto inline-flex items-baseline">
+                          +<Price amount={method.fixedFee} animate={false} />
                         </span>
                       )}
                       {method.feeType === "percentage" && (
