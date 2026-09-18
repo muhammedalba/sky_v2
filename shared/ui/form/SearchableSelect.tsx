@@ -6,6 +6,7 @@ import {  PlusIcon, SearchIcon, SpinnerIcon } from "../Icons";
 
 export interface SearchOption {
   _id: string;
+  slug?:string;
   name: string | { en?: string; ar?: string };
   [key: string]: unknown;
 }
@@ -75,11 +76,21 @@ export function SearchableSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Clear search text if value is cleared externally
+  // Sync displayed text with `value` when it changes externally
+  // (e.g. a filter restored from the URL on navigation), and clear it
+  // when the value is cleared externally.
   useEffect(() => {
     if (!value) {
       setSearch("");
+      return;
     }
+    const match = options?.find((opt) => opt._id === value || opt.slug === value);
+    if (match) {
+      setSearch(getDisplayValue(match));
+    }
+    // Only re-sync when the selected id changes, not on every
+    // options/search edit (would override the user while typing).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   return (

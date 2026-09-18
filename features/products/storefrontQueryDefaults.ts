@@ -11,7 +11,7 @@
 
 export const DEFAULT_CATALOG_PARAMS = {
   page: 1,
-  limit: 9,
+  limit: 20,
   sort: "-createdAt",
 } as const;
 

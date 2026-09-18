@@ -75,17 +75,6 @@ export default function FeaturedProjectsSection() {
           ))}
         </div>
 
-        <div className="flex justify-center mt-12">
-          <Link href="/projects">
-            <Button
-              variant="ghost"
-              className="font-bold text-primary hover:bg-primary/10 hover:text-primary gap-2 group"
-            >
-              {t("projects.view_all")}
-              <ChevronRightIcon className="w-5 h-5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-        </div>
       </div>
     </section>
   );

@@ -9,6 +9,7 @@ import { Brand } from "@/types";
 import Badge from "@/shared/ui/Badge";
 import { ShieldIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import Link from "next/link";
 const EMPTY_BRANDS: Brand[] = [];
 
 interface TrustedByProps {
@@ -39,7 +40,8 @@ export default function TrustedBy({
         aria-hidden={index > 0 ? "true" : "false"}
       >
         {brands.map((brand) => (
-          <div
+          <Link
+            href={`/products?brand=${brand._id}#all-products`}
             key={brand._id}
             className="flex items-center justify-center min-w-30"
           >
@@ -75,7 +77,7 @@ export default function TrustedBy({
                 </span>
               </div>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     ));

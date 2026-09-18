@@ -35,7 +35,7 @@ function DrawerCategoryItem({
       <div className="flex items-center gap-1">
         {/* Category Link */}
         <Link
-          href={`/products?category=${category._id}`}
+          href={`/products?category=${category._id}#all-products`}
           onClick={onClose}
           className="flex-1 flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent/50 transition-colors group"
         >
@@ -88,7 +88,7 @@ function DrawerCategoryItem({
             {category.SubCategories!.map((sub) => (
               <Link
                 key={sub._id}
-                href={`/products?subCategory=${sub._id}`}
+                href={`/products?subCategory=${sub._id}#all-products`}
                 onClick={onClose}
                 className="flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-accent/40 transition-colors group"
               >

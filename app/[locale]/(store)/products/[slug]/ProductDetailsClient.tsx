@@ -256,12 +256,12 @@ export default function ProductDetailsClient({
         ? product.category
         : "";
   const categoryHref = categoryId
-    ? `/products?category=${categoryId}`
-    : "/products";
+    ? `/products?category=${categoryId}#all-products`
+    : "/products#all-products";
 
   const subCategoryId = product.SubCategories?.[0]?._id;
   const subCategoryHref = subCategoryId
-    ? `/products?category=${categoryId}&subCategory=${subCategoryId}`
+    ? `/products?category=${categoryId}&subCategory=${subCategoryId}#all-products`
     : undefined;
 
   const allImages = [product.imageCover, ...(product.images || [])].filter(

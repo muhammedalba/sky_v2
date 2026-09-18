@@ -48,6 +48,7 @@ export default function CategoriesSection() {
   const hero = categories[0];
   const secondary = categories.slice(1, 3);
   const rest = categories.slice(3, 7);
+  console.log(hero);
 
   return (
     <section className="py-7 relative overflow-hidden bg-background">
@@ -69,7 +70,7 @@ export default function CategoriesSection() {
           {/* Hero Category */}
           <ScrollReveal animation="slide-up" className="sm:col-span-2">
             <Link
-              href={`/products?category=${hero._id}`}
+              href={`/products?category=${hero._id}#all-products`}
               className="group block h-full"
             >
               <div className="relative h-full min-h-72 rounded-3xl bg-primary/5 border border-primary/10 overflow-hidden flex flex-col-reverse sm:flex-row items-stretch transition-colors duration-500 group-hover:bg-primary/10">
@@ -105,7 +106,7 @@ export default function CategoriesSection() {
               delay={150 + i * 100}
             >
               <Link
-                href={`/products?category=${cat._id}`}
+                href={`/products?category=${cat._id}#all-products`}
                 className="group block h-full"
               >
                 <div className="relative h-full min-h-72 rounded-3xl overflow-hidden">
@@ -139,7 +140,7 @@ export default function CategoriesSection() {
                 delay={300 + i * 100}
               >
                 <Link
-                  href={`/products?category=${cat._id}`}
+                  href={`/products?category=${cat._id}#all-products`}
                   className="group block h-full"
                 >
                   <div className="h-full flex flex-col rounded-3xl overflow-hidden bg-secondary/40 border border-border/50 hover:shadow-lg transition-shadow duration-300">

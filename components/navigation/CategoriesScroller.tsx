@@ -182,7 +182,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
     >
       
         <Link
-          href={`/products?category=${category._id}`}
+          href={`/products?category=${category._id}#all-products`}
           onClick={handleClick}
           className={cn(
             "shrink-0 flex items-center hover:text-primary hover:bg-primary/10 border border-border/20 hover:border-primary/30 text-xs font-medium  gap-2 px-4 py-1 rounded-full whitespace-nowrap active:scale-95 transition-all select-none",
@@ -230,7 +230,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
           onMouseLeave={handleLeave}
         >
           <Link
-            href={`/products?category=${category._id}`}
+            href={`/products?category=${category._id}#all-products`}
             onClick={closeDropdown}
             className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary/8 text-sm font-bold text-primary transition-colors mb-1 border-b border-border/20 pb-2"
           >
@@ -251,7 +251,7 @@ const CategoryItemWithDropdown = memo(function CategoryItemWithDropdown({
             {category.SubCategories?.map((sub) => (
               <Link
                 key={sub._id}
-                href={`/products?subCategory=${sub._id}`}
+                href={`/products?subCategory=${sub._id}#all-products`}
                 onClick={closeDropdown}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-accent/50 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
               >

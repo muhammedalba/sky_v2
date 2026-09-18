@@ -37,6 +37,7 @@ async function prefetchList(
   tags: string[],
 ) {
   const url = new URL(`${env.API_URL}${endpoint}`);
+
   Object.entries(urlParams).forEach(([k, v]) => {
     if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
   });
