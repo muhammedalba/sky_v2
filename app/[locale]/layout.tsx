@@ -130,49 +130,52 @@ export default async function RootLayout({
   };
 
   return (
-    <LocaleProvider locale={locale} messages={rootMessages}>
-      <ThemeProvider>
-        <SettingsProvider settings={finalSettings}>
-          <MaintenanceGuard
-            isMaintenance={isMaintenance}
-            canBypassMaintenance={canBypassMaintenance}
-            locale={locale}
-          >
-            {finalSettings.googleAnalyticsId && (
-              <>
-                <Script
-                  src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
-                  strategy="afterInteractive"
-                />
-                <Script id="google-analytics" strategy="afterInteractive">
-                  {`
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-                    gtag('config', '${finalSettings.googleAnalyticsId}');
-                  `}
-                </Script>
-              </>
-            )}
+    <>
+      {/* JSON-LD Structured Data for SEO Rich Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
 
-            <ToastProvider />
+      {finalSettings.googleAnalyticsId && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${finalSettings.googleAnalyticsId}');
+            `}
+          </Script>
+        </>
+      )}
 
-            {/* Performance Monitoring */}
-            <PerformanceMonitor
-              enablePerformance={finalSettings.enablePerformance ?? false}
-            />
-            {children}
-            <CartDrawer />
-            {/* JSON-LD Structured Data for SEO Rich Snippets */}
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify(structuredData),
-              }}
-            />
-          </MaintenanceGuard>
-        </SettingsProvider>
-      </ThemeProvider>
-    </LocaleProvider>
+      <LocaleProvider locale={locale} messages={rootMessages}>
+        <ThemeProvider>
+          <SettingsProvider settings={finalSettings}>
+            <MaintenanceGuard
+              isMaintenance={isMaintenance}
+              canBypassMaintenance={canBypassMaintenance}
+              locale={locale}
+            >
+              <ToastProvider />
+
+              {/* Performance Monitoring */}
+              <PerformanceMonitor
+                enablePerformance={finalSettings.enablePerformance ?? false}
+              />
+              {children}
+              <CartDrawer />
+            </MaintenanceGuard>
+          </SettingsProvider>
+        </ThemeProvider>
+      </LocaleProvider>
+    </>
   );
 }

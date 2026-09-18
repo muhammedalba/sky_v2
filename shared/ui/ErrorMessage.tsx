@@ -28,7 +28,8 @@ export default function ErrorMessage({
   // 'required', 'invalidPassword'. Server/API error strings aren't keys,
   // so they fall through defaultValue and render exactly as passed in.
   const tErrors = useTranslations("common.errors");
-  const displayMessage = tErrors(message, { defaultValue: message });
+  const displayMessage = message;
+  // const displayMessage = tErrors(message, { defaultValue: message });
 
   return (
     <div
