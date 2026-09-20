@@ -52,21 +52,8 @@ export const COLOR_SWATCHES: readonly ColorSwatch[] = [
   { value: 'Yellow', swatchClass: 'bg-yellow-300', light: true },
 ] as const;
 
-// استخراج نوع (Type) للأسماء المسموحة لزيادة الحماية (اختياري ولكن مفيد)
 
-// VariantComponent enum
-// export enum MeasurementUnit {
-//   KG = 'kg',
-//   LTR = 'ltr',
-//   ML = 'ml',
-//   MM = 'mm',
-//   CM = 'cm',
-//   M = 'm',
-//   PCS = 'pcs',
-//   BAG = 'bag',
-//   ROLL = 'roll',
-// }
-// 2. استخراج الأسماء تلقائياً (لا داعي لتكرارها يدوياً)
+// 2. Automatically extract names (no need to enter them manually)
 export const ATTRIBUTE_NAME_OPTIONS = Object.keys(ATTRIBUTE_CONFIG) as (keyof typeof ATTRIBUTE_CONFIG)[];
 export type AllowedAttributeName = keyof typeof ATTRIBUTE_CONFIG;
 export type WeightUnit = (typeof WEIGHT_UNITS)[number]['value'];

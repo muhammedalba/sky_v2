@@ -2,6 +2,8 @@
 
 import { memo, useTransition, useCallback } from "react";
 import { useUIStore } from "@/store/ui-store";
+import { useCurrencyStore } from "@/store/currency-store";
+import { useUsdNoticeStore } from "@/store/usd-notice-store";
 import { useRouter, usePathname } from "@/navigation";
 import { useParams } from "next/navigation";
 import { MoonIcon, SunIcon } from "@/shared/ui/Icons";
@@ -13,14 +15,19 @@ const TopbarActions = ({
   showThemeSwitcher = true,
   showLocaleSwitcher = true,
   showBar = true,
+  warnUsdOnLocaleSwitch = false,
 }: {
   showThemeSwitcher?: boolean;
   showLocaleSwitcher?: boolean;
   showBar?: boolean;
+  /** Only the storefront mounts the USD notice modal — dashboard/auth usages leave this off. */
+  warnUsdOnLocaleSwitch?: boolean;
 }) => {
   // 1. استخراج القيم بشكل محدد لتحسين الأداء
   const theme = useUIStore((state) => state.theme);
   const setTheme = useUIStore((state) => state.setTheme);
+  const currencyOverride = useCurrencyStore((state) => state.override);
+  const openUsdNotice = useUsdNoticeStore((state) => state.open);
 
   const { locale } = useParams();
   const router = useRouter();
@@ -43,11 +50,19 @@ const TopbarActions = ({
     (newLocale: "en" | "ar") => {
       if (newLocale === locale || isPending) return; // منع التغيير إذا كان هو المختار حالياً أو قيد المعالجة
 
+      // Automatic currency follows the language (ar -> base, other -> USD),
+      // so switching away from Arabic without a manual override silently
+      // flips the displayed currency to an approximate USD conversion too —
+      // warn the shopper the same way the currency toggle does.
+      if (warnUsdOnLocaleSwitch && currencyOverride === null && locale === "ar" && newLocale === "en") {
+        openUsdNotice();
+      }
+
       startTransition(() => {
         router.replace(pathname, { locale: newLocale });
       });
     },
-    [locale, isPending, pathname, router],
+    [locale, isPending, pathname, router, currencyOverride, openUsdNotice, warnUsdOnLocaleSwitch],
   );
 
   return (

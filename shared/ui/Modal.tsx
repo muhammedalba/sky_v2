@@ -48,10 +48,10 @@ export default function Modal({ isOpen, onClose, title, description, children, f
       />
 
       {/* Modal Container */}
-      <div className="h-full relative flex items-center justify-center">
+      <div className="m-h-full relative flex items-center justify-center">
         <div
           className={cn(
-            ' bg-background overflow-y-auto   overflow-x-hidden h-[95%] border border-border shadow-xl rounded-4xl w-full  animate-in zoom-in-95 fade-in duration-300',
+            ' bg-background overflow-y-auto   overflow-x-hidden m-h-[95%] border border-border shadow-xl rounded-4xl w-full  animate-in zoom-in-95 fade-in duration-300',
             sizes[size]
           )}
         >

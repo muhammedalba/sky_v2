@@ -10,7 +10,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import TopPromoBanner from "@/components/navigation/TopPromoBanner";
 import type { PromoBanner } from "@/features/marketing/types";
-import CurrencyToggleButton from "@/widgets/currency/CurrencyToggleButton";
+import CurrencyToggleLoader from "@/widgets/currency/CurrencyToggleLoader";
+import UsdApproximateNoticeModal from "@/widgets/currency/UsdApproximateNoticeModal";
 
 // ─── Server-side Data Fetch ───────────────────────────────────────────────────
 
@@ -128,8 +129,11 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
         {/* Mobile-only bottom navigation */}
         <MobileBottomNavLoader />
 
-        {/* Manual currency override toggle */}
-        <CurrencyToggleButton />
+        {/* Manual currency override toggle — draggable variant on home, fixed elsewhere */}
+        <CurrencyToggleLoader />
+
+        {/* Single shared instance — triggered from the currency toggle and the locale switcher */}
+        <UsdApproximateNoticeModal />
       </div>
     </NextIntlClientProvider>
   );

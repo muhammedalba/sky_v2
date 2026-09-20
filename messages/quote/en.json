@@ -1,27 +1,77 @@
 {
   "title": "Request a Quote",
   "subtitle": "Tell us about your project requirements and we will provide a customized offer shortly.",
+  "meta": {
+    "title": "Request a Quote - Sky Galaxy | Wholesale Insulation & Construction Supply",
+    "description": "Request a customized quote from Sky Galaxy for waterproofing, thermal insulation, and construction materials. Fast response, certified quotes, nationwide supply in Saudi Arabia."
+  },
+  "hero": {
+    "badge1": "Quick 24h Response",
+    "badge2": "Official Certified Quotes",
+    "badge3": "Nationwide Supply Coverage"
+  },
+  "prestige": {
+    "tagline": "Your Trusted Industrial Supply Partner",
+    "quote": "We believe quality is not just a benchmark, but our unyielding commitment to every project.",
+    "certifiedLabel": "Certified Industrial Supply"
+  },
+  "assistance": {
+    "text": "Need an urgent tender or custom specifications? Detail your requirements in the form and our supply engineer will follow up."
+  },
   "form": {
+    "customerType": "Customer Type",
+    "customerTypeIndividual": "Individual",
+    "customerTypeCompany": "Company",
+    "entityTypeHint": "Select entity type",
+    "customerTypeIndividualDesc": "Personal / Retail",
+    "customerTypeCompanyDesc": "Business / Corporate",
+    "sectionContactInfo": "Contact Information",
+    "sectionCompanyDetails": "Company & Tax Details",
+    "companyRequiredBadge": "Required for B2B Invoice",
+    "sectionRequirements": "Requirements & Delivery",
+    "deliveryAddressHint": "Project site / Warehouse location",
+    "privacyNote": "Your data is confidential and protected according to strict privacy standards.",
+    "nextStepsTitle": "What happens next?",
+    "nextStepsDesc": "Our engineering team is evaluating the quantities and preparing the official quote to reach out via your preferred method.",
+    "submitAnother": "Submit Another Request",
     "name": "Full Name",
-    "company": "Company Name",
-    "email": "Email Address",
     "phone": "Phone Number",
-    "product": "Product of Interest",
-    "quantity": "Estimated Quantity",
-    "message": "Additional Details",
-    "attachment": "Attach Specification (Optional)",
+    "email": "Email Address",
+    "addEmail": "Add another email",
+    "removeEmail": "Remove",
+    "preferredContactMethod": "Preferred Way to Receive the Quote",
+    "contactMethodPhone": "Phone",
+    "contactMethodEmail": "Email",
+    "orderDetails": "What do you need? (with quantity)",
+    "deliveryAddress": "Delivery Address",
+    "commercialRegistrationNumber": "Commercial Registration Number",
+    "taxNumber": "Tax Number",
+    "nationalAddress": "National Address",
     "submit": "Submit Request",
     "submitting": "Submitting...",
     "success": "Request Sent Successfully!",
-    "success_message": "Our technical team will contact you soon to discuss the details.",
+    "success_message": "Our team will contact you soon to discuss the details.",
+    "error": "Something went wrong. Please try again.",
+    "errors": {
+      "nameMin": "Name must be at least 2 characters",
+      "phoneInvalid": "Please enter a valid phone number",
+      "emailInvalid": "Invalid email address",
+      "emailsRequired": "At least one email is required",
+      "orderDetailsMin": "Please describe what you need in more detail",
+      "deliveryAddressMin": "Please provide a detailed delivery address",
+      "crRequired": "Commercial registration number is required for companies",
+      "taxRequired": "Tax number is required for companies",
+      "nationalAddressRequired": "National address is required for companies"
+    },
     "placeholders": {
       "name": "Enter your name",
-      "company": "Enter company name",
-      "email": "example@domain.com",
       "phone": "05xxxxxxxx",
-      "product": "Select product or service",
-      "quantity": "e.g. 500 sqm",
-      "message": "Explain your requirements in detail..."
+      "email": "example@domain.com",
+      "orderDetails": "Describe what you need and the quantity, e.g. waterproofing for a 200 sqm roof...",
+      "deliveryAddress": "Detailed address: city, district, street, building No....",
+      "commercialRegistrationNumber": "e.g. 1010xxxxxx",
+      "taxNumber": "e.g. 3xxxxxxxxxxxxx03",
+      "nationalAddress": "Building No., street, district, city, postal code..."
     }
   },
   "info": {

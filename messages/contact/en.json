@@ -1,18 +1,57 @@
 {
       "title": "Contact Us",
       "subtitle": "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+      "hero": {
+            "badge": "Support Center"
+      },
       "form": {
+            "heading": "Send a Message",
+            "subheading": "Fill in the fields below and we will contact you",
             "name": "Name",
             "email": "Email",
+            "phone": "Phone Number",
+            "inquiryType": "Inquiry Type",
+            "inquiryTypePlaceholder": "Select an inquiry type",
             "message": "Message",
+            "messagePlaceholder": "How can we help you?",
             "submit": "Send Message",
             "submitting": "Sending...",
             "success": "Message sent successfully!",
-            "error": "Failed to send message. Please try again."
+            "successMessage": "We've received your message. A support representative will get back to you shortly.",
+            "sendAnother": "Send another message",
+            "error": "Failed to send message. Please try again.",
+            "inquiryTypes": {
+                  "general": "General Inquiry",
+                  "product": "Product Inquiry",
+                  "service_quote": "Service Quote Request",
+                  "complaint": "Complaint"
+            },
+            "errors": {
+                  "nameMin": "Name must be at least 2 characters",
+                  "emailInvalid": "Invalid email address",
+                  "phoneMin": "Phone number must be at least 8 characters",
+                  "inquiryTypeRequired": "Please select an inquiry type",
+                  "messageMin": "Message must be at least 10 characters"
+            }
       },
       "info": {
             "email": "Email Us",
+            "emailCta": "Send an Email",
             "phone": "Call Us",
-            "office": "Visit Us"
+            "available": "Available 24/7",
+            "office": "Visit Us",
+            "officeFallback": "Riyadh, Saudi Arabia",
+            "hoursTitle": "Working Hours",
+            "workingDaysFallback": "Monday - Friday"
+      },
+      "map": {
+            "label": "Our Location",
+            "title": "Find Us on the Map",
+            "subtitle": "Drop by our office or get directions straight from the map below.",
+            "directions": "Get Directions"
+      },
+      "meta": {
+            "title": "Contact Us - Sky Galaxy | Waterproofing & Insulation Supplier",
+            "description": "Get in touch with Sky Galaxy for waterproofing, thermal insulation, and construction material inquiries. Call, email, or visit our office in Saudi Arabia."
       }
 }

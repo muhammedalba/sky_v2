@@ -9,7 +9,7 @@ import CategoriesScroller, { type CategoryItem } from "./CategoriesScroller";
 import SearchBar from "./SearchBar";
 import UserAccountMenu from "@/widgets/layout/UserAccountMenu";
 import TopbarActions from "@/widgets/layout/topbar/TopbarActions";
-import { DashboardIcon, MenuIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
+import { CustomerServiceIcon, DashboardIcon, MenuIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
 import { checkUserPermission } from "@/lib/auth";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useSettings } from "@/app/providers/SettingsProvider";
@@ -145,7 +145,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
     () => [
       { label: t("home"), href: `/home` },
       { label: t("products"), href: `/products` },
-      { label: t("contact"), href: `/contact` },
+      { label: t("quote"), href: `/request-quote` },
     ],
     [t],
   );
@@ -190,7 +190,11 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             {/* Actions */}
             <div className="flex items-center gap-1 shrink-0">
               {/* Language */}
-              <TopbarActions />
+              <TopbarActions warnUsdOnLocaleSwitch />
+              {/* Contact Us icon */}
+              <Link href="/contact" className="relative flex items-center p-2 rounded-full hover:bg-accent/50 transition-all duration-300 group shrink-0">
+                <CustomerServiceIcon className="size-4 text-foreground/ group-hover:text-primary transition-colors duration-300" />
+              </Link>
               {/* Cart */}
               <CartButton
                 className="hidden sm:block "

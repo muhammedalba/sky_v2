@@ -9,12 +9,12 @@ interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
   ({ className, label, description, id, onCheckedChange, defaultChecked, checked, ...props }, ref) => {
-    // توليد ID فريد إذا لم يوجد لربط الليبل بالمدخل
+// Generate a unique ID if one doesn't exist, to link the label to the input
     const generatedId = React.useId();
     const switchId = id || generatedId;
 
     return (
-      <div className={cn("group flex items-center justify-between gap-4", className)}>
+      <div className={cn("group flex items-center justify-between gap-2", className)}>
         {(label || description) && (
           <label
             htmlFor={switchId}
@@ -61,7 +61,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             "bg-muted border-2 border-transparent", // الحالة الافتراضية
             "peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background", // Focus احترافي
             "peer-checked:bg-success peer-checked:border-success/10", // حالة التفعيل
-            "after:content-[''] after:absolute after:top-[2px] after:inset-s-[2px]",
+            "after:content-[''] after:absolute after:top-0.5 after:inset-s-0.5 ",
             "after:bg-white after:shadow-sm after:rounded-full after:h-5 after:w-5 after:transition-all after:duration-300",
             "peer-checked:after:translate-x-5 rtl:peer-checked:after:-translate-x-5", // حركة الزر
             "peer-hover:after:scale-105" // تأثير صغير عند التحويم

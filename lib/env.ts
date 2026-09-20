@@ -164,5 +164,11 @@ export const env = {
       ADMIN_SEND: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_SEND || '/notifications/admin/send',
       STREAM: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_STREAM || '/notifications/stream',
     },
+    CONTACT: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CONTACT || '/contact',
+    },
+    QUOTE_REQUESTS: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_QUOTE_REQUESTS || '/quote-requests',
+    },
   },
 } as const;

@@ -3,7 +3,10 @@
     "label": "Currency",
     "automatic": "Automatic (by language)",
     "base": "Base currency",
-    "usd": "US Dollar (USD)"
+    "usd": "US Dollar (USD)",
+    "usdNoticeTitle": "Approximate USD prices",
+    "usdNoticeMessage": "Prices shown in US Dollars are approximate and provided for reference only. Your card or wallet will still be charged in the store's base currency, and the exact amount may vary slightly depending on the exchange rate at the time of payment.",
+    "usdNoticeConfirm": "Got it"
   },
   "buttons": {
     "save": "Save",

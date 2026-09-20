@@ -2,9 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/shared/ui/Button";
-import { ChevronRightIcon, MapPinIcon } from "@/shared/ui/Icons";
+import {  MapPinIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { GlowCard } from "@/shared/ui/GlowCard";
 import Badge from "@/shared/ui/Badge";

@@ -2,7 +2,7 @@ export type CurrencySymbolPosition = 'before' | 'after';
 
 export const CURRENCIES = [
   { code: 'USD', symbol: '$', label: 'US Dollar ($)', symbolPosition: 'before' as CurrencySymbolPosition },
-  { code: 'SAR', symbol: 'ر.س', label: 'Saudi Riyal (ر.س)', symbolPosition: 'after' as CurrencySymbolPosition },
+  { code: 'SAR', symbol: '⃁', label: 'Saudi Riyal (⃁)', symbolPosition: 'after' as CurrencySymbolPosition },
   { code: 'AED', symbol: 'د.إ', label: 'UAE Dirham (د.إ)', symbolPosition: 'after' as CurrencySymbolPosition },
   { code: 'KWD', symbol: 'د.ك', label: 'Kuwaiti Dinar (د.ك)', symbolPosition: 'after' as CurrencySymbolPosition },
   { code: 'QAR', symbol: 'ر.ق', label: 'Qatari Rial (ر.ق)', symbolPosition: 'after' as CurrencySymbolPosition },
@@ -20,6 +20,8 @@ export const CURRENCIES = [
   { code: 'LYD', symbol: 'ل.د', label: 'Libyan Dinar (ل.د)', symbolPosition: 'after' as CurrencySymbolPosition },
   { code: 'YER', symbol: 'ر.ي', label: 'Yemeni Rial (ر.ي)', symbolPosition: 'after' as CurrencySymbolPosition },
   { code: 'LBP', symbol: 'ل.ل', label: 'Lebanese Pound (ل.ل)', symbolPosition: 'after' as CurrencySymbolPosition },
+  { code: 'SYP', symbol: 'ل.س', label: 'Syrian Pound (ل.س)', symbolPosition: 'after' as CurrencySymbolPosition },
+  { code: 'AUD', symbol: '$', label: 'Australian Dollar ($)', symbolPosition: 'before' as CurrencySymbolPosition },
 ];
 
 export const CURRENCY_SELECT_OPTIONS = CURRENCIES.map((c) => ({
