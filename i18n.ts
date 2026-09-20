@@ -25,6 +25,10 @@ const loaders: Record<string, (locale: string) => Promise<unknown>> = {
     import(`./messages/home/${locale}.json`).then((m) => m.default),
   contact: (locale) =>
     import(`./messages/contact/${locale}.json`).then((m) => m.default),
+  privacy: (locale) =>
+    import(`./messages/privacy/${locale}.json`).then((m) => m.default),
+  terms: (locale) =>
+    import(`./messages/terms/${locale}.json`).then((m) => m.default),
   store: (locale) =>
     import(`./messages/store/${locale}.json`).then((m) => m.default),
   brands: (locale) =>

@@ -1,0 +1,116 @@
+{
+      "hero": {
+            "badge": "Terms & Conditions",
+            "title": "Terms & Conditions",
+            "subtitle": "Please read these terms and conditions carefully before using the Sky Galaxy website or making a purchase — they govern the relationship between you and the company.",
+            "lastUpdated": "Last updated: {date}"
+      },
+      "toc": {
+            "title": "On this page"
+      },
+      "sections": [
+            {
+                  "id": "general",
+                  "title": "General Provisions",
+                  "paragraphs": [
+                        "These terms and conditions apply to your use of the Sky Galaxy website and all related services. Your use of the site constitutes your explicit agreement to these terms and conditions in full.",
+                        "If you do not agree to these terms, you must not access or use the site. These terms apply to all users with respect to the services provided by Sky Galaxy, and take effect as soon as you accept any service offered through the site or any other means of communication with us.",
+                        "Please also review our Privacy Policy, which is an integral part of these terms and conditions."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "usage",
+                  "title": "Terms of Use",
+                  "paragraphs": [
+                        "By accessing and using this site, you acknowledge your agreement to and full understanding of these terms of use. If you do not agree, please do not access or use the site.",
+                        "The user acknowledges and accepts that use of the site and the services provided by Sky Galaxy is at their own risk. These terms of use are subject to change or update at any time without prior notice."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "sales",
+                  "title": "Sales Terms",
+                  "paragraphs": [
+                        "Images and descriptions displayed on the site are for illustrative purposes only and may differ slightly from the actual product. Product availability is confirmed within 24 hours of placing an order at the latest.",
+                        "If a product is unavailable at the time the order is confirmed, the company will refund the order value to the customer's bank account or the payment method used."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "shipping",
+                  "title": "Shipping Terms",
+                  "paragraphs": [
+                        "Shipping costs vary depending on the carrier responsible for delivering the order, and are determined based on weight and the customer's geographic area.",
+                        "Shipping fees are collected from the customer at order confirmation or upon receiving the goods, depending on the selected payment method."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "returns",
+                  "title": "Return Policy",
+                  "paragraphs": [
+                        "Returns of sold materials are not accepted after 15 days from the invoice date. Items must be in their original packaging or containers and in good condition suitable for resale, and are subject to inspection by our factories' quality department.",
+                        "No product that has been used or opened by the customer may be returned. If a return is accepted, 15% of the original goods' value is deducted to cover handling, repackaging, and return-shipping costs to the main warehouses."
+                  ],
+                  "list": [
+                        "To request a return, send us: the invoice number, date, and total value",
+                        "The amount requested for refund, the product name to be returned, and the reason for the return",
+                        "Allow 72 hours (excluding official and weekly holidays) for a customer service representative to contact you to arrange a time and place for product pickup, inspection, and refund"
+                  ]
+            },
+            {
+                  "id": "intellectualProperty",
+                  "title": "Intellectual Property",
+                  "paragraphs": [
+                        "Except as otherwise stated, all text, images, graphics, features, and design appearing on this site are the exclusive property of Sky Galaxy and may not be copied or distributed, in whole or in part, without the company's express written consent.",
+                        "You may download or print pages from the site for personal, non-commercial use only, provided all copyright notices remain intact."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "disclaimer",
+                  "title": "General Disclaimer",
+                  "paragraphs": [
+                        "The materials and information on this site are provided \"as is\" without warranties of any kind, express or implied, including warranties of merchantability or fitness for a particular purpose.",
+                        "The company and its affiliates are not liable for any direct or indirect damages arising from the use of, or inability to use, the site. Users are responsible for evaluating the accuracy and completeness of any information or opinions provided on the site, which is not a substitute for professional legal, financial, or accounting advice."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "governingLaw",
+                  "title": "Governing Law & Jurisdiction",
+                  "paragraphs": [
+                        "Any attempt to damage this site or disrupt its operation may constitute a violation of applicable criminal or civil law, and the company reserves the right to seek appropriate damages to the fullest extent permitted by law.",
+                        "The company makes no representation that the site's content is suitable for use in every jurisdiction. By using the site, you are solely responsible for complying with the local laws and regulations applicable in your country."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "forceMajeure",
+                  "title": "Force Majeure",
+                  "paragraphs": [
+                        "Sky Galaxy is not liable for any delay or failure in providing services caused by a force majeure event or any circumstance beyond our reasonable control that prevents or hinders the provision of the service."
+                  ],
+                  "list": []
+            },
+            {
+                  "id": "accessRestrictions",
+                  "title": "Access Restrictions",
+                  "paragraphs": [
+                        "The information on this site is not intended for use in any country or jurisdiction where such use would violate local law. If this applies to you, you are not authorized to access the site or use any information contained in it."
+                  ],
+                  "list": []
+            }
+      ],
+      "contact": {
+            "title": "Have a question about these terms?",
+            "description": "Our team is ready to answer any question about our terms and conditions or an order you've placed.",
+            "emailCta": "Email Us",
+            "contactCta": "Contact Page"
+      },
+      "meta": {
+            "title": "Terms & Conditions - Sky Galaxy | Insulation & Construction Materials",
+            "description": "Read the terms and conditions for using the Sky Galaxy website, including sales, shipping, returns, and intellectual property terms before purchasing from our store."
+      }
+}
