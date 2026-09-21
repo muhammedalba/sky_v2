@@ -10,7 +10,6 @@ import { Input } from "@/shared/ui/Input";
 import { Textarea } from "@/shared/ui/Textarea";
 import { Card } from "@/shared/ui/Card";
 import {
-  BoxIcon,
   CheckIcon,
   ChevronRightIcon,
   PlusIcon,
@@ -309,7 +308,13 @@ export default function QuoteFormClient() {
                   />
                 </div>
               </div>
-
+              <Input
+                label={t("form.email")}
+                type="email"
+                placeholder={t("form.placeholders.email")}
+                {...register(`emails.${0}` as const)}
+                error={errors.emails?.[0]?.message}
+              />
               {/* Emails Array */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between pb-4">
@@ -335,8 +340,8 @@ export default function QuoteFormClient() {
                         label={t("form.email")}
                         type="email"
                         placeholder={t("form.placeholders.email")}
-                        {...register(`emails.${index}` as const)}
-                        error={errors.emails?.[index]?.message}
+                        {...register(`emails.${index + 1}` as const)}
+                        error={errors.emails?.[index + 1]?.message}
                       />
                       {emailFields.length > 1 && (
                         <Button
@@ -344,7 +349,7 @@ export default function QuoteFormClient() {
                           variant="ghost"
                           size="icon"
                           className="h-12 w-12 shrink-0 rounded-xl text-destructive hover:bg-destructive/10 transition-colors"
-                          onClick={() => removeEmail(index)}
+                          onClick={() => removeEmail(index + 1)}
                           aria-label={t("form.removeEmail")}
                         >
                           <XIcon className="w-4 h-4" />
