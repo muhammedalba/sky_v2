@@ -1,54 +1,67 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { ArrowRightIcon } from "@/shared/ui/Icons";
-import { useCategories } from "@/features/categories/hooks/useCategories";
-import { Category } from "@/types";
+import { Category, LocalizedString } from "@/types";
 
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
-import { useTrans } from "@/shared/hooks/useTrans";
 import { cn } from "@/lib/utils";
 import { getImageUrl } from "@/shared/utils/image.util";
+import { env } from "@/lib/env";
 
-export default function CategoriesSection() {
-  const t = useTranslations("home");
-  const getTrans = useTrans();
-  const {
-    data: categoriesData,
-    isLoading,
-    error,
-  } = useCategories({ limit: 7 });
-  const categories = categoriesData?.data || [];
+// Bounds worst-case fetch latency, same convention as (store)/layout.tsx and
+// TrustedBy.tsx — falls through to the empty-array fallback exactly like any
+// other fetch failure.
+const FETCH_TIMEOUT_MS = 5000;
 
-  if (isLoading) {
-    return (
-      <section className="py-24 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="h-10 w-72 mx-auto bg-secondary animate-pulse rounded-lg mb-14" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="sm:col-span-2 h-72 bg-secondary animate-pulse rounded-3xl" />
-            <div className="h-72 bg-secondary animate-pulse rounded-3xl" />
-            <div className="h-72 bg-secondary animate-pulse rounded-3xl" />
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="h-72 bg-secondary animate-pulse rounded-3xl"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+async function getHomeCategories(locale: string): Promise<Category[]> {
+  try {
+    // limit=20 here matches (store)/layout.tsx's own categories fetch
+    // (used for the navbar) byte-for-byte on purpose: Next.js's Data Cache
+    // keys fetch() calls by their exact URL, so an identical URL means this
+    // request reuses that same cache entry instead of firing a second,
+    // separate network request for the same resource. Only the first 7
+    // items are actually rendered below (unchanged from before), so this
+    // is a pure cache-sharing optimization with zero visible effect.
+    const res = await fetch(
+      `${env.API_URL}${env.ENDPOINTS.CATEGORIES.BASE}?limit=20`,
+      {
+        next: { revalidate: 300 },
+        headers: { "Content-Type": "application/json", "Accept-Language": locale },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      },
     );
+
+    if (!res.ok) return [];
+
+    const json = await res.json();
+    const data: Category[] = json?.data || [];
+    if (!Array.isArray(data)) return [];
+
+    return data;
+  } catch {
+    return [];
   }
-  if (error || !categories || categories.length === 0) {
-    return;
-  }
+}
+
+function getTrans(content: LocalizedString | undefined | null, locale: string): string {
+  if (!content) return "";
+  if (typeof content === "string") return content;
+  return content[locale as "en" | "ar"] || content.en || content.ar || "";
+}
+
+export default async function CategoriesSection({
+  locale,
+}: {
+  locale: "ar" | "en";
+}) {
+  const t = await getTranslations({ locale, namespace: "home" });
+  const categories = await getHomeCategories(locale);
+
+  if (categories.length === 0) return null;
 
   const hero = categories[0];
   const secondary = categories.slice(1, 3);
   const rest = categories.slice(3, 7);
-  console.log(hero);
 
   return (
     <section className="py-7 relative overflow-hidden bg-background">
@@ -79,7 +92,7 @@ export default function CategoriesSection() {
                     {t("categories.new_product")}
                   </span>
                   <h3 className="text-2xl md:text-3xl font-bold text-primary mb-3 line-clamp-1">
-                    {getTrans(hero.name)}
+                    {getTrans(hero.name, locale)}
                   </h3>
                   <p className="text-muted-foreground font-medium mb-6 max-w-xs line-clamp-2">
                     {t("categories.items.waterproofing.desc")}
@@ -117,7 +130,7 @@ export default function CategoriesSection() {
                   <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent" />
                   <div className="absolute inset-0 z-10 flex flex-col justify-end p-6">
                     <h3 className="text-xl font-bold text-white mb-1.5 line-clamp-1">
-                      {getTrans(cat.name)}
+                      {getTrans(cat.name, locale)}
                     </h3>
                     <p className="text-white/75 text-sm font-medium mb-3 line-clamp-2">
                       {t("categories.items.waterproofing.desc")}
@@ -152,7 +165,7 @@ export default function CategoriesSection() {
                     </div>
                     <div className="p-5 flex-1 flex flex-col">
                       <h3 className="text-lg font-bold text-primary mb-1.5 line-clamp-1">
-                        {getTrans(cat.name)}
+                        {getTrans(cat.name, locale)}
                       </h3>
                       <p className="text-sm text-muted-foreground font-medium mb-3 line-clamp-2 flex-1">
                         {t("categories.items.waterproofing.desc")}

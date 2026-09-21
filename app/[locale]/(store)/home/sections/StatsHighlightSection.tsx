@@ -1,6 +1,4 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { CalendarIcon, CheckCircle2Icon, ShieldCheckIcon, UsersIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import CountUp from "@/components/CountUp";
@@ -12,8 +10,12 @@ const STATS = [
   { icon: ShieldCheckIcon, value: 100, suffix: "%", labelKey: "quality" },
 ] as const;
 
-export default function StatsHighlightSection() {
-  const t = useTranslations("home");
+export default async function StatsHighlightSection({
+  locale,
+}: {
+  locale: "ar" | "en";
+}) {
+  const t = await getTranslations({ locale, namespace: "home" });
 
   return (
     <section className="py-4 md:py-6 bg-background">

@@ -1,14 +1,16 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/shared/ui/Button";
 import { DownloadIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
-export default function PromoBannerSection() {
-  const t = useTranslations("home");
+export default async function PromoBannerSection({
+  locale,
+}: {
+  locale: "ar" | "en";
+}) {
+  const t = await getTranslations({ locale, namespace: "home" });
 
   return (
     // dir="ltr": the background artwork (mobile.webp / Desktop.webp) has a fixed

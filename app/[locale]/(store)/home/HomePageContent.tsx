@@ -1,52 +1,13 @@
-import dynamic from "next/dynamic";
 import HeroSection from "./sections/HeroSection";
 import StatsBar from "./sections/StatsBar";
 import TrustedBy from "@/components/home/TrustedBy";
-
-// --- Sections Below the Fold (Dynamically Imported) ---
-const CategoriesSection = dynamic(
-  () => import("./sections/CategoriesSection"),
-  {
-    loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
-  },
-);
-const FeaturedProductsSection = dynamic(
-  () => import("./sections/FeaturedProductsSection"),
-  {
-    loading: () => <div className="h-96 animate-pulse bg-background" />,
-  },
-);
-const PromoBannerSection = dynamic(
-  () => import("./sections/PromoBannerSection"),
-  {
-    loading: () => <div className="h-64 animate-pulse bg-background" />,
-  },
-);
-const WhyDifferenceSection = dynamic(
-  () => import("./sections/WhyDifferenceSection"),
-  {
-    loading: () => <div className="h-96 animate-pulse bg-background" />,
-  },
-);
-const StatsHighlightSection = dynamic(
-  () => import("./sections/StatsHighlightSection"),
-  {
-    loading: () => <div className="h-48 animate-pulse bg-background" />,
-  },
-);
-
-const TestimonialsSection = dynamic(
-  () => import("./sections/TestimonialsSection"),
-  {
-    loading: () => <div className="h-96 animate-pulse bg-background" />,
-  },
-);
-const FeaturedProjectsSection = dynamic(
-  () => import("./sections/FeaturedProjectsSection"),
-  {
-    loading: () => <div className="h-96 animate-pulse bg-background" />,
-  },
-);
+import CategoriesSection from "./sections/CategoriesSection";
+import FeaturedProductsSection from "./sections/FeaturedProductsSection";
+import FeaturedProjectsSection from "./sections/FeaturedProjectsSection";
+import TestimonialsSection from "./sections/TestimonialsSection";
+import StatsHighlightSection from "./sections/StatsHighlightSection";
+import WhyDifferenceSection from "./sections/WhyDifferenceSection";
+import PromoBannerSection from "./sections/PromoBannerSection";
 
 interface HomePageContentProps {
   locale: "ar" | "en";
@@ -64,28 +25,28 @@ export default function HomePageContent({ locale }: HomePageContentProps) {
       {/* 2. TRUST INDICATORS (Above the Fold - Server Component) */}
       <TrustedBy locale={locale} />
 
-      {/* 3. CORE CATEGORIES (Below the Fold - Dynamic Import) */}
-      <CategoriesSection  />
+      {/* 3. CORE CATEGORIES (Below the Fold - Server Component) */}
+      <CategoriesSection locale={locale} />
 
-      {/* 4. BEST SELLERS (Below the Fold - Dynamic Import) */}
-      <FeaturedProductsSection  />
+      {/* 4. BEST SELLERS (Below the Fold - Server Component) */}
+      <FeaturedProductsSection locale={locale} />
 
-      {/* 5. PROMO BANNER (Below the Fold - Dynamic Import) */}
-      <PromoBannerSection />
+      {/* 5. PROMO BANNER (Below the Fold - Server Component) */}
+      <PromoBannerSection locale={locale} />
 
-      {/* 5b. WHY IS THE DIFFERENCE (Below the Fold - Dynamic Import) */}
-      <WhyDifferenceSection />
+      {/* 5b. WHY IS THE DIFFERENCE (Below the Fold - Server Component) */}
+      <WhyDifferenceSection locale={locale} />
 
 
 
-      {/* 5c. STATS HIGHLIGHT (Below the Fold - Dynamic Import) */}
-      <StatsHighlightSection />
+      {/* 5c. STATS HIGHLIGHT (Below the Fold - Server Component) */}
+      <StatsHighlightSection locale={locale} />
 
-      {/* 7. CUSTOMER TESTIMONIALS (Below the Fold - Dynamic Import) */}
-      <TestimonialsSection />
+      {/* 7. CUSTOMER TESTIMONIALS (Below the Fold - Server Component) */}
+      <TestimonialsSection locale={locale} />
 
-      {/* 8. FEATURED PROJECTS (Below the Fold - Dynamic Import) */}
-      <FeaturedProjectsSection />
+      {/* 8. FEATURED PROJECTS (Below the Fold - Server Component) */}
+      <FeaturedProjectsSection locale={locale} />
     </div>
   );
 }
