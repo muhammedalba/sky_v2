@@ -5,6 +5,11 @@ import { StoreSettings } from "../types/settings";
  * Enterprise Grade Settings Service
  * Handles server-side fetching with Next.js Cache API
  */
+// Bounds worst-case fetch latency so a slow/unreachable backend can never
+// stall callers indefinitely — falls through to the existing catch-block
+// fallback exactly like any other fetch failure.
+const FETCH_TIMEOUT_MS = 5000;
+
 export async function getStoreSettings(): Promise<StoreSettings | null> {
   const endpoint = `${env.API_URL}${env.ENDPOINTS.SETTINGS.BASE}`;
 
@@ -17,6 +22,7 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
       headers: {
         "Content-Type": "application/json",
       },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
 
     if (!response.ok && response?.status == 503) {

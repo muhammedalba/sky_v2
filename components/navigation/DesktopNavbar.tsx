@@ -17,6 +17,7 @@ import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { env } from "@/lib/env";
 import SideDrawer from "./SideDrawer";
 import { useCart } from "@/features/cart/hooks/useCart";
+import { useMediaQuery } from "@/shared/hooks/use-media-query";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -130,6 +131,12 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
   const locale = useLocale();
   const settings = useSettings();
   const siteName = settings.siteName?.[locale as "ar" | "en"] || "Sky Galaxy";
+  // null = not yet known on the client (SSR-safe default: render as if it
+  // could be desktop, matching the CSS-based "hidden md:block" behaviour
+  // below). Once resolved to `false`, we skip mounting SearchBar entirely
+  // instead of just CSS-hiding it, so mobile viewports don't carry its
+  // duplicate state/effects/debounce timer alongside the mobile SearchBar.
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   // Improve the scroll monitor to prevent duplication.
   useEffect(() => {
     const handleScroll = () => {
@@ -183,10 +190,12 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
             </Link>
 
             {/* Search */}
-            <SearchBar
-              useLiveSearch={true}
-              className="hidden md:block w-1/6 "
-            />
+            {isDesktop !== false && (
+              <SearchBar
+                useLiveSearch={true}
+                className="hidden md:block w-1/6 "
+              />
+            )}
             {/* Actions */}
             <div className="flex items-center gap-1 shrink-0">
               {/* Language */}

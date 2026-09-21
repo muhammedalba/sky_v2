@@ -17,6 +17,7 @@ import ProductsGrid from "./ProductsGrid";
 import ProductsGridSkeleton from "./ProductsGridSkeleton";
 import { DEFAULT_CATALOG_PARAMS } from "@/features/products/storefrontQueryDefaults";
 import SearchBar from "@/components/navigation/SearchBar";
+import { useMediaQuery } from "@/shared/hooks/use-media-query";
 
 // ─── Stable empty reference ───────────────────────────────────────────────────
 const EMPTY_ARRAY: never[] = [];
@@ -93,6 +94,13 @@ export default function ProductsCatalogSection({
   const { filters, apiParams, page, sortBy, setPage, setSortBy } =
     useProductFilters();
 
+  // null = not yet known on the client (SSR-safe default: render as if it
+  // could be mobile, matching the CSS-based "md:hidden" behaviour below).
+  // Once resolved to `true`, skip mounting the mobile SearchBar entirely
+  // instead of just CSS-hiding it, so desktop viewports don't carry its
+  // duplicate state/effects/debounce timer alongside the desktop SearchBar.
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   // Badge count for the filter button
   const activeFilterCount = useMemo(
     () =>
@@ -131,14 +139,16 @@ export default function ProductsCatalogSection({
     <section id="all-products" className="relative py-10 sm:py-14 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Toolbar: always visible, no Suspense ──────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+        <div className="flex flex-wrap flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
           <h2 className="text-2xl sm:text-3xl font-black title-gradient">
             {t("allProducts")}
           </h2>
           {/* ── Mobile Search Bar: only visible on mobile screens ── */}
-          <div className="md:hidden mb-3">
-            <SearchBar useLiveSearch={true} className="w-full" />
-          </div>
+          {isDesktop !== true && (
+            <div className="md:hidden mb-3">
+              <SearchBar useLiveSearch={true} className="w-full" />
+            </div>
+          )}
           <div className="flex items-center justify-between md:justify-end gap-3">
             {/* Sort dropdown */}
             <Dropdown

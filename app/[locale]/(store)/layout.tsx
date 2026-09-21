@@ -15,6 +15,11 @@ import UsdApproximateNoticeModal from "@/widgets/currency/UsdApproximateNoticeMo
 
 // ─── Server-side Data Fetch ───────────────────────────────────────────────────
 
+// Bounds worst-case fetch latency so a slow/unreachable backend can never
+// stall this layout indefinitely — falls through to the existing catch-block
+// fallback exactly like any other fetch failure.
+const FETCH_TIMEOUT_MS = 5000;
+
 async function getCategories(locale: string): Promise<CategoryItem[]> {
   try {
     const res = await fetch(
@@ -22,6 +27,7 @@ async function getCategories(locale: string): Promise<CategoryItem[]> {
       {
         next: { revalidate: 300 },
         headers: { "Content-Type": "application/json", "Accept-Language": locale, },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       },
     );
 
@@ -44,6 +50,7 @@ async function getActivePromoBanner(locale: string): Promise<PromoBanner | null>
       {
         next: { revalidate: 60, tags: ["promo-banner"] },
         headers: { "Content-Type": "application/json", "Accept-Language": locale, },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       },
     );
 
@@ -70,9 +77,11 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const categories = await getCategories(locale);
-  const promoBanner = await getActivePromoBanner(locale);
-  const allMessages = await getMessages();
+  const [categories, promoBanner, allMessages] = await Promise.all([
+    getCategories(locale),
+    getActivePromoBanner(locale),
+    getMessages(),
+  ]);
 
 
 

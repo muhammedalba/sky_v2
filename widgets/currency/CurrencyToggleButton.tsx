@@ -239,7 +239,7 @@ export default function CurrencyToggleButton() {
       <div
         className={cn(
           "overflow-hidden border border-border/60 bg-background shadow-lg transition-[width] duration-300 ease-out",
-          isExpanded ? "w-56" : "w-5",
+          isExpanded ? "w-56" : "w-7",
           side === "left" ? "rounded-l-none rounded-r-xl" : "rounded-r-none rounded-l-xl",
         )}
       >

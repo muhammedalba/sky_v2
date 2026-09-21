@@ -230,7 +230,7 @@ export default function VariantTable({
                     </td>
                     <td className="px-6 py-4">
                       <Input
-                        value={variant.sku}
+                        value={variant.sku ?? ""}
                         onChange={(e) =>
                           updateVariant(idx, "sku", e.target.value)
                         }
@@ -244,7 +244,7 @@ export default function VariantTable({
                       <div className="flex flex-col gap-2">
                         <Input
                           type="number"
-                          value={variant.price?.toString() || ""}
+                          value={variant.price != null ? variant.price.toString() : ""}
                           onChange={(e) =>
                             updateVariant(idx, "price", Number(e.target.value))
                           }
@@ -259,7 +259,7 @@ export default function VariantTable({
                       <div className="flex flex-col gap-2">
                         <Input
                           type="number"
-                          value={variant.priceAfterDiscount?.toString() || ""}
+                          value={variant.priceAfterDiscount != null ? variant.priceAfterDiscount.toString() : ""}
                           onChange={(e) =>
                             updateVariant(
                               idx,
@@ -279,7 +279,7 @@ export default function VariantTable({
                     <td className="px-6 py-4">
                       <Input
                         type="number"
-                        value={variant.stock?.toString() || ""}
+                        value={variant.stock != null ? variant.stock.toString() : ""}
                         onChange={(e) =>
                           updateVariant(idx, "stock", Number(e.target.value))
                         }
