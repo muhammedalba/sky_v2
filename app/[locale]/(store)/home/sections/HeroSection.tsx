@@ -1,37 +1,26 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Button } from "@/shared/ui/Button";
 import { BoxIcon, CheckIcon, DownloadIcon, ShieldIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
 import Badge from "@/shared/ui/Badge";
-import { useSettings } from "@/app/providers/SettingsProvider";
-import { useLocale } from "next-intl";
+import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { truncate } from "@/lib/utils";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import HeroBackground from "./HeroBackground";
 
-export default function HeroSection() {
-  const t = useTranslations("home");
-  const settings = useSettings();
-  const locale = useLocale();
-  const siteName =
-    settings.siteName?.[locale as "ar" | "en"] || t("brand.name");
+export default async function HeroSection({
+  locale,
+}: {
+  locale: "ar" | "en";
+}) {
+  const t = await getTranslations({ locale, namespace: "home" });
+  const settings = (await getStoreSettings()) || DEFAULT_SETTINGS;
+  const siteName = settings.siteName?.[locale] || t("brand.name");
   const siteDescription =
-    settings.siteDescription?.[locale as "ar" | "en"] || t("hero.description");
+    settings.siteDescription?.[locale] || t("hero.description");
   return (
     <section className="relative min-h-screen  flex items-center pb-20 bg-background text-foreground">
-      {/* Video Background — preload=none delays the 6.7 MB download until autoplay starts */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="none"
-        poster="/assets/images/hero-poster.webp"
-        className="absolute inset-0 z-0 w-full h-full object-cover"
-      >
-        <source src="/assets/video/banner-video.mp4" type="video/mp4" />
-      </video>
+      <HeroBackground />
       <div className="absolute inset-0 z-1 bg-linear-to-b from-background/70 via-primary/10 to-background/60" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-48 lg:mt-36">

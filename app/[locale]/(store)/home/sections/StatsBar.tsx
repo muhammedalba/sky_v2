@@ -1,13 +1,14 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { BrandsIcon, CalendarIcon, PackageIcon, UsersIcon } from "@/shared/ui/Icons";
-import { useMemo } from "react";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import CountUp from "@/components/CountUp";
 
-export default function StatsBar() {
-  const t = useTranslations("home");
+export default async function StatsBar({
+  locale,
+}: {
+  locale: "ar" | "en";
+}) {
+  const t = await getTranslations({ locale, namespace: "home" });
 
   // Parse values safely with defaults
   const productsVal = parseInt(t("stats_bar.products_val") || "500", 10);
@@ -15,8 +16,7 @@ export default function StatsBar() {
   const yearsVal = parseInt(t("stats_bar.years_val") || "10", 10);
   const projectsVal = parseInt(t("stats_bar.projects_val") || "150", 10);
 
-  // Memoize stats array to prevent recreation on re-renders (if any parent state changes)
-  const stats = useMemo(() => [
+  const stats = [
     {
       icon: PackageIcon,
       val: productsVal,
@@ -49,7 +49,7 @@ export default function StatsBar() {
       colorClass:
         "text-info bg-info/10 group-hover:bg-info group-hover:text-info-foreground",
     },
-  ], [productsVal, brandsVal, yearsVal, projectsVal, t]);
+  ];
 
   return (
     <section className="relative z-20 -mt-12 sm:-mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-[90%] sm:w-full">
@@ -58,7 +58,7 @@ export default function StatsBar() {
           {stats.map((item, index) => {
             const Icon = item.icon;
             return (
-              <ScrollReveal animation="slide-right" delay={200 * index} 
+              <ScrollReveal animation="slide-right" delay={200 * index}
                 key={index}
                 className="group flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-start gap-2 p-4 lg:px-8 lg:first:pt-4 lg:divide-x-0 transition-all duration-300 hover:scale-[1.02]"
               >

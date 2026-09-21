@@ -1,5 +1,6 @@
 import { getStoreSettings } from '@/shared/api/settings';
 import ProductsClient from './ProductsClient';
+import TrustedBy from '@/components/home/TrustedBy';
 import { Metadata } from 'next';
 import {
   HydrationBoundary,
@@ -150,7 +151,11 @@ export default async function ProductsPage({ params }: Props) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProductsClient />
+      <ProductsClient
+        trustedBySection={
+          <TrustedBy locale={locale as 'ar' | 'en'} mode="text" duration="200s" />
+        }
+      />
     </HydrationBoundary>
   );
 }

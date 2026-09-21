@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { ReactNode, useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useProductFilters } from "@/features/products/hooks/useProductFilters";
 import { useProducts } from "@/features/products/hooks/useProducts";
@@ -30,14 +30,14 @@ const ProductsFilterDrawer = dynamic(
   () => import("./components/ProductsFilterDrawer"),
   { ssr: false }
 );
-const TrustedBy = dynamic(
-  () => import("@/components/home/TrustedBy"),
-  { ssr: false }
-);
 
 const EMPTY_ARRAY: never[] = [];
 
-export default function ProductsClient() {
+interface ProductsClientProps {
+  trustedBySection: ReactNode;
+}
+
+export default function ProductsClient({ trustedBySection }: ProductsClientProps) {
   const t = useTranslations("store.productsPage");
 
   // Only need filters + setFilter + resetFilters here;
@@ -138,8 +138,8 @@ export default function ProductsClient() {
         onOpenFilter={() => setIsMobileDrawerOpen(true)}
       />
 
-      {/* ─── 6. TRUSTED BY ───────────────────────────────────── */}
-      <TrustedBy mode="text" duration="200s" />
+      {/* ─── 6. TRUSTED BY (Server Component, rendered by page.tsx) ─── */}
+      {trustedBySection}
 
       {/* ─── Filter Drawer ────────────────────────────────────── */}
       <ProductsFilterDrawer

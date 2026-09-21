@@ -1,15 +1,9 @@
-"use client";
-
 import dynamic from "next/dynamic";
 import HeroSection from "./sections/HeroSection";
+import StatsBar from "./sections/StatsBar";
+import TrustedBy from "@/components/home/TrustedBy";
 
 // --- Sections Below the Fold (Dynamically Imported) ---
-const TrustedBy = dynamic(() => import("@/components/home/TrustedBy"), {
-  loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
-});
-const StatsBar = dynamic(() => import("./sections/StatsBar"), {
-  loading: () => <div className="h-96 animate-pulse bg-secondary/50" />,
-});
 const CategoriesSection = dynamic(
   () => import("./sections/CategoriesSection"),
   {
@@ -54,17 +48,21 @@ const FeaturedProjectsSection = dynamic(
   },
 );
 
-export default function HomeClient() {
+interface HomePageContentProps {
+  locale: "ar" | "en";
+}
+
+export default function HomePageContent({ locale }: HomePageContentProps) {
   return (
     <div className="flex flex-col min-h-screen max-w-350 mx-auto">
-      {/* 1. HERO SECTION (Above the Fold - Static Import) */}
-      <HeroSection />
+      {/* 1. HERO SECTION (Above the Fold - Server Component) */}
+      <HeroSection locale={locale} />
 
-      {/* Stats Bar (Above the Fold - Static Import) */}
-      <StatsBar />
+      {/* Stats Bar (Above the Fold - Server Component) */}
+      <StatsBar locale={locale} />
 
-      {/* 2. TRUST INDICATORS (Above the Fold - Static Import) */}
-      <TrustedBy />
+      {/* 2. TRUST INDICATORS (Above the Fold - Server Component) */}
+      <TrustedBy locale={locale} />
 
       {/* 3. CORE CATEGORIES (Below the Fold - Dynamic Import) */}
       <CategoriesSection  />
