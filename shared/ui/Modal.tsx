@@ -40,55 +40,54 @@ export default function Modal({ isOpen, onClose, title, description, children, f
   };
 
   return (
-    <div className="fixed  inset-0 z-100 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-secondary-950/40 backdrop-blur-sm animate-in fade-in duration-300"
+        className="fixed  inset-0 bg-secondary-950/40 backdrop-blur-sm animate-in fade-in duration-300"
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div className="m-h-full relative flex items-center justify-center">
-        <div
-          className={cn(
-            ' bg-background overflow-y-auto   overflow-x-hidden m-h-[95%] border border-border shadow-xl rounded-4xl w-full  animate-in zoom-in-95 fade-in duration-300',
-            sizes[size]
-          )}
-        >
-          {/* Header */}
-          <div className="px-8 pt-8 pb-4 mb-3 flex items-start justify-between  bg-muted/50">
-            <div className='border-b pb-5'>
-              {title && (
-                <h3 className="text-2xl font-black tracking-tight title-gradient">
-                  {title}
-                </h3>
-              )}
-              {description && (
-                <p className="text-muted-foreground text-sm font-medium mt-1">
-                  {description}
-                </p>
-              )}
-            </div>
-            <Button
-              variant="destructive"
-              size="icon"
-              onClick={onClose}
-              className='absolute -top-1 inset-e-0 rounded-full'
-            >
-              <XIcon className="w-5 h-5 " /> {/* Close icon fallback */}
-            </Button>
-          </div> 
+      <div
+        className={cn(
+          'relative flex flex-col bg-background max-h-[90vh] w-full border border-border shadow-xl rounded-4xl overflow-hidden animate-in zoom-in-95 fade-in duration-300',
+          sizes[size]
+        )}
+      >
+        {/* Header */}
+        <div className="px-8 pt-8 pb-4 mb-3 flex items-start justify-between  bg-muted/50 shrink-0">
+          <div className='border-b pb-5'>
+            {title && (
+              <h3 className="text-2xl font-black tracking-tight title-gradient">
+                {title}
+              </h3>
+            )}
+            {description && (
+              <p className="text-muted-foreground text-sm font-medium mt-1">
+                {description}
+              </p>
+            )}
+          </div>
+          <Button
+            variant="destructive"
+            size="icon"
+            onClick={onClose}
+            className='absolute -top-1 inset-e-0 rounded-full'
+          >
+            <XIcon className="w-5 h-5 " /> {/* Close icon fallback */}
+          </Button>
+        </div>
 
-          {/* Body */}
-          <div className="px-8 pb-8">{children}</div>
+        {/* Body */}
+        <div className="px-8 pb-8 overflow-y-auto overflow-x-hidden">{children}</div>
 
-          {/* Footer */}
-          {footer && (
-            <div className="px-8 py-6 bg-secondary/20 border-t border-border flex justify-end gap-3">
-              {footer}
-            </div>
-          )}
-        </div></div>
+        {/* Footer */}
+        {footer && (
+          <div className="px-8 py-6 bg-secondary/20 border-t border-border flex justify-end gap-3 shrink-0">
+            {footer}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

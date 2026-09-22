@@ -1,8 +1,10 @@
+import { FileAsset } from "@/shared/types/file-asset";
+
 export interface ShippingProvider {
   _id: string;
   name: string;
   code: string;
-  logo: string;
+  logo: FileAsset;
   trackingUrl: string;
   isActive: boolean;
   createdAt: string;

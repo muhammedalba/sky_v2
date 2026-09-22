@@ -1,26 +1,31 @@
-import { useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useTranslations } from 'next-intl';
-import { Input } from '@/shared/ui/Input';
-import { Button } from '@/shared/ui/Button';
-import { Switch } from '@/shared/ui/Switch';
-import { CreateShippingProviderDto, ShippingProvider } from '../../types';
-import { useCreateShippingProvider, useUpdateShippingProvider } from '../../hooks/useShippingProviders';
-import { useToast } from '@/shared/hooks/useToast';
+import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useTranslations } from "next-intl";
+import { Input } from "@/shared/ui/Input";
+import { Button } from "@/shared/ui/Button";
+import { Switch } from "@/shared/ui/Switch";
+import { CreateShippingProviderDto, ShippingProvider } from "../../types";
+import {
+  useCreateShippingProvider,
+  useUpdateShippingProvider,
+} from "../../hooks/useShippingProviders";
+import { useToast } from "@/shared/hooks/useToast";
 import { EditIcon } from "@/shared/ui/Icons";
-import ImageUpload from '@/shared/ui/form/ImageUpload';
+import ImageUpload from "@/shared/ui/form/ImageUpload";
+import { getFileUrl } from "@/shared/utils/image.util";
 
-const formSchema = z.object({
-  name: z.string().min(1, 'الاسم بالعربية مطلوب'),
-  code: z.string().min(1, 'كود الشركة مطلوب'),
-  logo: z.any().optional(),
-  trackingUrl: z.string().optional(),
-  isActive: z.boolean(),
-});
+const getFormSchema = (t: ReturnType<typeof useTranslations>) =>
+  z.object({
+    name: z.string().min(1, t("form.nameRequired")),
+    code: z.string().min(1, t("form.codeRequired")),
+    logo: z.any().optional(),
+    trackingUrl: z.string().optional(),
+    isActive: z.boolean(),
+  });
 
-type ShippingProviderFormData = z.infer<typeof formSchema>;
+type ShippingProviderFormData = z.infer<ReturnType<typeof getFormSchema>>;
 
 interface ShippingProviderFormProps {
   editingProvider?: ShippingProvider | null;
@@ -28,17 +33,26 @@ interface ShippingProviderFormProps {
   onCancel?: () => void;
 }
 
-export default function ShippingProviderForm({ editingProvider, onSuccess, onCancel }: ShippingProviderFormProps) {
-  // const t = useTranslations('shipping');
-  const tCommon = useTranslations('buttons');
+export default function ShippingProviderForm({
+  editingProvider,
+  onSuccess,
+  onCancel,
+}: ShippingProviderFormProps) {
+  const t = useTranslations("shipping");
+  const tCommon = useTranslations("buttons");
   const { success: toastSuccess, error: toastError } = useToast();
+  const formSchema = getFormSchema(t);
 
-  const { mutateAsync: createProvider, isPending: isCreating } = useCreateShippingProvider();
-  const { mutateAsync: updateProvider, isPending: isUpdating } = useUpdateShippingProvider();
+  const { mutateAsync: createProvider, isPending: isCreating } =
+    useCreateShippingProvider();
+  const { mutateAsync: updateProvider, isPending: isUpdating } =
+    useUpdateShippingProvider();
   const isPending = isCreating || isUpdating;
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(editingProvider?.logo || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    getFileUrl(editingProvider?.logo) || null,
+  );
 
   const {
     register,
@@ -48,29 +62,31 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
     formState: { errors },
   } = useForm<ShippingProviderFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: editingProvider ? {
-      name:editingProvider.name || '',
-      code: editingProvider.code || '',
-      logo: editingProvider.logo || '',
-      trackingUrl: editingProvider.trackingUrl || '',
-      isActive: editingProvider.isActive ?? true,
-    } : {
-      name: "",
-      code: '',
-      logo: '',
-      trackingUrl: '',
-      isActive: true,
-    },
+    defaultValues: editingProvider
+      ? {
+          name: editingProvider.name || "",
+          code: editingProvider.code || "",
+          logo: editingProvider.logo || "",
+          trackingUrl: editingProvider.trackingUrl || "",
+          isActive: editingProvider.isActive ?? true,
+        }
+      : {
+          name: "",
+          code: "",
+          logo: "",
+          trackingUrl: "",
+          isActive: true,
+        },
   });
 
-  const isActive = useWatch({ control, name: 'isActive' });
+  const isActive = useWatch({ control, name: "isActive" });
 
   const onSubmit = async (data: CreateShippingProviderDto) => {
     try {
       const payload: CreateShippingProviderDto = {
         name: data.name,
         code: data.code,
-        trackingUrl: data.trackingUrl || '',
+        trackingUrl: data.trackingUrl || "",
         isActive: data.isActive,
       };
 
@@ -79,15 +95,16 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
       }
 
       if (editingProvider) {
-        await updateProvider({ id: editingProvider._id, data: payload  });
-        toastSuccess('تم التحديث بنجاح');
+        await updateProvider({ id: editingProvider._id, data: payload });
+        toastSuccess(t("form.updateSuccess"));
       } else {
         await createProvider(payload);
-        toastSuccess('تمت الإضافة بنجاح');
+        toastSuccess(t("form.createSuccess"));
       }
       onSuccess?.();
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      const msg =
+        error instanceof Error ? error.message : t("form.unexpectedError");
       toastError(msg);
     }
   };
@@ -96,9 +113,9 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="space-y-2">
         <Input
-          label="اسم شركة الشحن"
+          label={t("form.nameLabel")}
           icon={EditIcon}
-          {...register('name')}
+          {...register("name")}
           error={errors.name?.message}
           disabled={isPending}
           dir="rtl"
@@ -107,8 +124,8 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
 
       <div className="space-y-2">
         <Input
-          label="كود الشركة (Code)"
-          {...register('code')}
+          label={t('form.codeLabel')}
+          {...register("code")}
           error={errors.code?.message}
           disabled={isPending}
           dir="ltr"
@@ -117,13 +134,15 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
 
       <div className="space-y-2">
         <Input
-          label="رابط التتبع (Tracking URL)"
-          {...register('trackingUrl')}
+          label={t("form.trackingUrlLabel")}
+          {...register("trackingUrl")}
           error={errors.trackingUrl?.message}
           disabled={isPending}
           dir="ltr"
         />
-        <p className="text-xs text-muted-foreground mt-1">استخدم {"{tracking_number}"} في الرابط ليتم استبدالها برقم التتبع لاحقاً</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          {t("form.trackingUrlHint")}
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -132,12 +151,12 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
           onChange={(file) => {
             setImageFile(file);
             setImagePreview(URL.createObjectURL(file));
-            setValue('logo', file, { shouldValidate: true });
+            setValue("logo", file, { shouldValidate: true });
           }}
           onRemove={() => {
             setImageFile(null);
             setImagePreview(null);
-            setValue('logo', undefined, { shouldValidate: true });
+            setValue("logo", undefined, { shouldValidate: true });
           }}
           error={errors?.logo?.message as string | undefined}
         />
@@ -145,14 +164,14 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
 
       <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
         <div className="space-y-0.5">
-          <span className="font-semibold text-base">تفعيل الشركة</span>
+          <span className="font-semibold text-base">{t("form.activeTitle")}</span>
           <p className="text-sm text-muted-foreground">
-            هل تريد إتاحة هذه الشركة للعملاء؟
+            {t("form.activeDescription")}
           </p>
         </div>
         <Switch
           checked={isActive}
-          onCheckedChange={(val) => setValue('isActive', val)}
+          onCheckedChange={(val) => setValue("isActive", val)}
           disabled={isPending}
         />
       </div>
@@ -164,7 +183,7 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
           isLoading={isPending}
           disabled={isPending}
         >
-          {editingProvider ? tCommon('save') : tCommon('add')}
+          {editingProvider ? tCommon("save") : tCommon("add")}
         </Button>
         <Button
           type="button"
@@ -173,7 +192,7 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
           onClick={onCancel}
           disabled={isPending}
         >
-          {tCommon('cancel')}
+          {tCommon("cancel")}
         </Button>
       </div>
     </form>

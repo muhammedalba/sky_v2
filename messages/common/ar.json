@@ -223,6 +223,19 @@
       "name": "اسم الشركة",
       "status": "الحالة",
       "actions": "إجراءات"
+    },
+    "form": {
+      "nameLabel": "اسم شركة الشحن",
+      "codeLabel": "كود الشركة (Code)",
+      "trackingUrlLabel": "رابط التتبع (Tracking URL)",
+      "trackingUrlHint": "استخدم '{tracking_number}' في الرابط ليتم استبدالها برقم التتبع لاحقاً",
+      "activeTitle": "تفعيل الشركة",
+      "activeDescription": "هل تريد إتاحة هذه الشركة للعملاء؟",
+      "nameRequired": "الاسم بالعربية مطلوب",
+      "codeRequired": "كود الشركة مطلوب",
+      "updateSuccess": "تم التحديث بنجاح",
+      "createSuccess": "تمت الإضافة بنجاح",
+      "unexpectedError": "حدث خطأ غير متوقع"
     }
   },
   "shippingRates": {

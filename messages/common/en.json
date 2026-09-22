@@ -223,6 +223,19 @@
       "name": "Company Name",
       "status": "Status",
       "actions": "Actions"
+    },
+    "form": {
+      "nameLabel": "Shipping Company Name",
+      "codeLabel": "Company Code",
+      "trackingUrlLabel": "Tracking URL",
+      "trackingUrlHint": "Use '{tracking_number}' in the URL to be replaced with the tracking number later",
+      "activeTitle": "Enable Company",
+      "activeDescription": "Do you want to make this company available to customers?",
+      "nameRequired": "Arabic name is required",
+      "codeRequired": "Company code is required",
+      "updateSuccess": "Updated successfully",
+      "createSuccess": "Added successfully",
+      "unexpectedError": "An unexpected error occurred"
     }
   },
   "shippingRates": {

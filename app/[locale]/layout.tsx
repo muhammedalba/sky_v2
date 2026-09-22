@@ -8,22 +8,20 @@ import LocaleProvider from "./LocaleProvider";
 import ThemeProvider from "@/app/providers/ThemeProvider";
 import ToastProvider from "@/shared/ui/toast/ToastProvider";
 import SettingsProvider from "@/app/providers/SettingsProvider";
-import "../globals.css";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import CartDrawer from "@/features/cart/components/CartDrawer";
 import { getImageUrl } from "@/shared/utils/image.util";
-import { getFontVariables } from "@/lib/fonts";
 import { env } from "@/lib/env";
 
 /**
  * Enterprise SEO Engine
  * Dynamic Metadata Generation based on active locale and global settings.
  *
- * This is the app's true root layout (html/body) — it lives under [locale]
- * so `params.locale` is available directly, instead of the dynamic
- * `getLocale()` a layout above this segment would need (which forces the
- * entire site to render dynamically, defeating static/ISR generation).
+ * Note: html/body live in the true root app/layout.tsx, not here — this
+ * layout uses `params.locale` directly (instead of the dynamic `getLocale()`
+ * an ancestor layout would need), which keeps the whole app static/ISR
+ * eligible. See app/layout.tsx for why the theme <Script> also lives there.
  */
 export async function generateMetadata({
   params,
@@ -104,8 +102,6 @@ export default async function RootLayout({
   // Optimize next-intl rendering & enable static deduplication
   setRequestLocale(locale);
 
-  const dir = locale === "ar" ? "rtl" : "ltr";
-
   const [allMessages, settings] = await Promise.all([
     getMessages(),
     getStoreSettings(),
@@ -137,55 +133,46 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
-      <head />
-      <body className={`${getFontVariables()} antialiased`}>
-        <Script
-          id="theme-initializer"
-          src="/theme-init.js"
-          strategy="beforeInteractive"
-        />
+    <>
+      {/* JSON-LD Structured Data for SEO Rich Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
 
-        {/* JSON-LD Structured Data for SEO Rich Snippets */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
-          }}
-        />
+      {finalSettings.googleAnalyticsId && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${finalSettings.googleAnalyticsId}');
+            `}
+          </Script>
+        </>
+      )}
 
-        {finalSettings.googleAnalyticsId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
-              strategy="afterInteractive"
+      <LocaleProvider locale={locale} messages={rootMessages}>
+        <ThemeProvider>
+          <SettingsProvider settings={finalSettings}>
+            <ToastProvider />
+
+            {/* Performance Monitoring */}
+            <PerformanceMonitor
+              enablePerformance={finalSettings.enablePerformance ?? false}
             />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${finalSettings.googleAnalyticsId}');
-              `}
-            </Script>
-          </>
-        )}
-
-        <LocaleProvider locale={locale} messages={rootMessages}>
-          <ThemeProvider>
-            <SettingsProvider settings={finalSettings}>
-              <ToastProvider />
-
-              {/* Performance Monitoring */}
-              <PerformanceMonitor
-                enablePerformance={finalSettings.enablePerformance ?? false}
-              />
-              {children}
-              <CartDrawer />
-            </SettingsProvider>
-          </ThemeProvider>
-        </LocaleProvider>
-      </body>
-    </html>
+            {children}
+            <CartDrawer />
+          </SettingsProvider>
+        </ThemeProvider>
+      </LocaleProvider>
+    </>
   );
 }

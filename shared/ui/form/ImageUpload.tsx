@@ -41,6 +41,8 @@ export default function ImageUpload({ value, onChange, onRemove, className, erro
     if (inputRef.current) inputRef.current.value = '';
     onRemove();
   };
+
+  
   return (
     <div className={`flex flex-col gap-4  ${className}  `}>
       <div className="flex items-center gap-4 justify-center">
