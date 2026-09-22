@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import LoginForm from "@/features/auth/components/LoginForm";
 import AuthPageLayout from "@/features/auth/components/AuthPageLayout";
@@ -35,7 +36,9 @@ export default async function LoginPage({
         bottom: "bg-gradient-to-tl from-secondary/30 to-primary/20",
       }}
     >
-      <LoginForm />
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
     </AuthPageLayout>
   );
 }

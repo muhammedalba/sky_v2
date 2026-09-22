@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { ReactNode } from "react";
 import { locales } from "@/i18n";
@@ -12,27 +13,35 @@ import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import CartDrawer from "@/features/cart/components/CartDrawer";
 import { getImageUrl } from "@/shared/utils/image.util";
+import { getFontVariables } from "@/lib/fonts";
+import { env } from "@/lib/env";
 
 /**
  * Enterprise SEO Engine
- * Dynamic Metadata Generation based on active locale and global settings
+ * Dynamic Metadata Generation based on active locale and global settings.
+ *
+ * This is the app's true root layout (html/body) — it lives under [locale]
+ * so `params.locale` is available directly, instead of the dynamic
+ * `getLocale()` a layout above this segment would need (which forces the
+ * entire site to render dynamically, defeating static/ISR generation).
  */
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
-}) {
+}): Promise<Metadata> {
   const { locale } = await params;
   const settings = (await getStoreSettings()) || DEFAULT_SETTINGS;
 
   const title =
     settings.metaTitle?.[locale as "ar" | "en"] ||
     settings.siteName?.[locale as "ar" | "en"] ||
-    "Sky Galaxy";
+    env.APP_NAME;
   const description =
     settings.metaDescription?.[locale as "ar" | "en"] ||
     settings.siteDescription?.[locale as "ar" | "en"] ||
-    "";
+    env.APP_DESCRIPTION;
+  const ogImage = getImageUrl(settings.logo);
 
   return {
     title: {
@@ -49,10 +58,15 @@ export async function generateMetadata({
       title,
       description,
       siteName: title,
-      images: getImageUrl(settings.logo)
-        ? [{ url: getImageUrl(settings.logo)! }]
-        : [],
+      images: ogImage ? [{ url: ogImage }] : [],
+      locale: locale === "ar" ? "ar_SA" : "en_US",
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : [],
     },
     robots: {
       index: true,
@@ -60,6 +74,13 @@ export async function generateMetadata({
     },
   };
 }
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -82,6 +103,8 @@ export default async function RootLayout({
 
   // Optimize next-intl rendering & enable static deduplication
   setRequestLocale(locale);
+
+  const dir = locale === "ar" ? "rtl" : "ltr";
 
   const [allMessages, settings] = await Promise.all([
     getMessages(),
@@ -114,46 +137,55 @@ export default async function RootLayout({
   };
 
   return (
-    <>
-      {/* JSON-LD Structured Data for SEO Rich Snippets */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
-        }}
-      />
+    <html lang={locale} dir={dir} suppressHydrationWarning>
+      <head />
+      <body className={`${getFontVariables()} antialiased`}>
+        <Script
+          id="theme-initializer"
+          src="/theme-init.js"
+          strategy="beforeInteractive"
+        />
 
-      {finalSettings.googleAnalyticsId && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
-            strategy="afterInteractive"
-          />
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${finalSettings.googleAnalyticsId}');
-            `}
-          </Script>
-        </>
-      )}
+        {/* JSON-LD Structured Data for SEO Rich Snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
 
-      <LocaleProvider locale={locale} messages={rootMessages}>
-        <ThemeProvider>
-          <SettingsProvider settings={finalSettings}>
-            <ToastProvider />
-
-            {/* Performance Monitoring */}
-            <PerformanceMonitor
-              enablePerformance={finalSettings.enablePerformance ?? false}
+        {finalSettings.googleAnalyticsId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
+              strategy="afterInteractive"
             />
-            {children}
-            <CartDrawer />
-          </SettingsProvider>
-        </ThemeProvider>
-      </LocaleProvider>
-    </>
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${finalSettings.googleAnalyticsId}');
+              `}
+            </Script>
+          </>
+        )}
+
+        <LocaleProvider locale={locale} messages={rootMessages}>
+          <ThemeProvider>
+            <SettingsProvider settings={finalSettings}>
+              <ToastProvider />
+
+              {/* Performance Monitoring */}
+              <PerformanceMonitor
+                enablePerformance={finalSettings.enablePerformance ?? false}
+              />
+              {children}
+              <CartDrawer />
+            </SettingsProvider>
+          </ThemeProvider>
+        </LocaleProvider>
+      </body>
+    </html>
   );
 }
