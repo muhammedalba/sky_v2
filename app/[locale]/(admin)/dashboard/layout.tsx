@@ -8,6 +8,8 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 
 import { AsyncBoundary } from "@/shared/ui/boundaries/AsyncBoundary";
 import { Permissions } from "@/features/roles/types";
+import MaintenanceGuard from "@/components/MaintenanceGuard";
+import { getMaintenanceState } from "@/lib/maintenance";
 
 export default async function DashboardLayoutWrapper({
   children,
@@ -38,6 +40,8 @@ export default async function DashboardLayoutWrapper({
   if (!isAllowed) {
     redirect(`/home`);
   }
+
+  const { isMaintenance, canBypassMaintenance } = await getMaintenanceState();
 
   // Fetch all messages on the server and filter for the client dashboard sub-tree
   const allMessages = await getMessages();
@@ -76,9 +80,14 @@ export default async function DashboardLayoutWrapper({
 
   return (
     <NextIntlClientProvider locale={locale} messages={dashboardMessages}>
-      <DashboardLayout locale={locale}>
-        <AsyncBoundary>{children}</AsyncBoundary>
-      </DashboardLayout>
+      <MaintenanceGuard
+        isMaintenance={isMaintenance}
+        canBypassMaintenance={canBypassMaintenance}
+      >
+        <DashboardLayout locale={locale}>
+          <AsyncBoundary>{children}</AsyncBoundary>
+        </DashboardLayout>
+      </MaintenanceGuard>
     </NextIntlClientProvider>
   );
 }

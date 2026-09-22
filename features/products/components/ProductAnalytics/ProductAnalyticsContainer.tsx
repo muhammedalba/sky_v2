@@ -218,7 +218,7 @@ export function ProductAnalyticsContainer() {
       stats?.dateRange
         ? `${formatDate(stats.dateRange.start)} → ${formatDate(stats.dateRange.end)}`
         : "",
-    [stats?.dateRange],
+    [stats],
   );
 
   const topProducts = useMemo(
@@ -496,14 +496,14 @@ export function ProductAnalyticsContainer() {
               </Card>
 
               {/* Brand Performance */}
-              <Card className="border-none shadow-md bg-background">
+              <Card className="border-none shadow-md bg-background max-h-80 overflow-y-scroll">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-bold">
                     {t("charts.brandPerformance")}
                   </CardTitle>
                   <CardDescription>{t("charts.brandDesc")}</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4 pt-2">
+                <CardContent className="space-y-4 pt-2 ">
                   {(stats?.brandPerformance ?? []).map((b, i) => (
                     <HorizontalBar
                       key={b._id ?? "unknown"}

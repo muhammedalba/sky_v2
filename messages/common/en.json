@@ -326,5 +326,10 @@
     "only_left": "Only {stock} left",
     "product_unavailable": "Product unavailable"
 
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred while rendering this component. Our team has been notified.",
+    "retry": "Try again"
   }
 }

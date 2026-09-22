@@ -8,12 +8,7 @@ import ThemeProvider from "@/app/providers/ThemeProvider";
 import ToastProvider from "@/shared/ui/toast/ToastProvider";
 import SettingsProvider from "@/app/providers/SettingsProvider";
 import "../globals.css";
-import { cookies } from "next/headers";
-import { getServerUserFromToken, checkUserPermission } from "@/lib/auth";
-import { User } from "@/types";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
-import { Permissions } from "@/features/roles/types";
-import MaintenanceGuard from "@/components/MaintenanceGuard";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import CartDrawer from "@/features/cart/components/CartDrawer";
 import { getImageUrl } from "@/shared/utils/image.util";
@@ -88,7 +83,6 @@ export default async function RootLayout({
   // Optimize next-intl rendering & enable static deduplication
   setRequestLocale(locale);
 
-  const cookieStore = await cookies();
   const [allMessages, settings] = await Promise.all([
     getMessages(),
     getStoreSettings(),
@@ -109,16 +103,6 @@ export default async function RootLayout({
 
   // Use fallback settings if API fails
   const finalSettings = settings || DEFAULT_SETTINGS;
-
-  const token = cookieStore.get("access_token")?.value;
-  const user = token ? getServerUserFromToken(token) : null;
-  const canBypassMaintenance = checkUserPermission(user as User, [
-    Permissions.UPDATE_SETTINGS,
-    Permissions.VIEW_SETTINGS,
-    Permissions.ACCESS_DASHBOARD,
-  ]);
-
-  const isMaintenance = finalSettings.maintenanceMode === true;
 
   // 1. Structured Data Configuration
   const structuredData = {
@@ -159,20 +143,14 @@ export default async function RootLayout({
       <LocaleProvider locale={locale} messages={rootMessages}>
         <ThemeProvider>
           <SettingsProvider settings={finalSettings}>
-            <MaintenanceGuard
-              isMaintenance={isMaintenance}
-              canBypassMaintenance={canBypassMaintenance}
-              locale={locale}
-            >
-              <ToastProvider />
+            <ToastProvider />
 
-              {/* Performance Monitoring */}
-              <PerformanceMonitor
-                enablePerformance={finalSettings.enablePerformance ?? false}
-              />
-              {children}
-              <CartDrawer />
-            </MaintenanceGuard>
+            {/* Performance Monitoring */}
+            <PerformanceMonitor
+              enablePerformance={finalSettings.enablePerformance ?? false}
+            />
+            {children}
+            <CartDrawer />
           </SettingsProvider>
         </ThemeProvider>
       </LocaleProvider>

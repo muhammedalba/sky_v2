@@ -30,7 +30,7 @@ export default async function PromoBannerSection({
             {t("promo.description")}
           </p>
           <div className="flex flex-wrap items-center gap-6 pt-2">
-            <Link href="/contact">
+            <Link href="/request-quote">
               <Button className="h-14 px-8 rounded-xl bg-linear-to-b from-blue-500 to-blue-600 hover:brightness-110 text-white font-bold text-base shadow-xl shadow-blue-950/30">
                 {t("promo.cta_quote")}
               </Button>

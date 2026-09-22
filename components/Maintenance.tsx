@@ -10,6 +10,7 @@ export default function Maintenance() {
   const t = useTranslations('maintenance');
   const locale = useLocale();
   const settings = useSettings();
+  const email=settings.contactInfo?.email || 'skygalaxy.shop@gmail.com';    
 
   const customMessage = settings.maintenanceMessage?.[locale as 'ar' | 'en'] || t('description');
   const storeName = settings.siteName?.[locale as 'ar' | 'en'] || 'SkyGalaxy';
@@ -58,7 +59,7 @@ export default function Maintenance() {
 
         {/* Status & Support Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl mx-auto px-4">
-          <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-7 rounded-3xl flex items-center gap-5 text-start shadow-xl shadow-slate-200/40 dark:shadow-none hover:bg-white/90 dark:hover:bg-white/10 hover:translate-y-[-2px] transition-all duration-300 group">
+          <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-7 rounded-3xl flex items-center gap-5 text-start shadow-xl shadow-slate-200/40 dark:shadow-none hover:bg-white/90 dark:hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300 group">
             <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <ClockIcon className="w-7 h-7 text-primary" />
             </div>
@@ -68,7 +69,7 @@ export default function Maintenance() {
             </div>
           </div>
 
-          <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-7 rounded-3xl flex items-center gap-5 text-start shadow-xl shadow-slate-200/40 dark:shadow-none hover:bg-white/90 dark:hover:bg-white/10 hover:translate-y-[-2px] transition-all duration-300 group">
+          <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 p-7 rounded-3xl flex items-center gap-5 text-start shadow-xl shadow-slate-200/40 dark:shadow-none hover:bg-white/90 dark:hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300 group">
             <div className="w-14 h-14 shrink-0 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <MessageCircleIcon className="w-7 h-7 text-purple-600 dark:text-purple-400" />
             </div>
@@ -89,7 +90,7 @@ export default function Maintenance() {
             {t('retryBtn')}
           </Button>
           <a 
-            href="mailto:support@skygalaxy.com" 
+            href={`mailto:${email}`} 
             className="w-full sm:w-auto h-16 px-9 rounded-2xl border border-slate-300 bg-white/60  backdrop-blur-md flex items-center justify-center gap-3 font-bold  text-primary  hover:border-slate-400  transition-all group shadow-lg shadow-slate-200/30"
           >
             <MailIcon className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors" />
