@@ -66,14 +66,14 @@ export default function ShippingProviderForm({
       ? {
           name: editingProvider.name || "",
           code: editingProvider.code || "",
-          logo: editingProvider.logo || "",
+          logo: getFileUrl(editingProvider.logo) || "",
           trackingUrl: editingProvider.trackingUrl || "",
           isActive: editingProvider.isActive ?? true,
         }
       : {
           name: "",
           code: "",
-          logo: "",
+          logo: null,
           trackingUrl: "",
           isActive: true,
         },
@@ -124,7 +124,7 @@ export default function ShippingProviderForm({
 
       <div className="space-y-2">
         <Input
-          label={t('form.codeLabel')}
+          label={t("form.codeLabel")}
           {...register("code")}
           error={errors.code?.message}
           disabled={isPending}
@@ -164,7 +164,9 @@ export default function ShippingProviderForm({
 
       <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
         <div className="space-y-0.5">
-          <span className="font-semibold text-base">{t("form.activeTitle")}</span>
+          <span className="font-semibold text-base">
+            {t("form.activeTitle")}{" "}
+          </span>
           <p className="text-sm text-muted-foreground">
             {t("form.activeDescription")}
           </p>
