@@ -2,10 +2,36 @@ import { cache } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { env } from "@/lib/env";
+import { locales } from "@/i18n";
 import ProductDetailsClient from "./ProductDetailsClient";
 
 interface ProductPageProps {
   params: Promise<{ locale: string; slug: string }>;
+}
+
+// Pre-renders the top best-selling products at build time (same "-totalSold"
+// sort the storefront's own best-sellers section uses) so their HTML is
+// served from the static/ISR cache instead of being re-rendered on every
+// request. Any other product slug still works via on-demand ISR (dynamicParams
+// defaults to true) — it just isn't pre-built.
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(
+      `${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}?limit=50&sort=-totalSold`,
+      { next: { revalidate: 3600 } },
+    );
+    if (!res.ok) return [];
+
+    const json = await res.json();
+    const products: { slug?: string }[] = json?.data || [];
+    const slugs = products
+      .map((p) => p.slug)
+      .filter((slug): slug is string => Boolean(slug));
+
+    return locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
+  } catch {
+    return [];
+  }
 }
 
 /**
