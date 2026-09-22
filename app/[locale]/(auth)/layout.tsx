@@ -37,7 +37,7 @@ export default async function AuthLayout({
       <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
         <AuthNavbar />
         <main className="flex-1 ">{children}</main>
-        <StoreFooter />
+        <StoreFooter locale={locale as "ar" | "en"} />
       </div>
     </NextIntlClientProvider>
   );

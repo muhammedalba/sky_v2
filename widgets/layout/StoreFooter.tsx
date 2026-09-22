@@ -1,8 +1,6 @@
-"use client";
-
-import { useTranslations, useLocale } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/navigation";
-import { useSettings } from "@/app/providers/SettingsProvider";
+import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import {
   FacebookIcon,
@@ -20,15 +18,19 @@ import {
   YoutubeIcon,
 } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import FreeShippingPrice from "./FreeShippingPrice";
 
-export default function StoreFooter() {
-  const t = useTranslations("store.footer");
-  const navT = useTranslations("store.nav");
-  const locale = useLocale();
-  const settings = useSettings();
+export default async function StoreFooter({
+  locale,
+}: {
+  locale: "ar" | "en";
+}) {
+  const t = await getTranslations({ locale, namespace: "store.footer" });
+  const navT = await getTranslations({ locale, namespace: "store.nav" });
+  const settings = (await getStoreSettings()) || DEFAULT_SETTINGS;
   const currentYear = new Date().getFullYear();
 
-  const siteName = settings.siteName?.[locale as "ar" | "en"] || "Sky Galaxy";
+  const siteName = settings.siteName?.[locale] || "Sky Galaxy";
   const socialLinks = settings.socialLinks || {};
 
   return (
@@ -52,12 +54,10 @@ export default function StoreFooter() {
             </div>
             <div>
               <h4 className="font-bold text-sm title-gradient">
-                {locale === "ar" ? "شحن سريع وموثوق" : "Fast & Secure Shipping"}
+                {t("highlights.shipping.title")}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
-                {locale === "ar"
-                  ? "توصيل سريع وآمن لجميع المناطق"
-                  : "Express delivery to your doorstep"}
+                {t("highlights.shipping.desc")}
               </p>
             </div>
           </ScrollReveal>
@@ -66,17 +66,15 @@ export default function StoreFooter() {
             animation="slide-up"
             className="flex items-center gap-4 p-5 rounded-2xl bg-card border border-border/60 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-300"
           >
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <div className="p-3 rounded-xl bg-success/10 text-emerald-600  border border-success/20">
               <ShieldIcon className="h-6 w-6 text-success" />
             </div>
             <div>
               <h4 className="font-bold text-sm title-gradient">
-                {locale === "ar" ? "ضمان وأمان 100%" : "100% Secure Checkout"}
+                {t("highlights.secure.title")}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
-                {locale === "ar"
-                  ? "بياناتك مشفرة وحقوقك محفوظة بالكامل"
-                  : "Encrypted transactions & buyers protection"}
+                {t("highlights.secure.desc")}
               </p>
             </div>
           </ScrollReveal>
@@ -90,14 +88,10 @@ export default function StoreFooter() {
             </div>
             <div>
               <h4 className="font-bold text-sm title-gradient">
-                {locale === "ar"
-                  ? "دعم فني متواصل 24/7"
-                  : "Premium Support 24/7"}
+                {t("highlights.supportHours.title")}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
-                {locale === "ar"
-                  ? "فريق متخصص لمساعدتك في اختيار المنتج المناسب"
-                  : "A dedicated team ready to help you pick the right product"}
+                {t("highlights.supportHours.desc")}
               </p>
             </div>
           </ScrollReveal>
@@ -110,12 +104,10 @@ export default function StoreFooter() {
             </div>
             <div>
               <h4 className="font-bold text-sm title-gradient">
-                {locale === "ar" ? "تسعير الكميات" : "Bulk Pricing"}
+                {t("highlights.bulkPricing.title")}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
-                {locale === "ar"
-                  ? "خصومات تنافسية عند الطلب بكميات كبيرة"
-                  : "Competitive discounts on large-volume orders"}
+                {t("highlights.bulkPricing.desc")}
               </p>
             </div>
           </ScrollReveal>
@@ -149,7 +141,7 @@ export default function StoreFooter() {
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-medium">
-              {settings.metaDescription?.[locale as "ar" | "en"] ||
+              {settings.metaDescription?.[locale] ||
                 "Premium industrial products and electronic components."}
             </p>
 
@@ -305,10 +297,10 @@ export default function StoreFooter() {
                   </div>
                   <span className="leading-tight">
                     {[
-                      settings.businessAddress.street?.[locale as "ar" | "en"],
-                      settings.businessAddress.area?.[locale as "ar" | "en"],
-                      settings.businessAddress.city?.[locale as "ar" | "en"],
-                      settings.businessAddress.country?.[locale as "ar" | "en"],
+                      settings.businessAddress.street?.[locale],
+                      settings.businessAddress.area?.[locale],
+                      settings.businessAddress.city?.[locale],
+                      settings.businessAddress.country?.[locale],
                     ]
                       .filter(Boolean)
                       .join(", ")}
@@ -330,22 +322,24 @@ export default function StoreFooter() {
 
             <div className="space-y-3 font-medium">
               <div className="p-3.5 rounded-2xl bg-card border border-border/60 shadow-xs flex items-center justify-between gap-2">
-                <span className="text-[11px] text-muted-foreground">
-                  {locale === "ar" ? "العملة الرئيسية" : "Main Currency"}
+                <span className="text-[11px] text-muted-foreground font-bold">
+                  {t("mainCurrency")}
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20 text-xs font-bold uppercase tracking-wider">
-                  {settings.currencySymbol} ({settings.currencyCode})
+                  ({settings.currencyCode})
                 </span>
               </div>
 
               {settings.freeShippingThreshold > 0 && (
-                <div className="p-3.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 flex items-center justify-between gap-2">
-                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400">
-                    {locale === "ar" ? "الشحن المجاني" : "Free Shipping"}
+                <div className="p-3.5 rounded-2xl bg-success/5 border border-success/15 flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-success  font-bold ">
+                    {t("freeShipping")}
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold">
-                    &ge; {settings.freeShippingThreshold}{" "}
-                    {settings.currencySymbol}
+                  <span className="flex items-center gap-1  px-2.5 py-1 rounded-lg bg-success/10 text-success  border border-success/20 text-xs font-bold">
+                    {t("startingFrom")}{" "}
+                    <span className="flex items-center gap-4 ">
+                      <FreeShippingPrice amount={settings.freeShippingThreshold} />
+                    </span>
                   </span>
                 </div>
               )}
@@ -366,13 +360,13 @@ export default function StoreFooter() {
               href="/privacy"
               className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-all"
             >
-              {locale === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}
+              {t("privacyPolicy")}
             </Link>
             <Link
               href="/terms"
               className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-all"
             >
-              {locale === "ar" ? "الشروط والأحكام" : "Terms of Service"}
+              {t("termsOfService")}
             </Link>
           </div>
         </div>

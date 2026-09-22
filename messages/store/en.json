@@ -24,7 +24,30 @@
             "rights": "All rights reserved.",
             "quickLinks": "Quick Links",
             "support": "Support & Help",
-            "shopInfo": "Shop Info"
+            "shopInfo": "Shop Info",
+            "highlights": {
+                  "shipping": {
+                        "title": "Fast & Secure Shipping",
+                        "desc": "Express delivery to your doorstep"
+                  },
+                  "secure": {
+                        "title": "100% Secure Checkout",
+                        "desc": "Encrypted transactions & buyers protection"
+                  },
+                  "supportHours": {
+                        "title": "Premium Support 24/7",
+                        "desc": "A dedicated team ready to help you pick the right product"
+                  },
+                  "bulkPricing": {
+                        "title": "Bulk Pricing",
+                        "desc": "Competitive discounts on large-volume orders"
+                  }
+            },
+            "mainCurrency": "Main Currency",
+            "freeShipping": "Free Shipping",
+            "startingFrom": "starting from",
+            "privacyPolicy": "Privacy Policy",
+            "termsOfService": "Terms of Service"
       },
       "productsPage": {
             "heroTitle": "Construction & Insulation Materials",

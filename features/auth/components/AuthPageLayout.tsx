@@ -1,4 +1,3 @@
-import { getTranslations } from 'next-intl/server';
 import AuthBrandingSection from './AuthBrandingSection';
 import { AuthBackgroundDecorations, AuthFormContainer, AuthTrustIndicators } from './AuthSharedComponents';
 import { ReactNode } from 'react';

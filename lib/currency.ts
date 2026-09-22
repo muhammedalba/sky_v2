@@ -80,5 +80,5 @@ export function formatCurrency(
     exchangeRate,
     currencyCode,
   );
-  return symbolPosition === "before" ? `${symbol}${formattedNumber}` : `${formattedNumber} ${symbol}`;
+  return symbolPosition === "before" ? `${symbol} ${formattedNumber}` : `${formattedNumber} ${symbol}`;
 }

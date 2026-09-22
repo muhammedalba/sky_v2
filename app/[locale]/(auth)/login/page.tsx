@@ -14,6 +14,8 @@ export async function generateMetadata({
   return {
     title: t("loginTitle"),
     description: t("loginDescription"),
+    // Utility page — no SEO value, and indexing it is actively undesirable.
+    robots: { index: false, follow: false },
   };
 }
 

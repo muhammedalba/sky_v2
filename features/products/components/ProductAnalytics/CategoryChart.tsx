@@ -21,7 +21,7 @@ interface BarShapeProps {
 }
 
 const CHART_HEIGHT = 300;
-const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+const COLORS = ['#5c5ceecf', '#ec4899cf', '#f59e0bcf', '#10b981cf', '#3b82f6cf', '#8b5cf6cf'];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -45,12 +45,12 @@ export function CategoryChart({ data }: CategoryChartProps) {
   }, []);
 
   return (
-    <Card className="border-none bg-white/50 backdrop-blur-md dark:bg-secondary/50 shadow-xl">
+    <Card className="border-none bg-background/50 backdrop-blur-md dark:bg-secondary/50 shadow-xl">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">{t('categories')}</CardTitle>
+        <CardTitle className="text-lg font-semibold title-gradient">{t('categories')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div ref={containerRef} className="w-full" style={{ height: CHART_HEIGHT }}>
+        <div ref={containerRef} className="w-full text-success" style={{ height: CHART_HEIGHT }}>
           {chartWidth > 0 && (
             <BarChart
               width={chartWidth}

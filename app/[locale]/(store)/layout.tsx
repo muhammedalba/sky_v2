@@ -133,7 +133,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
         </main>
 
         {/* Footer */}
-        <StoreFooter />
+        <StoreFooter locale={locale as "ar" | "en"} />
 
         {/* Mobile-only bottom navigation */}
         <MobileBottomNavLoader />

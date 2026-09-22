@@ -10,6 +10,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t('signupTitle'),
     description: t('signupDescription'),
+    // Utility page — no SEO value, and indexing it is actively undesirable.
+    robots: { index: false, follow: false },
   };
 }
 
