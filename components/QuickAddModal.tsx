@@ -23,10 +23,9 @@ interface QuickAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product;
-  t: (key: string) => string;
 }
 
-export default function QuickAddModal({ isOpen, onClose, product, t }: QuickAddModalProps) {
+export default function QuickAddModal({ isOpen, onClose, product }: QuickAddModalProps) {
   const getTrans = useTrans();
   const locale = useLocale();
   const commonT = useTranslations("common");

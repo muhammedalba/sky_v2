@@ -2,7 +2,7 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { isAxiosError } from 'axios';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Switch } from '@/shared/ui/Switch';
@@ -11,7 +11,6 @@ import { PromoBanner } from '@/types';
 import { useTranslations } from 'next-intl';
 import { PromoBannerFormValues, promoBannerSchema } from '@/features/marketing/marketing.schema';
 import { useToast } from '@/shared/hooks/useToast';
-import { cn } from '@/lib/utils';
 import { Textarea } from '@/shared/ui/Textarea';
 
 
@@ -62,8 +61,10 @@ export default function PromoBannerForm({ editingPromoBanner, onSuccess, onCance
         toast.success(t('messages.createSuccess'));
       }
       onSuccess();
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || t('messages.error');
+    } catch (error: unknown) {
+      const errorMessage = isAxiosError(error)
+        ? error.response?.data?.message || error.message
+        : t('messages.error');
       toast.error(errorMessage);
     }
   };

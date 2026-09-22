@@ -1,13 +1,12 @@
 'use client';
 
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { useCreateUser, useUpdateUser, useRoles } from '@/features/users/hooks/useUsers';
 import { useState } from 'react';
 import ImageUpload from '@/shared/ui/form/ImageUpload';
-import { User } from '@/types';
+import { Role, User } from '@/types';
 import { UserFormValues, createUserSchema, editUserSchema } from '@/features/users/user.schema';
 import { Switch } from '@/shared/ui/Switch';
 import { useTranslations, useLocale } from 'next-intl';
@@ -47,7 +46,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
     defaultValues: {
       name: editingUser?.name || '',
       email: editingUser?.email || '',
-      role: typeof editingUser?.role === 'object' ? (editingUser.role as any)?._id : (editingUser?.role || ''),
+      role: typeof editingUser?.role === 'object' ? (editingUser.role as Role)?._id : (editingUser?.role || ''),
       isActive: editingUser?.isActive ?? true,
       phone: editingUser?.phone || '',
       avatar: typeof editingUser?.avatar === 'string' ? editingUser?.avatar : editingUser?.avatar?.url || null,
@@ -60,7 +59,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors }
   } = methods;
 
@@ -100,7 +99,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
   };
 
 
-  const isActive = watch('isActive');
+  const isActive = useWatch({ control, name: 'isActive' });
 
   return (
     <FormProvider {...methods}>
@@ -167,7 +166,7 @@ export default function UserForm({ editingUser, mode }: UserFormProps) {
                     label={t('fields.role')}
                     icon={ShieldIcon}
                     {...register('role')}
-                    options={Array.isArray(roles) ? roles.map((role: any) => ({
+                    options={Array.isArray(roles) ? roles.map((role) => ({
                       value: role._id,
                       label: t.has(`roles.${role.name}`) ? t(`roles.${role.name}`) : role.name,
                     })) : []}

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { BarChart3Icon, BarChartIcon, BrandsIcon, CategoriesIcon, CheckIcon, CouponsIcon, ShoppingBagIcon, UsersIcon } from "@/shared/ui/Icons";
-import { StatCard } from '@/shared/ui/StatCard';
+import { StatCard, StatCardProps } from '@/shared/ui/StatCard';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatCurrency } from '@/lib/utils';
 import type { DashboardData } from './types';
@@ -122,7 +122,7 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
                 colorFrom={a.from}
                 colorBg={a.bg}
                 colorIcon={a.icon}
-                badgeVariant={c.badgeVariant as any}
+                badgeVariant={c.badgeVariant as StatCardProps["badgeVariant"]}
               />
             );
           })}

@@ -214,14 +214,6 @@ export default function OrdersPage() {
     },
     [],
   );
-  // we use letter to filter
-  const handleExportAll = useCallback(() => {
-    handleExportCsv(
-      orders,
-      `orders-export-${new Date().toISOString().slice(0, 10)}.csv`,
-    );
-  }, [orders, handleExportCsv]);
-
   const handleBulkExport = useCallback(() => {
     const selectedOrders = orders.filter((o) => selectedArray.includes(o._id));
     handleExportCsv(

@@ -32,7 +32,7 @@ export const formatChartDate = (dateStr: string) => {
       day: 'numeric', 
       month: 'short' 
     });
-  } catch (e) {
+  } catch {
     return dateStr;
   }
 };

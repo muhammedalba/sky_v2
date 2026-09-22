@@ -188,7 +188,6 @@ export default function SimilarProductCard({ item }: { item: Product }) {
           isOpen={isQuickAddOpen}
           onClose={() => setIsQuickAddOpen(false)}
           product={item}
-          t={commonT}
         />
       )}
     </div>

@@ -54,9 +54,13 @@ export function SearchableSelect({
   const [search, setSearch] = useState(initialDisplayValue);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // When the parent provides an initialDisplayValue after async load, sync it once
+  // When the parent provides an initialDisplayValue after async load, sync it once.
+  // `initialDisplayValue` arrives from the parent's own async fetch, so it can't
+  // be known synchronously at this component's mount — a lazy useState initializer
+  // wouldn't see it.
   useEffect(() => {
     if (initialDisplayValue && !search) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearch(initialDisplayValue);
     }
     // Only run when initialDisplayValue changes, intentionally skip `search`
@@ -81,6 +85,7 @@ export function SearchableSelect({
   // when the value is cleared externally.
   useEffect(() => {
     if (!value) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearch("");
       return;
     }

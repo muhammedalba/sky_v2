@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
 import { env } from '@/lib/env';
-import { ApiResponse, User } from '@/types';
+import { ApiResponse, Role, User } from '@/types';
 import { createCrudApi } from '@/shared/api/factory';
 
 const ENDPOINTS = env.ENDPOINTS.USERS;
@@ -11,5 +11,5 @@ export const usersApi = {
   updateRole: (id: string, roleId: string) =>
     apiClient.patch<ApiResponse<User>>(`${ENDPOINTS.BASE}/${id}`, { role: roleId }),
   getStats: () => apiClient.get(ENDPOINTS.STATS),
-  getRoles: () => apiClient.get<any[]>(env.ENDPOINTS.ROLES.BASE),
+  getRoles: () => apiClient.get<Role[]>(env.ENDPOINTS.ROLES.BASE),
 };

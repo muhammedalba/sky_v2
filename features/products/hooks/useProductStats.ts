@@ -1,7 +1,5 @@
 import { productsApi } from '@/features/products/api';
 import { useQuery } from '@tanstack/react-query';
-import { ApiResponse } from '@/types';
-import { ProductStatisticsData } from '../statistics.types';
 
 export function useProductStats(params?: { startDate?: string; endDate?: string })  {
   return useQuery({

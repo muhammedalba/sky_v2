@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ShippingRate } from '../types';
+import { ShippingRate, CreateShippingRateDto, UpdateShippingRateDto } from '../types';
 import { apiClient } from '@/lib/api/client';
 import { ApiResponse } from '@/types';
 
 export const shippingRatesKeys = {
   all: ['shippingRates'] as const,
   lists: () => [...shippingRatesKeys.all, 'list'] as const,
-  list: (params: any) => [...shippingRatesKeys.lists(), params] as const,
+  list: (params: Record<string, unknown> | undefined) => [...shippingRatesKeys.lists(), params] as const,
   details: () => [...shippingRatesKeys.all, 'detail'] as const,
   detail: (id: string) => [...shippingRatesKeys.details(), id] as const,
 };
@@ -15,7 +15,7 @@ export function useShippingRates(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: shippingRatesKeys.list(params),
     queryFn: async () => {
-      const response = await apiClient.get<any, ApiResponse<ShippingRate[]>>('/shipping/rates', { params });
+      const response = await apiClient.get<ApiResponse<ShippingRate[]>, ApiResponse<ShippingRate[]>>('/shipping/rates', { params });
       return response;
     },
   });
@@ -35,7 +35,7 @@ export function useShippingRate(id: string) {
 export function useCreateShippingRate() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async (payload: CreateShippingRateDto) => {
       const { data } = await apiClient.post<ShippingRate>('/shipping/rates', payload);
       return data;
     },
@@ -48,7 +48,7 @@ export function useCreateShippingRate() {
 export function useUpdateShippingRate() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, payload }: { id: string; payload: any }) => {
+    mutationFn: async ({ id, payload }: { id: string; payload: UpdateShippingRateDto }) => {
       const { data } = await apiClient.patch<ShippingRate>(`/shipping/rates/${id}`, payload);
       return data;
     },

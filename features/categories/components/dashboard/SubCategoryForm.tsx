@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
@@ -44,7 +44,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors }
   } = useForm<SubCategoryFormValues>({
     resolver: zodResolver(subCategorySchema),
@@ -57,7 +57,7 @@ export default function SubCategoryForm({ editingSubCategory, onSuccess, onCance
     },
   });
 
-  const watchedCategory = watch('category');
+  const watchedCategory = useWatch({ control, name: 'category' });
 
   const onCategorySearch = (val: string) => setSearch(val);
   const onCategoryOpen = () => setIsDropdownOpen(true);

@@ -1,5 +1,8 @@
 import { useMemo } from "react";
 import { Order } from "@/features/orders/types";
+import { LocalizedString } from "@/types";
+import { SettingsInput } from "@/features/settings/settings.schema";
+import { FileAsset } from "@/shared/types/file-asset";
 import { useTrans } from "@/shared/hooks/useTrans";
 import {
   getLocalizedValue,
@@ -22,7 +25,7 @@ export interface InvoiceCalculatedData {
   arabicAmountWords: string;
   siteNameAr: string;
   siteNameEn: string;
-  siteLogo: string;
+  siteLogo: FileAsset | string;
   crNo: string;
   vatNo: string;
   bankName: string;
@@ -45,7 +48,7 @@ export interface InvoiceCalculatedData {
 
 export function useInvoiceData(
   order: Order | null,
-  settings: any,
+  settings: Partial<SettingsInput> | null | undefined,
 ): InvoiceCalculatedData | null {
   const getTrans = useTrans();
 
@@ -65,11 +68,11 @@ export function useInvoiceData(
 
     const customerCountry =
       getLocationName(order.shippingAddress?.country, "ar") ||
-      getTrans(order.shippingAddress?.country as any) ||
+      getTrans(order.shippingAddress?.country as unknown as LocalizedString | undefined) ||
       "المملكة العربية السعودية";
     const customerCity =
       getLocationName(order.shippingAddress?.city, "ar") ||
-      getTrans(order.shippingAddress?.city as any) ||
+      getTrans(order.shippingAddress?.city as unknown as LocalizedString | undefined) ||
       "-";
 
     const arabicAmountWords = numberToArabicWords(grandTotal);

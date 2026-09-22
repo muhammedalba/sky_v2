@@ -13,17 +13,20 @@ import {
 } from './ChartUtils';
 import { cn } from '@/lib/utils';
 
-interface BarGroupChartProps {
-  data: any[];
-  xAxisKey: string;
-  bars: { dataKey: string; name: string; color?: string }[];
+interface BarGroupChartProps<T extends object> {
+  data: T[];
+  xAxisKey: Extract<keyof T, string>;
+  bars: readonly { dataKey: Extract<keyof T, string>; name: string; color?: string }[];
   height?: number | string;
   className?: string;
   showGrid?: boolean;
-  tooltipFormatter?: (value: any, name: any) => [any, any];
+  tooltipFormatter?: (
+    value: number | string | ReadonlyArray<number | string> | undefined,
+    name: number | string | undefined,
+  ) => [string | number, string];
 }
 
-export function BarGroupChart({
+export function BarGroupChart<T extends object>({
   data,
   xAxisKey,
   bars,
@@ -31,7 +34,7 @@ export function BarGroupChart({
   className,
   showGrid = true,
   tooltipFormatter,
-}: BarGroupChartProps) {
+}: BarGroupChartProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 

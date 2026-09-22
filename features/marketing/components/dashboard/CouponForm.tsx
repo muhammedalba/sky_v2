@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
@@ -76,8 +76,10 @@ export default function CouponForm({ initialData }: CouponFormProps) {
     },
   });
 
-  const applyTo = form.watch("applyTo");
-  const isActive = form.watch("active");
+  const applyTo = useWatch({ control: form.control, name: "applyTo" });
+  const isActive = useWatch({ control: form.control, name: "active" });
+  const type = useWatch({ control: form.control, name: "type" });
+
   // Fetching data for SearchableMultiSelect based on applyTo
   const { data: brandsData, isLoading: isLoadingBrands } = useBrands(
     { keywords: searchTerm, limit: 200, fields: "_id,name" },
@@ -123,6 +125,9 @@ export default function CouponForm({ initialData }: CouponFormProps) {
       initialData.applyItems!.includes(opt._id),
     );
     if (preSelected.length > 0) {
+      // `options` loads asynchronously from a query, so this can't be a lazy
+      // useState initializer — it must react once the data actually arrives.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedItems(preSelected);
       restoredRef.current = true;
     }
@@ -151,9 +156,10 @@ export default function CouponForm({ initialData }: CouponFormProps) {
       router.push(`/${locale}/dashboard/coupons`);
     } catch (error: unknown) {
       console.log(error);
-      const msg = (error as { message: string }).message || t("messages.errorOccurred");
+      const msg =
+        (error as { message: string }).message || t("messages.errorOccurred");
       toast.error(msg);
-    } 
+    }
   };
 
   return (
@@ -231,7 +237,7 @@ export default function CouponForm({ initialData }: CouponFormProps) {
                   className="px-7.5"
                 />
                 <div className="absolute inset-s-4   top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">
-                  {form.watch("type") === "percentage" ? "%" : "$"}
+                  {type === "percentage" ? "%" : "$"}
                 </div>
               </div>
             </div>
@@ -276,7 +282,14 @@ export default function CouponForm({ initialData }: CouponFormProps) {
               ]}
               className="mt-3"
               onChange={(e) => {
-                form.setValue("applyTo", e.target.value as "all" | "products" | "categories" | "brands");
+                form.setValue(
+                  "applyTo",
+                  e.target.value as
+                    | "all"
+                    | "products"
+                    | "categories"
+                    | "brands",
+                );
                 form.setValue("applyItems", []);
                 setSelectedItems([]);
               }}

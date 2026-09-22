@@ -23,7 +23,10 @@ export default function MoyasarCheckoutPage() {
   const t = useTranslations("cart.payment_pages.moyasar");
   const toast = useToast();
 
-  const [orderId, setOrderId] = useState<string | null>(null);
+  // Read synchronously available on mount — no need to round-trip through an effect.
+  const [orderId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : sessionStorage.getItem("moyasar_order_id"),
+  );
   const [orderAmount, setOrderAmount] = useState<number | null>(null);
   const [orderCurrency, setOrderCurrency] = useState<string>("SAR");
   const [isLoading, setIsLoading] = useState(true);
@@ -42,15 +45,12 @@ export default function MoyasarCheckoutPage() {
     (m) => m.code === "moyasar"
   )?.publicConfig?.publishableKey;
 
-  // 1. Get orderId from session storage on mount
+  // 1. Redirect back to checkout if session storage never had an orderId
   useEffect(() => {
-    const storedOrderId = sessionStorage.getItem("moyasar_order_id");
-    if (!storedOrderId) {
+    if (!orderId) {
       router.replace(`/checkout`);
-      return;
     }
-    setOrderId(storedOrderId);
-  }, [router]);
+  }, [orderId, router]);
 
   // 2. Fetch order details to know the amount
   useEffect(() => {
@@ -116,6 +116,9 @@ export default function MoyasarCheckoutPage() {
             }
           });
         } catch {
+          // Reacting to a synchronous failure of the third-party Moyasar SDK
+          // call — there's no way to know this outside the effect.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setError(t("failed_to_init"));
         }
       }
@@ -126,6 +129,9 @@ export default function MoyasarCheckoutPage() {
   useEffect(() => {
     if (paymentMethods.length > 0 && !publishableKey && !error) {
       toast.error("Payment configuration error.");
+      // Paired with the toast above — both are one-time reactions to the
+      // payment methods query resolving without a usable key.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError("Payment configuration error.");
     }
   }, [paymentMethods, publishableKey, error, toast]);

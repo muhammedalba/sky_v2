@@ -1,15 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useUIStore } from '@/store/ui-store';
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useUIStore();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    
     // logic to sync store with localstorage/system preference on mount
     const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;

@@ -131,17 +131,20 @@ export function BreakdownSection({ d }: BreakdownSectionProps) {
     { dataKey: 'orders',   name: t('orders'),   color: BAR_COLORS.orders   },
     { dataKey: 'revenue',  name: t('revenue'),  color: BAR_COLORS.revenue  },
     { dataKey: 'discount', name: t('discount'), color: BAR_COLORS.discount },
-  ], [t]);
+  ] as const, [t]);
 
   const tooltipFormatter = useCallback(
-    (v: number | string, name: string): [string | number, string] => {
+    (
+      v: number | string | ReadonlyArray<number | string> | undefined,
+      name: number | string | undefined,
+    ): [string | number, string] => {
       const revenueName  = t('revenue');
       const discountName = t('discount');
       const formatted =
         name === revenueName || name === discountName
           ? formatCurrency(Number(v))
-          : v;
-      return [formatted, name];
+          : typeof v === 'number' ? v : String(v ?? '');
+      return [formatted, String(name ?? '')];
     },
     [t],
   );

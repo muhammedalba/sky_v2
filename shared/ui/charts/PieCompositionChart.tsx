@@ -14,7 +14,10 @@ interface PieCompositionChartProps {
   innerRadius?: number;
   outerRadius?: number;
   showLegend?: boolean;
-  tooltipFormatter?: (value: any, name: any) => [any, any];
+  tooltipFormatter?: (
+    value: number | string | ReadonlyArray<number | string> | undefined,
+    name: number | string | undefined,
+  ) => [string | number, string];
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────

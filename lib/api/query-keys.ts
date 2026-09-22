@@ -21,7 +21,7 @@ export const queryKeys = {
 
   dashboard: {
     all: ["dashboard"] as const,
-    stats: (params: Record<string, any>) =>
+    stats: (params: Record<string, unknown>) =>
       [...queryKeys.dashboard.all, "stats", params] as const,
   },
 } as const;

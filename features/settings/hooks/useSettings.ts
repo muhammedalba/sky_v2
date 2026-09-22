@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { settingsApi } from '../api';
 import { SettingsInput } from '../settings.schema';
 
+type CachedSettings = SettingsInput | undefined;
+
 export function useSettings() {
   return useQuery({
     queryKey: ['settings'],
@@ -35,7 +37,7 @@ export function useUpdateSettings() {
       // Optimistically update to the new value
       // Note: If newData is FormData, we don't optimistically update since it's hard to merge
       if (!(newData instanceof FormData)) {
-        queryClient.setQueryData(['settings'], (old: any) => ({
+        queryClient.setQueryData(['settings'], (old: CachedSettings) => ({
           ...old,
           ...newData,
         }));

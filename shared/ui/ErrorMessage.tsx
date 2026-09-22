@@ -26,10 +26,8 @@ export default function ErrorMessage({
   const t = useTranslations("common.buttons");
   // Form validation (zod) messages are plain translation keys, e.g.
   // 'required', 'invalidPassword'. Server/API error strings aren't keys,
-  // so they fall through defaultValue and render exactly as passed in.
-  const tErrors = useTranslations("common.errors");
+  // so `message` is rendered exactly as passed in rather than translated.
   const displayMessage = message;
-  // const displayMessage = tErrors(message, { defaultValue: message });
 
   return (
     <div

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { isAxiosError } from "axios";
 import { useTranslations } from "next-intl";
 import { Input } from "@/shared/ui/Input";
 import { Button } from "@/shared/ui/Button";
@@ -71,19 +72,17 @@ export default function TaxForm({
   const { success: toastSuccess, error: toastError } = useToast();
 
   const { data: countriesResponse } = useCountries();
-  const countries = Array.isArray(countriesResponse)
-    ? countriesResponse
-    : (countriesResponse as any)?.data || [];
+  const countries = countriesResponse || [];
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     reset,
     formState: { errors },
   } = useForm<TaxFormData>({
-    resolver: zodResolver(formSchema) as any,
+    resolver: zodResolver(formSchema) as Resolver<TaxFormData>,
     defaultValues: {
       name: "VAT",
       percentage: 15,
@@ -98,15 +97,18 @@ export default function TaxForm({
     },
   });
 
-  const watchScope = watch("scope");
-  const watchCountry = watch("country");
-  const watchRegion = watch("region");
+  const watchScope = useWatch({ control, name: "scope" });
+  const watchCountry = useWatch({ control, name: "country" });
+  const watchRegion = useWatch({ control, name: "region" });
+  const watchCity = useWatch({ control, name: "city" });
+  const watchIsIncludedInPrice = useWatch({ control, name: "isIncludedInPrice" });
+  const watchIsActive = useWatch({ control, name: "isActive" });
 
   const { data: regionsResponse } = useRegions(watchCountry || undefined, true);
-  const regions = Array.isArray(regionsResponse) ? regionsResponse : (regionsResponse as any)?.data || [];
+  const regions = regionsResponse || [];
 
   const { data: citiesResponse } = useCities(watchRegion || undefined, true);
-  const cities = Array.isArray(citiesResponse) ? citiesResponse : (citiesResponse as any)?.data || [];
+  const cities = citiesResponse || [];
 
   useEffect(() => {
     if (editingTax) {
@@ -153,8 +155,8 @@ export default function TaxForm({
         toastSuccess("تم", "تم إضافة الضريبة بنجاح");
       }
       onSuccess?.();
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "حدث خطأ غير متوقع";
+    } catch (err: unknown) {
+      const msg = isAxiosError(err) ? err.response?.data?.message || err.message : "حدث خطأ غير متوقع";
       toastError(msg);
     }
   };
@@ -217,10 +219,10 @@ export default function TaxForm({
               setValue("city", "");
             }}
             options={[
-              { value: "", disabled: true, label: t("globalFallback", { fallback: "اختر الدولة..." }) },
-              ...countries.map((c: any) => ({
+              { value: "", label: t("globalFallback", { fallback: "اختر الدولة..." }) },
+              ...countries.map((c) => ({
                 value: c._id,
-                label: c.name?.ar || c.name, 
+                label: c.name?.ar || c.name?.en || '',
               })),
             ]}
             error={errors.country?.message}
@@ -237,10 +239,10 @@ export default function TaxForm({
               setValue("city", "");
             }}
             options={[
-              { value: "", disabled: true, label: "اختر المنطقة..." },
-              ...regions.map((r: any) => ({
+              { value: "", label: "اختر المنطقة..." },
+              ...regions.map((r) => ({
                 value: r._id,
-                label: r.name?.ar || r.name,
+                label: r.name?.ar || r.name?.en || '',
               })),
             ]}
             error={errors.region?.message}
@@ -252,15 +254,15 @@ export default function TaxForm({
         {watchScope === 'city' && (
           <Select
             label={t("fields.city", { fallback: "المدينة" })}
-            value={watch("city")}
+            value={watchCity}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setValue("city", e.target.value, { shouldValidate: true })
             }
             options={[
-              { value: "", disabled: true, label: "اختر المدينة..." },
-              ...cities.map((c: any) => ({
+              { value: "", label: "اختر المدينة..." },
+              ...cities.map((c) => ({
                 value: c._id,
-                label: c.name?.ar || c.name,
+                label: c.name?.ar || c.name?.en || '',
               })),
             ]}
             error={errors.city?.message}
@@ -288,7 +290,7 @@ export default function TaxForm({
             </p>
           </div>
           <Switch
-            checked={watch("isIncludedInPrice")}
+            checked={watchIsIncludedInPrice}
             onCheckedChange={(val: boolean) =>
               setValue("isIncludedInPrice", val)
             }
@@ -298,7 +300,7 @@ export default function TaxForm({
         <div className="flex items-center justify-between">
           <p className="font-medium text-sm">{t("fields.isActive")}</p>
           <Switch
-            checked={watch("isActive")}
+            checked={watchIsActive}
             onCheckedChange={(val: boolean) => setValue("isActive", val)}
           />
         </div>

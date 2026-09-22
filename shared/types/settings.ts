@@ -52,6 +52,13 @@ export interface Gateways {
   cod: boolean;
 }
 
+export interface BankTransferDetails {
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  iban: string;
+}
+
 export interface StoreSettings {
   siteName: LocalizedString;
   siteDescription: LocalizedString;
@@ -81,6 +88,7 @@ export interface StoreSettings {
   enablePerformance: boolean;
   hasCustomShippingRates?: boolean;
   hasCustomTaxes?: boolean;
+  bankTransferDetails?: BankTransferDetails;
 
   // Legacy support for common fields
   supportPhone?: string;

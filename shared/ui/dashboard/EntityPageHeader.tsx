@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Button } from "@/shared/ui/Button";
 import { cn } from "@/lib/utils";
 import Badge from "../Badge";
-import { Icons, ProductsIcon } from "../Icons";
+import { ProductsIcon } from "../Icons";
 import Can from "@/components/auth/Can";
 
 interface EntityPageHeaderProps {

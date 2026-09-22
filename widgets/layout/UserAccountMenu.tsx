@@ -22,7 +22,6 @@ import LogoutButton from "./topbar/LogoutButton";
 import { useMe, useLogout } from "@/features/auth/hooks/useAuth";
 import { checkUserPermission } from "@/lib/auth";
 import { Permissions } from "@/features/roles/types";
-import { User } from "@/types";
 
 interface UserAccountMenuProps {
   iconOnly?: boolean;

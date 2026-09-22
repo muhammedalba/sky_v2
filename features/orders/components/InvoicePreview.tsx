@@ -2,7 +2,7 @@
 
 import { Order } from '@/features/orders/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
-import { DownloadIcon, PrinterIcon, FileTextIcon } from '@/shared/ui/Icons';
+import { DownloadIcon, FileTextIcon } from '@/shared/ui/Icons';
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
 

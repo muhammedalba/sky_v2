@@ -7,5 +7,5 @@ const ALL = env.ENDPOINTS.PAYMENTS.ALL;
 
 export const adminPaymentsApi = {
   ...createCrudApi(BASE, false),
-  getAll: (params?: Record<string, any>) => apiClient.get(ALL, { params }),
+  getAll: (params?: Record<string, unknown>) => apiClient.get(ALL, { params }),
 };

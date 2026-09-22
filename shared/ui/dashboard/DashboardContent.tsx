@@ -15,7 +15,7 @@ import { DateRangeFilter } from "@/shared/ui/DateRangeFilter";
 import { SectionWrapper } from "@/shared/ui/SectionWrapper";
 import ErrorMessage from "../ErrorMessage";
 import EntityPageHeader from "./EntityPageHeader";
-import { Icons, RefreshCwIcon } from "../Icons";
+import { RefreshCwIcon } from "../Icons";
 import { formatDate } from "@/lib/utils";
 
 export default function DashboardContent() {

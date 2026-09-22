@@ -12,7 +12,7 @@ function AreaCard({
 }: {
   title: string; desc: string;
   data: { date: string; count: number }[];
-  dataKey: string; color: string;
+  dataKey: 'count'; color: string;
   isLoading: boolean;
 }) {
   if (isLoading) {

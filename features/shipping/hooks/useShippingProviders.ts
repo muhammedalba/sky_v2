@@ -6,14 +6,14 @@ import { ShippingProvider, CreateShippingProviderDto, UpdateShippingProviderDto 
 export const shippingProviderKeys = {
   all: ['shipping-providers'] as const,
   lists: () => [...shippingProviderKeys.all, 'list'] as const,
-  list: (params: any) => [...shippingProviderKeys.lists(), params] as const,
+  list: (params: Record<string, unknown> | undefined) => [...shippingProviderKeys.lists(), params] as const,
 };
 
 export function useShippingProviders(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: shippingProviderKeys.list(params),
     queryFn: async () => {
-      const response = await api.get<any, ApiResponse<ShippingProvider[]>>('/shipping/providers', { params });
+      const response = await api.get<ApiResponse<ShippingProvider[]>, ApiResponse<ShippingProvider[]>>('/shipping/providers', { params });
       return response;
     },
   });

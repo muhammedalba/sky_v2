@@ -148,7 +148,7 @@ export default function SettingsForm() {
     handleSubmit,
     reset,
     register,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = methods;
 
   // Axis 4: Explicitly Register Image Fields (Always tracked regardless of active section)

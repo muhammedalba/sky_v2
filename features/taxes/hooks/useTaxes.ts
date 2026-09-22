@@ -21,7 +21,7 @@ export interface Tax {
 export const taxKeys = {
   all: ['taxes'] as const,
   lists: () => [...taxKeys.all, 'list'] as const,
-  list: (params: any) => [...taxKeys.lists(), params] as const,
+  list: (params: Record<string, unknown> | undefined) => [...taxKeys.lists(), params] as const,
 };
 
 export const useTaxes = (params?: Record<string, unknown>) => {
@@ -32,7 +32,7 @@ export const useTaxes = (params?: Record<string, unknown>) => {
       console.log(params);
       console.log(taxKeys.list(params));
       
-      const response = await api.get<any, ApiResponse<Tax[]>>('/taxes', {params} );
+      const response = await api.get<ApiResponse<Tax[]>, ApiResponse<Tax[]>>('/taxes', {params} );
       return response;
     },
   });
@@ -41,7 +41,7 @@ export const useGetTaxByCountry = (countryId: string) => {
   return useQuery({
     queryKey: ['taxes', 'active', countryId],
     queryFn: async () => {
-      const response = await api.get<any, ApiResponse<Tax>>(`/taxes/country/${countryId}`);
+      const response = await api.get<ApiResponse<Tax>, ApiResponse<Tax>>(`/taxes/country/${countryId}`);
       return response.data;
       
     },
@@ -54,7 +54,7 @@ export const useCreateTax = () => {
 
   return useMutation({
     mutationFn: async (data: Partial<Tax>) => {
-      const response = await api.post<any, ApiResponse<Tax>>('/taxes', data);
+      const response = await api.post<ApiResponse<Tax>, ApiResponse<Tax>>('/taxes', data);
       return response.data;
     },
     onSuccess: () => {
@@ -68,7 +68,7 @@ export const useUpdateTax = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Tax> }) => {
-      const response = await api.patch<any, ApiResponse<Tax>>(`/taxes/${id}`, data);
+      const response = await api.patch<ApiResponse<Tax>, ApiResponse<Tax>>(`/taxes/${id}`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -82,7 +82,7 @@ export const useDeleteTax = () => {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const response = await api.delete<any, ApiResponse<any>>(`/taxes/${id}`);
+      const response = await api.delete<ApiResponse<null>, ApiResponse<null>>(`/taxes/${id}`);
       return response.data;
     },
     onSuccess: () => {

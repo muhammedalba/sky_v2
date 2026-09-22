@@ -75,7 +75,7 @@ export async function generateMetadata({
 }: ProductPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
 
-  // 2. استخدام الدالة هنا
+  // 2. Using the same function here
   const product = await getProductData(slug, locale);
 
   if (!product) return {};
@@ -115,7 +115,7 @@ export async function generateMetadata({
 export default async function ProductDetailsPage({ params }: ProductPageProps) {
   const { slug, locale } = await params;
 
-  // 3. استخدام نفس الدالة هنا مرة أخرى
+  // 3. Using the same function here again
   //  Next.js: this will not make a new API request! It will use the cached result from generateMetadata request
   const product = await getProductData(slug, locale);
 

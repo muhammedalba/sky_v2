@@ -13,23 +13,23 @@ import {
 } from './ChartUtils';
 import { cn } from '@/lib/utils';
 
-interface AreaTrendChartProps {
-  data: { date: string; [key: string]: any }[];
-  dataKey: string;
+interface AreaTrendChartProps<T extends { date: string }> {
+  data: T[];
+  dataKey: Extract<keyof T, string>;
   color?: string;
   height?: number | string;
   className?: string;
   showGrid?: boolean;
 }
 
-export function AreaTrendChart({
+export function AreaTrendChart<T extends { date: string }>({
   data,
   dataKey,
   color = '#6366f1',
   height = 300,
   className,
   showGrid = true,
-}: AreaTrendChartProps) {
+}: AreaTrendChartProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 

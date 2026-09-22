@@ -56,6 +56,9 @@ const SYSTEM_ACTION_HANDLERS: Record<
     toast.error(data.message, t("systemAlert"), 6000);
     authApi.logout().finally(() => {
       const defaultLocale = env.DEFAULT_LOCALE;
+      // Outside React's tree (a plain handler registry) — no router available,
+      // and a full reload is wanted to clear in-memory state on forced logout.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = `/${defaultLocale}/login`;
     });
   },
@@ -71,6 +74,9 @@ const SYSTEM_ACTION_HANDLERS: Record<
         toast.error(t("dashboardRevoked"), t("systemAlert"), 6000);
         setTimeout(() => {
           const defaultLocale = env.DEFAULT_LOCALE;
+          // Same rationale as FORCE_LOGOUT above — no router available here,
+          // and a full reload ensures stale permission-gated UI isn't reused.
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = `/${defaultLocale}`;
         }, 2000);
         return;

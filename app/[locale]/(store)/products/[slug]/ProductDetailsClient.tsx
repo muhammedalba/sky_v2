@@ -101,9 +101,9 @@ export default function ProductDetailsClient({
     if (product?._id) addRecentlyViewed(product._id);
   }, [product?._id, addRecentlyViewed]);
 
-  const [activeTab, setActiveTab] = useState<"order" | "reviews">(
-    (product?.variantCount ?? 0) > 1 ? "order" : "order",
-  );
+  // The tab switcher UI below is temporarily disabled (commented out), so this
+  // only ever reads "order" for now — the setter is unused until it's re-enabled.
+  const [activeTab] = useState<"order" | "reviews">("order");
 
   // Default properties of the first available variable
   const defaultAttributes = useMemo(

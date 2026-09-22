@@ -1,7 +1,6 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ApiResponse, User } from '@/types';
 import { usersApi } from '@/features/users/api';
 
 export function useUsers(params?: { page?: number; limit?: number; role?: string, keywords?: string, isActive?: boolean }) {

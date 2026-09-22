@@ -115,8 +115,7 @@ apiClient.interceptors.response.use(
 
         const resData = response.data;
         const newAccessToken =
-          resData.access_token ||
-          resData.data?.access_token;
+          resData.access_token || resData.data?.access_token;
 
         if (newAccessToken) {
           processQueue(null);
@@ -165,6 +164,9 @@ function handleLogout() {
       });
 
       const defaultLocale = env.DEFAULT_LOCALE || "ar";
+      // Outside React's tree (axios interceptor) — no router available, and a
+      // full reload is wanted anyway to clear in-memory state on session expiry.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = `/${defaultLocale}/login`;
     }
   }

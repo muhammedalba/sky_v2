@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
@@ -44,7 +44,7 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<ShippingProviderFormData>({
     resolver: zodResolver(formSchema),
@@ -62,6 +62,8 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
       isActive: true,
     },
   });
+
+  const isActive = useWatch({ control, name: 'isActive' });
 
   const onSubmit = async (data: CreateShippingProviderDto) => {
     try {
@@ -149,7 +151,7 @@ export default function ShippingProviderForm({ editingProvider, onSuccess, onCan
           </p>
         </div>
         <Switch
-          checked={watch('isActive')}
+          checked={isActive}
           onCheckedChange={(val) => setValue('isActive', val)}
           disabled={isPending}
         />

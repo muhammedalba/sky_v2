@@ -110,18 +110,6 @@ const ProductCard = ({ item, commonT }: Props) => {
     ));
   }, [item.uses, locale]);
 
-  // 3. تجهيز اسم التصنيف مسبقاً لتنظيف الـ JSX ومنع العمليات المنطقية داخله
-  const categoryName = useMemo(() => {
-    if (
-      typeof item.category === "object" &&
-      item.category &&
-      "name" in item.category
-    ) {
-      return getTrans(item.category.name);
-    }
-    return "";
-  }, [item.category, getTrans]);
-
   // 4. استخدام useCallback لمنع إعادة إنشاء دالة الحدث
   const handleWishlistClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -275,7 +263,6 @@ const ProductCard = ({ item, commonT }: Props) => {
           isOpen={isQuickAddOpen}
           onClose={() => setIsQuickAddOpen(false)}
           product={item}
-          t={commonT}
         />
       )}
     </Card>

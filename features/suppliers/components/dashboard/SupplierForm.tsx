@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
@@ -65,7 +65,7 @@ export default function SupplierForm({
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<SupplierFormValues>({
     resolver: zodResolver(supplierSchema),
@@ -82,6 +82,8 @@ export default function SupplierForm({
   });
 
   // handlers
+  const isActive = useWatch({ control, name: "isActive" });
+
   const onSubmit = async (data: SupplierFormValues) => {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -187,12 +189,12 @@ export default function SupplierForm({
               <span
                 className={cn(
                   "text-sm font-medium transition-colors",
-                  watch("isActive")
+                  isActive
                     ? "text-green-600 dark:text-green-400"
                     : "text-destructive",
                 )}
               >
-                {watch("isActive") ? t("fields.active") : t("fields.inactive")}
+                {isActive ? t("fields.active") : t("fields.inactive")}
               </span>
             </div>
           </div>

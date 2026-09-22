@@ -14,11 +14,14 @@ interface BaseFieldProps {
   showStrength?: boolean;
 }
 
-export function SmartInput({ 
-  name, 
+export function SmartInput({
+  name,
   errorNamespace = 'errors',
-  showStrength = true,
-  ...props 
+  // Destructured only to keep it out of `...props` (SmartInput doesn't render
+  // a strength meter, unlike SmartPasswordInput below).
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  showStrength,
+  ...props
 }: BaseFieldProps & { type?: string }) {
   const { register, formState: { errors }, control } = useFormContext();
   const tErrors = useTranslations(errorNamespace);
@@ -32,7 +35,7 @@ export function SmartInput({
       {...register(name)}
       {...props}
       value={value}
-      error={error ? tErrors(error as any) : undefined}
+      error={error ? tErrors(error as Parameters<typeof tErrors>[0]) : undefined}
     />
     </div>
   );
@@ -54,7 +57,7 @@ export function SmartPasswordInput({
       {...register(name)}
       {...props}
       value={value}
-      error={error ? tErrors(error as any) : undefined}
+      error={error ? tErrors(error as Parameters<typeof tErrors>[0]) : undefined}
       showStrength={showStrength}
     />
   );

@@ -52,7 +52,7 @@ export default function CityForm({ countryId, regionId, editingCity, onSuccess, 
     handleSubmit,
     control, // تم استخدام control بدلاً من watch و setValue
     formState: { errors },
-  } =useForm<CityFormInput, any, CityFormOutput>({
+  } =useForm<CityFormInput, unknown, CityFormOutput>({
     resolver: zodResolver(formSchema), // تمت إزالة as any
     defaultValues: {
       name: {

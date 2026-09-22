@@ -28,7 +28,6 @@ import { Can } from "@/components/auth/Can";
 import { Permissions } from "@/features/roles/types";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/shared/hooks/useToast";
-import { AxiosError } from "axios";
 
 export default function AdminNotificationsPage() {
   const t = useTranslations("notifications");

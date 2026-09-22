@@ -34,5 +34,22 @@ export interface CreateShippingProviderDto {
   trackingUrl?: string;
   isActive?: boolean;
 }
-// We intentionally keep this interface for semantic meaning in DTOs
-export interface UpdateShippingProviderDto extends Partial<CreateShippingProviderDto> {}
+// We intentionally keep this as a distinctly-named type for semantic meaning in DTOs
+export type UpdateShippingProviderDto = Partial<CreateShippingProviderDto>;
+
+export interface CreateShippingRateDto {
+  provider: string;
+  scope: 'global' | 'country' | 'region' | 'city';
+  country?: string;
+  region?: string;
+  city?: string;
+  basePrice: number;
+  baseWeight: number;
+  additionalKgPrice: number;
+  estimatedDays?: string;
+  supportsCOD: boolean;
+  isActive: boolean;
+  freeShippingThreshold: number;
+}
+
+export type UpdateShippingRateDto = Partial<CreateShippingRateDto>;

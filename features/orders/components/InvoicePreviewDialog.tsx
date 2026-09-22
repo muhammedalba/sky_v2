@@ -160,12 +160,10 @@ export default function InvoicePreviewDialog({
     } finally {
       setIsGeneratingPdf(false);
     }
-  }, [
-    handlePrint,
-    order?.shippingAddress?.firstName,
-    order?.shippingAddress?.lastName,
-    order?.deliveryReceiptNumber,
-  ]);
+    // handlePrint itself depends on `order`, so the compiler treats this
+    // callback as depending on the whole object rather than these nested
+    // paths — list `order` directly to match instead of the narrower fields.
+  }, [handlePrint, order]);
 
   // Short-circuit rendering if modal is closed or order/data is null
   if (!isOpen || !order || !data) return null;

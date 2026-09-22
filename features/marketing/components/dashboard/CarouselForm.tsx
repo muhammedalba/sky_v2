@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -67,8 +67,7 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
     register,
     handleSubmit,
     setValue,
-
-    watch,
+    control,
     formState: { errors },
   } = useForm<CarouselFormValues>({
     resolver: zodResolver(carouselSchema),
@@ -98,7 +97,7 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
     },
   });
 
-  const isActive = watch("isActive");
+  const isActive = useWatch({ control, name: "isActive" });
 
   const onSubmit = async (data: CarouselFormValues) => {
     const formData = new FormData();
@@ -126,9 +125,10 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
         router.push(`/${locale}/dashboard/carousel`);
         toast.success(t("messages.addSuccess"));
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error(error);
-      toast.error(error?.message || t("messages.error"));
+      toast.error(err.message || t("messages.error"));
     }
   };
 

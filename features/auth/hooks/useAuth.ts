@@ -116,6 +116,9 @@ export function useLogout() {
     onSettled: () => {
       queryClient.clear();
       const locale = getCurrentLocale();
+      // Full reload (not router navigation) is deliberate: it guarantees any
+      // module-level in-memory state is wiped on logout, not just React Query/Zustand.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = `/${locale}/login`;
       toast.success("تم تسجيل الخروج بنجاح");
     },

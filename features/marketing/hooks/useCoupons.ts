@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Coupon } from '@/types';
 import { couponsApi } from '@/features/marketing/coupons.api';
 
-export function useCoupons(params?: Record<string, any>) {
+export function useCoupons(params?: Record<string, unknown>) {
 
   return useQuery({
     queryKey: ['coupons', params],

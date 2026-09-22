@@ -11,9 +11,9 @@ export interface ProductStatisticsData {
     variable: number;
   };
   categoryDistribution: { name: string; value: number }[];
-  topProducts: any[];
+  topProducts: Product[];
   lowStockCount: number;
-  lowStockProducts: any[];
+  lowStockProducts: Product[];
   inventoryStats: {
     totalVariants: number;
     totalStock: number;

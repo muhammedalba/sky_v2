@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
@@ -49,10 +49,10 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<ShippingRateFormData>({
-    resolver: zodResolver(formSchema) as any,
+    resolver: zodResolver(formSchema) as Resolver<ShippingRateFormData>,
     defaultValues: {
       provider: editingRate?.provider?._id || '',
       scope: editingRate?.scope || 'global',
@@ -69,9 +69,13 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
     },
   });
 
-  const selectedScope = watch('scope');
-  const selectedCountry = watch('country');
-  const selectedRegion = watch('region');
+  const selectedScope = useWatch({ control, name: 'scope' });
+  const selectedCountry = useWatch({ control, name: 'country' });
+  const selectedRegion = useWatch({ control, name: 'region' });
+  const selectedProvider = useWatch({ control, name: 'provider' });
+  const selectedCity = useWatch({ control, name: 'city' });
+  const supportsCOD = useWatch({ control, name: 'supportsCOD' });
+  const isActive = useWatch({ control, name: 'isActive' });
 
   const showCountry = selectedScope !== 'global';
   const showRegion = selectedScope === 'region' || selectedScope === 'city';
@@ -85,7 +89,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
   const { mutateAsync: updateRate, isPending: isUpdating } = useUpdateShippingRate();
   const isPending = isCreating || isUpdating;
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ShippingRateFormData) => {
     try {
       const payload = {
         ...data,
@@ -102,8 +106,9 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
         toastSuccess('تمت إضافة التسعيرة بنجاح');
       }
       onSuccess?.();
-    } catch (error: any) {
-      toastError(error.message || 'حدث خطأ غير متوقع');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toastError(msg);
     }
   };
 
@@ -111,13 +116,13 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Select 
+          <Select
             label={t('fields.provider')}
-            value={watch('provider')} 
+            value={selectedProvider}
             onChange={(e) => setValue('provider', e.target.value, { shouldValidate: true })}
-            options={providers.map((p: any) => ({
+            options={providers.map((p: { _id: string; name: string | { ar?: string; en?: string } }) => ({
               value: p._id,
-              label: typeof p.name === 'string' ? p.name : p.name?.ar || p.name?.en
+              label: typeof p.name === 'string' ? p.name : p.name?.ar || p.name?.en || ''
             }))}
             error={errors.provider?.message}
             dir="rtl"
@@ -125,11 +130,11 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
         </div>
 
         <div className="space-y-2">
-          <Select 
+          <Select
             label={t('fields.scope')}
-            value={watch('scope')} 
+            value={selectedScope}
             onChange={(e) => {
-              setValue('scope', e.target.value as any, { shouldValidate: true });
+              setValue('scope', e.target.value as ShippingRateFormData['scope'], { shouldValidate: true });
               setValue('country', '');
               setValue('region', '');
               setValue('city', '');
@@ -149,15 +154,15 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
           <div className="space-y-2">
             <Select 
               label={t('fields.country')}
-              value={watch('country')} 
+              value={selectedCountry}
               onChange={(e) => {
                 setValue('country', e.target.value, { shouldValidate: true });
                 setValue('region', '');
                 setValue('city', '');
               }}
-              options={countries?.map((c: any) => ({
+              options={countries?.map((c) => ({
                 value: c._id,
-                label: c.name?.ar || c.name
+                label: c.name?.ar || c.name?.en || ''
               })) || []}
               error={errors.country?.message}
               dir="rtl"
@@ -169,14 +174,14 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
           <div className="space-y-2">
             <Select 
               label={t('fields.region')}
-              value={watch('region')} 
+              value={selectedRegion}
               onChange={(e) => {
                 setValue('region', e.target.value, { shouldValidate: true });
                 setValue('city', '');
               }}
-              options={regions?.map((r: any) => ({
+              options={regions?.map((r) => ({
                 value: r._id,
-                label: r.name?.ar || r.name
+                label: r.name?.ar || r.name?.en || ''
               })) || []}
               error={errors.region?.message}
               dir="rtl"
@@ -188,11 +193,11 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
           <div className="space-y-2">
             <Select 
               label={t('fields.city')}
-              value={watch('city')} 
+              value={selectedCity}
               onChange={(e) => setValue('city', e.target.value, { shouldValidate: true })}
-              options={cities?.map((c: any) => ({
+              options={cities?.map((c) => ({
                 value: c._id,
-                label: c.name?.ar || c.name
+                label: c.name?.ar || c.name?.en || ''
               })) || []}
               error={errors.city?.message}
               dir="rtl"
@@ -248,7 +253,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
             <p className="text-sm text-muted-foreground">{t('fields.supportsCOD')}</p>
           </div>
           <Switch
-            checked={watch('supportsCOD')}
+            checked={supportsCOD}
             onCheckedChange={(val) => setValue('supportsCOD', val)}
             disabled={isPending}
           />
@@ -260,7 +265,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
             <p className="text-sm text-muted-foreground">{t('fields.isActive')}</p>
           </div>
           <Switch
-            checked={watch('isActive')}
+            checked={isActive}
             onCheckedChange={(val) => setValue('isActive', val)}
             disabled={isPending}
           />
