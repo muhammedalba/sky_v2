@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     // 2. DATA EXTRACTION
     const { searchParams } = new URL(request.url);
     const tagInput = searchParams.get('tag');
-    console.log("tagInput", tagInput)
+
     if (!tagInput) {
       return NextResponse.json(
         { error: 'Bad Request', message: 'Missing "tag" parameter' },
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // Support multiple tags separated by comma
     const tagsToProcess = tagInput.split(',').map(t => t.trim()).filter(Boolean);
-    console.log("tagsToProcess", tagsToProcess)
+
     // 3. WHITELIST VALIDATION
     const invalidTags = tagsToProcess.filter(tag => !ALLOWED_TAGS.has(tag));
     if (invalidTags.length > 0) {
