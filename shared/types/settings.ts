@@ -59,6 +59,29 @@ export interface BankTransferDetails {
   iban: string;
 }
 
+export interface GoogleReviewsSettings {
+  enabled: boolean;
+  placeId: string;
+  reviewsUrl: string;
+}
+
+export interface GoogleReview {
+  author: string;
+  authorUrl: string;
+  photo: string;
+  rating: number;
+  text: string;
+  time: string;
+}
+
+export interface GoogleReviewsResult {
+  enabled: boolean;
+  rating: number;
+  total: number;
+  url: string;
+  reviews: GoogleReview[];
+}
+
 export interface StoreSettings {
   siteName: LocalizedString;
   siteDescription: LocalizedString;
@@ -83,6 +106,8 @@ export interface StoreSettings {
   allowRegistration: boolean;
   autoBackup: boolean;
   googleMapsApiKey: string;
+  googleReviews?: GoogleReviewsSettings;
+  hasGooglePlacesApiKey?: boolean;
   features: FeatureFlags;
   gateways: Gateways;
   enablePerformance: boolean;

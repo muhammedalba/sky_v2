@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import HeroSection from "./sections/HeroSection";
 import StatsBar from "./sections/StatsBar";
 import TrustedBy from "@/components/home/TrustedBy";
@@ -42,8 +43,10 @@ export default function HomePageContent({ locale }: HomePageContentProps) {
       {/* 5c. STATS HIGHLIGHT (Below the Fold - Server Component) */}
       <StatsHighlightSection locale={locale} />
 
-      {/* 7. CUSTOMER TESTIMONIALS (Below the Fold - Server Component) */}
-      <TestimonialsSection locale={locale} />
+      {/* 7. CUSTOMER TESTIMONIALS (Below the Fold - Server Component, streamed so Google reviews never block the page) */}
+      <Suspense fallback={null}>
+        <TestimonialsSection locale={locale} />
+      </Suspense>
 
       {/* 8. FEATURED PROJECTS (Below the Fold - Server Component) */}
       <FeaturedProjectsSection locale={locale} />

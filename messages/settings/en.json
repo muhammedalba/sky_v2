@@ -116,6 +116,19 @@
     "wishlist": "Wishlist",
     "wishlistDesc": "Allow customers to save products to their wishlist."
   },
+  "googleReviews": {
+    "title": "Google Reviews",
+    "desc": "Show real reviews from your Google Business profile on the home page.",
+    "enable": "Show Google Reviews",
+    "enableDesc": "When disabled, the home page shows the default testimonials.",
+    "reviewsUrl": "Google Maps Link",
+    "reviewsUrlDesc": "Paste your business link from Google Maps — the Place ID is detected automatically on save.",
+    "placeId": "Google Place ID (optional)",
+    "placeIdHelp": "Auto-detected from the link. Find it manually",
+    "apiKey": "Google Places API Key",
+    "apiKeyDesc": "Stored encrypted in the database and never shown publicly.",
+    "apiKeySaved": "A key is already saved (encrypted). Leave blank to keep it, or enter a new key to replace it."
+  },
   "advanced": {
     "title": "Advanced Options",
     "desc": "Maintenance mode and system settings.",

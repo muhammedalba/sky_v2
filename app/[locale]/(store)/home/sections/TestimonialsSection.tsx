@@ -1,9 +1,13 @@
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { Card } from "@/shared/ui/Card";
-import { ActivityIcon, StarIcon } from "@/shared/ui/Icons"; // استبدل بـ QuoteIcon إن وجد
+import { ActivityIcon, ExternalLinkIcon, GoogleIcon, StarIcon } from "@/shared/ui/Icons"; // استبدل بـ QuoteIcon إن وجد
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import { getStoreSettings } from "@/shared/api/settings";
+import { getGoogleReviews } from "@/shared/api/googleReviews";
 
 
+// Default testimonials — shown whenever real Google reviews are disabled or unavailable.
 const TESTIMONIALS = [
   {
     id: 1,
@@ -25,12 +29,122 @@ const TESTIMONIALS = [
   },
 ];
 
+/** Shared shape for both static testimonials and Google reviews. */
+interface TestimonialItem {
+  key: string;
+  author: string;
+  subtitle: string;
+  text: string;
+  rating: number;
+  photo?: string;
+  authorUrl?: string;
+}
+
+const STATIC_ITEMS: TestimonialItem[] = TESTIMONIALS.map((testimonial) => ({
+  key: String(testimonial.id),
+  author: testimonial.name,
+  subtitle: testimonial.role,
+  text: testimonial.text,
+  rating: 5,
+}));
+
+function RatingStars({ rating, className }: { rating: number; className: string }) {
+  const filled = Math.round(rating);
+  return (
+    <div className="flex gap-1 text-warning">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <StarIcon
+          key={s}
+          className={`${className} ${s <= filled ? "fill-current" : "text-muted-foreground/30"}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function TestimonialCard({ item, isGoogle }: { item: TestimonialItem; isGoogle: boolean }) {
+  // حل ذكي لاستخراج أول حرف من الاسم وتجاهل الألقاب مثل "المهندس"
+  const nameInitial = item.author.replace("المهندس ", "").charAt(0);
+
+  return (
+    <Card className="p-8 max-w-md  rounded-3xl border border-border/50  relative h-full flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+      {/* أيقونة الاقتباس بالخلفية */}
+      <ActivityIcon className="absolute top-6 left-6 w-12 h-12 text-primary/10 group-hover:text-primary/10 transition-colors rotate-180" />
+
+      <div className="mb-6">
+        <RatingStars rating={item.rating} className="w-4 h-4" />
+      </div>
+
+      <p
+        className={`text-foreground/80 font-medium max-w-xl mb-8 text-wrap ${isGoogle ? "line-clamp-5" : ""}`}
+      >
+        &ldquo;{item.text}&rdquo;
+      </p>
+
+      <div className="flex items-center gap-4 mt-auto pt-6 border-t border-border/50">
+        {item.photo ? (
+          <Image
+            src={item.photo}
+            alt={item.author}
+            width={48}
+            height={48}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary font-black text-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            {nameInitial}
+          </div>
+        )}
+        <div>
+          <h4 className="font-black text-foreground">
+            {item.authorUrl ? (
+              <a
+                href={item.authorUrl}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="hover:text-primary transition-colors"
+              >
+                {item.author}
+              </a>
+            ) : (
+              item.author
+            )}
+          </h4>
+          <p className="text-xs font-bold text-muted-foreground">
+            {item.subtitle}
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export default async function TestimonialsSection({
   locale,
 }: {
   locale: "ar" | "en";
 }) {
-  const t = await getTranslations({ locale, namespace: "home" });
+  // Settings are request-deduped & ISR-cached; reviews are fetched only when enabled.
+  const [t, settings] = await Promise.all([
+    getTranslations({ locale, namespace: "home" }),
+    getStoreSettings(),
+  ]);
+  const googleReviews = settings?.googleReviews?.enabled
+    ? await getGoogleReviews(locale)
+    : null;
+
+  const isGoogle = !!googleReviews;
+  const items: TestimonialItem[] = googleReviews
+    ? googleReviews.reviews.map((review, i) => ({
+        key: `${review.author}-${i}`,
+        author: review.author,
+        subtitle: review.time,
+        text: review.text,
+        rating: review.rating,
+        photo: review.photo || undefined,
+        authorUrl: review.authorUrl || undefined,
+      }))
+    : STATIC_ITEMS;
 
   // use 6 groups instead of 7 (even number).
   // because the animation moves by 50%, the even number ensures that the movement ends at the beginning of a complete group, preventing interruption (Seamless Loop).
@@ -41,43 +155,11 @@ export default async function TestimonialsSection({
       // 3.Accessibility: hide repeated groups from screen readers
       aria-hidden={index > 0 ? "true" : "false"}
     >
-       {TESTIMONIALS.map((testimonial, i) => {
-          // حل ذكي لاستخراج أول حرف من الاسم وتجاهل الألقاب مثل "المهندس"
-          const nameInitial = testimonial.name.replace('المهندس ', '').charAt(0);
-
-          return (
-            <ScrollReveal key={testimonial.id} delay={i * 100} className="flex gap-5 shrink-0 items-center">
-              <Card className="p-8 max-w-md  rounded-3xl border border-border/50  relative h-full flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                {/* أيقونة الاقتباس بالخلفية */}
-                <ActivityIcon className="absolute top-6 left-6 w-12 h-12 text-primary/10 group-hover:text-primary/10 transition-colors rotate-180" />
-
-                <div className="flex gap-1 text-warning mb-6">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <StarIcon key={s} className="w-4 h-4 fill-current" />
-                  ))}
-                </div>
-
-                <p className="text-foreground/80 font-medium max-w-xl mb-8 text-wrap">
-                  &ldquo;{testimonial.text}&rdquo;
-                </p>
-
-                <div className="flex items-center gap-4 mt-auto pt-6 border-t border-border/50">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary font-black text-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    {nameInitial}
-                  </div>
-                  <div>
-                    <h4 className="font-black text-foreground">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-xs font-bold text-muted-foreground">
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </ScrollReveal>
-          );
-        })}
+      {items.map((item, i) => (
+        <ScrollReveal key={item.key} delay={i * 100} className="flex gap-5 shrink-0 items-center">
+          <TestimonialCard item={item} isGoogle={isGoogle} />
+        </ScrollReveal>
+      ))}
     </div>
   ));
 
@@ -113,6 +195,36 @@ export default async function TestimonialsSection({
             <p className="text-lg text-muted-foreground font-medium">
               {t("testimonials.description")}
             </p>
+
+            {googleReviews && (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                <div className="flex items-center gap-3">
+                  <GoogleIcon className="w-6 h-6" />
+                  <span className="text-2xl font-black text-foreground">
+                    {googleReviews.rating.toFixed(1)}
+                  </span>
+                  <div className="flex flex-col items-start gap-0.5">
+                    <RatingStars rating={googleReviews.rating} className="w-4 h-4" />
+                    <span className="text-xs font-bold text-muted-foreground">
+                      {t("testimonials.basedOn", { count: googleReviews.total })}
+                      {" · "}
+                      {t("testimonials.fromGoogle")}
+                    </span>
+                  </div>
+                </div>
+                {googleReviews.url && (
+                  <a
+                    href={googleReviews.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background px-5 py-2 text-sm font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    {t("testimonials.viewAll")}
+                    <ExternalLinkIcon className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </ScrollReveal>
 

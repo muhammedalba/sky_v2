@@ -117,7 +117,10 @@
   },
   "testimonials": {
     "title": "What They Say About Sky Galaxy",
-    "description": "Our customers' trust is the fundamental pillar upon which we build our success."
+    "description": "Our customers' trust is the fundamental pillar upon which we build our success.",
+    "basedOn": "Based on {count} reviews",
+    "fromGoogle": "Reviews from Google",
+    "viewAll": "View all reviews on Google"
   },
   "projects": {
     "badge": "Our Portfolio",

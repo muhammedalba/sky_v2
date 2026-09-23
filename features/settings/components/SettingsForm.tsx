@@ -116,6 +116,8 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   allowRegistration: true,
   autoBackup: false,
   googleMapsApiKey: "",
+  googleReviews: { enabled: false, placeId: "", reviewsUrl: "" },
+  googlePlacesApiKey: "",
   minOrderAmount: 0,
   enablePerformance: false,
   inventoryAlertsEnabled: true,
@@ -123,6 +125,18 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   logo: undefined,
   favicon: undefined,
 };
+
+const GoogleReviewsSection = dynamic(
+  () => import("./sections/GoogleReviewsSection"),
+  { loading: () => <SectionSkeleton /> },
+);
+
+const FeaturesAndReviewsSection = () => (
+  <div className="space-y-6">
+    <FeaturesSection />
+    <GoogleReviewsSection />
+  </div>
+);
 
 const ContactAndAddressSection = () => (
   <div className="space-y-6">
@@ -180,6 +194,7 @@ export default function SettingsForm() {
           "businessAddress",
           "bankTransferDetails",
           "features",
+          "googleReviews",
           "maintenanceMessage",
         ];
         jsonFields.forEach((field) => {
@@ -211,6 +226,12 @@ export default function SettingsForm() {
             formData.append(field, String(value));
           }
         });
+
+        // Write-only secret: send only when the admin typed a new key,
+        // otherwise the server keeps the stored (encrypted) one.
+        if (data.googlePlacesApiKey?.trim()) {
+          formData.append("googlePlacesApiKey", data.googlePlacesApiKey.trim());
+        }
 
         // 3. Media Fields (Explicit Handling)
         // Logo
@@ -266,7 +287,7 @@ export default function SettingsForm() {
       case "shipping":
         return ShippingSection;
       case "features":
-        return FeaturesSection;
+        return FeaturesAndReviewsSection;
       case "advanced":
         return AdvancedSection;
       default:

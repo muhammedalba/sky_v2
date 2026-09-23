@@ -166,6 +166,19 @@ export const settingsSchema = z.object({
   allowRegistration: z.boolean().default(true),
   autoBackup: z.boolean().default(false),
   googleMapsApiKey: z.string().default(""),
+  googleReviews: z
+    .object({
+      enabled: z.boolean().default(false),
+      placeId: z
+        .string()
+        .trim()
+        .regex(/^[A-Za-z0-9_-]*$/, "Invalid Place ID")
+        .default(""),
+      reviewsUrl: z.union([z.literal(""), z.string().trim().url()]).default(""),
+    })
+    .default({ enabled: false, placeId: "", reviewsUrl: "" }),
+  // Write-only: never returned by the API (stored encrypted server-side)
+  googlePlacesApiKey: z.string().default(""),
   minOrderAmount: z.coerce.number().min(0).default(0),
   enablePerformance: z.boolean().default(false),
   inventoryAlertsEnabled: z.boolean().default(true),
