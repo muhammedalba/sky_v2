@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 
 const API_BASE_URL = env.API_URL;
 const REFRESH_ENDPOINT = env.ENDPOINTS.AUTH.REFRESH;
+const LOCALE_COOKIE_RE = /(?:^|;\s*)NEXT_LOCALE=([^;]*)/;
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -13,56 +14,49 @@ export const apiClient = axios.create({
   },
 });
 
-interface PendingRequest {
-  resolve: (value: unknown) => void;
-  reject: (reason?: unknown) => void;
-  config: InternalAxiosRequestConfig;
+type RetriableConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+  _sentAt?: number;
+};
+
+let refreshPromise: Promise<void> | null = null;
+let lastRefreshAt = 0;
+
+// Single-flight: concurrent 401s share one refresh request
+function refreshSession(): Promise<void> {
+  refreshPromise ??= axios
+    // طلب التجديد - السيرفر سيعالج الكوكيز تلقائياً بسبب withCredentials
+    .get(`${API_BASE_URL}${REFRESH_ENDPOINT}`, { withCredentials: true })
+    .then(({ data }) => {
+      if (!(data.access_token || data.data?.access_token)) {
+        throw new Error("No access token in response");
+      }
+      lastRefreshAt = Date.now();
+    })
+    .finally(() => {
+      refreshPromise = null;
+    });
+  return refreshPromise;
 }
 
-let isRefreshing = false;
-let failedQueue: PendingRequest[] = [];
-
-const processQueue = (error: unknown) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(apiClient(prom.config));
-    }
-  });
-  failedQueue = [];
-};
+// Prioritize pathLocale > cookieLocale > htmlLang — cookie is read only if needed
+function resolveClientLocale(): string {
+  const pathSegment = window.location.pathname.split("/", 2)[1];
+  if (pathSegment && pathSegment.length >= 2 && pathSegment.length <= 5) {
+    return pathSegment;
+  }
+  const cookieLocale = LOCALE_COOKIE_RE.exec(document.cookie)?.[1];
+  return cookieLocale || document.documentElement.lang || env.DEFAULT_LOCALE;
+}
 
 // Request interceptor
 apiClient.interceptors.request.use(
-  (config) => {
-    if (typeof window !== "undefined") {
-      const getCookie = (name: string) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-        return null;
-      };
-
-      const pathSegment = window.location.pathname.split("/")[1];
-      const isLikelyLocale =
-        pathSegment && pathSegment.length >= 2 && pathSegment.length <= 5;
-      const pathLocale = isLikelyLocale ? pathSegment : null;
-
-      const cookieLocale = getCookie("NEXT_LOCALE");
-      const htmlLang = document.documentElement.lang;
-
-      // Prioritize pathLocale > cookieLocale > htmlLang
-      const locale =
-        pathLocale || cookieLocale || htmlLang || env.DEFAULT_LOCALE;
-
-      config.headers["x-lang"] = locale;
-      config.headers["Accept-Language"] = locale;
-    } else {
-      config.headers["x-lang"] = env.DEFAULT_LOCALE;
-      config.headers["Accept-Language"] = env.DEFAULT_LOCALE;
-    }
-
+  (config: RetriableConfig) => {
+    const locale =
+      typeof window !== "undefined" ? resolveClientLocale() : env.DEFAULT_LOCALE;
+    config.headers["x-lang"] = locale;
+    config.headers["Accept-Language"] = locale;
+    config._sentAt = Date.now();
     return config;
   },
   (error) => {
@@ -87,9 +81,8 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
+    const originalRequest = error.config as RetriableConfig;
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (
         typeof window !== "undefined" &&
@@ -98,38 +91,21 @@ apiClient.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject, config: originalRequest });
-        });
-      }
-
       originalRequest._retry = true;
-      isRefreshing = true;
 
-      try {
-        // طلب التجديد - السيرفر سيعالج الكوكيز تلقائياً بسبب withCredentials
-        const response = await axios.get(`${API_BASE_URL}${REFRESH_ENDPOINT}`, {
-          withCredentials: true,
-        });
-
-        const resData = response.data;
-        const newAccessToken =
-          resData.access_token || resData.data?.access_token;
-
-        if (newAccessToken) {
-          processQueue(null);
-          return apiClient(originalRequest);
-        } else {
-          throw new Error("No access token in response");
-        }
-      } catch (refreshError) {
-        processQueue(refreshError);
-        handleLogout();
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
+      // Sent before the latest successful refresh — just retry with the new cookie
+      if ((originalRequest._sentAt ?? 0) < lastRefreshAt) {
+        return apiClient(originalRequest);
       }
+
+      const isInitiator = !refreshPromise;
+      try {
+        await refreshSession();
+      } catch (refreshError) {
+        if (isInitiator) handleLogout();
+        return Promise.reject(refreshError);
+      }
+      return apiClient(originalRequest);
     }
 
     // Handle standardized error response from AllExceptionsFilter
