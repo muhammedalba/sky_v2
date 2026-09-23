@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getServerUserFromToken, checkUserPermission } from "@/lib/auth";
+import { checkUserPermission } from "@/lib/auth";
+import { getVerifiedServerUser } from "@/lib/auth.server";
 import { User } from "@/types";
 import DashboardLayout from "@/widgets/layout/DashboardLayout";
 import { NextIntlClientProvider } from "next-intl";
@@ -26,7 +27,7 @@ export default async function DashboardLayoutWrapper({
 
   // Server-side check using JWT from HttpOnly cookie
   const token = cookieStore.get("access_token")?.value;
-  const user = token ? getServerUserFromToken(token) : null;
+  const user = token ? await getVerifiedServerUser(token) : null;
   if (!token || !user) {
     redirect(`/login`);
   }

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
-import { getServerUserFromToken, checkUserPermission } from "@/lib/auth";
+import { checkUserPermission } from "@/lib/auth";
+import { getVerifiedServerUser } from "@/lib/auth.server";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { Permissions } from "@/features/roles/types";
 import { User } from "@/types";
@@ -12,7 +13,7 @@ export interface MaintenanceState {
 export async function getMaintenanceState(): Promise<MaintenanceState> {
   const cookieStore = await cookies();
   const token = cookieStore.get("access_token")?.value;
-  const user = token ? getServerUserFromToken(token) : null;
+  const user = token ? await getVerifiedServerUser(token) : null;
 
   const canBypassMaintenance = checkUserPermission(user as User, [
     Permissions.UPDATE_SETTINGS,

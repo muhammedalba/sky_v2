@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { locales } from "./i18n";
 import { env } from "./lib/env";
-import { checkUserPermission, getServerUserFromToken } from "@/lib/auth";
+import { checkUserPermission } from "@/lib/auth";
+import { getVerifiedServerUser } from "@/lib/auth.server";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { Permissions } from "@/features/roles/types";
 import { User } from "@/types";
@@ -34,7 +35,7 @@ async function checkMaintenance(request: NextRequest): Promise<NextResponse | nu
   if (settings.maintenanceMode !== true) return null;
 
   const token = request.cookies.get("access_token")?.value;
-  const user = token ? getServerUserFromToken(token) : null;
+  const user = token ? await getVerifiedServerUser(token) : null;
   const canBypassMaintenance = checkUserPermission(user as User, [
     Permissions.UPDATE_SETTINGS,
     Permissions.VIEW_SETTINGS,

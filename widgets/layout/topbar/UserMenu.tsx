@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { getServerUserFromToken } from '@/lib/auth';
+import { getVerifiedServerUser } from '@/lib/auth.server';
 import { UserIcon } from "@/shared/ui/Icons";
 import LogoutButton from './LogoutButton';
 import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
@@ -9,7 +9,7 @@ import ImageWithFallback from '@/shared/ui/image/ImageWithFallback';
 const UserMenu = async ({ locale }: { locale: string }) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('access_token')?.value;
-  const user = token ? getServerUserFromToken(token) : null;
+  const user = token ? await getVerifiedServerUser(token) : null;
 
   return (
     <div className="ps-2 relative group">
