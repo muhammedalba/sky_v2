@@ -24,6 +24,7 @@ import {
   DEFAULT_FEATURED_PARAMS,
   DEFAULT_CATEGORIES_PARAMS,
   DEFAULT_BRANDS_PARAMS,
+  STOREFRONT_REFETCH_OPTIONS,
 } from "@/features/products/storefrontQueryDefaults";
 
 const ProductsFilterDrawer = dynamic(
@@ -47,8 +48,12 @@ export default function ProductsClient({ trustedBySection }: ProductsClientProps
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // ─── Data Fetching ───────────────────────────────────────
-  const { data: bestSellersData } = useProducts(DEFAULT_BEST_SELLERS_PARAMS);
-  const { data: featuredData } = useProducts(DEFAULT_FEATURED_PARAMS);
+  const { data: bestSellersData } = useProducts(DEFAULT_BEST_SELLERS_PARAMS, {
+    refetchOnWindowFocus: STOREFRONT_REFETCH_OPTIONS.refetchOnWindowFocus,
+  });
+  const { data: featuredData } = useProducts(DEFAULT_FEATURED_PARAMS, {
+    refetchOnWindowFocus: STOREFRONT_REFETCH_OPTIONS.refetchOnWindowFocus,
+  });
   const { data: categoriesData } = useCategories(DEFAULT_CATEGORIES_PARAMS);
   const { data: subCategoriesData } = useSubCategories(
     { category: filters.category || undefined, limit: 100 },

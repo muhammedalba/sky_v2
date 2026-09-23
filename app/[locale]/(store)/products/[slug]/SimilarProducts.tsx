@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useProducts } from "@/features/products/hooks/useProducts";
+import { STOREFRONT_REFETCH_OPTIONS } from "@/features/products/storefrontQueryDefaults";
 import { Product } from "@/types";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import SimilarProductCard from "@/components/SimilarProductCard";
@@ -21,13 +22,14 @@ export default function SimilarProducts({ product }: SimilarProductsProps) {
     (typeof product.brand === "object" ? product.brand?._id : product.brand) ||
     undefined;
 
+  const { refetchOnWindowFocus } = STOREFRONT_REFETCH_OPTIONS;
   const { data: byBrand } = useProducts(
     { brand: brandId, limit: 8 },
-    { enabled: !!brandId },
+    { enabled: !!brandId, refetchOnWindowFocus },
   );
   const { data: byCategory } = useProducts(
     { category: categoryId, limit: 8 },
-    { enabled: !!categoryId },
+    { enabled: !!categoryId, refetchOnWindowFocus },
   );
 
   const relatedProducts = useMemo(() => {

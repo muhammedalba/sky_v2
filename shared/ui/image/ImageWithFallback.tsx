@@ -20,8 +20,12 @@ export default function ImageWithFallback({
   fill,
   ...props
 }: ImageWithFallbackProps) {
-  const [error, setError] = useState(false);
   const resolvedSrc = getImageUrl(src);
+  // Track *which* URL failed, not just "failed": when src changes (e.g. a new
+  // image after an edit, while the old file was already deleted) the error
+  // resets automatically instead of sticking to the fallback forever.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const error = failedSrc !== null && failedSrc === resolvedSrc;
 
   if (error || !resolvedSrc || resolvedSrc === null) {
     return (
@@ -45,7 +49,7 @@ export default function ImageWithFallback({
       alt={alt || "image"}
       className={className}
       fill={fill}
-      onError={() => setError(true)}
+      onError={() => setFailedSrc(resolvedSrc)}
       {...props}
     />
   );

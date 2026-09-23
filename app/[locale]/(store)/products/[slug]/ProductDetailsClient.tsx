@@ -3,6 +3,7 @@
 import { useState, use, useMemo, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useProduct } from "@/features/products/hooks/useProducts";
+import { STOREFRONT_REFETCH_OPTIONS } from "@/features/products/storefrontQueryDefaults";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -89,7 +90,10 @@ export default function ProductDetailsClient({
   >(() => getInitialVariantAttributes(initialData?.variants));
 
   // --- Fetch Data ---
-  const { data: payload, isLoading, error } = useProduct(slug, { initialData });
+  const { data: payload, isLoading, error } = useProduct(slug, {
+    initialData,
+    ...STOREFRONT_REFETCH_OPTIONS,
+  });
 
   const product = payload?.product;
   const variants = useMemo(() => payload?.variants || [], [payload?.variants]);

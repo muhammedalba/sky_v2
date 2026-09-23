@@ -100,6 +100,12 @@ export function useUpdateOrderStatus() {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["order-stats"] });
+      // Cancelling / reactivating an order gives stock back or takes it again:
+      // refresh every product query (dashboard + storefront, lists + details).
+      // The backend responds only after its product caches are cleared.
+      if (variables.status !== undefined) {
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+      }
     },
   });
 }

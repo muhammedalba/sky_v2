@@ -50,7 +50,8 @@ const getProductData = cache(async (slug: string, locale: string) => {
   const response = await fetch(endpoint, {
     next: {
       revalidate: 3600, // Cache for 1 hour
-      tags: [`product-${slug}-${locale}`, "products"],
+      // Locale-agnostic tag: one revalidation (from /api/revalidate-product) clears every locale
+      tags: [`product-${slug}`, "products"],
     },
     headers: {
       "Content-Type": "application/json",

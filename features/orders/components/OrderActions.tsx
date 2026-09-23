@@ -32,6 +32,7 @@ export default function OrderActions({ order }: OrderActionsProps) {
   const t = useTranslations("orders");
   const tButtons = useTranslations("buttons");
   const tMessages = useTranslations("messages");
+  const tErrors = useTranslations("errors");
   const deleteOrderMutation = useDeleteOrder();
   const updateStatusMutation = useUpdateOrderStatus();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -85,7 +86,8 @@ export default function OrderActions({ order }: OrderActionsProps) {
         paymentStatus: newStatus,
       });
     } catch (err) {
-      console.error(err);
+      // Server message (e.g. insufficient stock on reactivation), set by the axios interceptor
+      toastError(err instanceof Error ? err.message : tErrors("serverError"));
     } finally {
       setIsUpdating(false);
     }
@@ -99,7 +101,8 @@ export default function OrderActions({ order }: OrderActionsProps) {
         status: newStatus,
       });
     } catch (err) {
-      console.error(err);
+      // Server message (e.g. insufficient stock on reactivation), set by the axios interceptor
+      toastError(err instanceof Error ? err.message : tErrors("serverError"));
     } finally {
       setIsUpdating(false);
     }

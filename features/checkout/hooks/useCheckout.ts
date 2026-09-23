@@ -8,6 +8,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { useLocale } from "next-intl";
 import { isAxiosError } from "axios";
 import { queryKeys } from "@/lib/api/query-keys";
+import { useCartStore } from "@/store/cart-store";
 
 export type AddressPayload = Record<string, unknown>;
 
@@ -244,6 +245,12 @@ export function usePlaceOrder() {
       // refresh so the account page shows it immediately.
       queryClient.invalidateQueries({ queryKey: ["orders", "my-orders"] });
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.me() });
+      // The backend empties the cart on every successful placeOrder (all payment
+      // methods), but only gateway flows pass through /checkout/callback which
+      // clears it client-side — bank transfer / COD would keep showing the
+      // stale cached cart until a reload.
+      queryClient.invalidateQueries({ queryKey: ["cart"], refetchType: "all" });
+      useCartStore.getState().clearCart();
       toast.success(locale === "ar" ? "تم تقديم طلبك بنجاح!" : "Order placed successfully!");
     },
     onError: (error: Error | unknown) => {

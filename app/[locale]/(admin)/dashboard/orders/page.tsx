@@ -27,10 +27,13 @@ import { RefreshCwIcon } from "@/shared/ui/Icons";
 import { useTranslations } from "next-intl";
 import Can from "@/components/auth/Can";
 import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
+import { useToast } from "@/shared/hooks/useToast";
 import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 
 export default function OrdersPage() {
   const t = useTranslations("orders");
+  const tErrors = useTranslations("errors");
+  const { error: toastError } = useToast();
   const { getQueryParam, setQueryParam } = useQueryState();
   const queryClient = useQueryClient();
 
@@ -152,14 +155,28 @@ export default function OrdersPage() {
   // Bulk Actions
   const handleBulkStatusUpdate = useCallback(
     async (status: string) => {
-      await Promise.all(
+      // allSettled: one order failing (e.g. insufficient stock) must not hide the others' result
+      const results = await Promise.allSettled(
         selectedArray.map((id) =>
           updateStatusMutation.mutateAsync({ id, status }),
         ),
       );
+      const failures = results.filter(
+        (r): r is PromiseRejectedResult => r.status === "rejected",
+      );
+      if (failures.length > 0) {
+        const reason: unknown = failures[0].reason;
+        const message =
+          reason instanceof Error ? reason.message : tErrors("serverError");
+        toastError(
+          failures.length > 1
+            ? `${message} (+${failures.length - 1})`
+            : message,
+        );
+      }
       clearSelection();
     },
-    [selectedArray, updateStatusMutation, clearSelection],
+    [selectedArray, updateStatusMutation, clearSelection, toastError, tErrors],
   );
 
   const handleBulkDelete = useCallback(async () => {

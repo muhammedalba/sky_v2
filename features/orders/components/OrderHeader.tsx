@@ -11,6 +11,7 @@ import {
 } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useUpdateOrderStatus } from "@/features/orders/hooks/useOrders";
+import { useToast } from "@/shared/hooks/useToast";
 
 import Link from "next/link";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
@@ -28,6 +29,8 @@ interface OrderHeaderProps {
 
 export default function OrderHeader({ order }: OrderHeaderProps) {
   const t = useTranslations("orders");
+  const tErrors = useTranslations("errors");
+  const { error: toastError } = useToast();
   const formatCurrency = useFormatCurrency();
   const updateStatusMutation = useUpdateOrderStatus();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -40,7 +43,8 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
         paymentStatus: newStatus,
       });
     } catch (err) {
-      console.error(err);
+      // Server message (e.g. insufficient stock on reactivation), set by the axios interceptor
+      toastError(err instanceof Error ? err.message : tErrors("serverError"));
     } finally {
       setIsUpdating(false);
     }
@@ -54,7 +58,8 @@ export default function OrderHeader({ order }: OrderHeaderProps) {
         status: newStatus,
       });
     } catch (err) {
-      console.error(err);
+      // Server message (e.g. insufficient stock on reactivation), set by the axios interceptor
+      toastError(err instanceof Error ? err.message : tErrors("serverError"));
     } finally {
       setIsUpdating(false);
     }

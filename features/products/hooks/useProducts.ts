@@ -32,7 +32,7 @@ export interface UseProductsParams {
 
 export function useProducts(
   params?: UseProductsParams,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; refetchOnWindowFocus?: boolean },
 ) {
   const locale = useLocale();
   return useQuery({
@@ -45,12 +45,18 @@ export function useProducts(
     // يتطابق مع next: { revalidate: 60 } في page.tsx
     // يمنع إعادة الـ fetch فور الـ hydration بعد SSR prefetch
     staleTime: 60 * 1000,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
   });
 }
 
 export function useProduct(
   id: string,
-  options?: { all_langs?: boolean; initialData?: ProductWithVariants | null },
+  options?: {
+    all_langs?: boolean;
+    initialData?: ProductWithVariants | null;
+    refetchOnWindowFocus?: boolean;
+    staleTime?: number;
+  },
 ): UseQueryResult<ProductWithVariants, Error> {
   const all_langs = options?.all_langs ?? false;
   const locale = useLocale();
@@ -65,8 +71,9 @@ export function useProduct(
     throwOnError: true,
     // ✅ إذا وُجدت بيانات أولية من SSR، لا يُرسَل أي طلب عند أول تحميل
     initialData: options?.initialData ?? undefined,
-    // يتطابق مع مدة الكاش على السيرفر (1 ساعة)
-    staleTime: 60 * 60 * 1000,
+    // الافتراضي يتطابق مع مدة الكاش على السيرفر (1 ساعة)
+    staleTime: options?.staleTime ?? 60 * 60 * 1000,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
   });
 }
 
@@ -103,7 +110,7 @@ export function useUpdateProduct() {
       const response = await productsApi.update(id, data);
       return response.data as unknown as ProductWithVariants;
     },
-    onSuccess: async (updatedProduct: ProductWithVariants) => {
+    onSuccess: async () => {
       // 1. تحديث قائمة المنتجات (الكاش المكون من عنصرين)
       await queryClient.invalidateQueries({
         predicate: (query) =>
@@ -115,22 +122,7 @@ export function useUpdateProduct() {
         predicate: (query) =>
           query.queryKey[0] === "products" && query.queryKey.length >= 4,
       });
-
-      // 3. Trigger Next.js ISR revalidation for page tags (product and products)
-      try {
-        const slug =
-          updatedProduct?.product?.slug ??
-          (updatedProduct as unknown as { slug?: string })?.slug;
-        if (slug) {
-          await fetch("/api/revalidate-product", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ slug }),
-          });
-        }
-      } catch (err) {
-        console.error("[useUpdateProduct] failed to revalidate next tags", err);
-      }
+      // Next.js ISR tags (products, product-<slug>) are revalidated by the backend after commit.
     },
     onError: (error: Error) => {
       console.error("Backend Error:", error);

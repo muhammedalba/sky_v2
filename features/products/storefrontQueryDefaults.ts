@@ -9,6 +9,16 @@
  * literals keeps that guarantee compiler-enforced rather than comment-enforced.
  */
 
+/**
+ * Storefront product queries refetch when the tab regains focus (once the
+ * 60s staleTime has passed), so edits made in the dashboard show up without
+ * a manual page reload.
+ */
+export const STOREFRONT_REFETCH_OPTIONS = {
+  refetchOnWindowFocus: true,
+  staleTime: 60 * 1000,
+} as const;
+
 export const DEFAULT_CATALOG_PARAMS = {
   page: 1,
   limit: 20,

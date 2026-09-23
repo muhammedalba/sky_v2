@@ -15,7 +15,10 @@ import {
 } from "@/shared/ui/Icons";
 import ProductsGrid from "./ProductsGrid";
 import ProductsGridSkeleton from "./ProductsGridSkeleton";
-import { DEFAULT_CATALOG_PARAMS } from "@/features/products/storefrontQueryDefaults";
+import {
+  DEFAULT_CATALOG_PARAMS,
+  STOREFRONT_REFETCH_OPTIONS,
+} from "@/features/products/storefrontQueryDefaults";
 import SearchBar from "@/components/navigation/SearchBar";
 import { useMediaQuery } from "@/shared/hooks/use-media-query";
 
@@ -36,8 +39,8 @@ function CatalogGrid({ queryParams, onPageChange, t }: CatalogGridProps) {
   const { data } = useSuspenseQuery({
     queryKey: ["products", locale, queryParams],
     queryFn: () => productsApi.getAll(queryParams),
-    // يتطابق مع next: { revalidate: 60 } في page.tsx — لا re-fetch بعد hydration
-    staleTime: 60 * 1000,
+    // staleTime يتطابق مع next: { revalidate: 60 } في page.tsx — لا re-fetch بعد hydration
+    ...STOREFRONT_REFETCH_OPTIONS,
   });
 
   return (

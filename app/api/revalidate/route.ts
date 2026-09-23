@@ -29,6 +29,12 @@ const ALLOWED_TAGS = new Set([
   'promo-banner',
 ]);
 
+/** Per-product page tags: `product-<slug>` (see products/[slug]/page.tsx). */
+const PRODUCT_TAG_PATTERN = /^product-[\p{L}\p{N}_-]{1,200}$/u;
+
+const isAllowedTag = (tag: string) =>
+  ALLOWED_TAGS.has(tag) || PRODUCT_TAG_PATTERN.test(tag);
+
 /**
  * STRUCTURED LOGGER
  */
@@ -87,7 +93,7 @@ export async function POST(request: NextRequest) {
     const tagsToProcess = tagInput.split(',').map(t => t.trim()).filter(Boolean);
 
     // 3. WHITELIST VALIDATION
-    const invalidTags = tagsToProcess.filter(tag => !ALLOWED_TAGS.has(tag));
+    const invalidTags = tagsToProcess.filter(tag => !isAllowedTag(tag));
     if (invalidTags.length > 0) {
       logger.error('Forbidden tags detected', { requestId, invalidTags, clientIp });
       return NextResponse.json(
@@ -97,9 +103,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. EXECUTION (Atomic Revalidation)
-    // Next.js 16 requires a profile ('max' for stale-while-revalidate)
+    // expire: 0 = immediate expiry, so admin changes (e.g. maintenance mode) apply
+    // on the very next request ('max' would serve the stale version once more).
     tagsToProcess.forEach(tag => {
-      revalidateTag(tag, 'max');
+      revalidateTag(tag, { expire: 0 });
     });
 
     logger.info('Cache revalidation successful', {
