@@ -43,8 +43,13 @@ import { getAttributeLabel } from "@/shared/constants/product-constants";
 import Modal from "@/shared/ui/Modal";
 import { useDownloadFile } from "@/shared/hooks/useDownloadFile";
 import { getFileUrl, getImageUrl } from "@/shared/utils/image.util";
+import { useSettings } from "@/app/providers/SettingsProvider";
+import { useMyReviewsForProducts } from "@/features/reviews/hooks/useReviews";
+import OrderItemReview from "@/features/reviews/components/storefront/OrderItemReview";
 
 const ACTIVE_STATUSES = ["pending", "pending_payment", "processing", "shipped"];
+// Same statuses the backend treats as "purchased" (verified-purchase check)
+const REVIEWABLE_STATUSES = ["delivered", "completed"];
 const INFO_CARD_CLASS = "border-border/60 bg-card";
 const INFO_ICON_CLASS = "rounded-xl bg-primary/10";
 
@@ -99,6 +104,33 @@ export default function OrderDetailPage() {
       .filter(Boolean)
       .join(" — ");
   }, [order?.shippingAddress, getTrans, t]);
+
+  // ── Reviews (hooks stay above the early returns) ─────────────────────────
+  // 1) Only delivered orders ask for reviews, and only if the admin enabled them
+  const settings = useSettings();
+  const reviewsEnabled = settings?.features?.reviews !== false;
+  const isDeliveredOrder = !!order && REVIEWABLE_STATUSES.includes(order.status);
+
+  // 2) One prompt per product: the same product can appear several times
+  //    (different variants) but a user reviews a product only once. Products
+  //    no longer on the store come back unpopulated (no slug) and are skipped.
+  const { reviewableIds, firstItemIndex } = useMemo(() => {
+    const firstIndex = new Map<string, number>();
+    order?.items?.forEach((item, idx) => {
+      const productId = item.productId?._id;
+      if (productId && item.productId?.slug && !firstIndex.has(productId)) {
+        firstIndex.set(productId, idx);
+      }
+    });
+    return { reviewableIds: [...firstIndex.keys()], firstItemIndex: firstIndex };
+  }, [order?.items]);
+
+  const showReviews = reviewsEnabled && isDeliveredOrder && reviewableIds.length > 0;
+
+  // 3) The user's existing reviews for all those products in ONE request
+  const { data: myReviews } = useMyReviewsForProducts(reviewableIds, {
+    enabled: showReviews,
+  });
 
   // ── Loading skeleton ─────────────────────────────────────────────────────
   if (isLoading) {
@@ -462,33 +494,53 @@ export default function OrderDetailPage() {
                       </div>
                     </>
                   );
+                  // Review prompt only on the first row of each product
+                  const showItemReview =
+                    showReviews &&
+                    !!product?._id &&
+                    firstItemIndex.get(product._id) === idx;
+
                   return (
                     <ScrollReveal
                       animation="fade"
                       delay={idx * 400}
                       key={idx}
                       className={cn(
-                        "flex items-center gap-4 py-4 first:pt-0 last:pb-0",
+                        "py-4 first:pt-0 last:pb-0",
                         idx === 0 ? "mt-4" : "",
                       )}
                     >
-                      {product?.slug ? (
-                        <Link
-                          href={`/${locale}/products/${product.slug}`}
-                          className="flex items-center gap-4 flex-1 min-w-0 group"
-                        >
-                          {content}
-                        </Link>
-                      ) : (
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          {content}
+                      <div className="flex items-center gap-4">
+                        {product?.slug ? (
+                          <Link
+                            href={`/${locale}/products/${product.slug}`}
+                            className="flex items-center gap-4 flex-1 min-w-0 group"
+                          >
+                            {content}
+                          </Link>
+                        ) : (
+                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                            {content}
+                          </div>
+                        )}
+                        <Price
+                          amount={item.price}
+                          className="font-bold text-sm text-foreground shrink-0 tabular-nums"
+                          animate={false}
+                        />
+                      </div>
+
+                      {/* Kept OUTSIDE the product <Link>: clicking a star must
+                          not navigate. ms-20 aligns it under the product text
+                          (64px image + 16px gap). */}
+                      {showItemReview && product?._id && (
+                        <div className="mt-3 ms-20">
+                          <OrderItemReview
+                            productId={product._id}
+                            review={myReviews?.get(product._id)}
+                          />
                         </div>
                       )}
-                      <Price
-                        amount={item.price}
-                        className="font-bold text-sm text-foreground shrink-0 tabular-nums"
-                        animate={false}
-                      />
                     </ScrollReveal>
                   );
                 })}
