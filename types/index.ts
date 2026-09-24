@@ -8,6 +8,7 @@ export * from '@/features/dashboard/types';
 export * from '@/features/brands/types';
 export * from '@/features/suppliers/types';
 export * from '@/features/marketing/types';
+export * from '@/features/reviews/types';
 
 export interface PaginationMeta {
   currentPage: number;

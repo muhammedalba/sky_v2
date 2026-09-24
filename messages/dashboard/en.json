@@ -77,6 +77,8 @@
             "userStatus": "User Status",
             "orderStatus": "Order Status",
             "noOrders": "No orders",
+            "reviewStatus": "Review Status",
+            "noReviews": "No reviews",
             "salesChannelsTitle": "Sales Channels Comparison",
             "salesChannelsDesc": "Organic vs Marketing — Revenue, Orders & Discounts",
             "organic": "Organic",

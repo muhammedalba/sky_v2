@@ -112,6 +112,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     locations: allMessages.locations,
     profile: allMessages.profile,
     orders: allMessages.orders,
+    reviews: allMessages.reviews,
   };
 
   return (

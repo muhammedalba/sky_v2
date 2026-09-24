@@ -170,5 +170,8 @@ export const env = {
     QUOTE_REQUESTS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_QUOTE_REQUESTS || '/quote-requests',
     },
+    REVIEWS: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_REVIEWS || '/reviews',
+    },
   },
 } as const;

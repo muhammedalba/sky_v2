@@ -10,6 +10,10 @@ import { BarGroupChart } from '@/shared/ui/charts/BarGroupChart';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { CHART_COLORS } from './types';
 import type { DashboardData } from './types';
+import { Can } from '@/components/auth/Can';
+import { Permissions } from '@/features/roles/types';
+import { useReviewStats } from '@/features/reviews/hooks/useReviews';
+import type { ReviewStatus } from '@/features/reviews/types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -35,7 +39,8 @@ const BAR_COLORS = {
 
 interface DonutCardProps {
   title: string;
-  data: { name: string; value: number }[];
+  /** `color` overrides the name-based lookup (needed when `name` is a translated label) */
+  data: { name: string; value: number; color?: string }[];
 }
 
 function DonutCard({ title, data }: DonutCardProps) {
@@ -43,7 +48,10 @@ function DonutCard({ title, data }: DonutCardProps) {
     () =>
       data.map((item, i) => ({
         ...item,
-        color: STATUS_COLOR[item.name.toLowerCase()] ?? CHART_COLORS[i % CHART_COLORS.length],
+        color:
+          item.color ??
+          STATUS_COLOR[item.name.toLowerCase()] ??
+          CHART_COLORS[i % CHART_COLORS.length],
       })),
     [data],
   );
@@ -71,6 +79,33 @@ function DonutCard({ title, data }: DonutCardProps) {
       </CardContent>
     </Card>
   );
+}
+
+const REVIEW_STATUSES: ReviewStatus[] = ['pending', 'approved', 'rejected'];
+const REVIEW_STATUS_COLOR: Record<ReviewStatus, string> = {
+  pending:  STATUS_COLOR.pending,
+  approved: STATUS_COLOR.active,
+  rejected: STATUS_COLOR.cancelled,
+};
+
+/** Review moderation breakdown — has its own query (GET /reviews/statistics). */
+function ReviewStatusCard() {
+  const t = useTranslations('dashboard.breakdownSection');
+  const tStatus = useTranslations('reviews.admin.status');
+  const { data: stats } = useReviewStats();
+
+  const reviewData = useMemo(() => {
+    if (!stats?.total) {
+      return [{ name: t('noReviews'), value: 1, color: STATUS_COLOR.unverified }];
+    }
+    return REVIEW_STATUSES.filter((status) => stats[status] > 0).map((status) => ({
+      name: tStatus(status),
+      value: stats[status],
+      color: REVIEW_STATUS_COLOR[status],
+    }));
+  }, [stats, t, tStatus]);
+
+  return <DonutCard title={t('reviewStatus')} data={reviewData} />;
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -161,10 +196,15 @@ export function BreakdownSection({ d }: BreakdownSectionProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* auto-fit: 3 or 4 cards depending on whether the review card is visible */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
         <DonutCard title={t('userRoles')}   data={roleData} />
         <DonutCard title={t('userStatus')}  data={statusData} />
         <DonutCard title={t('orderStatus')} data={orderStatusWithFallback} />
+        {/* The stats endpoint requires VIEW_REVIEWS — mount (and fetch) only when allowed */}
+        <Can permission={Permissions.VIEW_REVIEWS}>
+          <ReviewStatusCard />
+        </Can>
       </div>
 
       <Card className="border-none shadow-md bg-background">

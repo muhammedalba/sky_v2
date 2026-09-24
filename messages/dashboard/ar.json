@@ -77,6 +77,8 @@
             "userStatus": "حالة المستخدمين",
             "orderStatus": "حالة الطلبات",
             "noOrders": "لا توجد طلبات",
+            "reviewStatus": "حالة التقييمات",
+            "noReviews": "لا توجد تقييمات",
             "salesChannelsTitle": "مقارنة قنوات البيع",
             "salesChannelsDesc": "العضوي مقابل التسويق — الإيرادات، الطلبات، والخصومات",
             "organic": "عضوي",

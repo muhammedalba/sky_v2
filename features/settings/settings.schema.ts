@@ -146,6 +146,7 @@ export const settingsSchema = z.object({
   // Features
   features: z.object({
     reviews: z.boolean().default(true),
+    reviewsVerifiedOnly: z.boolean().default(false),
     coupons: z.boolean().default(true),
     guestCheckout: z.boolean().default(true),
     wishlist: z.boolean().default(true),

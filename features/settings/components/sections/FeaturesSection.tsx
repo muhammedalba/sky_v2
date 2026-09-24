@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Switch } from '@/shared/ui/Switch';
-import { HeartIcon, LayoutIcon, StarIcon, TagIcon, UserIcon } from "@/shared/ui/Icons";
+import { HeartIcon, LayoutIcon, ShieldCheckIcon, StarIcon, TagIcon, UserIcon } from "@/shared/ui/Icons";
 import { SettingsInput } from '../../settings.schema';
 
 export default function FeaturesSection() {
@@ -24,6 +24,15 @@ export default function FeaturesSection() {
       desc: t('features.reviewsDesc'), 
       icon: StarIcon, 
       value: features?.reviews 
+    },
+    {
+      id: 'reviewsVerifiedOnly',
+      name: t('features.reviewsVerifiedOnly'),
+      desc: t('features.reviewsVerifiedOnlyDesc'),
+      icon: ShieldCheckIcon,
+      value: features?.reviewsVerifiedOnly,
+      // Only meaningful while reviews are enabled
+      disabled: !features?.reviews,
     },
     { 
       id: 'coupons', 
@@ -69,11 +78,12 @@ export default function FeaturesSection() {
                 </div>
                 <div className="space-y-0.5">
                   <p className="font-medium text-sm">{toggle.name}</p>
-                  <p className="text-[10px] text-muted-foreground line-clamp-1">{toggle.desc}</p>
+                  <p className="text-[10px] text-muted-foreground line-clamp-1" title={toggle.desc}>{toggle.desc}</p>
                 </div>
               </div>
               <Switch
                 checked={!!toggle.value}
+                disabled={'disabled' in toggle ? toggle.disabled : false}
                 onCheckedChange={(checked) => setValue(`features.${toggle.id}` as keyof SettingsInput, checked, { shouldDirty: true })}
               />
             </div>
