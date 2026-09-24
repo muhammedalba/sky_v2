@@ -9,7 +9,11 @@ export const reviewKeys = {
   all: ['reviews'] as const,
   product: (productId: string, params?: Record<string, unknown>) =>
     ['reviews', 'product', productId, params] as const,
+  // Prefix shared by every "my review(s)" query (single product + batch),
+  // so one invalidation refreshes both the product page and the order page.
+  mineAll: ['reviews', 'mine'] as const,
   mine: (productId: string) => ['reviews', 'mine', productId] as const,
+  mineBatch: (productIds: string[]) => ['reviews', 'mine', 'batch', productIds] as const,
   // locale is part of the key: the backend localizes populated fields
   // (e.g. product.title) per request language
   admin: (locale: string, params?: Record<string, unknown>) =>
@@ -42,11 +46,36 @@ export function useMyReview(productId: string, options?: { enabled?: boolean }) 
   });
 }
 
+/**
+ * The current user's reviews on several products (order details page).
+ * Returns a Map productId → review for O(1) lookup per order item.
+ */
+export function useMyReviewsForProducts(productIds: string[], options?: { enabled?: boolean }) {
+  // 1) Stable key regardless of item order in the order
+  const sortedIds = [...productIds].sort();
+
+  return useQuery({
+    queryKey: reviewKeys.mineBatch(sortedIds),
+    queryFn: async () => {
+      // 2) One request for all products instead of one per item
+      const response = await reviewsApi.getMyReviews(sortedIds);
+      const reviews = response.data ?? [];
+      // 3) Index by product id (backend returns `product` as a plain id here)
+      return new Map(reviews.map((review) => [String(review.product), review]));
+    },
+    enabled: sortedIds.length > 0 && (options?.enabled ?? true),
+    // Same reasoning as useMyReview: only the user's own actions change it
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useCreateReview(productId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ReviewPayload) => reviewsApi.create(productId, data),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: reviewKeys.mine(productId) }),
+    // onSettled (not onSuccess): a 409 "already reviewed" must also refetch
+    // so the UI switches to edit mode
+    onSettled: () => queryClient.invalidateQueries({ queryKey: reviewKeys.mineAll }),
   });
 }
 
@@ -56,7 +85,7 @@ export function useUpdateMyReview(productId: string) {
     mutationFn: ({ reviewId, data }: { reviewId: string; data: Partial<ReviewPayload> }) =>
       reviewsApi.updateMine(reviewId, data),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: reviewKeys.mine(productId) });
+      await queryClient.invalidateQueries({ queryKey: reviewKeys.mineAll });
       // An edited approved review leaves the public list until re-approved
       await queryClient.invalidateQueries({ queryKey: ['reviews', 'product', productId] });
     },

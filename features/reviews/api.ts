@@ -13,6 +13,12 @@ export const reviewsApi = {
   getMyReview: (productId: string) =>
     apiClient.get(`${BASE}/product/${productId}/me`) as unknown as Promise<ApiResponse<MyReviewState>>,
 
+  /** The current user's reviews on several products in one request (order page). */
+  getMyReviews: (productIds: string[]) =>
+    apiClient.get(`${BASE}/me`, { params: { productIds: productIds.join(',') } }) as unknown as Promise<
+      ApiResponse<Review[]>
+    >,
+
   create: (productId: string, data: ReviewPayload) =>
     apiClient.post(`${BASE}/product/${productId}`, data) as unknown as Promise<ApiResponse<Review>>,
 

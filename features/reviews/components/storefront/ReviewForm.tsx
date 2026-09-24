@@ -10,21 +10,34 @@ import { useCreateReview, useUpdateMyReview } from '@/features/reviews/hooks/use
 import { reviewSchema } from '@/features/reviews/review.schema';
 import { getReviewErrorMessage } from '@/features/reviews/utils';
 import { Review } from '@/features/reviews/types';
+import { cn } from '@/lib/utils';
 
 interface ReviewFormProps {
   productId: string;
   /** When set the form edits this review instead of creating a new one */
   existing?: Review | null;
+  /** Pre-selected stars for a new review (e.g. the star clicked in the order page) */
+  initialRating?: number;
+  /** Lighter inline variant: no title, tighter spacing, shorter textarea */
+  compact?: boolean;
   onDone: () => void;
   onCancel: () => void;
 }
 
 type FieldErrors = Partial<Record<'rating' | 'comment', string>>;
 
-export default function ReviewForm({ productId, existing, onDone, onCancel }: ReviewFormProps) {
+export default function ReviewForm({
+  productId,
+  existing,
+  initialRating = 0,
+  compact = false,
+  onDone,
+  onCancel,
+}: ReviewFormProps) {
   const t = useTranslations('reviews.store');
   const toast = useToast();
-  const [rating, setRating] = useState(existing?.rating ?? 0);
+  // Existing review wins; otherwise start from the star the user already picked
+  const [rating, setRating] = useState(existing?.rating ?? initialRating);
   const [comment, setComment] = useState(existing?.comment ?? '');
   const [errors, setErrors] = useState<FieldErrors>({});
 
@@ -64,8 +77,15 @@ export default function ReviewForm({ productId, existing, onDone, onCancel }: Re
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-border/50 bg-muted/30 p-4 sm:p-5 space-y-4" noValidate>
-      <p className="font-bold">{existing ? t('editReview') : t('writeReview')}</p>
+    <form
+      onSubmit={handleSubmit}
+      className={cn(
+        'rounded-2xl border border-border/50 bg-muted/30',
+        compact ? 'p-3 space-y-3' : 'p-4 sm:p-5 space-y-4',
+      )}
+      noValidate
+    >
+      {!compact && <p className="font-bold">{existing ? t('editReview') : t('writeReview')}</p>}
 
       {existing && (
         <p className="text-xs text-warning/90 bg-warning/10 rounded-lg px-3 py-2">{t('editNotice')}</p>
@@ -91,7 +111,7 @@ export default function ReviewForm({ productId, existing, onDone, onCancel }: Re
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         maxLength={1000}
-        rows={4}
+        rows={compact ? 3 : 4}
         disabled={isPending}
         error={errors.comment}
       />
