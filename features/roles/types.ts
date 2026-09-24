@@ -103,6 +103,11 @@ export enum Permissions {
   VIEW_NOTIFICATIONS = "view_notifications",
   SEND_NOTIFICATION = "send_notification",
   DELETE_NOTIFICATION = "delete_notification",
+
+  // ---- Reviews ----
+  VIEW_REVIEWS = "view_reviews",
+  MANAGE_REVIEWS = "manage_reviews",
+  DELETE_REVIEW = "delete_review",
 }
 
 export interface PermissionGroup {

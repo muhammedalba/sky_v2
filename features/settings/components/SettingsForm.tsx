@@ -104,6 +104,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   taxesIncluded: false,
   features: {
     reviews: true,
+    reviewsVerifiedOnly: false,
     coupons: true,
     guestCheckout: true,
     wishlist: true,

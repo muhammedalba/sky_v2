@@ -12,6 +12,8 @@ export interface MaintenanceMode {
 
 export interface FeatureFlags {
   reviews: boolean;
+  /** Only customers with a delivered order containing the product can review it */
+  reviewsVerifiedOnly?: boolean;
   coupons: boolean;
   guestCheckout: boolean;
   wishlist: boolean;

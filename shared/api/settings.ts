@@ -130,6 +130,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   googleMapsApiKey: "",
   features: {
     reviews: true,
+    reviewsVerifiedOnly: false,
     coupons: true,
     guestCheckout: true,
     wishlist: true,

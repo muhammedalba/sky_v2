@@ -30,6 +30,7 @@ import {
 } from "./components/ProductSkeletons";
 import SimilarProducts from "./SimilarProducts";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import { cn } from "@/lib/utils";
 import { useRecentlyViewedStore } from "@/store/recently-viewed-store";
 import RecentlyViewedSection from "../components/RecentlyViewedSection";
 
@@ -105,9 +106,11 @@ export default function ProductDetailsClient({
     if (product?._id) addRecentlyViewed(product._id);
   }, [product?._id, addRecentlyViewed]);
 
-  // The tab switcher UI below is temporarily disabled (commented out), so this
-  // only ever reads "order" for now — the setter is unused until it's re-enabled.
-  const [activeTab] = useState<"order" | "reviews">("order");
+  // Multi-variant products show an Order / Reviews tab switcher; single-variant
+  // products have no order panel here, so the reviews section is shown directly.
+  const [activeTab, setActiveTab] = useState<"order" | "reviews">("order");
+  const hasOrderTab = (product?.variantCount ?? 0) > 1;
+  const currentTab = hasOrderTab ? activeTab : "reviews";
 
   // Default properties of the first available variable
   const defaultAttributes = useMemo(
@@ -418,8 +421,7 @@ export default function ProductDetailsClient({
 
         {/* Order / Reviews Tabs Section */}
         <div className="mt-10">
-          {/* now is not avialbe  this section*/}
-          {/* {product.variantCount > 1 && (
+          {hasOrderTab && (
             <ScrollReveal animation="slide-right" className="inline-flex items-center gap-1 rounded-sm p-2 bg-muted/60 border border-border/40 mb-6 w-full">
               <button
                 type="button"
@@ -452,9 +454,9 @@ export default function ProductDetailsClient({
                 )}
               </button>
             </ScrollReveal>
-          )} */}
+          )}
 
-          {activeTab === "order" && (product?.variantCount ?? 0) > 1 ? (
+          {currentTab === "order" ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-muted/60 p-5">
               <ProductVariantSelector
                 attributeGroups={attributeGroups}
@@ -479,12 +481,13 @@ export default function ProductDetailsClient({
                 getAttributeLabel={(key) => getAttributeLabel(key, isAr)}
               />
             </div>
-          ) : activeTab === "reviews" ? (
+          ) : (
             <ProductReviewsTab
+              productId={product._id}
               ratingsAverage={product.ratingsAverage}
               ratingsQuantity={product.ratingsQuantity}
             />
-          ) : null}
+          )}
         </div>
 
         {/* Similar Products */}

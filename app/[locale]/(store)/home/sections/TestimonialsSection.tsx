@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
 import { Card } from "@/shared/ui/Card";
-import { ActivityIcon, ExternalLinkIcon, GoogleIcon, StarIcon } from "@/shared/ui/Icons"; // استبدل بـ QuoteIcon إن وجد
+import { ActivityIcon, ExternalLinkIcon, GoogleIcon } from "@/shared/ui/Icons"; // استبدل بـ QuoteIcon إن وجد
+import { RatingStars } from "@/shared/ui/RatingStars";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { getStoreSettings } from "@/shared/api/settings";
 import { getGoogleReviews } from "@/shared/api/googleReviews";
-
+import { Avatar } from "@/shared/ui/CustomAvatar";
 
 // Default testimonials — shown whenever real Google reviews are disabled or unavailable.
 const TESTIMONIALS = [
@@ -48,33 +48,20 @@ const STATIC_ITEMS: TestimonialItem[] = TESTIMONIALS.map((testimonial) => ({
   rating: 5,
 }));
 
-function RatingStars({ rating, className }: { rating: number; className: string }) {
-  const filled = Math.round(rating);
-  return (
-    <div className="flex gap-1 text-warning">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <StarIcon
-          key={s}
-          className={`${className} ${s <= filled ? "fill-current" : "text-muted-foreground/30"}`}
-        />
-      ))}
-    </div>
-  );
-}
+function TestimonialCard({
+  item,
+  isGoogle,
+}: {
+  item: TestimonialItem;
+  isGoogle: boolean;
+}) {
 
-function TestimonialCard({ item, isGoogle }: { item: TestimonialItem; isGoogle: boolean }) {
-  // حل ذكي لاستخراج أول حرف من الاسم وتجاهل الألقاب مثل "المهندس"
-  const nameInitial = item.author.replace("المهندس ", "").charAt(0);
 
   return (
     <Card className="p-8 max-w-md  rounded-3xl border border-border/50  relative h-full flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-      {/* أيقونة الاقتباس بالخلفية */}
-      <ActivityIcon className="absolute top-6 left-6 w-12 h-12 text-primary/10 group-hover:text-primary/10 transition-colors rotate-180" />
-
-      <div className="mb-6">
-        <RatingStars rating={item.rating} className="w-4 h-4" />
-      </div>
-
+      {/* Quote icon with background*/}
+      <ActivityIcon className="absolute bottom-4 inset-e-7 w-12 h-12 text-primary/10 group-hover:text-primary/10 transition-colors rotate-180" />
+ 
       <p
         className={`text-foreground/80 font-medium max-w-xl mb-8 text-wrap ${isGoogle ? "line-clamp-5" : ""}`}
       >
@@ -82,19 +69,13 @@ function TestimonialCard({ item, isGoogle }: { item: TestimonialItem; isGoogle: 
       </p>
 
       <div className="flex items-center gap-4 mt-auto pt-6 border-t border-border/50">
-        {item.photo ? (
-          <Image
-            src={item.photo}
-            alt={item.author}
-            width={48}
-            height={48}
-            className="w-12 h-12 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary font-black text-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-            {nameInitial}
-          </div>
-        )}
+        <Avatar
+          src={item.photo}
+          alt={item.author}
+          fallback={item.author}
+          className="w-12 h-12 rounded-full object-cover"
+        />
+
         <div>
           <h4 className="font-black text-foreground">
             {item.authorUrl ? (
@@ -113,6 +94,7 @@ function TestimonialCard({ item, isGoogle }: { item: TestimonialItem; isGoogle: 
           <p className="text-xs font-bold text-muted-foreground">
             {item.subtitle}
           </p>
+          <RatingStars rating={item.rating} starClassName="w-4 h-4" />
         </div>
       </div>
     </Card>
@@ -156,17 +138,19 @@ export default async function TestimonialsSection({
       aria-hidden={index > 0 ? "true" : "false"}
     >
       {items.map((item, i) => (
-        <ScrollReveal key={item.key} delay={i * 100} className="flex gap-5 shrink-0 items-center">
+        <ScrollReveal
+          key={item.key}
+          delay={i * 100}
+          className="flex gap-5 shrink-0 items-center"
+        >
           <TestimonialCard item={item} isGoogle={isGoogle} />
         </ScrollReveal>
       ))}
     </div>
   ));
 
-
   return (
     <section className="py-40 relative overflow-hidden">
-      {/* الخلفية المنحنية (الأقواس من الأعلى والأسفل) */}
       <div className="absolute inset-0  bg-primary/10">
         <svg
           className="absolute top-0 inset-x-0 w-full h-20 md:h-28 text-background"
@@ -182,7 +166,10 @@ export default async function TestimonialsSection({
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          <path d="M0,120 L0,80 Q720,-30 1440,80 L1440,120 Z" fill="currentColor" />
+          <path
+            d="M0,120 L0,80 Q720,-30 1440,80 L1440,120 Z"
+            fill="currentColor"
+          />
         </svg>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,7 +178,7 @@ export default async function TestimonialsSection({
             <h2 className="text-4xl md:text-5xl font-black title-gradient tracking-tight">
               {t("testimonials.title")}
             </h2>
-             <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 mx-auto" />
+            <div className="w-24 h-0.5 bg-primary/80 rounded-full mt-2.5 mx-auto" />
             <p className="text-lg text-muted-foreground font-medium">
               {t("testimonials.description")}
             </p>
@@ -204,10 +191,14 @@ export default async function TestimonialsSection({
                     {googleReviews.rating.toFixed(1)}
                   </span>
                   <div className="flex flex-col items-start gap-0.5">
-                    <RatingStars rating={googleReviews.rating} className="w-4 h-4" />
+                    <RatingStars
+                      rating={googleReviews.rating}
+                      starClassName="w-4 h-4"
+                    />
                     <span className="text-xs font-bold text-muted-foreground">
-                      {t("testimonials.basedOn", { count: googleReviews.total })}
-                      {" · "}
+                      {t("testimonials.basedOn", {
+                        count: googleReviews.total,
+                      })}
                       {t("testimonials.fromGoogle")}
                     </span>
                   </div>
@@ -228,11 +219,11 @@ export default async function TestimonialsSection({
           </div>
         </ScrollReveal>
 
-          <div className="w-full relative flex overflow-hidden mask-image-fade">
-            <div className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500">
-              {marqueeContent}
-            </div>
+        <div className="w-full relative flex overflow-hidden mask-image-fade">
+          <div className="flex whitespace-nowrap animate-marquee items-center gap-5 hover:opacity-50 hover:grayscale grayscale-0 opacity-100 transition-all duration-500">
+            {marqueeContent}
           </div>
+        </div>
       </div>
     </section>
   );

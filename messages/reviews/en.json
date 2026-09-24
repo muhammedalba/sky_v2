@@ -1,0 +1,111 @@
+{
+  "store": {
+    "title": "Customer Reviews",
+    "basedOn": "Based on {count} reviews",
+    "empty": "No reviews yet. Be the first to review this product.",
+    "writeReview": "Write a Review",
+    "editReview": "Edit Your Review",
+    "yourRating": "Your rating",
+    "yourComment": "Your review",
+    "commentPlaceholder": "Share your experience with this product...",
+    "submit": "Submit Review",
+    "update": "Update Review",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "yourReview": "Your review",
+    "alreadyReviewed": "You have already reviewed this product. You can edit your review instead of adding a new one.",
+    "editNotice": "Editing your review sends it back for approval before it is published again.",
+    "loginToReview": "Log in to share your opinion about this product.",
+    "login": "Log in",
+    "buyersOnly": "Only customers who purchased this product can write a review.",
+    "verifiedPurchase": "Verified purchase",
+    "storeReply": "Store reply",
+    "edited": "Edited",
+    "submitted": "Your review has been submitted and will be published after approval.",
+    "updated": "Your review has been updated and will be published after approval.",
+    "ratingRequired": "Please select a rating",
+    "commentMin": "Your review must be at least 3 characters",
+    "commentMax": "Your review must be at most 1000 characters",
+    "loadMore": "Show more reviews",
+    "error": "Something went wrong. Please try again.",
+    "status": {
+      "pending": "Awaiting approval",
+      "approved": "Published",
+      "rejected": "Not approved"
+    },
+    "stars": "{count} out of 5 stars"
+  },
+  "admin": {
+    "title": "Product Reviews",
+    "subtitle": "Review customer feedback before it is published on the store",
+    "stats": {
+      "total": "Total Reviews",
+      "pending": "Awaiting Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "approvalRate": "Approval Rate",
+      "approvalRateDescription": "Percentage of approved reviews",
+      "badges": {
+        "allTime": "All Time",
+        "awaitingReview": "Needs Action",
+        "published": "Published",
+        "notPublished": "Hidden"
+      }
+    },
+    "searchPlaceholder": "Search in review text...",
+    "tabs": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "all": "All"
+    },
+    "fields": {
+      "customer": "Customer",
+      "product": "Product",
+      "rating": "Rating",
+      "comment": "Review",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "reply": "Reply",
+      "delete": "Delete"
+    },
+    "verified": "Verified buyer",
+    "verifiedOnly": "Verified buyers only",
+    "edited": "Edited by customer",
+    "fullComment": "Full review",
+    "adminReply": "Store reply",
+    "replied": "Replied",
+    "productDeleted": "Product deleted",
+    "productInactive": "Product inactive",
+    "reply": {
+      "title": "Reply to review",
+      "description": "You can reply only once. The reply is shown under the review on the product page.",
+      "placeholder": "Write your reply to the customer...",
+      "submit": "Send Reply",
+      "required": "Reply cannot be empty"
+    },
+    "messages": {
+      "approved": "Review approved and published",
+      "rejected": "Review rejected",
+      "replied": "Reply sent successfully",
+      "deleted": "Review deleted",
+      "deleteConfirm": "Delete review?",
+      "deleteConfirmMessage": "The review by \"{name}\" will be permanently deleted.",
+      "error": "Something went wrong. Please try again."
+    },
+    "emptyState": {
+      "title": "No reviews here",
+      "description": "Customer reviews will appear here once submitted."
+    }
+  }
+}
