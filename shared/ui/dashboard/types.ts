@@ -39,7 +39,7 @@ export interface DashboardData {
     dailyOrders: { date: string; count: number }[];
     statusBreakdown: Record<string, number>;
     topProducts: TopProduct[];
-    topCustomers: { name: string; orders: number; revenue?: number }[];
+    topCustomers: { userId: string; userName: string; totalOrders: number; totalSpent?: number }[];
     dateRange: { start: string; end: string };
   };
   marketingStats: {

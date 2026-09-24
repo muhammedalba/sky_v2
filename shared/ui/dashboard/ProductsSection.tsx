@@ -63,6 +63,7 @@ export function ProductsSection({ d }: ProductsSectionProps) {
   const topCustomers         = useMemo(() => d?.orders?.topCustomers ?? [],                      [d?.orders?.topCustomers]);
   const suppliersWithProducts = useMemo(() => d?.suppliers?.suppliersWithProducts ?? [],         [d?.suppliers?.suppliersWithProducts]);
 
+
   const displayProducts = useMemo(
     () => topProducts.length > 0 ? topProducts : orderTopProducts,
     [topProducts, orderTopProducts],
@@ -232,19 +233,19 @@ export function ProductsSection({ d }: ProductsSectionProps) {
               <div className="space-y-2">
                 {topCustomers.map((c, i) => (
                   <div
-                    key={c.name ?? i}
+                    key={c.userId ?? i}
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-secondary/30 transition-colors"
                   >
-                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-black shrink-0">
-                      {(c.name ?? '?').charAt(0).toUpperCase()}
+                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-primary/80 to-primary/50 flex items-center justify-center text-background text-xs font-black shrink-0">
+                      {(c.userName || '?').charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate">{c.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{t('orders', { count: c.orders })}</p>
+                      <p className="font-semibold text-sm truncate">{c.userName}</p>
+                      <p className="text-[11px] text-muted-foreground">{t('orders', { count: c.totalOrders })}</p>
                     </div>
-                    {c.revenue != null && (
+                    {c.totalSpent != null && (
                       <span className="font-bold text-sm text-emerald-500">
-                        {formatCurrency(c.revenue)}
+                        {formatCurrency(c.totalSpent)}
                       </span>
                     )}
                     <span
@@ -298,7 +299,7 @@ export function ProductsSection({ d }: ProductsSectionProps) {
                       >
                         {s.supplierName.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-sm font-semibold truncate max-w-[120px]">
+                      <span className="text-sm font-semibold truncate max-w-30">
                         {s.supplierName}
                       </span>
                     </div>
