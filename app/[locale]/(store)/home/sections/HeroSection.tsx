@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { Button } from "@/shared/ui/Button";
 import { BoxIcon, CheckIcon, DownloadIcon, ShieldIcon, ShoppingCartIcon } from "@/shared/ui/Icons";
 import Badge from "@/shared/ui/Badge";
@@ -59,9 +59,11 @@ export default async function HeroSection({
                   <ShoppingCartIcon className="w-6 h-6 rtl:ml-2" />
                 </Button>
               </Link>
-              <Link
+              {/* Static file, not a route — plain <a> (no locale prefix, no RSC prefetch) */}
+              <a
                 href="/assets/sky-galaxy-company-profile.pdf"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="w-full sm:w-auto"
               >
                 <Button
@@ -71,7 +73,7 @@ export default async function HeroSection({
                   {t("hero.cta_download_catalog")}
                   <DownloadIcon className="w-5 h-5" />
                 </Button>
-              </Link>
+              </a>
             </div>
 
             {/* Trust Signals */}

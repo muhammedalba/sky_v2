@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { LockIcon as Lock } from "@/shared/ui/Icons";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { FeaturePill } from "./BrandingComponents";
 import Image from "next/image";
 

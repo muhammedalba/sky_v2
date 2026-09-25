@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { Button } from "@/shared/ui/Button";
 import { ChevronRightIcon } from "@/shared/ui/Icons";
 import { Product } from "@/types";

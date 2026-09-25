@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore, useMemo, useCallback } from "react"; // إضافة خطافات الأداء والحالة
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useCartStore } from "@/store/cart-store";
 import {
   useCart,

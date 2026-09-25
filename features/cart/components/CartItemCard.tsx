@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/navigation";
 
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import Price from "@/shared/ui/Price";

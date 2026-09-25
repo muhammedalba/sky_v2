@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { Button } from "@/shared/ui/Button";
 import { DownloadIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
@@ -35,14 +35,16 @@ export default async function PromoBannerSection({
                 {t("promo.cta_quote")}
               </Button>
             </Link>
-            <Link
+            {/* Static file, not a route — plain <a> (no locale prefix, no RSC prefetch) */}
+            <a
               href="/assets/sky-galaxy-company-profile.pdf"
               target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-white/90 hover:text-white font-semibold underline-offset-4 hover:underline"
             >
               {t("promo.cta_catalog")}
               <DownloadIcon className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </ScrollReveal>
 

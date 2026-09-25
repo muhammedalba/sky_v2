@@ -4,7 +4,7 @@ import { Order } from "@/features/orders/types";
 
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { useTrans } from "@/shared/hooks/useTrans";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";

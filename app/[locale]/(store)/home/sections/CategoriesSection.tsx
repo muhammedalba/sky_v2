@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { ArrowRightIcon } from "@/shared/ui/Icons";
 import { Category, LocalizedString } from "@/types";
 

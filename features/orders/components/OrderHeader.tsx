@@ -13,7 +13,7 @@ import { useTranslations } from "next-intl";
 import { useUpdateOrderStatus } from "@/features/orders/hooks/useOrders";
 import { useToast } from "@/shared/hooks/useToast";
 
-import Link from "next/link";
+import { Link } from "@/navigation";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { CheckIcon, SpinnerIcon, UserIcon } from "@/shared/ui/Icons";
 import { Tooltip } from "@/shared/ui/Tooltip";

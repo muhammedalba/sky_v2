@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { Brand } from "@/types";
 import Badge from "@/shared/ui/Badge";
 import { ShieldIcon } from "@/shared/ui/Icons";

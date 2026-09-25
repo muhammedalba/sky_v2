@@ -8,7 +8,7 @@ import React, {
   useMemo,
   memo,
 } from "react";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
 import {
   LogoutIcon,

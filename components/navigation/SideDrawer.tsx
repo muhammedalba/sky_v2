@@ -198,7 +198,7 @@ export default function SideDrawer({
               {[
                 { label: t("home"), href: "/home" },
                 { label: t("products"), href: "/products" },
-                { label: t("orders"), href: "/orders" },
+                { label: t("orders"), href: "/account?tab=orders" },
                 { label: t("contact"), href: "/contact" },
               ].map((item) => (
                 <Link

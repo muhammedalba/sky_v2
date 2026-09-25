@@ -27,7 +27,7 @@ import {
   EditIcon,
   MoreVerticalIcon,
 } from "@/shared/ui/Icons";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useTranslations, useLocale } from "next-intl";
 
 

@@ -24,7 +24,7 @@ import InvoicePreviewDialog from "@/features/orders/components/InvoicePreviewDia
 import EntityPageHeader from "@/shared/ui/dashboard/EntityPageHeader";
 import { CouponsIcon, RefreshCwIcon, ShoppingBagIcon } from "@/shared/ui/Icons";
 import { formatDate, formatOrderNumber } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 
 export default function OrderDetailsPage({

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { Sheet, SheetContent } from "@/shared/ui/sheet/Sheet";
 import { Card, CardContent } from "@/shared/ui/Card";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";

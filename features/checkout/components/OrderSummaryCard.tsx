@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { TagIcon as Tag, ShieldCheckIcon as ShieldCheck, LockIcon as Lock } from "@/shared/ui/Icons";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { CouponValidationResult } from "@/features/cart/hooks/useCart";

@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog";
 import { useToast } from "@/shared/hooks/useToast";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { CouponsIcon, ProductsIcon, SpinnerIcon, UserIcon, XIcon } from "@/shared/ui/Icons";
 
 import {

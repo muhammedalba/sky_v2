@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { Button } from "@/shared/ui/Button";
 import {
   EyeIcon,

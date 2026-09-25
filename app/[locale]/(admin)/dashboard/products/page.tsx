@@ -193,7 +193,7 @@ export default function ProductsPage({ params }: { params: Promise<{ locale: str
         render: (product: Product, index: number) => (
           <>
             <Link
-              href={`${locale}/dashboard/products/${product.slug}/edit`}
+              href={`/${locale}/dashboard/products/${product.slug}/edit`}
               className="flex items-center gap-3"
             >
               <div className="h-14 w-14 rounded-2xl bg-muted/60 shrink-0 overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all shadow-sm group-hover:shadow-md relative">
