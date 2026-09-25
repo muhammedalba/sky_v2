@@ -3,7 +3,6 @@ import { Link } from "@/navigation";
 import { Button } from "@/shared/ui/Button";
 import {
   EyeIcon,
-  HeartIcon,
   ArrowLeftIcon,
   ShoppingCartIcon,
   StarIcon,
@@ -20,6 +19,7 @@ import { memo, useMemo, useCallback, useState } from "react";
 import { useLocale } from "next-intl";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import QuickAddModal from "@/components/QuickAddModal";
+import WishlistButton from "@/features/wishlist/components/WishlistButton";
 
 interface Props {
   item: Product;
@@ -110,16 +110,6 @@ const ProductCard = ({ item, commonT }: Props) => {
     ));
   }, [item.uses, locale]);
 
-  // 4. استخدام useCallback لمنع إعادة إنشاء دالة الحدث
-  const handleWishlistClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      // Logic for wishlist here
-    },
-    [],
-  );
-
   return (
     <Card className="group flex flex-col bg-accent/40 hover:shadow-sm transition-all duration-500 rounded-4xl overflow-hidden  h-full relative hover:scale-[1.01]">
       <div className="aspect-square relative overflow-hidden flex items-center justify-center">
@@ -127,17 +117,11 @@ const ProductCard = ({ item, commonT }: Props) => {
           dir={"ltr"}
           className="absolute top-4 inset-s-4 z-30 flex flex-col gap-2 md:-translate-x-24 md:group-hover:translate-x-4 transition-all duration-300"
         >
-          <button
-            type="button"
-            onClick={handleWishlistClick}
-            title="add to wishlist"
-            aria-label="add to wishlist"
-            className="cursor-pointer border border-border/50 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-primary/70 hover:text-primary-foreground transition-colors duration-300"
-          >
-            <Tooltip position="inset" content={commonT("add_to_wishlist")}>
-              <HeartIcon className="w-4 h-4" />
-            </Tooltip>
-          </button>
+          <WishlistButton
+            product={item}
+            withTooltip
+            className="border border-border/50 w-10 h-10 bg-background/80 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-primary/70 hover:text-primary-foreground transition-colors duration-300"
+          />
           <Link
             href={`/products/${item.sku}`}
             title="quick view"

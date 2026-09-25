@@ -47,6 +47,8 @@ const loaders: Record<string, (locale: string) => Promise<unknown>> = {
     import(`./messages/settings/${locale}.json`).then((m) => m.default),
   quote: (locale) =>
     import(`./messages/quote/${locale}.json`).then((m) => m.default),
+  wishlist: (locale) =>
+    import(`./messages/wishlist/${locale}.json`).then((m) => m.default),
   cart: (locale) =>
     import(`./messages/cart/${locale}.json`).then((m) => m.default),
   maintenance: (locale) =>

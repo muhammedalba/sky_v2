@@ -5,6 +5,11 @@ import { useTranslations } from "next-intl";
 import { useProduct } from "@/features/products/hooks/useProducts";
 import { STOREFRONT_REFETCH_OPTIONS } from "@/features/products/storefrontQueryDefaults";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
+import {
+  useIsWishlisted,
+  useToggleWishlist,
+} from "@/features/wishlist/hooks/useWishlist";
+import { useSettings } from "@/app/providers/SettingsProvider";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useToast } from "@/shared/hooks/useToast";
@@ -82,7 +87,6 @@ export default function ProductDetailsClient({
   const [selectedImage, setSelectedImage] = useState<FileAsset | string | null>(
     null,
   );
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -203,9 +207,14 @@ export default function ProductDetailsClient({
     [defaultAttributes],
   );
 
+  const settings = useSettings();
+  const isWishlisted = useIsWishlisted(product?._id);
+  const { mutate: toggleWishlist } = useToggleWishlist();
   const handleToggleWishlist = useCallback(() => {
-    setIsWishlisted((prev) => !prev);
-  }, []);
+    if (!product) return;
+    // Keep variants on the guest snapshot so the wishlist page can add to cart directly
+    toggleWishlist({ product: { ...product, variants }, isWishlisted });
+  }, [product, variants, isWishlisted, toggleWishlist]);
 
   const handleShare = useCallback(async () => {
     if (!product) return;
@@ -393,7 +402,11 @@ export default function ProductDetailsClient({
             hasDiscount={hasDiscount}
             discountPercent={discountPercent}
             isWishlisted={isWishlisted}
-            onToggleWishlist={handleToggleWishlist}
+            onToggleWishlist={
+              settings?.features?.wishlist === false
+                ? undefined
+                : handleToggleWishlist
+            }
             onShare={handleShare}
           />
 

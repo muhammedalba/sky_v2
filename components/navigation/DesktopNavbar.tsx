@@ -17,6 +17,7 @@ import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { env } from "@/lib/env";
 import SideDrawer from "./SideDrawer";
 import { useCart } from "@/features/cart/hooks/useCart";
+import WishlistNavLink from "@/features/wishlist/components/WishlistNavLink";
 import { useMediaQuery } from "@/shared/hooks/use-media-query";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -204,6 +205,8 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
               <Link href="/contact" className="relative flex items-center p-2 rounded-full hover:bg-accent/50 transition-all duration-300 group shrink-0">
                 <CustomerServiceIcon className="size-4 text-foreground/ group-hover:text-primary transition-colors duration-300" />
               </Link>
+              {/* Wishlist */}
+              {!is_Admin && <WishlistNavLink className="hidden sm:flex" />}
               {/* Cart */}
               <CartButton
                 className="hidden sm:block "

@@ -10,6 +10,7 @@ import Image from "next/image";
 import UserAccountMenu from "@/widgets/layout/UserAccountMenu";
 import SidebarHeader from "@/widgets/layout/sidebar/SidebarHeader";
 import { XIcon } from "@/shared/ui/Icons";
+import { useSettings } from "@/app/providers/SettingsProvider";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -114,6 +115,7 @@ export default function SideDrawer({
 }: SideDrawerProps) {
   const locale = useLocale();
   const t = useTranslations("store.nav");
+  const settings = useSettings();
   const isRtl = locale === "ar";
 
   // Close on Escape
@@ -198,6 +200,9 @@ export default function SideDrawer({
               {[
                 { label: t("home"), href: "/home" },
                 { label: t("products"), href: "/products" },
+                ...(settings?.features?.wishlist === false
+                  ? []
+                  : [{ label: t("wishlist"), href: "/wishlist" }]),
                 { label: t("orders"), href: "/account?tab=orders" },
                 { label: t("contact"), href: "/contact" },
               ].map((item) => (

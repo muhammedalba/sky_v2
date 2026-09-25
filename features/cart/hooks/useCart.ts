@@ -212,34 +212,56 @@ export function useClearCart() {
 }
 
 // ─── Sync Guest Cart to Backend ────────────────────────────────────────────────
+let inFlightCartSync: Promise<boolean> | null = null;
+
 /**
  * Utility function to synchronize the guest's local cart with the backend.
  *
  * Retrieves all items currently stored in the local Zustand store and sends them
- * to the backend in a single bulk request. If the synchronization is successful,
- * the local cart is cleared to prevent duplicate items.
+ * to the backend in a single bulk request.
+ *
+ * - Only the items that were actually sent are removed from localStorage, so an
+ *   item added while the request is in flight is not lost.
+ * - On failure the local items are kept; `CartSyncer` retries on the next
+ *   authenticated app load.
+ * - Concurrent calls (login hook + CartSyncer) share the same request. This matters
+ *   because the backend sync ADDS quantities, so a duplicate request would double them.
  *
  * @async
- * @returns A promise that resolves when the synchronization is complete.
+ * @returns `true` if items were synced (caller should invalidate the cart query).
  */
-export const syncGuestCart = async () => {
-  const localItems = useCartStore.getState().items;
-  if (!localItems || localItems.length === 0) return;
+export const syncGuestCart = (): Promise<boolean> => {
+  if (inFlightCartSync) return inFlightCartSync;
 
-  try {
-    // Send all items to backend in a single request
-    await cartApi.syncCart(
-      localItems.map((item) => ({
-        productId: item.productId,
-        variantId: item.variantId,
-        quantity: item.quantity,
-      })),
-    );
-    // Clear local cart after successful sync
-    useCartStore.getState().clearCart();
-  } catch (error) {
-    console.error("Failed to sync guest cart", error);
-  }
+  inFlightCartSync = (async () => {
+    const localItems = useCartStore.getState().items;
+    if (!localItems || localItems.length === 0) return false;
+
+    try {
+      // Send all items to backend in a single request
+      await cartApi.syncCart(
+        localItems.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId,
+          // Backend validates 1..100 per line (stock is re-checked server-side)
+          quantity: Math.min(Math.max(Math.floor(item.quantity) || 1, 1), 100),
+        })),
+      );
+      // Remove only the synced items from the local cart to prevent duplicates
+      const synced = new Set(localItems);
+      useCartStore.setState((state) => ({
+        items: state.items.filter((item) => !synced.has(item)),
+      }));
+      return true;
+    } catch (error) {
+      console.error("Failed to sync guest cart", error);
+      return false;
+    }
+  })().finally(() => {
+    inFlightCartSync = null;
+  });
+
+  return inFlightCartSync;
 };
 
 // ─── Coupon Validation (pre-checkout) ──────────────────────────────────────

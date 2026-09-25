@@ -1,0 +1,26 @@
+{
+  "title": "Wishlist",
+  "actions": {
+    "add": "Add to wishlist",
+    "remove": "Remove from wishlist",
+    "clear": "Clear wishlist"
+  },
+  "toast": {
+    "added": "Added to wishlist",
+    "removed": "Removed from wishlist",
+    "cleared": "Wishlist cleared",
+    "disabled": "Wishlist is currently disabled",
+    "error": "Something went wrong, please try again"
+  },
+  "empty": {
+    "title": "Your wishlist is empty",
+    "subtitle": "Tap the heart icon on any product to save it here for later.",
+    "cta": "Browse products"
+  },
+  "misc": {
+    "home": "Home",
+    "loading": "Loading wishlist...",
+    "item_count_single": " item",
+    "item_count_plural": " items"
+  }
+}

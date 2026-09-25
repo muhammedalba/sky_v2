@@ -12,6 +12,8 @@ import SettingsProvider from "@/app/providers/SettingsProvider";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import CartDrawer from "@/features/cart/components/CartDrawer";
+import CartSyncer from "@/features/cart/components/CartSyncer";
+import WishlistSyncer from "@/features/wishlist/components/WishlistSyncer";
 import { getImageUrl } from "@/shared/utils/image.util";
 import { env } from "@/lib/env";
 
@@ -175,6 +177,8 @@ export default async function RootLayout({
             />
             {children}
             <CartDrawer />
+            <CartSyncer />
+            <WishlistSyncer />
           </SettingsProvider>
         </ThemeProvider>
       </LocaleProvider>

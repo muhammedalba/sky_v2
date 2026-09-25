@@ -6,6 +6,7 @@ import { LoginResponseData } from "@/features/auth/types";
 import { authApi } from "@/features/auth/api";
 import { useToast } from "@/shared/hooks/useToast";
 import { syncGuestCart } from "@/features/cart/hooks/useCart";
+import { syncGuestWishlist } from "@/features/wishlist/hooks/useWishlist";
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -18,9 +19,10 @@ export function useLogin() {
       return response.data;
     },
     onSuccess: async () => {
-      await syncGuestCart();
+      await Promise.all([syncGuestCart(), syncGuestWishlist()]);
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
     },
   });
 }
@@ -57,9 +59,10 @@ export function useRegister() {
       return authApi.register(data);
     },
     onSuccess: async () => {
-      await syncGuestCart();
+      await Promise.all([syncGuestCart(), syncGuestWishlist()]);
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
     },
   });
 }

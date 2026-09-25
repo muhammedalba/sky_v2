@@ -9,6 +9,7 @@ import { useTrans } from "@/shared/hooks/useTrans";
 import { Button } from "@/shared/ui/Button";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import QuickAddModal from "@/components/QuickAddModal";
+import WishlistButton from "@/features/wishlist/components/WishlistButton";
 import { Product } from "@/types";
 import { StarIcon, ShoppingCartIcon, ArrowRightIcon } from "@/shared/ui/Icons";
 import Badge from "@/shared/ui/Badge";
@@ -96,7 +97,10 @@ export default function SimilarProductCard({ item }: { item: Product }) {
 
   return (
     <div className="group relative bg-background rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300">
-
+      <WishlistButton
+        product={item}
+        className="absolute top-3 rtl:left-3 ltr:right-3 z-20 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md border border-border/50 flex items-center justify-center text-foreground hover:text-destructive transition-colors duration-300"
+      />
       <Link
         href={`/products/${item.slug}`}
         className="relative aspect-4/3 block overflow-hidden bg-secondary/10"

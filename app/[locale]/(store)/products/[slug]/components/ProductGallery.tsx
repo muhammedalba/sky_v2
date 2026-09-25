@@ -24,7 +24,8 @@ export interface ProductGalleryProps {
   hasDiscount?: boolean;
   discountPercent?: number;
   isWishlisted: boolean;
-  onToggleWishlist: () => void;
+  /** Omit to hide the wishlist button (feature disabled). */
+  onToggleWishlist?: () => void;
   onShare: () => void;
 }
 
@@ -78,17 +79,20 @@ export default function ProductGallery({
           className="absolute top-4 rtl:left-4 ltr:right-4 z-10 flex flex-col gap-2"
           style={hasDiscount ? { marginTop: "2.5rem" } : undefined}
         >
-          <Button
-            variant="outline2"
-            size="icon"
-            className="rounded-full h-10 w-10 bg-muted/10 backdrop-blur-md"
-            onClick={onToggleWishlist}
-            aria-label={t("gallery.addToWishlist")}
-          >
-            <HeartIcon
-              className={`w-4 h-4 ${isWishlisted ? "fill-destructive text-destructive" : ""}`}
-            />
-          </Button>
+          {onToggleWishlist && (
+            <Button
+              variant="outline2"
+              size="icon"
+              className="rounded-full h-10 w-10 bg-muted/10 backdrop-blur-md"
+              onClick={onToggleWishlist}
+              aria-label={t("gallery.addToWishlist")}
+              aria-pressed={isWishlisted}
+            >
+              <HeartIcon
+                className={`w-4 h-4 ${isWishlisted ? "fill-destructive text-destructive" : ""}`}
+              />
+            </Button>
+          )}
           <Button
             variant="outline2"
             size="icon"

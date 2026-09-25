@@ -148,6 +148,15 @@ export const env = {
       CLEAR: process.env.NEXT_PUBLIC_ENDPOINT_CART_CLEAR || '/cart/clear',
       REMOVE: process.env.NEXT_PUBLIC_ENDPOINT_CART_REMOVE || '/cart/remove',
     },
+    WISHLIST: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST || '/wishlist',
+      IDS: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_IDS || '/wishlist/ids',
+      ADD: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_ADD || '/wishlist/add',
+      REMOVE:
+        process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_REMOVE || '/wishlist/remove',
+      CLEAR: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_CLEAR || '/wishlist/clear',
+      SYNC: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_SYNC || '/wishlist/sync',
+    },
     SETTINGS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_SETTINGS || '/settings',
     },
