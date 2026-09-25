@@ -1,5 +1,6 @@
 import { env } from "@/lib/env";
 import { GoogleReviewsResult } from "../types/settings";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 const FETCH_TIMEOUT_MS = 5000;
 
@@ -16,7 +17,7 @@ export async function getGoogleReviews(
   const endpoint = `${env.API_URL}${env.ENDPOINTS.SETTINGS.BASE}/google-reviews?lang=${locale}`;
 
   try {
-    const response = await fetch(endpoint, {
+    const response = await serverFetch(endpoint, {
       next: { revalidate: 86400, tags: ["settings"] },
       headers: { "Content-Type": "application/json" },
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),

@@ -7,6 +7,7 @@ import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import Badge from "@/shared/ui/Badge";
 import SimilarProductCard from "@/components/SimilarProductCard";
 import { env } from "@/lib/env";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 // Bounds worst-case fetch latency, same convention as (store)/layout.tsx,
 // TrustedBy.tsx and CategoriesSection.tsx — falls through to the
@@ -15,7 +16,7 @@ const FETCH_TIMEOUT_MS = 5000;
 
 async function getFeaturedProducts(locale: string): Promise<Product[]> {
   try {
-    const res = await fetch(
+    const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}?limit=4&isFeatured=true`,
       {
         // matches useProducts()'s own staleTime comment: revalidate 60

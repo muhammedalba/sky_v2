@@ -7,6 +7,7 @@ import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { cn } from "@/lib/utils";
 import { getImageUrl } from "@/shared/utils/image.util";
 import { env } from "@/lib/env";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 // Bounds worst-case fetch latency, same convention as (store)/layout.tsx and
 // TrustedBy.tsx — falls through to the empty-array fallback exactly like any
@@ -22,7 +23,7 @@ async function getHomeCategories(locale: string): Promise<Category[]> {
     // separate network request for the same resource. Only the first 7
     // items are actually rendered below (unchanged from before), so this
     // is a pure cache-sharing optimization with zero visible effect.
-    const res = await fetch(
+    const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.CATEGORIES.BASE}?limit=20`,
       {
         next: { revalidate: 300 },

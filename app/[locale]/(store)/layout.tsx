@@ -10,6 +10,7 @@ import TopPromoBanner from "@/components/navigation/TopPromoBanner";
 import type { PromoBanner } from "@/features/marketing/types";
 import CurrencyToggleLoader from "@/widgets/currency/CurrencyToggleLoader";
 import UsdApproximateNoticeModal from "@/widgets/currency/UsdApproximateNoticeModal";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 // ─── Server-side Data Fetch ───────────────────────────────────────────────────
 
@@ -20,7 +21,7 @@ const FETCH_TIMEOUT_MS = 5000;
 
 async function getCategories(locale: string): Promise<CategoryItem[]> {
   try {
-    const res = await fetch(
+    const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.CATEGORIES.BASE}?limit=20`,
       {
         next: { revalidate: 300 },
@@ -43,7 +44,7 @@ async function getCategories(locale: string): Promise<CategoryItem[]> {
 
 async function getActivePromoBanner(locale: string): Promise<PromoBanner | null> {
   try {
-    const res = await fetch(
+    const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.PROMO_BANNER.ACTIVE}`,
       {
         next: { revalidate: 60, tags: ["promo-banner"] },
@@ -113,6 +114,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     profile: allMessages.profile,
     orders: allMessages.orders,
     reviews: allMessages.reviews,
+    wishlist: allMessages.wishlist,
   };
 
   return (

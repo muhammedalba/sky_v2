@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { env } from "@/lib/env";
 import { locales } from "@/i18n";
 import ProductDetailsClient from "./ProductDetailsClient";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 interface ProductPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -16,7 +17,7 @@ interface ProductPageProps {
 // defaults to true) — it just isn't pre-built.
 export async function generateStaticParams() {
   try {
-    const res = await fetch(
+    const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}?limit=50&sort=-totalSold`,
       { next: { revalidate: 3600 } },
     );
@@ -47,7 +48,7 @@ export async function generateStaticParams() {
 const getProductData = cache(async (slug: string, locale: string) => {
   const endpoint = `${env.API_URL}${env.ENDPOINTS.PRODUCTS.BASE}/${slug}`;
 
-  const response = await fetch(endpoint, {
+  const response = await serverFetch(endpoint, {
     next: {
       revalidate: 3600, // Cache for 1 hour
       // Locale-agnostic tag: one revalidation (from /api/revalidate-product) clears every locale

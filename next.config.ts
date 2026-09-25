@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  experimental: {
+    // Retry a page whose prerender fails (e.g. a transient API error) instead
+    // of failing the whole build on the first error.
+    staticGenerationRetryCount: 2,
+  },
   /**
    * Reverse Proxy configuration to resolve Third-Party Cookie restrictions.
    *

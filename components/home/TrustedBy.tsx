@@ -6,6 +6,7 @@ import Badge from "@/shared/ui/Badge";
 import { ShieldIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { env } from "@/lib/env";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 const EMPTY_BRANDS: Brand[] = [];
 
@@ -16,7 +17,7 @@ const FETCH_TIMEOUT_MS = 5000;
 
 async function getBrands(locale: string): Promise<Brand[]> {
   try {
-    const res = await fetch(
+    const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.BRANDS.BASE}?all_langs=false`,
       {
         next: { revalidate: 300 },

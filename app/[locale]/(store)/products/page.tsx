@@ -16,6 +16,7 @@ import {
   DEFAULT_BRANDS_PARAMS,
   DEFAULT_CAROUSEL_PARAMS,
 } from '@/features/products/storefrontQueryDefaults';
+import { serverFetch } from "@/shared/api/server-fetch";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -47,7 +48,7 @@ async function prefetchList(
     await queryClient.prefetchQuery({
       queryKey,
       queryFn: async () => {
-        const res = await fetch(url.toString(), {
+        const res = await serverFetch(url.toString(), {
           next: { revalidate, tags },
           headers: { 'Content-Type': 'application/json', 'accept-language': locale },
         });

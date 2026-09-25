@@ -1,5 +1,6 @@
 import { env } from "@/lib/env";
 import { StoreSettings } from "../types/settings";
+import { serverFetch } from "@/shared/api/server-fetch";
 
 /**
  * Enterprise Grade Settings Service
@@ -14,7 +15,7 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
   const endpoint = `${env.API_URL}${env.ENDPOINTS.SETTINGS.BASE}`;
 
   try {
-    const response = await fetch(endpoint, {
+    const response = await serverFetch(endpoint, {
       next: {
         revalidate: 3600,
         tags: ["settings", "public-settings"],
