@@ -4,6 +4,12 @@ import { locales } from "./i18n";
 import { env } from "./lib/env";
 import { checkUserPermission } from "@/lib/auth";
 import { getVerifiedServerUser } from "@/lib/auth.server";
+import { isIP } from "node:net";
+import {
+  clientIpFromChain,
+  getTrustedProxies,
+  normalizeIp,
+} from "@/lib/trusted-proxies";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { Permissions } from "@/features/roles/types";
 import { User } from "@/types";
@@ -28,14 +34,26 @@ export const config = {
 };
 
 /**
- * The visitor's IP as seen by the reverse proxy in front of this server: it
- * appends the peer address as the rightmost X-Forwarded-For entry. Entries to
- * its left can be sent by the client, so only the rightmost one is trusted.
+ * The visitor's IP. Each proxy in front of this server (the local reverse
+ * proxy, plus any CDN in TRUSTED_PROXIES) appends its peer to X-Forwarded-For;
+ * walking from the right past trusted proxies gives the real client, while
+ * client-sent entries further left are ignored.
  */
 function getClientIp(request: NextRequest): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const nearest = forwardedFor?.split(",").pop()?.trim();
-  return nearest || request.headers.get("x-real-ip")?.trim() || "unknown";
+  const chain = (request.headers.get("x-forwarded-for") ?? "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+  const fromChain = clientIpFromChain(chain, getTrustedProxies());
+  if (fromChain) return fromChain;
+
+  // Every hop was a trusted proxy: CDNs that only send a dedicated header
+  // (CLIENT_IP_HEADER, e.g. true-client-ip) — trusted only in this case.
+  const cdnHeader = process.env.CLIENT_IP_HEADER?.trim();
+  const cdnIp = chain.length && cdnHeader ? request.headers.get(cdnHeader) : null;
+  if (cdnIp && isIP(normalizeIp(cdnIp))) return normalizeIp(cdnIp);
+
+  return request.headers.get("x-real-ip")?.trim() || "unknown";
 }
 
 /**
