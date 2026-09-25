@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { locales } from "@/i18n";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import LocaleProvider from "./LocaleProvider";
 import ThemeProvider from "@/app/providers/ThemeProvider";
 import ToastProvider from "@/shared/ui/toast/ToastProvider";
+import NavigationProgress from "@/shared/ui/NavigationProgress";
 import SettingsProvider from "@/app/providers/SettingsProvider";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
@@ -163,6 +164,10 @@ export default async function RootLayout({
         <ThemeProvider>
           <SettingsProvider settings={finalSettings}>
             <ToastProvider />
+            {/* Suspense: NavigationProgress reads useSearchParams (keeps pages static) */}
+            <Suspense fallback={null}>
+              <NavigationProgress />
+            </Suspense>
 
             {/* Performance Monitoring */}
             <PerformanceMonitor
