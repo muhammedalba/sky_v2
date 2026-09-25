@@ -1,11 +1,11 @@
 'use client';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { loginSchema } from '@/features/auth/auth.schema';
 import { LoginResponseData } from '@/features/auth/types';
 import { checkUserPermission } from '@/lib/auth';
-import { Link } from '@/navigation';
+import { Link, useRouter } from '@/navigation';
 import { Button } from '@/shared/ui/Button';
 import { LockIcon as Lock, MailIcon as Mail } from '@/shared/ui/Icons';
 import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
@@ -13,6 +13,19 @@ import { SocialLoginSection } from './AuthClientComponents';
 import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
 import { useToast } from '@/shared/hooks/useToast';
+
+/**
+ * Only same-site paths are allowed as a post-login target — rejects absolute
+ * URLs and protocol-relative ones ("//evil.com", "/\evil.com") to prevent an
+ * open redirect via ?redirect=. A leading locale is stripped because the
+ * locale-aware router adds it back.
+ */
+function getSafeRedirect(value: string | null | undefined): string | null {
+  if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) {
+    return null;
+  }
+  return value.replace(/^\/(ar|en)(?=\/|$|\?)/, '') || '/';
+}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -28,7 +41,7 @@ export default function LoginForm() {
     toast.success(t('loginSuccess'));
     // Determine redirect based on server-provided role/permissions (no localStorage)
     const canAccessDashboard = checkUserPermission(userData, 'access_dashboard');
-    const redirectParam = searchParams?.get('redirect');
+    const redirectParam = getSafeRedirect(searchParams?.get('redirect'));
     if (redirectParam) {
       router.push(redirectParam);
     } else if (canAccessDashboard) {
