@@ -20,7 +20,7 @@ import { useSettings } from "@/app/providers/SettingsProvider";
 import { SmartForm } from "@/shared/ui/form/SmartForm";
 import { SmartInput, SmartPasswordInput } from "@/shared/ui/form/SmartFields";
 
-export default function SignUpForm({ locale }: { locale: string }) {
+export default function SignUpForm() {
   const router = useRouter();
   const t = useTranslations("auth");
   const toast = useToast();
@@ -128,7 +128,7 @@ export default function SignUpForm({ locale }: { locale: string }) {
       <AuthFooter
         text={t("alreadyHaveAccount")}
         linkText={t("loginLink")}
-        linkHref={`/${locale}/login`}
+        linkHref={`/login`}
       />
     </div>
   );

@@ -18,7 +18,7 @@ const intlMiddleware = createIntlMiddleware({
 // guard themselves via <MaintenanceGuard> instead, since login/forgot-password
 // must stay reachable during maintenance.
 const STORE_PATH_RE =
-  /^\/(en|ar)\/(home|products|cart|checkout|contact|account|notifications|privacy|terms|request-quote)(\/|$)/;
+  /^\/(en|ar)\/(home|products|cart|checkout|contact|account|notifications|privacy|terms|request-quote|signup)(\/|$)/;
 
 // Proxy always runs on the Node.js runtime (Next.js 16+), so it shares the
 // same Data Cache, Buffer-based JWT decoding, and settings fetch used by the
