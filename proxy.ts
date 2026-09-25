@@ -24,8 +24,38 @@ const STORE_PATH_RE =
 // same Data Cache, Buffer-based JWT decoding, and settings fetch used by the
 // server components — no separate Edge-compatible implementation to maintain.
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)", "/api/v1/:path*"],
 };
+
+/**
+ * The visitor's IP as seen by the reverse proxy in front of this server: it
+ * appends the peer address as the rightmost X-Forwarded-For entry. Entries to
+ * its left can be sent by the client, so only the rightmost one is trusted.
+ */
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const nearest = forwardedFor?.split(",").pop()?.trim();
+  return nearest || request.headers.get("x-real-ip")?.trim() || "unknown";
+}
+
+/**
+ * Browser calls to /api/v1/* are relayed to the API by the next.config rewrite,
+ * so the API only sees this server's IP. Attach the visitor's IP plus the
+ * shared internal key so the API rate-limits per visitor. Client-sent values
+ * of both headers are always replaced, so they can't be spoofed.
+ */
+function relayApiRequest(request: NextRequest): NextResponse {
+  const headers = new Headers(request.headers);
+  headers.delete("x-internal-key");
+  headers.delete("x-client-ip");
+
+  const internalKey = process.env.INTERNAL_API_KEY;
+  if (internalKey) {
+    headers.set("x-internal-key", internalKey);
+    headers.set("x-client-ip", getClientIp(request));
+  }
+  return NextResponse.next({ request: { headers } });
+}
 
 async function checkMaintenance(request: NextRequest): Promise<NextResponse | null> {
   const { pathname } = request.nextUrl;
@@ -86,6 +116,10 @@ async function checkAuth(request: NextRequest): Promise<NextResponse | null> {
 }
 
 export default async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/api/v1/")) {
+    return relayApiRequest(request);
+  }
+
   const authResponse = await checkAuth(request);
   if (authResponse) return authResponse;
 
