@@ -1,5 +1,5 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
+import { useMemo, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { loginSchema } from '@/features/auth/auth.schema';
@@ -27,9 +27,29 @@ function getSafeRedirect(value: string | null | undefined): string | null {
   return value.replace(/^\/(ar|en)(?=\/|$|\?)/, '') || '/';
 }
 
+const subscribeToHistory = (onChange: () => void) => {
+  window.addEventListener('popstate', onChange);
+  return () => window.removeEventListener('popstate', onChange);
+};
+
+/**
+ * Query string without useSearchParams(): on a statically rendered page,
+ * useSearchParams() bails out of prerendering, so the form would be missing
+ * from the HTML until JS hydrates. The server snapshot is "" (no query), and
+ * the real value is applied right after hydration.
+ */
+function useLocationSearchParams(): URLSearchParams {
+  const search = useSyncExternalStore(
+    subscribeToHistory,
+    () => window.location.search,
+    () => '',
+  );
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export default function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useLocationSearchParams();
   const t = useTranslations('auth');
   const toast = useToast();
 
@@ -41,7 +61,7 @@ export default function LoginForm() {
     toast.success(t('loginSuccess'));
     // Determine redirect based on server-provided role/permissions (no localStorage)
     const canAccessDashboard = checkUserPermission(userData, 'access_dashboard');
-    const redirectParam = getSafeRedirect(searchParams?.get('redirect'));
+    const redirectParam = getSafeRedirect(searchParams.get('redirect'));
     if (redirectParam) {
       router.push(redirectParam);
     } else if (canAccessDashboard) {
@@ -52,9 +72,9 @@ export default function LoginForm() {
   };
 
   const successMessage =
-    searchParams?.get('signup') === 'success' ? t('signupSuccess') :
-      searchParams?.get('reset') === 'success' ? t('resetSuccess') :
-       searchParams?.get('redirect')==="/checkout" ? t('loginSuccess') :
+    searchParams.get('signup') === 'success' ? t('signupSuccess') :
+      searchParams.get('reset') === 'success' ? t('resetSuccess') :
+       searchParams.get('redirect')==="/checkout" ? t('loginSuccess') :
         null;
 
   return (
