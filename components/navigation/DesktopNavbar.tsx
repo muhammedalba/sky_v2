@@ -206,13 +206,14 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
                 <CustomerServiceIcon className="size-4 text-foreground/ group-hover:text-primary transition-colors duration-300" />
               </Link>
               {/* Wishlist */}
-              {!is_Admin && <WishlistNavLink className="hidden sm:flex" />}
+              {!is_Admin && <WishlistNavLink  />}
               {/* Cart */}
               <CartButton
                 className="hidden sm:block "
                 is_Admin={is_Admin}
                 cartItemCount={Number(cartItemCount)}
               />
+              
               {/* User */}
               <UserAccountMenu
                 iconOnly={true}
