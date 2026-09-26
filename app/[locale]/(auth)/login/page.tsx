@@ -1,7 +1,11 @@
-import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import LoginForm from "@/features/auth/components/LoginForm";
 import AuthPageLayout from "@/features/auth/components/AuthPageLayout";
+import {
+  AuthFooter,
+  AuthHeader,
+  AuthMobileLogo,
+} from "@/features/auth/components/AuthSharedComponents";
 
 // Metadata generation for SEO
 export async function generateMetadata({
@@ -26,6 +30,7 @@ export default async function LoginPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "auth" });
 
   return (
     <AuthPageLayout
@@ -36,9 +41,13 @@ export default async function LoginPage({
         bottom: "bg-gradient-to-tl from-secondary/30 to-primary/20",
       }}
     >
-      <Suspense fallback={null}>
+      {/* Static parts render on the server; LoginForm holds only the interactive form */}
+      <div className="w-full space-y-6">
+        <AuthMobileLogo subtitle={t("constructionPortal")} className="lg:hidden" />
+        <AuthHeader title={t("loginTitle")} description={t("welcomeBack")} />
         <LoginForm />
-      </Suspense>
+        <AuthFooter text={t("noAccount")} linkText={t("signupLink")} linkHref="/signup" />
+      </div>
     </AuthPageLayout>
   );
 }

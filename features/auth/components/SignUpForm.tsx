@@ -14,7 +14,6 @@ import {
   MailIcon as Mail,
   LockIcon as Lock,
 } from "@/shared/ui/Icons";
-import { AuthHeader, AuthFooter, AuthMobileLogo } from "./AuthSharedComponents";
 import { SocialLoginSection } from "./AuthClientComponents";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { SmartForm } from "@/shared/ui/form/SmartForm";
@@ -43,18 +42,10 @@ export default function SignUpForm() {
     router.push(`/login?signup=success`);
   };
 
+  // Logo, header and footer are rendered by the (server) page; the fragment
+  // keeps these children direct descendants of the page's `space-y-6` wrapper.
   return (
-    <div className="w-full space-y-6">
-      <AuthMobileLogo
-        subtitle={t("constructionPortal")}
-        className="lg:hidden"
-      />
-
-      <AuthHeader
-        title={t("createAccount")}
-        description={t("signupDescription")}
-      />
-
+    <>
       <SmartForm
         schema={registerSchema}
         defaultValues={{
@@ -124,12 +115,6 @@ export default function SignUpForm() {
         dividerText={t("orContinueWith")}
         disabled={isRegistrationDisabled}
       />
-
-      <AuthFooter
-        text={t("alreadyHaveAccount")}
-        linkText={t("loginLink")}
-        linkHref={`/login`}
-      />
-    </div>
+    </>
   );
 }

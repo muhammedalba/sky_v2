@@ -8,7 +8,6 @@ import { checkUserPermission } from '@/lib/auth';
 import { Link, useRouter } from '@/navigation';
 import { Button } from '@/shared/ui/Button';
 import { LockIcon as Lock, MailIcon as Mail } from '@/shared/ui/Icons';
-import { AuthHeader, AuthFooter, AuthMobileLogo } from './AuthSharedComponents';
 import { SocialLoginSection } from './AuthClientComponents';
 import { SmartForm } from '@/shared/ui/form/SmartForm';
 import { SmartInput, SmartPasswordInput } from '@/shared/ui/form/SmartFields';
@@ -77,11 +76,11 @@ export default function LoginForm() {
        searchParams.get('redirect')==="/checkout" ? t('loginSuccess') :
         null;
 
+  // Logo, header and footer are rendered by the (server) page; this client
+  // component only holds the interactive parts. The fragment keeps both
+  // children direct descendants of the page's `space-y-6` wrapper.
   return (
-    <div className="w-full space-y-6">
-      <AuthMobileLogo subtitle={t('constructionPortal')} className="lg:hidden" />
-      <AuthHeader title={t('loginTitle')} description={t('welcomeBack')} />
-
+    <>
       <SmartForm
         schema={loginSchema}
         defaultValues={{ email: '', password: '' }}
@@ -127,9 +126,7 @@ export default function LoginForm() {
       </SmartForm>
 
       <SocialLoginSection disabled={loginMutation.isPending} />
-
-      <AuthFooter text={t('noAccount')} linkText={t('signupLink')} linkHref={`/signup`} />
-    </div>
+    </>
   );
 }
 
