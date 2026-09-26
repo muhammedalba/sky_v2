@@ -85,15 +85,18 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
             ? initialData.description
             : "",
       isActive: initialData?.isActive ?? true,
-      carouselLg:  typeof initialData?.carouselLg === "object"
-      ? initialData?.carouselLg?.url || ""
-      : initialData?.carouselLg || "",
-      carouselMd:  typeof initialData?.carouselMd === "object"
-      ? initialData?.carouselMd?.url || ""
-      : initialData?.carouselMd || "",
-      carouselSm:  typeof initialData?.carouselSm === "object"
-      ? initialData?.carouselSm?.url || ""
-      : initialData?.carouselSm || "",
+      carouselLg:
+        typeof initialData?.carouselLg === "object"
+          ? initialData?.carouselLg?.url || ""
+          : initialData?.carouselLg || "",
+      carouselMd:
+        typeof initialData?.carouselMd === "object"
+          ? initialData?.carouselMd?.url || ""
+          : initialData?.carouselMd || "",
+      carouselSm:
+        typeof initialData?.carouselSm === "object"
+          ? initialData?.carouselSm?.url || ""
+          : initialData?.carouselSm || "",
     },
   });
 
@@ -248,9 +251,14 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-                  {t("fields.large")}
-                </label>
+                <div className="flex flex-col gap-0.5 px-1">
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {t("fields.large")}
+                  </label>
+                  <span className="text-[11px] text-muted-foreground/80 font-medium">
+                    {t("fields.largeHint")}
+                  </span>
+                </div>
                 <ImageUpload
                   value={previewLg || undefined}
                   onChange={(file) => {
@@ -268,9 +276,14 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-                  {t("fields.medium")}
-                </label>
+                <div className="flex flex-col gap-0.5 px-1">
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {t("fields.medium")}
+                  </label>
+                  <span className="text-[11px] text-muted-foreground/80 font-medium">
+                    {t("fields.mediumHint")}
+                  </span>
+                </div>
                 <ImageUpload
                   value={previewMd || undefined}
                   onChange={(file) => {
@@ -288,9 +301,14 @@ export default function CarouselForm({ initialData }: CarouselFormProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-                  {t("fields.small")}
-                </label>
+                <div className="flex flex-col gap-0.5 px-1">
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {t("fields.small")}
+                  </label>
+                  <span className="text-[11px] text-muted-foreground/80 font-medium">
+                    {t("fields.smallHint")}
+                  </span>
+                </div>
                 <ImageUpload
                   value={previewSm || undefined}
                   onChange={(file) => {

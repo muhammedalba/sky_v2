@@ -18,8 +18,11 @@
             "inactive": "Inactive",
             "actions": "Actions",
             "large": "Large (Desktop)",
+            "largeHint": "Recommended aspect ratio: 21:9 (e.g. 2100x900px)",
             "medium": "Medium (Tablet)",
+            "mediumHint": "Recommended aspect ratio: 16:7 (e.g. 1600x700px)",
             "small": "Small (Mobile)",
+            "smallHint": "Recommended aspect ratio: 4:3 (e.g. 1080x810px)",
             "descriptionEn": "Description (English)",
             "descriptionAr": "Description (Arabic)",
             "statusDescription": "Control if this slide is visible to customers on the home page"
