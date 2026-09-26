@@ -93,7 +93,7 @@ export function VariantAttributes({
         const label = getLabel ? getLabel(key) : key;
 
         return (
-          <ScrollReveal animation="fade" delay={index * 500} 
+          <ScrollReveal animation="fade" delay={index * 50} 
             key={key}
             className={cn(
               "inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap",

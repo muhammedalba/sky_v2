@@ -32,6 +32,8 @@
     "markRead": "تحديد كمقروء",
     "actions": "الإجراءات",
     "add_to_cart": "أضف للسلة",
+    "increase_quantity": "زيادة الكمية",
+    "decrease_quantity": "إنقاص الكمية",
     "out_of_stock": "نفدت الكمية",
     "add_to_wishlist": "أضف للمفضلة",
     "view_all": "عرض الكل",

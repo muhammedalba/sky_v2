@@ -32,6 +32,8 @@
     "markRead": "Mark as read",
     "actions": "Actions",
     "add_to_cart": "Add to Cart",
+    "increase_quantity": "Increase quantity",
+    "decrease_quantity": "Decrease quantity",
     "out_of_stock": "Out of Stock",
     "add_to_wishlist": "Add to Wishlist",
     "view_all": "View All",
