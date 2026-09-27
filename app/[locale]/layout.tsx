@@ -173,15 +173,27 @@ export default async function RootLayout({
       {/* Tawk.to Live Chat — tawkId format: "<propertyId>/<widgetId>" */}
       {tawkId && (
         <>
-          <Script id="tawk-init" strategy="lazyOnload">
-            {`var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();`}
+          {/* Config must exist before the embed loads, so both live in one script.
+              Tawk picks desktop/mobile by user agent, not width — so the offset is
+              chosen by viewport width (MobileBottomNav, ~84px, shows below sm/640px). */}
+          <Script id="tawk" strategy="lazyOnload">
+            {`
+              var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+              var tawkNavVisible = window.matchMedia('(max-width: 639px)').matches;
+              var tawkOffset = { position: 'br', xOffset: tawkNavVisible ? 12 : 20, yOffset: tawkNavVisible ? 100 : 20 };
+              Tawk_API.customStyle = {
+                visibility: { desktop: tawkOffset, mobile: tawkOffset }
+              };
+              (function () {
+                var s = document.createElement('script');
+                s.async = true;
+                s.src = 'https://embed.tawk.to/' + ${JSON.stringify(tawkId)};
+                s.charset = 'UTF-8';
+                s.setAttribute('crossorigin', '*');
+                document.head.appendChild(s);
+              })();
+            `}
           </Script>
-          <Script
-            id="tawk-embed"
-            src={`https://embed.tawk.to/${tawkId}`}
-            strategy="lazyOnload"
-            crossOrigin="anonymous"
-          />
         </>
       )}
 
