@@ -14,6 +14,8 @@ import { CheckIcon, SpinnerIcon, TagIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { useToast } from "@/shared/hooks/useToast";
 import { contactApi } from "@/features/contact/api";
+import { isRecaptchaError } from "@/lib/recaptcha";
+import RecaptchaNotice from "@/shared/ui/RecaptchaNotice";
 
 const INQUIRY_TYPES = [
   "general",
@@ -44,6 +46,7 @@ function buildContactSchema(t: (key: string) => string) {
  */
 export default function ContactClient() {
   const t = useTranslations("contact");
+  const tCommon = useTranslations("common");
   const [success, setSuccess] = useState(false);
   const toast = useToast();
   const contactSchema = useMemo(() => buildContactSchema(t), [t]);
@@ -63,7 +66,11 @@ export default function ContactClient() {
       setSuccess(true);
       reset();
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("form.error");
+      const message = isRecaptchaError(error)
+        ? tCommon("recaptcha.failed")
+        : error instanceof Error
+          ? error.message
+          : t("form.error");
       toast.error(message);
     }
   };
@@ -181,6 +188,7 @@ export default function ContactClient() {
               )}
               {isSubmitting ? t("form.submitting") : t("form.submit")}
             </Button>
+            <RecaptchaNotice />
           </form>
         </ScrollReveal>
       )}

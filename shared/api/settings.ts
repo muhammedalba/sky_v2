@@ -89,6 +89,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     en: "Professional E-commerce Store",
   },
   googleAnalyticsId: "",
+  tawkId: "",
   socialLinks: {
     facebook: "",
     instagram: "",

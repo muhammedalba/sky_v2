@@ -126,6 +126,9 @@ export default async function RootLayout({
   // Use fallback settings if API fails
   const finalSettings = settings || DEFAULT_SETTINGS;
 
+  // Tawk.to chat: dashboard setting first, env var as fallback
+  const tawkId =  process.env.NEXT_PUBLIC_TAWKID;
+
   // 1. Structured Data Configuration
   const structuredData = {
     "@context": "https://schema.org",
@@ -144,21 +147,13 @@ export default async function RootLayout({
           __html: JSON.stringify(structuredData),
         }}
       />
-      {/* <Script
-        src={`https://www.google.com/recaptcha/api.js?render=${finalSettings.recaptchaSiteKey}`}
-        strategy="afterInteractive"
-      /> */}
       {finalSettings.googleAnalyticsId && (
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
             strategy="afterInteractive"
           />
-          {/* <Script
-            id="tawk-script"
-            src={`https://embed.tawk.to/${finalSettings.tawkId}`}
-            strategy="afterInteractive"
-          /> */}
+
           <Script id="google-analytics" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
@@ -176,6 +171,21 @@ export default async function RootLayout({
               style={{ display: "none", visibility: "hidden" }}
             />
           </noscript>
+        </>
+      )}
+
+      {/* Tawk.to Live Chat — tawkId format: "<propertyId>/<widgetId>" */}
+      {tawkId && (
+        <>
+          <Script id="tawk-init" strategy="lazyOnload">
+            {`var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();`}
+          </Script>
+          <Script
+            id="tawk-embed"
+            src={`https://embed.tawk.to/${tawkId}`}
+            strategy="lazyOnload"
+            crossOrigin="anonymous"
+          />
         </>
       )}
 

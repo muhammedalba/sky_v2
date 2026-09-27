@@ -24,6 +24,8 @@ import {
   UsersIcon,
 } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import RecaptchaNotice from "@/shared/ui/RecaptchaNotice";
+import { isRecaptchaError } from "@/lib/recaptcha";
 import { useToast } from "@/shared/hooks/useToast";
 import {
   quoteRequestApi,
@@ -92,6 +94,7 @@ function buildQuoteSchema(t: (key: string) => string) {
  */
 export default function QuoteFormClient() {
   const t = useTranslations("quote");
+  const tCommon = useTranslations("common");
   const toast = useToast();
   const [success, setSuccess] = useState(false);
   const quoteSchema = useMemo(() => buildQuoteSchema(t), [t]);
@@ -159,7 +162,11 @@ export default function QuoteFormClient() {
         nationalAddress: "",
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("form.error");
+      const message = isRecaptchaError(error)
+        ? tCommon("recaptcha.failed")
+        : error instanceof Error
+          ? error.message
+          : t("form.error");
       toast.error(message);
     }
   };
@@ -523,6 +530,7 @@ export default function QuoteFormClient() {
                 <ShieldIcon className="w-3.5 h-3.5 text-primary" />
                 <span>{t("form.privacyNote")}</span>
               </p>
+              <RecaptchaNotice />
             </div>
           </form>
         </div>

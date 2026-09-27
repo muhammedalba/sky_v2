@@ -92,6 +92,7 @@ export interface StoreSettings {
   metaTitle: LocalizedString;
   metaDescription: LocalizedString;
   googleAnalyticsId: string;
+  tawkId?: string;
   socialLinks: SocialLinks;
   contactInfo: contactInfo;
   businessAddress: BusinessAddress;

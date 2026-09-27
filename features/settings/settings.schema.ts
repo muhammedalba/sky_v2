@@ -31,6 +31,10 @@ export const settingsSchema = z.object({
     en: z.string().default(""),
   }),
   googleAnalyticsId: z.string().default(""),
+  tawkId: z
+    .string()
+    .regex(/^([a-f0-9]{24}\/[a-z0-9]+)?$/i, "Format: <propertyId>/<widgetId>")
+    .default(""),
 
   // Social Links
   socialLinks: z.object({

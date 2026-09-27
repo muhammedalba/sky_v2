@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { env } from "@/lib/env";
+import { recaptchaHeaders } from "@/lib/recaptcha";
 import { ApiResponse } from "@/types";
 
 const ENDPOINTS = env.ENDPOINTS.CONTACT;
@@ -15,8 +16,12 @@ export interface ContactPayload {
 }
 
 export const contactApi = {
-  send: (data: ContactPayload) =>
-    apiClient.post(ENDPOINTS.BASE, data) as unknown as Promise<
+  send: async (data: ContactPayload) =>
+    apiClient.post(
+      ENDPOINTS.BASE,
+      data,
+      await recaptchaHeaders("contact"),
+    ) as unknown as Promise<
       ApiResponse<{ status: string; message: string }>
     >,
 };

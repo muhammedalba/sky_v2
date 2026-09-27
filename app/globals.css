@@ -408,3 +408,8 @@ input::-ms-clear {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* reCAPTCHA v3 badge hidden — forms show <RecaptchaNotice /> instead (allowed by Google) */
+.grecaptcha-badge {
+  visibility: hidden;
+}

@@ -67,6 +67,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   metaTitle: { ar: "", en: "" },
   metaDescription: { ar: "", en: "" },
   googleAnalyticsId: "",
+  tawkId: "",
   socialLinks: {
     facebook: "",
     instagram: "",
@@ -207,6 +208,7 @@ export default function SettingsForm() {
           "currencyCode",
           "currencySymbol",
           "googleAnalyticsId",
+          "tawkId",
           "freeShippingThreshold",
           "vatRate",
           "taxesIncluded",

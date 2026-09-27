@@ -68,6 +68,20 @@ export default function SEOSection() {
               />
             </div>
           </div>
+          <div className="flex items-center gap-4 p-4 mt-4 border border-border/50 rounded-2xl bg-muted/5">
+            <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <TargetIcon className="w-6 h-6 text-green-500" />
+            </div>
+            <div className="flex-1">
+              <Input
+                {...register('tawkId')}
+                label={t('seo.tawkId')}
+                placeholder="64f1a2b3c4d5e6f7a8b9c0d1/1h9abcdef"
+                error={errors.tawkId?.message}
+                className="rounded-xl h-11"
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
