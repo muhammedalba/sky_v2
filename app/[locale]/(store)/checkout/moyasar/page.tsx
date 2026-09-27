@@ -122,10 +122,16 @@ export default function MoyasarCheckoutPage() {
               orderId,
               timestamp: Date.now().toString(),
             },
-            on_completed: function() {
-              return new Promise((resolve) => {
-                resolve(true);
-              });
+            // Runs after Moyasar creates the payment and before the 3DS redirect.
+            // Linking its id lets the server check Moyasar before expiring the
+            // order if the webhook and the callback are both lost. Best effort:
+            // it never blocks the payment and waits at most 5s.
+            on_completed: function(payment: { id?: string }) {
+              if (!payment?.id) return Promise.resolve(true);
+              const link = apiClient
+                .post("/payments/moyasar/link", { paymentId: payment.id }, { timeout: 5000 })
+                .catch(() => undefined);
+              return link.then(() => true);
             }
           });
         } catch {
