@@ -8,7 +8,7 @@ import { getLocalizedValue } from '@/lib/utils';
 import type { PromoBanner } from '@/features/marketing/types';
 
 // ─────────────────────────────────────────────
-// مُساعِد localStorage معزول: يُسهّل الاختبار ويمنع التكرار
+// Isolated localStorage helper: Simplifies testing and prevents duplication.
 // ─────────────────────────────────────────────
 const STORAGE_KEY = (id: string) => `dismissed-banner-${id}`;
 
@@ -21,23 +21,23 @@ function getDismissedSnapshot(id: string): boolean {
 }
 
 // ─────────────────────────────────────────────
-// هوك مخصص: يُدير حالة الإغلاق بشكل صحيح في SSR + CSR
+// Custom hook: Manages the dismissal state correctly in SSR + CSR
 // ─────────────────────────────────────────────
 function useBannerDismissed(bannerId: string | undefined) {
-  // useSyncExternalStore: يوفّر snapshots منفصلة للسيرفر والعميل
-  // → يمنع Hydration Mismatch تماماً
+  // useSyncExternalStore: Provides separate snapshots for server and client
+  // → Prevents Hydration Mismatch completely
   const dismissed = useSyncExternalStore(
-    // subscribe: نستمع لتغييرات storage من تبويبات أخرى
+    // subscribe: Listen to storage changes from other tabs
     useCallback((onStoreChange) => {
       window.addEventListener('storage', onStoreChange);
       return () => window.removeEventListener('storage', onStoreChange);
     }, []),
-    // getSnapshot للعميل
+    // getSnapshot for client
     useCallback(
       () => (bannerId ? getDismissedSnapshot(bannerId) : false),
       [bannerId],
     ),
-    // getServerSnapshot: البانر مرئي دائماً في SSR (لا وميض)
+    // getServerSnapshot: Banner is always visible in SSR (no flicker)
     () => false,
   );
 
@@ -45,10 +45,10 @@ function useBannerDismissed(bannerId: string | undefined) {
     if (!bannerId) return;
     try {
       localStorage.setItem(STORAGE_KEY(bannerId), 'true');
-      // نُطلق حدث storage يدوياً لأن الحدث لا يُطلق في نفس التبويب
+      // Dispatch storage event manually because the event doesn't fire in the same tab
       window.dispatchEvent(new Event('storage'));
     } catch {
-      // localStorage غير متاح (وضع التصفح الخاص أو امتلاء التخزين)
+      // localStorage is not available (private browsing mode or full storage)
     }
   }, [bannerId]);
 
@@ -56,7 +56,7 @@ function useBannerDismissed(bannerId: string | undefined) {
 }
 
 // ─────────────────────────────────────────────
-// المكوّن الرئيسي
+// Main Component
 // ─────────────────────────────────────────────
 interface TopPromoBannerProps {
   banner: PromoBanner | null;
@@ -68,32 +68,32 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
 
   const { dismissed, dismiss } = useBannerDismissed(banner?._id);
 
-  // ─── مرئية البانر ───────────────────────────
+  // ─── Banner visibility ───────────────────
   const isVisible = !!banner?.isActive && !dismissed;
 
-  // ─── CSS Variable للارتفاع ──────────────────
-  // التبعيات مُضيَّقة: isVisible فقط بدلاً من banner كاملاً
+  // ─── CSS Variable for height ──────────────────
+  // Dependencies narrowed: isVisible only instead of full banner
   useEffect(() => {
     document.documentElement.style.setProperty(
       '--promo-banner-height',
       isVisible ? '40px' : '0px',
     );
-    // cleanup يعمل عند الـ unmount الفعلي للمكوّن
+    // Cleanup works on actual component unmount
     return () => {
       document.documentElement.style.setProperty('--promo-banner-height', '0px');
     };
   }, [isVisible]);
 
-  // ─── النص المحلي ────────────────────────────
+  // ─── Localized text ────────────────────────────
   const localizedText = useMemo(
     () => (banner ? getLocalizedValue<string>(banner.text, locale) : ''),
     [banner, locale],
   );
 
-  // ─── استخراج القيم الأولية لتجنب re-renders زائدة ───
+  // ─── Extract initial values to avoid extra re-renders ───
   const bannerLink = banner?.link ?? null;
 
-  // ─── عناصر الماركي ──────────────────────────
+  // ─── Marquee items ──────────────────────────
   const marqueeItems = useMemo(() => {
     if (!localizedText) return null;
 
@@ -117,11 +117,11 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
 
     return (
       <div className="flex whitespace-nowrap animate-marquee ">
-        {/* النسخة الأولى */}
+        {/* First copy */}
         <div className="flex shrink-0 items-center justify-around min-w-full">
           {items}
         </div>
-        {/* النسخة المكررة للاستمرارية البصرية */}
+        {/* Duplicate copy for visual continuity */}
         <div
           className="flex shrink-0 items-center justify-around min-w-full"
           aria-hidden="true"
@@ -132,7 +132,7 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
     );
   }, [localizedText, bannerLink, t]);
 
-  // ─── معالج الإغلاق ──────────────────────────
+  // ─── Dismiss handler ──────────────────────────
   const handleClose = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -142,10 +142,10 @@ export default function TopPromoBanner({ banner }: TopPromoBannerProps) {
     [dismiss],
   );
 
-  // ─── الحراسة المبكرة ─────────────────────────
+  // ─── Early guard ─────────────────────────
   if (!isVisible) return null;
 
-  // ─── المحتوى الداخلي ─────────────────────────
+  // ─── Inner content ─────────────────────────
   const innerContent = (
    <div className="w-full h-full relative flex items-center justify-center overflow-hidden mask-image-fade"> 
       {marqueeItems}
