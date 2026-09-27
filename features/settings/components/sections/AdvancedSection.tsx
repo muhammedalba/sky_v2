@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useMemo } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useFormContext, useWatch } from "react-hook-form";
 import {
   Card,
@@ -21,19 +21,30 @@ import {
   SettingsIcon,
   TrashIcon,
 } from "@/shared/ui/Icons";
-import { apiClient } from "@/lib/api/client";
 import { useToast } from "@/shared/hooks/useToast";
 import { SettingsInput } from "../../settings.schema";
 import { Permissions } from "@/features/roles/types";
 import { checkUserPermission } from "@/lib/auth";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import {
+  useCacheStats,
+  useClearSettingsCache,
+} from "../../hooks/useSettings";
 
 export default function AdvancedSection() {
   const t = useTranslations("settings");
   const toast = useToast();
-  const [isClearingCache, setIsClearingCache] = useState(false);
+  const locale = useLocale();
   const { data: user } = useMe();
+  const canViewCacheStats = checkUserPermission(
+    user || null,
+    Permissions.VIEW_SETTINGS,
+    false,
+  );
+  const cacheStats = useCacheStats(canViewCacheStats);
+  const { mutateAsync: clearCache, isPending: isClearingCache } =
+    useClearSettingsCache();
 
   const {
     register,
@@ -46,9 +57,9 @@ export default function AdvancedSection() {
     useWatch({ control, name: "storageProvider" }) || "local";
 
   const handleClearCache = async () => {
-    setIsClearingCache(true);
     try {
-      await apiClient.patch("/settings/clear-cache");
+      // Also refetches every client query (incl. these stats)
+      await clearCache();
       toast.success(
         t("success.cacheMessage") || "System cache updated successfully",
         t("success.cacheTitle") || "Cache Cleared",
@@ -62,10 +73,43 @@ export default function AdvancedSection() {
         message || "Failed to clear cache",
         t("errors.cacheTitle") || "Error",
       );
-    } finally {
-      setIsClearingCache(false);
     }
   };
+
+  const stats = cacheStats.data;
+  const statTiles = stats
+    ? [
+        {
+          label: t("advanced.cacheHitRate"),
+          value:
+            stats.hitRate === null
+              ? "—"
+              : `${Math.round(stats.hitRate * 100)}%`,
+          hint: t("advanced.cacheHitsMisses", {
+            hits: stats.hits,
+            misses: stats.misses,
+          }),
+        },
+        {
+          label: t("advanced.cacheEntries"),
+          value: `${stats.entries ?? "—"} / ${stats.maxEntries}`,
+          hint: t("advanced.cacheEntriesHint"),
+        },
+        {
+          label: t("advanced.cacheInvalidations"),
+          value: String(stats.invalidations),
+          hint: t("advanced.cacheCoalesced", { count: stats.coalesced }),
+        },
+        {
+          label: t("advanced.cacheSince"),
+          value: new Intl.DateTimeFormat(locale, {
+            dateStyle: "short",
+            timeStyle: "short",
+          }).format(new Date(stats.since)),
+          hint: t("advanced.cacheSinceHint"),
+        },
+      ]
+    : [];
 
   // Axis 2.1: Use useWatch for efficient re-renders
   const maintenanceMode = useWatch({ control, name: "maintenanceMode" });
@@ -314,7 +358,67 @@ export default function AdvancedSection() {
             {t("advanced.systemMaintenance") || "System Maintenance"}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 space-y-4">
+          {canViewCacheStats && (
+            <div className="p-4 bg-muted/20 rounded-2xl border border-border/30 space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="space-y-1">
+                  <h5 className="text-sm font-bold flex items-center gap-2">
+                    <ActivityIcon className="w-4 h-4 text-primary" />
+                    {t("advanced.cacheStats")}
+                  </h5>
+                  <p className="text-[10px] text-muted-foreground">
+                    {t("advanced.cacheStatsDesc")}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => cacheStats.refetch()}
+                  disabled={cacheStats.isFetching}
+                  aria-label={t("advanced.cacheRefresh")}
+                  className="p-2 rounded-xl border border-border hover:bg-muted transition-all disabled:opacity-50"
+                >
+                  <RefreshCwIcon
+                    className={cn(
+                      "w-3 h-3",
+                      cacheStats.isFetching && "animate-spin text-primary",
+                    )}
+                  />
+                </button>
+              </div>
+              {cacheStats.isError ? (
+                <p className="text-xs text-destructive">
+                  {t("advanced.cacheStatsError")}
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {statTiles.length
+                    ? statTiles.map((tile) => (
+                        <div
+                          key={tile.label}
+                          className="p-3 rounded-xl bg-background border border-border/40"
+                        >
+                          <p className="text-[10px] text-muted-foreground">
+                            {tile.label}
+                          </p>
+                          <p className="text-lg font-bold tabular-nums">
+                            {tile.value}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {tile.hint}
+                          </p>
+                        </div>
+                      ))
+                    : Array.from({ length: 4 }, (_, i) => (
+                        <div
+                          key={i}
+                          className="h-18.5 animate-pulse rounded-xl bg-muted/50"
+                        />
+                      ))}
+                </div>
+              )}
+            </div>
+          )}
           <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/30">
             <div className="space-y-1">
               <h5 className="text-sm font-bold">

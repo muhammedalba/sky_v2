@@ -58,10 +58,25 @@ export function useUpdateSettings() {
 }
 
 export function useClearSettingsCache() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
       const response = await settingsApi.clearCache();
       return response.data;
     },
+    // The backend dropped its whole response cache; refetch everything this
+    // browser holds too, so the admin immediately sees fresh data everywhere.
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+}
+
+/** Backend response-cache statistics (admin, needs VIEW_SETTINGS). */
+export function useCacheStats(enabled = true) {
+  return useQuery({
+    queryKey: ['settings', 'cache-stats'],
+    queryFn: async () => (await settingsApi.getCacheStats()).data,
+    enabled,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 }

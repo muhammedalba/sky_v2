@@ -20,7 +20,7 @@ async function getBrands(locale: string): Promise<Brand[]> {
     const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.BRANDS.BASE}?all_langs=false`,
       {
-        next: { revalidate: 300 },
+        next: { revalidate: 300, tags: ["brands"] },
         headers: { "Content-Type": "application/json", "Accept-Language": locale },
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       },

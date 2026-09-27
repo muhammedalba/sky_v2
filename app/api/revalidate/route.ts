@@ -23,7 +23,6 @@ const ALLOWED_TAGS = new Set([
   'public-settings',
   'products',
   'categories',
-  'homepage',
   'brands',
   'carousel',
   'promo-banner',

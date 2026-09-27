@@ -26,7 +26,7 @@ async function getHomeCategories(locale: string): Promise<Category[]> {
     const res = await serverFetch(
       `${env.API_URL}${env.ENDPOINTS.CATEGORIES.BASE}?limit=20`,
       {
-        next: { revalidate: 300 },
+        next: { revalidate: 300, tags: ["categories"] },
         headers: { "Content-Type": "application/json", "Accept-Language": locale },
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       },
