@@ -53,9 +53,9 @@ export default async function StoreFooter({
               <TruckIcon className="h-6 w-6 text-warning" />
             </div>
             <div>
-              <h4 className="font-bold text-sm title-gradient">
+              <h3 className="font-bold text-sm title-gradient">
                 {t("highlights.shipping.title")}
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
                 {t("highlights.shipping.desc")}
               </p>
@@ -70,9 +70,9 @@ export default async function StoreFooter({
               <ShieldIcon className="h-6 w-6 text-success" />
             </div>
             <div>
-              <h4 className="font-bold text-sm title-gradient">
+              <h3 className="font-bold text-sm title-gradient">
                 {t("highlights.secure.title")}
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
                 {t("highlights.secure.desc")}
               </p>
@@ -87,9 +87,9 @@ export default async function StoreFooter({
               <HeadphoneIcon className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h4 className="font-bold text-sm title-gradient">
+              <h3 className="font-bold text-sm title-gradient">
                 {t("highlights.supportHours.title")}
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
                 {t("highlights.supportHours.desc")}
               </p>
@@ -103,9 +103,9 @@ export default async function StoreFooter({
               <HeadphoneIcon className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h4 className="font-bold text-sm title-gradient">
+              <h3 className="font-bold text-sm title-gradient">
                 {t("highlights.bulkPricing.title")}
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-relaxed">
                 {t("highlights.bulkPricing.desc")}
               </p>
@@ -129,8 +129,8 @@ export default async function StoreFooter({
                   <ImageWithFallback
                     src={settings.logo || "/assets/images/auth-logo.webp"}
                     alt={`${siteName} Logo`}
-                    width={500}
-                    height={300}
+                    width={40}
+                    height={40}
                     className="object-contain w-auto h-auto"
                   />
                 </div>
@@ -232,10 +232,10 @@ export default async function StoreFooter({
             animation="slide-up"
             className="md:col-span-2 flex flex-col gap-4"
           >
-            <h4 className="font-bold text-foreground text-xs uppercase tracking-wider relative pb-2 w-fit">
+            <h3 className="font-bold text-foreground text-xs uppercase tracking-wider relative pb-2 w-fit">
               {t("quickLinks")}
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-            </h4>
+            </h3>
             <ul className="space-y-3 font-medium">
               <li>
                 <Link
@@ -269,10 +269,10 @@ export default async function StoreFooter({
             animation="slide-up"
             className="md:col-span-3 flex flex-col gap-4"
           >
-            <h4 className="font-bold text-foreground text-xs uppercase tracking-wider relative pb-2 w-fit">
+            <h3 className="font-bold text-foreground text-xs uppercase tracking-wider relative pb-2 w-fit">
               {t("support")}
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-            </h4>
+            </h3>
             <ul className="space-y-3 font-medium">
               {settings.contactInfo?.phones?.[0] && (
                 <li className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group">
@@ -315,10 +315,10 @@ export default async function StoreFooter({
             animation="slide-up"
             className="md:col-span-3 flex flex-col gap-4"
           >
-            <h4 className="font-bold text-foreground text-xs uppercase tracking-wider relative pb-2 w-fit">
+            <h3 className="font-bold text-foreground text-xs uppercase tracking-wider relative pb-2 w-fit">
               {t("shopInfo")}
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-            </h4>
+            </h3>
 
             <div className="space-y-3 font-medium">
               <div className="p-3.5 rounded-2xl bg-card border border-border/60 shadow-xs flex items-center justify-between gap-2">

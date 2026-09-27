@@ -30,7 +30,10 @@ export default function HeroBackground() {
       src="/assets/images/hero-poster.webp"
       alt=""
       fill
-      priority
+      preload
+      loading="eager"
+      fetchPriority="high"
+      quality={60}
       sizes="100vw"
       className="absolute inset-0 z-0 w-full h-full object-cover"
     />

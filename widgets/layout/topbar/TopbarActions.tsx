@@ -84,7 +84,9 @@ const TopbarActions = ({
               className={cn(
                 "px-2.5 py-1 cursor-pointer active:scale-110 rounded-md text-[10px] uppercase font-bold transition-all",
                 locale === l
-                  ? "bg-background shadow-sm text-primary"
+                  // في الوضع الداكن: الأزرق (primary) على خلفية شبه سوداء تباينه 3.84:1 فقط
+                  // (أقل من 4.5:1 المطلوب لإمكانية الوصول)، لذلك نستخدم لون النص الأساسي
+                  ? "bg-background shadow-sm text-primary dark:text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >

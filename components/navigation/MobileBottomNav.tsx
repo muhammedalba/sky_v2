@@ -78,7 +78,6 @@ const BottomNavItem = memo(function BottomNavItem({
       href={item.href}
       aria-label={label}
       title={label}
-      aria-placeholder={label}
       className={cn(
         'relative z-10 flex h-full flex-1 items-center justify-center',
         'select-none outline-none active:scale-95 transition-transform duration-300',
@@ -145,8 +144,8 @@ export default function MobileBottomNav() {
       { key: 'home', href: '/home', icon: HomeIcon },
       { key: 'store', href: '/products', icon: StoreIcon },
       { key: 'quote', href: '/request-quote', icon: MessageSquareQuoteIcon, isCTA: true },
-      { key: 'dashboard-or-cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? DashboardIcon : ShoppingCartIcon },
-      { key: 'account-or-login', href: is_auth ? '/account' : '/login', icon: UserIcon },
+      { key: 'cart', href: `/${is_Admin ? "dashboard" : "cart"}`, icon: is_Admin ? DashboardIcon : ShoppingCartIcon },
+      { key: 'account', href: is_auth ? '/account' : '/login', icon: UserIcon },
     ],
     [is_Admin, is_auth]
   );

@@ -26,6 +26,9 @@ import { Inter, Noto_Kufi_Arabic } from 'next/font/google';
 export const fontInter = Inter({
   subsets: ['latin'],
   display: 'swap',
+  // Arabic is the default locale; Inter only covers Latin runs, so keep it
+  // off the critical request chain.
+  preload: false,
   variable: '--font-inter',
   weight: ['400', '600', '800'],
   fallback: ['system-ui', 'Arial', 'sans-serif'],

@@ -24,7 +24,12 @@ const intlMiddleware = createIntlMiddleware({
 // guard themselves via <MaintenanceGuard> instead, since login/forgot-password
 // must stay reachable during maintenance.
 const STORE_PATH_RE =
-  /^\/(en|ar)\/(home|products|cart|wishlist|checkout|contact|account|notifications|privacy|terms|request-quote|signup)(\/|$)/;
+  /^\/(en|ar)(\/(home|products|cart|wishlist|checkout|contact|account|notifications|privacy|terms|request-quote|signup)(\/|$)|\/?$)/;
+
+// Bare locale root (/ar, /en). Served as the home page via rewrite instead of
+// app/[locale]/page.tsx's redirect, so it costs no extra round-trip and the
+// home canonical (/ar) resolves with a 200.
+const LOCALE_ROOT_RE = /^\/(en|ar)\/?$/;
 
 // Proxy always runs on the Node.js runtime (Next.js 16+), so it shares the
 // same Data Cache, Buffer-based JWT decoding, and settings fetch used by the
@@ -93,7 +98,7 @@ async function checkMaintenance(request: NextRequest): Promise<NextResponse | nu
 
   // Rewrite (not redirect) so the visible URL is unchanged, matching the
   // previous in-place <Maintenance /> rendering behavior.
-  const locale = pathname.match(/^\/(en|ar)\//)?.[1] ?? "en";
+  const locale = pathname.match(/^\/(en|ar)(\/|$)/)?.[1] ?? "en";
   const url = request.nextUrl.clone();
   url.pathname = `/${locale}/maintenance`;
   return NextResponse.rewrite(url);
@@ -143,6 +148,13 @@ export default async function proxy(request: NextRequest) {
 
   const maintenanceResponse = await checkMaintenance(request);
   if (maintenanceResponse) return maintenanceResponse;
+
+  const localeRoot = request.nextUrl.pathname.match(LOCALE_ROOT_RE);
+  if (localeRoot) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${localeRoot[1]}/home`;
+    return NextResponse.rewrite(url);
+  }
 
   return intlMiddleware(request);
 }

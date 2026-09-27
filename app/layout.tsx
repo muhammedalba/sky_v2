@@ -25,11 +25,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang={defaultLocale} dir={dir} suppressHydrationWarning>
       <head />
       <body className={`${getFontVariables()} antialiased`}>
-        <Script
-          id="theme-initializer"
-          src="/theme-init.js"
-          strategy="beforeInteractive"
-        />
+        {/* Inline (not src=) so it needs no extra request before first paint */}
+        <Script id="theme-initializer" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})();`}
+        </Script>
         {children}
       </body>
     </html>

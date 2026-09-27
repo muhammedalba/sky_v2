@@ -175,13 +175,14 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
           {/* Main Row */}
           <div className="flex items-center gap-8 h-14 justify-between">
             {/* Logo */}
-            <Link href={`/home`} className="flex  items-center  shrink-0 group">
+            <Link href={`/home`} aria-label={siteName || APP_NAME} className="flex  items-center  shrink-0 group">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center  group-hover:scale-110 transition-transform duration-500">
                 <ImageWithFallback
                   src={settings.logo || "/assets/images/auth-logo.webp"}
                   alt={`${siteName} Logo`}
-                  width={500}
-                  height={300}
+                  width={40}
+                  height={40}
+                  loading="eager"
                   className="object-contain w-auto h-auto"
                 />
               </div>
@@ -202,7 +203,7 @@ function DesktopNavbar({ categories }: DesktopNavbarProps) {
               {/* Language */}
               <TopbarActions warnUsdOnLocaleSwitch />
               {/* Contact Us icon */}
-              <Link href="/contact" className="relative flex items-center p-2 rounded-full hover:bg-accent/50 transition-all duration-300 group shrink-0">
+              <Link href="/contact" aria-label={t("contact")} title={t("contact")} className="relative flex items-center p-2 rounded-full hover:bg-accent/50 transition-all duration-300 group shrink-0">
                 <CustomerServiceIcon className="size-4 text-foreground/ group-hover:text-primary transition-colors duration-300" />
               </Link>
               {/* Wishlist */}

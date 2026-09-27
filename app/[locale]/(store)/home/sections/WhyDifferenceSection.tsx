@@ -189,7 +189,7 @@ function FeatureText({
             : "text-left"
       }
     >
-      <h4 className="text-lg font-black title-gradient mb-1">{title}</h4>
+      <h3 className="text-lg font-black title-gradient mb-1">{title}</h3>
       <p className="text-sm text-muted-foreground font-medium">{desc}</p>
     </ScrollReveal>
   );

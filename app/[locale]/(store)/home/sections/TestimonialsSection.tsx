@@ -77,7 +77,7 @@ function TestimonialCard({
         />
 
         <div>
-          <h4 className="font-black text-foreground">
+          <h3 className="font-black text-foreground">
             {item.authorUrl ? (
               <a
                 href={item.authorUrl}
@@ -90,7 +90,7 @@ function TestimonialCard({
             ) : (
               item.author
             )}
-          </h4>
+          </h3>
           <p className="text-xs font-bold text-muted-foreground">
             {item.subtitle}
           </p>

@@ -11,7 +11,7 @@ import NavigationProgress from "@/shared/ui/NavigationProgress";
 import SettingsProvider from "@/app/providers/SettingsProvider";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
-import CartDrawer from "@/features/cart/components/CartDrawer";
+import CartDrawer from "@/features/cart/components/CartDrawerLoader";
 import CartSyncer from "@/features/cart/components/CartSyncer";
 import WishlistSyncer from "@/features/wishlist/components/WishlistSyncer";
 import { getImageUrl } from "@/shared/utils/image.util";
@@ -79,8 +79,6 @@ export async function generateMetadata({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export function generateStaticParams() {
@@ -150,7 +148,8 @@ export default async function RootLayout({
       {/* Google Tag Manager — GA4, pixels, etc. are configured inside the GTM container */}
       {finalSettings.googleTagManagerId && (
         <>
-          <Script id="gtm" strategy="afterInteractive">
+          {/* lazyOnload: keeps GTM's ~110 KiB off the critical path */}
+          <Script id="gtm" strategy="lazyOnload">
             {`
               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
               new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -175,7 +174,9 @@ export default async function RootLayout({
         <>
           {/* Config must exist before the embed loads, so both live in one script.
               Tawk picks desktop/mobile by user agent, not width — so the offset is
-              chosen by viewport width (MobileBottomNav, ~84px, shows below sm/640px). */}
+              chosen by viewport width (MobileBottomNav, ~84px, shows below sm/640px).
+              The embed is injected on the first user interaction: its popup iframe
+              otherwise lands mid-load and counts as a large layout shift (CLS). */}
           <Script id="tawk" strategy="lazyOnload">
             {`
               var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
@@ -185,12 +186,17 @@ export default async function RootLayout({
                 visibility: { desktop: tawkOffset, mobile: tawkOffset }
               };
               (function () {
-                var s = document.createElement('script');
-                s.async = true;
-                s.src = 'https://embed.tawk.to/' + ${JSON.stringify(tawkId)};
-                s.charset = 'UTF-8';
-                s.setAttribute('crossorigin', '*');
-                document.head.appendChild(s);
+                var events = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+                function load() {
+                  events.forEach(function (e) { window.removeEventListener(e, load); });
+                  var s = document.createElement('script');
+                  s.async = true;
+                  s.src = 'https://embed.tawk.to/' + ${JSON.stringify(tawkId)};
+                  s.charset = 'UTF-8';
+                  s.setAttribute('crossorigin', '*');
+                  document.head.appendChild(s);
+                }
+                events.forEach(function (e) { window.addEventListener(e, load, { once: true, passive: true }); });
               })();
             `}
           </Script>

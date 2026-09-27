@@ -82,7 +82,9 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     getMessages(),
   ]);
 
-  // Pick only customer-facing storefront messages to avoid admin bloat
+  // Only namespaces read by storefront *client* components — these are
+  // serialized into every page's HTML. Server components use getTranslations
+  // and don't need them here. Grep `useTranslations("<ns>")` before adding.
   const storeMessages = {
     // Root layout messages
     common: allMessages.common,
@@ -91,9 +93,6 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     errors: allMessages.errors,
     navigation: allMessages.navigation,
     messages: allMessages.messages,
-    shipping: allMessages.shipping,
-    shippingRates: allMessages.shippingRates,
-    taxes: allMessages.taxes,
     notifications: allMessages.notifications,
     // Storefront layout messages
     store: allMessages.store,
@@ -101,16 +100,8 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     contact: allMessages.contact,
     products: allMessages.products,
     product: allMessages.product,
-    categories: allMessages.categories,
-    subCategories: allMessages.subCategories,
     cart: allMessages.cart,
     quote: allMessages.quote,
-    brands: allMessages.brands,
-    carousel: allMessages.carousel,
-    promoBanners: allMessages.promoBanners,
-    coupons: allMessages.coupons,
-    settings: allMessages.settings,
-    locations: allMessages.locations,
     profile: allMessages.profile,
     orders: allMessages.orders,
     reviews: allMessages.reviews,
@@ -119,6 +110,12 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
 
   return (
     <NextIntlClientProvider messages={storeMessages}>
+      {/* Reserve the banner's height in the server HTML so content doesn't
+          shift when TopPromoBanner's effect sets the variable after hydration.
+          Its inline style on <html> still wins, so dismissing still collapses it. */}
+      {promoBanner?.isActive && (
+        <style>{`:root{--promo-banner-height:40px}`}</style>
+      )}
       <div className="min-h-screen pb-20 sm:pb-0 overflow-x-hidden flex flex-col bg-background font-sans antialiased pt-(--promo-banner-height,0px) transition-[padding-top]">
         {/* Top promo banner */}
         <TopPromoBanner banner={promoBanner} />

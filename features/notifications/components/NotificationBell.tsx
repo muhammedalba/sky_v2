@@ -63,6 +63,7 @@ const NotificationBell = () => {
 
   const triggerBtn = (
     <div
+      role="button"
       className="relative p-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors text-foreground hover:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
       aria-label={t("title")}
       title={t("title")}

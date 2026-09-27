@@ -5,7 +5,6 @@ import { BoxIcon, CheckIcon, DownloadIcon, ShieldIcon, ShoppingCartIcon } from "
 import Badge from "@/shared/ui/Badge";
 import { getStoreSettings, DEFAULT_SETTINGS } from "@/shared/api/settings";
 import { truncate } from "@/lib/utils";
-import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import HeroBackground from "./HeroBackground";
 
 export default async function HeroSection({
@@ -25,7 +24,9 @@ export default async function HeroSection({
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-48 lg:mt-36">
         <div className="grid grid-cols-1 gap-12 items-center">
-          <ScrollReveal delay={100} animation="slide-up" className="space-y-8 text-center">
+          {/* No entrance animation: the tagline below is the LCP element and must
+              paint from the server HTML, not after hydration. */}
+          <div className="space-y-8 text-center">
             <Badge
               variant="outline"
               className="tracking-widest inline-flex items-center gap-2"
@@ -39,7 +40,7 @@ export default async function HeroSection({
               </span>
             </Badge>
 
-            <ScrollReveal animation="slide-left" delay={300} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-lg">
                 {truncate(siteName, 25)}
                 <br />
@@ -50,9 +51,9 @@ export default async function HeroSection({
               <p className="max-w-3xl text-xs sm:text-sm  md:text-md lg:text-lg text-foreground/50 font-medium leading-relaxed mt-2 mx-auto">
                 {truncate(siteDescription, 250)}
               </p>
-            </ScrollReveal>
+            </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/products" className="w-full sm:w-auto">
                 <Button className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-primary/80 hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 border-none font-black text-lg gap-3 transition-transform hover:scale-105">
                   {t("hero.cta_shop")}
@@ -95,7 +96,7 @@ export default async function HeroSection({
                 </Badge>
               ))}
             </div>
-          </ScrollReveal>
+          </div>
         </div>
       </div>
       {/* <div className="absolute bottom-0 inset-x-0 h-7 bg-linear-to-b from-transparent to-background z-40" /> */}

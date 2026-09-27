@@ -18,6 +18,23 @@ const nextConfig: NextConfig = {
     // Retry a page whose prerender fails (e.g. a transient API error) instead
     // of failing the whole build on the first error.
     staticGenerationRetryCount: 2,
+    // Not using `inlineCss`: measured worse (Lighthouse 68 vs 74) — it also
+    // copies the full stylesheet into the RSC payload, bloating the HTML ~2.5x.
+  },
+  async headers() {
+    return [
+      {
+        // Static public assets (hero poster, video, icons, PDF) — not
+        // content-hashed, so a finite TTL rather than immutable.
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+    ];
   },
   /**
    * Reverse Proxy configuration to resolve Third-Party Cookie restrictions.
@@ -41,6 +58,8 @@ const nextConfig: NextConfig = {
   },
   images: {
     unoptimized: process.env.NEXT_PUBLIC_NODE_ENV === "development",
+    formats: ["image/avif", "image/webp"],
+    qualities: [60, 75],
     remotePatterns: [
       {
         protocol: "https",
