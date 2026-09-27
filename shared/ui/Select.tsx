@@ -37,8 +37,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             <option className="" value="" disabled={props.required}>
               {label || "Select"}
             </option>
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
+            {options.map((option,index) => (
+              
+              <option key={option.value + index} value={option.value}>
                 {option.label}
               </option>
             ))}
