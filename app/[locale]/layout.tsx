@@ -144,13 +144,21 @@ export default async function RootLayout({
           __html: JSON.stringify(structuredData),
         }}
       />
-
+      {/* <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${finalSettings.recaptchaSiteKey}`}
+        strategy="afterInteractive"
+      /> */}
       {finalSettings.googleAnalyticsId && (
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${finalSettings.googleAnalyticsId}`}
             strategy="afterInteractive"
           />
+          {/* <Script
+            id="tawk-script"
+            src={`https://embed.tawk.to/${finalSettings.tawkId}`}
+            strategy="afterInteractive"
+          /> */}
           <Script id="google-analytics" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
@@ -159,6 +167,15 @@ export default async function RootLayout({
               gtag('config', '${finalSettings.googleAnalyticsId}');
             `}
           </Script>
+          {/* Google Tag Manager */}
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${finalSettings.googleAnalyticsId}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
         </>
       )}
 

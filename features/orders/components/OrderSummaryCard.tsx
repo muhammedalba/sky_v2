@@ -21,6 +21,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
   const tax = order.taxAmount || 0;
   const paymentFees = order.paymentFees || 0;
   const grandTotal = order.grandTotal || subtotal;
+  const refunded = order.refundedAmount || 0;
 
   const totalQuantity =
     order.items?.reduce((acc, item) => acc + (item.quantity || 0), 0) || 0;
@@ -81,6 +82,23 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             {formatCurrency(grandTotal)}
           </span>
         </div>
+
+        {refunded > 0 && (
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+              <span>{t("refunded")}</span>
+              <span className="tabular-nums">-{formatCurrency(refunded)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-black text-foreground">
+                {t("netAfterRefund")}
+              </span>
+              <span className="text-base font-black text-foreground tabular-nums">
+                {formatCurrency(Math.max(0, grandTotal - refunded))}
+              </span>
+            </div>
+          </div>
+        )}
 
         <div className="h-px bg-border/40 my-1" />
 

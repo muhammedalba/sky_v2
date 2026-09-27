@@ -15,6 +15,7 @@ export const PAYMENT_STATUS_OPTIONS = [
   { value: "FAILED", label: "paymentStatus.FAILED" },
   { value: "CANCELLED", label: "paymentStatus.CANCELLED" },
   { value: "REFUNDED", label: "paymentStatus.REFUNDED" },
+  { value: "PARTIALLY_REFUNDED", label: "paymentStatus.PARTIALLY_REFUNDED" },
   { value: "EXPIRED", label: "paymentStatus.EXPIRED" },
 ];
 

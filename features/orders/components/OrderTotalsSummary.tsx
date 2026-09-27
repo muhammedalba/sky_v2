@@ -109,6 +109,37 @@ export default function OrderTotalsSummary({
               />
             </span>
           </div>
+          {!!order.refundedAmount && order.refundedAmount > 0 && (
+            <>
+              <div className="flex justify-between text-purple-600 dark:text-purple-400 p-2">
+                <span>{t("refunded")}</span>
+                <span className="tabular-nums font-bold">
+                  -
+                  <Price
+                    className="tabular-nums font-semibold"
+                    currencyClassName=" text-[1em]"
+                    amount={order.refundedAmount}
+                    animate={false}
+                  />
+                </span>
+              </div>
+              <div className="flex justify-between text-sm font-black text-foreground p-2">
+                <span>{t("netAfterRefund")}</span>
+                <span className="tabular-nums">
+                  <Price
+                    className="tabular-nums font-semibold"
+                    currencyClassName=" text-[1em]"
+                    amount={Math.max(
+                      0,
+                      (order.grandTotal || order.totalPrice || 0) -
+                        order.refundedAmount,
+                    )}
+                    animate={false}
+                  />
+                </span>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </ScrollReveal>

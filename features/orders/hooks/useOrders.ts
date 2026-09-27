@@ -110,6 +110,25 @@ export function useUpdateOrderStatus() {
   });
 }
 
+/**
+ * Refunds a Moyasar-paid order. A full refund of an order that has not shipped
+ * cancels it and returns its stock, so products are refreshed too.
+ */
+export function useRefundOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: string; amount?: number; reason: string }) =>
+      ordersApi.refund(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+}
+
 export function useUpdateOrderDetails() {
   const queryClient = useQueryClient();
 

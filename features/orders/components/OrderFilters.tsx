@@ -46,6 +46,7 @@ export default function OrderFilters({
     { value: "FAILED", label: t("paymentStatus.FAILED") },
     { value: "CANCELLED", label: t("paymentStatus.CANCELLED") },
     { value: "REFUNDED", label: t("paymentStatus.REFUNDED") },
+    { value: "PARTIALLY_REFUNDED", label: t("paymentStatus.PARTIALLY_REFUNDED") },
     { value: "EXPIRED", label: t("paymentStatus.EXPIRED") },
   ];
 

@@ -26,6 +26,9 @@ export const ordersApi = {
     apiClient.get(ENDPOINTS.STATS, { params }),
   applyCoupon: (data: { items: Record<string, unknown>[]; couponCode: string }) =>
     apiClient.post(ENDPOINTS.COUPON, data),
+  /** Refunds a Moyasar-paid order (all that is left, or `amount`). Requires REFUND_ORDER. */
+  refund: (id: string, data: { amount?: number; reason: string }) =>
+    apiClient.post(`${env.ENDPOINTS.PAYMENTS.BASE}/orders/${id}/refund`, data),
   createBankTransfer: (data: FormData) =>
     apiClient.post(ENDPOINTS.BANK_TRANSFER, data, {
       headers: { 'Content-Type': 'multipart/form-data' },

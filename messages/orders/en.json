@@ -40,6 +40,8 @@
   "tax": "Tax",
   "shipping": "Shipping",
   "grandTotal": "Grand Total",
+  "refunded": "Refunded",
+  "netAfterRefund": "Net after refunds",
   "paymentStatusLabel": "Payment Status",
   "orderStatus": "Order Status",
   "viewInvoice": "View Invoice",
@@ -98,6 +100,7 @@
     "FAILED": "Failed",
     "CANCELLED": "Cancelled",
     "REFUNDED": "Refunded",
+    "PARTIALLY_REFUNDED": "Partially refunded",
     "EXPIRED": "Expired",
     "unknown": "Unknown"
   },
@@ -170,7 +173,27 @@
     "amountPaid": "Amount Paid",
     "transferReceipt": "Bank Transfer Receipt",
     "viewReceipt": "View Receipt",
-    "downloadReceipt": "Download Receipt"
+    "downloadReceipt": "Download Receipt",
+    "refundedAmount": "Refunded"
+  },
+  "refund": {
+    "button": "Refund payment",
+    "title": "Refund payment",
+    "remaining": "Refundable: {amount}",
+    "fullOption": "Full refund",
+    "partialOption": "Partial refund",
+    "amountLabel": "Amount to refund ({currency})",
+    "amountInvalid": "Enter an amount greater than 0 and at most {max}",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Why is this money returned? (kept in the audit log)",
+    "warningCancel": "The order will be cancelled, its stock returned and its coupon released. The customer is notified by email. This cannot be undone.",
+    "warningShipped": "The order has already shipped: it stays as is and its stock is not returned automatically (restock returned items by hand). The customer is notified by email. This cannot be undone.",
+    "warningPartial": "The order continues as usual; only the refunded amount is recorded. The customer is notified by email. This cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Refund",
+    "submitting": "Refunding…",
+    "success": "Refund completed",
+    "error": "The refund failed. Nothing was refunded."
   },
   "deliveryInfo": {
     "title": "Delivery Receipt",

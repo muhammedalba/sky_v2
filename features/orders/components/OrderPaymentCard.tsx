@@ -13,6 +13,9 @@ import { useTranslations } from "next-intl";
 import Modal from "@/shared/ui/Modal";
 import { FileTextIcon, EyeIcon, ExternalLinkIcon, DownloadIcon } from "@/shared/ui/Icons";
 import { getImageUrl } from "@/shared/utils/image.util";
+import { Can } from "@/components/auth/Can";
+import { Permissions } from "@/features/roles/types";
+import OrderRefundDialog from "@/features/orders/components/OrderRefundDialog";
 
 interface OrderPaymentCardProps {
   order: Order;
@@ -23,6 +26,19 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
   const t = useTranslations("orders");
   const { downloadFile, isDownloading } = useDownloadFile();
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isRefundOpen, setIsRefundOpen] = useState(false);
+
+  const refundedAmount = order.refundedAmount ?? 0;
+  const remainingToRefund = Math.max(
+    0,
+    Math.round(((order.grandTotal ?? 0) - refundedAmount) * 1000) / 1000,
+  );
+  // Only Moyasar card payments can be refunded from here; COD / bank transfer
+  // are settled outside the store.
+  const canRefund =
+    order.paymentMethodCode === "moyasar" &&
+    ["PAID", "PARTIALLY_REFUNDED"].includes(order.paymentStatus ?? "") &&
+    remainingToRefund > 0;
 
   const hasReceipt = Boolean(order.transferReceiptImg);
 
@@ -116,6 +132,30 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
                   {formatCurrency(order.grandTotal)}
                 </span>
               </div>
+
+              {refundedAmount > 0 && (
+                <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
+                  <span className="text-muted-foreground font-semibold">
+                    {t("paymentInfo.refundedAmount")}
+                  </span>
+                  <span className="text-purple-600 dark:text-purple-400 font-bold tabular-nums">
+                    {formatCurrency(refundedAmount)}
+                  </span>
+                </div>
+              )}
+
+              {canRefund && (
+                <Can permission={Permissions.REFUND_ORDER}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsRefundOpen(true)}
+                    className="w-full h-9 text-xs font-semibold rounded-lg border-destructive/40 text-destructive hover:bg-destructive/10"
+                  >
+                    {t("refund.button")}
+                  </Button>
+                </Can>
+              )}
             </div>
           </div>
 
@@ -179,6 +219,15 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
           )}
         </CardContent>
       </Card>
+
+      {canRefund && (
+        <OrderRefundDialog
+          order={order}
+          remaining={remainingToRefund}
+          isOpen={isRefundOpen}
+          onClose={() => setIsRefundOpen(false)}
+        />
+      )}
 
       {/* Full Preview Modal */}
       {hasReceipt && (

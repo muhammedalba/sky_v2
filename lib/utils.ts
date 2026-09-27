@@ -149,6 +149,7 @@ export function getPaymentStatusColor(status: string): string {
     FAILED: "bg-red-500/10 text-red-600",
     CANCELLED: "bg-red-500/10 text-red-600",
     REFUNDED: "bg-purple-500/10 text-purple-600",
+    PARTIALLY_REFUNDED: "bg-purple-500/10 text-purple-600",
     EXPIRED: "bg-gray-500/10 text-gray-600",
   };
   return statusColors[status.toUpperCase()] || "bg-muted text-muted-foreground";

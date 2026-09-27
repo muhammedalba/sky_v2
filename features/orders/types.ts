@@ -54,6 +54,9 @@ export interface Order {
   couponId?: Coupon;
   couponCode?: string;
   paymentStatus?: string;
+  /** Total refunded through Moyasar, in major units. */
+  refundedAmount?: number;
+  refundedAt?: string;
   status: string;
   isCheckedOut?: boolean;
   notes?: string;
@@ -136,6 +139,7 @@ export type PaymentStatusType =
   | 'FAILED'
   | 'CANCELLED'
   | 'REFUNDED'
+  | 'PARTIALLY_REFUNDED'
   | 'EXPIRED';
 
 export interface OrderFilters {
