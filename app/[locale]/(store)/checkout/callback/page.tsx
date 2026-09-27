@@ -10,6 +10,10 @@ import {  useTranslations } from "next-intl";
 import { usePaymentVerification } from "@/features/checkout/hooks/usePaymentVerification";
 import { Link } from "@/navigation";
 
+// The server only sends a coarse category, never the issuer's raw message.
+const FAILURE_CATEGORIES = ["insufficient_funds", "card_expired", "authentication", "declined"] as const;
+type FailureCategory = (typeof FAILURE_CATEGORIES)[number];
+
 export default function CheckoutCallbackPage() {
   const searchParams = useSearchParams();
 
@@ -34,10 +38,16 @@ export default function CheckoutCallbackPage() {
     if (paymentState === "paid") {
       clearServerCart();
       clearGuestCart();
-      // Clean up sessionStorage used for Moyasar
+    }
+    // The order is settled either way; a retry goes through a new checkout.
+    if (paymentState !== "verifying") {
       sessionStorage.removeItem("moyasar_order_id");
     }
   }, [paymentState, clearServerCart, clearGuestCart]);
+
+  const failureCategory = FAILURE_CATEGORIES.includes(verificationStatus?.failureCategory)
+    ? (verificationStatus.failureCategory as FailureCategory)
+    : null;
 
   // If no invoice ID was found in URL at all
   if (!invoiceId) {
@@ -121,7 +131,9 @@ export default function CheckoutCallbackPage() {
               {t("payment_failed")}
             </h1>
             <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-              {t("payment_failed_desc")}
+              {failureCategory
+                ? t(`failure_reasons.${failureCategory}`)
+                : t("payment_failed_desc")}
             </p>
             <Link
               href={`/checkout`}

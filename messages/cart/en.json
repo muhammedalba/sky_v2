@@ -159,6 +159,12 @@
       "continue_shopping": "Continue Shopping",
       "payment_failed": "Payment Failed",
       "payment_failed_desc": "Unfortunately, your payment could not be securely verified or failed.",
+      "failure_reasons": {
+        "insufficient_funds": "Insufficient balance or card limit to complete the payment. Try another card or contact your bank.",
+        "card_expired": "This card has expired. Check the expiry date or use another card.",
+        "authentication": "Your bank could not verify the card. Make sure online purchases are enabled, then try again.",
+        "declined": "The payment was declined by your card issuer. Try another card or contact your bank."
+      },
       "payment_expired": "Payment Expired",
       "payment_expired_desc": "Sorry, your payment session has expired. Please try again.",
       "try_again": "Try Again"

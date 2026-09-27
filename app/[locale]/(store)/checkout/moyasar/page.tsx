@@ -61,8 +61,21 @@ export default function MoyasarCheckoutPage() {
 
     const fetchOrder = async () => {
       try {
-        const res = await apiClient.get(`/order/${orderId}`);
+        // Customer-scoped endpoint — `/order/:id` requires the admin VIEW_ORDERS permission.
+        const res = await apiClient.get(`/order/my-orders/${orderId}`);
         const order = res?.data;
+        // A paid, failed or cancelled order must not reach the payment form:
+        // a charge against it would not match any open transaction.
+        const paymentStatus = String(order?.paymentStatus ?? "").toUpperCase();
+        const isAwaitingPayment =
+          (order?.status === "pending" || order?.status === "pending_payment") &&
+          paymentStatus !== "PAID" &&
+          paymentStatus !== "FAILED";
+        if (order && !isAwaitingPayment) {
+          sessionStorage.removeItem("moyasar_order_id");
+          router.replace(`/checkout`);
+          return;
+        }
         if (order && order.grandTotal) {
           setOrderAmount(order.grandTotal);
           setOrderCurrency(order.currency || "SAR");
@@ -78,7 +91,7 @@ export default function MoyasarCheckoutPage() {
     };
 
     fetchOrder();
-  }, [orderId, locale, t, toast]);
+  }, [orderId, locale, t, toast, router]);
 
   // 3. Initialize Moyasar once script, amount, and publishableKey are all ready
   useEffect(() => {
