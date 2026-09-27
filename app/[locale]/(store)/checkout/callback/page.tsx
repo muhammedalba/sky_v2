@@ -29,7 +29,9 @@ export default function CheckoutCallbackPage() {
   const { data: verificationStatus } = usePaymentVerification(invoiceId);
 
   const paymentState = 
-    verificationStatus?.paymentStatus === "PAID" ? "paid" :
+    // A partial refund means the payment went through and the order goes on.
+    verificationStatus?.paymentStatus === "PAID" || verificationStatus?.paymentStatus === "PARTIALLY_REFUNDED" ? "paid" :
+    verificationStatus?.paymentStatus === "REFUNDED" ? "refunded" :
     verificationStatus?.paymentStatus === "FAILED" ? "failed" :
     (verificationStatus?.paymentStatus === "EXPIRED" || verificationStatus?.orderStatus === "expired") ? "expired" :
     "verifying";
@@ -140,6 +142,30 @@ export default function CheckoutCallbackPage() {
               className="inline-block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition"
             >
               {t("try_again")}
+            </Link>
+          </div>
+        )}
+
+        {paymentState === "refunded" && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="mx-auto w-20 h-20 bg-purple-500/10 text-purple-600 rounded-full flex items-center justify-center mb-6">
+              <CheckCircle className="w-10 h-10" />
+            </div>
+            <h1 className="text-2xl font-bold mb-3 text-foreground">
+              {t("payment_refunded")}
+            </h1>
+            <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
+              {t("payment_refunded_desc")}
+              <span className="block mt-3 text-sm font-medium text-foreground bg-accent/50 py-2 rounded-lg">
+                {t("order_id")} 
+                <span className="tracking-wider">{displayOrderId}</span>
+              </span>
+            </p>
+            <Link
+              href={`/account?tab=orders`}
+              className="inline-block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition"
+            >
+              {t("view_orders")}
             </Link>
           </div>
         )}

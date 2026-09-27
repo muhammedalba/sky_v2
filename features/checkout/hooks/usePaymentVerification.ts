@@ -13,13 +13,15 @@ export function usePaymentVerification(invoiceId: string | null) {
     // Add staleTime to prevent unnecessary fetches if component re-renders
     staleTime: 1000 * 60,
     refetchInterval: (query) => {
-      // Poll every 3 seconds as long as we are verifying and status is still INITIATED/PENDING
+      // Poll every 3 seconds only while the payment is still in progress.
+      // Any other status is final for this page (paid, failed, expired,
+      // refunded, cancelled…), including ones added later.
       const data = query.state?.data;
       if (!data) return 3000;
-      
+
       const status = data?.paymentStatus;
       const orderStatus = data?.orderStatus;
-      if (status === "PAID" || status === "FAILED" || status === "EXPIRED" || orderStatus === "expired") {
+      if ((status !== "INITIATED" && status !== "PENDING") || orderStatus === "expired") {
         return false;
       }
       return 3000;

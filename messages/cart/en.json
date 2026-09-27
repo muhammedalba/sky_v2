@@ -167,6 +167,8 @@
       },
       "payment_expired": "Payment Expired",
       "payment_expired_desc": "Sorry, your payment session has expired. Please try again.",
+      "payment_refunded": "Payment refunded",
+      "payment_refunded_desc": "The amount paid for this order was refunded. It goes back to the same payment method and may take a few business days to appear, depending on your bank.",
       "try_again": "Try Again"
     }
   }
