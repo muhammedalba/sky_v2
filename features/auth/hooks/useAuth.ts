@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/api/query-keys";
 import { LoginResponseData } from "@/features/auth/types";
@@ -27,13 +28,22 @@ export function useLogin() {
   });
 }
 
-export function useMe() {
-  let isLoggedInCookie = false;
-  if (typeof document !== "undefined") {
-    isLoggedInCookie = document.cookie.includes("is_logged_in=true");
-  }
+const subscribeNoop = () => () => {};
 
-  return useQuery({
+export function useMe() {
+  // false during SSR and the hydration render, true afterwards. Auth lives in a
+  // browser cookie + client query cache the server can't see, so reading them
+  // during the hydration render made the client output differ from the SSR HTML
+  // (e.g. account page: server skeleton vs client full page).
+  const hydrated = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
+  const isLoggedInCookie =
+    hydrated && document.cookie.includes("is_logged_in=true");
+
+  const query = useQuery({
     queryKey: queryKeys.auth.me(),
     queryFn: async () => {
       const response = await authApi.me();
@@ -49,6 +59,20 @@ export function useMe() {
     // Prevent re-fetching when a component re-mounts (happens on locale switch)
     refetchOnMount: false,
   });
+
+  // Until hydrated, report "auth still loading" on both server and client so
+  // the markup matches; the real cached/fetched user appears right after.
+  if (!hydrated) {
+    return {
+      ...query,
+      data: undefined,
+      status: "pending",
+      isPending: true,
+      isLoading: true,
+      isSuccess: false,
+    } as unknown as typeof query;
+  }
+  return query;
 }
 
 export function useRegister() {
