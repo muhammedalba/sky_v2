@@ -101,7 +101,7 @@
     "publicConfigJsonLabel": "إعدادات الربط العامة (مرئية للعملاء)",
     "publicConfigJsonDesc": "أدخل الإعدادات العامة (مثل: Publishable Keys) بصيغة JSON صحيحة.",
     "secretConfigJsonLabel": "إعدادات الربط السرية (مشفرة في قاعدة البيانات)",
-    "secretConfigJsonDesc": "أدخل الإعدادات السرية (مثل: Secret Keys, Webhooks) بصيغة JSON صحيحة.",
+    "secretConfigJsonDesc": "أدخل الإعدادات السرية (مثل: Secret Keys, Webhooks) بصيغة JSON صحيحة. القيم المحفوظة تظهر مخفية (••••): اتركها كما هي للإبقاء عليها، أو استبدلها لتغييرها، أو اجعلها null لحذفها.",
     "invalidJson": "صيغة JSON غير صحيحة",
     "statusLabel": "الحالة",
     "statusDesc": "تفعيل أو تعطيل طريقة الدفع فوراً",

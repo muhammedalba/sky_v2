@@ -101,7 +101,7 @@
     "publicConfigJsonLabel": "Public Config JSON (Available to clients)",
     "publicConfigJsonDesc": "Enter public configuration (e.g., publishable keys) in valid JSON format.",
     "secretConfigJsonLabel": "Secret Config JSON (Encrypted in DB)",
-    "secretConfigJsonDesc": "Enter secret configuration (e.g., secret keys, webhooks) in valid JSON format.",
+    "secretConfigJsonDesc": "Enter secret configuration (e.g., secret keys, webhooks) in valid JSON format. Saved values are shown masked (••••): leave them as they are to keep them, replace one to change it, or set it to null to remove it.",
     "invalidJson": "Invalid JSON",
     "statusLabel": "Status",
     "statusDesc": "Enable or disable this method immediately",

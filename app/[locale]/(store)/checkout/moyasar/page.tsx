@@ -9,6 +9,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { apiClient } from "@/lib/api/client";
 import { ShieldCheckIcon, CreditCardIcon, AlertCircleIcon } from "@/shared/ui/Icons";
 import { useActivePaymentMethods } from "@/features/checkout/hooks/useCheckout";
+import { normalizeCurrency, toMinorUnits } from "@/features/checkout/utils/currency";
 
 declare global {
   interface Window {
@@ -99,11 +100,8 @@ export default function MoyasarCheckoutPage() {
       if (hasInitialized.current) return;
       hasInitialized.current = true;
 
-      const amountInHalalas = Math.round(orderAmount * 100);
-      let currencyCode = (orderCurrency || 'SAR').toUpperCase().trim();
-      if (currencyCode === 'ر.س' || currencyCode === 'ر.س.') {
-        currencyCode = 'SAR';
-      }
+      const currencyCode = normalizeCurrency(orderCurrency);
+      const amountInMinorUnits = toMinorUnits(orderAmount, currencyCode);
 
       const Moyasar = window.Moyasar;
 
@@ -111,7 +109,7 @@ export default function MoyasarCheckoutPage() {
         try {
           Moyasar.init({
             element: '.mysr-form',
-            amount: amountInHalalas,
+            amount: amountInMinorUnits,
             currency: currencyCode,
             description: `Order ${orderId}`,
             publishable_api_key: publishableKey,

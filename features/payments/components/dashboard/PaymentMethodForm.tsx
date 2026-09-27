@@ -497,7 +497,7 @@ export default function PaymentMethodForm({
               {t("form.secretConfigJsonLabel", { defaultValue: "Secret Config JSON (Encrypted in DB)" })}
             </label>
             <p className="text-xs text-muted-foreground mb-4">
-              {t("form.secretConfigJsonDesc", { defaultValue: "Enter secret configuration (e.g., secret keys, webhooks) in valid JSON format." })}
+              {t("form.secretConfigJsonDesc", { defaultValue: "Enter secret configuration (e.g., secret keys, webhooks) in valid JSON format. Saved values are shown masked (••••): leave them as they are to keep them, replace one to change it, or set it to null to remove it." })}
             </p>
             <textarea
               className="w-full h-32 p-3 rounded-xl border border-input bg-transparent text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none resize-y"
