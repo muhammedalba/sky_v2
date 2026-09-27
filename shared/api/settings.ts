@@ -88,7 +88,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     ar: "متجر إلكتروني احترافي",
     en: "Professional E-commerce Store",
   },
-  googleAnalyticsId: "",
+  googleTagManagerId: "",
   tawkId: "",
   socialLinks: {
     facebook: "",

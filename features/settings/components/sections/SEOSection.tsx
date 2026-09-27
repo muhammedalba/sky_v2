@@ -60,10 +60,10 @@ export default function SEOSection() {
             </div>
             <div className="flex-1">
               <Input
-                {...register('googleAnalyticsId')}
-                label={t('seo.googleAnalytics')}
-                placeholder="UA-XXXXXXXXX-X or G-XXXXXXXXXX"
-                error={errors.googleAnalyticsId?.message}
+                {...register('googleTagManagerId')}
+                label={t('seo.googleTagManager')}
+                placeholder="GTM-XXXXXXX"
+                error={errors.googleTagManagerId?.message}
                 className="rounded-xl h-11"
               />
             </div>

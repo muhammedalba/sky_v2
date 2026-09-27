@@ -41,7 +41,7 @@
   "seo": {
     "title": "إعدادات SEO",
     "desc": "تحسين ظهور متجرك في نتائج البحث.",
-    "googleAnalytics": "معرف Google Analytics",
+    "googleTagManager": "معرف Google Tag Manager",
     "tawkId": "معرف دردشة Tawk.to (propertyId/widgetId)"
   },
   "social": {

@@ -66,7 +66,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   exchangeRate: 1,
   metaTitle: { ar: "", en: "" },
   metaDescription: { ar: "", en: "" },
-  googleAnalyticsId: "",
+  googleTagManagerId: "",
   tawkId: "",
   socialLinks: {
     facebook: "",
@@ -207,7 +207,7 @@ export default function SettingsForm() {
         const primitiveFields: (keyof SettingsInput)[] = [
           "currencyCode",
           "currencySymbol",
-          "googleAnalyticsId",
+          "googleTagManagerId",
           "tawkId",
           "freeShippingThreshold",
           "vatRate",

@@ -30,7 +30,10 @@ export const settingsSchema = z.object({
     ar: z.string().default(""),
     en: z.string().default(""),
   }),
-  googleAnalyticsId: z.string().default(""),
+  googleTagManagerId: z
+    .string()
+    .regex(/^(GTM-[A-Z0-9]+)?$/i, "Format: GTM-XXXXXXX")
+    .default(""),
   tawkId: z
     .string()
     .regex(/^([a-f0-9]{24}\/[a-z0-9]+)?$/i, "Format: <propertyId>/<widgetId>")

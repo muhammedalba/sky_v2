@@ -41,7 +41,7 @@
   "seo": {
     "title": "SEO Settings",
     "desc": "Optimize your store visibility in search results.",
-    "googleAnalytics": "Google Analytics ID",
+    "googleTagManager": "Google Tag Manager ID",
     "tawkId": "Tawk.to Chat ID (propertyId/widgetId)"
   },
   "social": {

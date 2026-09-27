@@ -91,7 +91,7 @@ export interface StoreSettings {
   favicon: FileAsset;
   metaTitle: LocalizedString;
   metaDescription: LocalizedString;
-  googleAnalyticsId: string;
+  googleTagManagerId: string;
   tawkId?: string;
   socialLinks: SocialLinks;
   contactInfo: contactInfo;
