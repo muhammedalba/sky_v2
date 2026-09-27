@@ -70,7 +70,7 @@ export default function WishlistPage() {
         {/* Breadcrumbs */}
         <ScrollReveal animation="fade" delay={200}>
           <Breadcrumb
-            items={[{ label: t("misc.home"), href: "/" }, { label: t("title") }]}
+            items={[ { label: t("title") }]}
           />
         </ScrollReveal>
 

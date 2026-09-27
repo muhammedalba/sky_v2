@@ -1,17 +1,18 @@
 "use client";
 
-import Link from "next/link";
+
 import { useSearchParams } from "next/navigation";
 import { CheckIcon as CheckCircle, AlertCircleIcon as XCircle, SpinnerIcon as Loader2 } from "@/shared/ui/Icons";
 import { useClearCart } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
 import { useEffect } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import {  useTranslations } from "next-intl";
 import { usePaymentVerification } from "@/features/checkout/hooks/usePaymentVerification";
+import { Link } from "@/navigation";
 
 export default function CheckoutCallbackPage() {
   const searchParams = useSearchParams();
-  const locale = useLocale();
+
   const t = useTranslations("cart.payment_pages.callback");
   
   // Extract provider payment ID (invoice_id or id)
@@ -50,7 +51,7 @@ export default function CheckoutCallbackPage() {
           <p className="text-muted-foreground mb-8 text-sm">
             {t("no_reference")}
           </p>
-          <Link href={`/${locale}/checkout`} className="block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition">
+          <Link href={`/checkout`} className="block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition">
             {t("return_to_checkout")}
           </Link>
         </div>
@@ -96,13 +97,13 @@ export default function CheckoutCallbackPage() {
             </p>
             <div className="flex flex-col gap-3">
               <Link
-                href={`/${locale}/account/orders`}
+                href={`/account?tab=orders`}
                 className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition"
               >
                 {t("view_orders")}
               </Link>
               <Link
-                href={`/${locale}/products`}
+                href={`/products`}
                 className="w-full bg-accent text-foreground py-3.5 rounded-xl font-medium hover:bg-accent/80 transition"
               >
                 {t("continue_shopping")}
@@ -123,7 +124,7 @@ export default function CheckoutCallbackPage() {
               {t("payment_failed_desc")}
             </p>
             <Link
-              href={`/${locale}/checkout`}
+              href={`/checkout`}
               className="inline-block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition"
             >
               {t("try_again")}
@@ -143,7 +144,7 @@ export default function CheckoutCallbackPage() {
               {t("payment_expired_desc")}
             </p>
             <Link
-              href={`/${locale}/checkout`}
+              href={`/checkout`}
               className="inline-block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition"
             >
               {t("try_again")}

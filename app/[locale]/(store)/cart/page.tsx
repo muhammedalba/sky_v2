@@ -37,7 +37,7 @@ export default function CartPage() {
   const settings = useSettings();
   const { data: user } = useMe();
   const { data: serverCart, isLoading } = useCart();
-  console.log("serverCart", serverCart);
+
   const { data: previewResult } = useCheckoutSummary({ enabled: !!user });
 
   // ======> cart operations <======
@@ -149,7 +149,6 @@ export default function CartPage() {
         <ScrollReveal animation="fade" delay={200}>
           <Breadcrumb
             items={[
-              { label: t("misc.home"), href: "/" },
               { label: t("title") },
             ]}
           />

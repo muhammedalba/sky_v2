@@ -59,7 +59,6 @@ export default function CheckoutPage() {
   // get cart items from server
   const { data: serverCart } = useCart();
 
-  console.log("previewResult", previewResult);
   /* ─────────────────────────────────────────── HOOKS ──────────────────────────────────────────────── */
   const router = useRouter();
   const getTrans = useTrans();
@@ -146,7 +145,7 @@ export default function CheckoutPage() {
     currency,
     countryId,
   );
-  console.log("paymentMethods", paymentMethods);
+
 
   // Pre-fill user data if authenticated
   useEffect(() => {

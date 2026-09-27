@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+
 import { useTranslations } from "next-intl";
 import { Card } from "@/shared/ui/Card";
 import { Skeleton } from "@/shared/ui/Skeleton";
@@ -16,6 +16,7 @@ import Pagination from "@/shared/ui/Pagination";
 import type { Order } from "@/types";
 import { OrderRow } from "./OrderRow";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import { Link } from "@/navigation";
 
 interface OrdersTabProps {
   locale: string;
@@ -79,7 +80,7 @@ export function OrdersTab({ locale }: OrdersTabProps) {
       header: "",
       render: (order) => (
         <Link
-          href={`/${locale}/account/orders/${order._id}`}
+          href={`/account/orders/${order._id}`}
           className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:bg-muted/60 hover:text-primary transition-colors"
         >
           <EyeIcon className="w-4 h-4" />
