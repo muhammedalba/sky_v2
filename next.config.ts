@@ -1,7 +1,13 @@
 import path from "path";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
-import { env } from "./lib/env";
+
+const isProd =
+  process.env.NODE_ENV === "production" ||
+  process.env.NEXT_PUBLIC_NODE_ENV === "production";
+const apiUrl = isProd
+  ? process.env.NEXT_PUBLIC_PRO_API_URL || process.env.NEXT_PUBLIC_API_URL || ""
+  : process.env.NEXT_PUBLIC_API_URL || "";
 
 const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
@@ -12,7 +18,7 @@ const nextConfig: NextConfig = {
   // which otherwise makes Turbopack infer the wrong root and fail to
   // resolve dependencies like tailwindcss.
   turbopack: {
-    root: path.resolve(__dirname),
+    root: path.resolve(process.cwd()),
   },
   experimental: {
     // Retry a page whose prerender fails (e.g. a transient API error) instead
@@ -52,7 +58,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/v1/:path*",
-        destination: `${env.API_URL}/:path*`,
+        destination: `${apiUrl}/:path*`,
       },
     ];
   },
