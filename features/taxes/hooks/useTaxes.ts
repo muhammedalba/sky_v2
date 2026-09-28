@@ -29,9 +29,6 @@ export const useTaxes = (params?: Record<string, unknown>) => {
     queryKey: taxKeys.list(params),
     
     queryFn: async () => {
-      console.log(params);
-      console.log(taxKeys.list(params));
-      
       const response = await api.get<ApiResponse<Tax[]>, ApiResponse<Tax[]>>('/taxes', {params} );
       return response;
     },

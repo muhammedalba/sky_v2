@@ -32,8 +32,6 @@ export default function SubCategoriesPage() {
   }), [page, search]);
 
   const { data, isLoading, refetch } = useSubCategories(queryParams);
-  console.log(data);
-
   // mutations
   const { mutateAsync: deleteSubCategory, isPending: deleteSubCategoryPending } = useDeleteSubCategory();
   // translations

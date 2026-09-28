@@ -105,7 +105,6 @@ export function CheckoutAddressStep({
       "companyName",
       "vendorVatNo",
     ]);
-    console.log("isValid", isValid);
     if (isValid) {
       onNext();
     }

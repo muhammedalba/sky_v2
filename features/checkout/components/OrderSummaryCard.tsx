@@ -66,7 +66,6 @@ export function OrderSummaryCard({
   const settings = useSettings();
   const { data: user } = useMe();
 
-  console.log("cartItems", cartItems);
   /* ── hooks & state ── */
   const toast = useToast();
   const formatCurrency = useFormatCurrency();
@@ -224,8 +223,6 @@ export function OrderSummaryCard({
         )}
       >
         {cartItems.map((item: CartItem, index: number) => {
-          console.log(item);
-
           const product = item.product;
           if (!product) return null;
           const { price, image } = resolveItemData(item);

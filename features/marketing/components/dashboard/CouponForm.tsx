@@ -155,7 +155,6 @@ export default function CouponForm({ initialData }: CouponFormProps) {
       }
       router.push(`/${locale}/dashboard/coupons`);
     } catch (error: unknown) {
-      console.log(error);
       const msg =
         (error as { message: string }).message || t("messages.errorOccurred");
       toast.error(msg);
