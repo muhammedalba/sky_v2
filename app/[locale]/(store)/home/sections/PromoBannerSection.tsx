@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { Link } from "@/navigation";
 import { Button } from "@/shared/ui/Button";
 import { DownloadIcon } from "@/shared/ui/Icons";
@@ -12,12 +12,31 @@ export default async function PromoBannerSection({
 }) {
   const t = await getTranslations({ locale, namespace: "home" });
 
+  // Background artwork via next/image (not a CSS url()): /assets is served by
+  // the host without cache headers, /_next/image is cached and resized.
+  const bgCommon = { alt: "", fill: true, sizes: "(min-width: 1280px) 1280px, 100vw" };
+  // srcSet is undefined when images are unoptimized (dev) — fall back to src.
+  const { props: desktop } = getImageProps({ ...bgCommon, src: "/assets/images/Desktop.webp" });
+  const { props: mobile } = getImageProps({ ...bgCommon, src: "/assets/images/mobile.webp" });
+  const desktopSrcSet = desktop.srcSet ?? desktop.src;
+  const mobileSrcSet = mobile.srcSet ?? mobile.src;
+
   return (
     // dir="ltr": the background artwork (mobile.webp / Desktop.webp) has a fixed
     // dark-to-light gradient baked in from left to right, so the layout stays
     // physically left/right regardless of locale instead of mirroring for RTL.
     <section dir="ltr" className="p-7 ">
-      <div className="relative rounded-lg overflow-hidden bg-[#c9dbf5] bg-[url('/assets/images/mobile.webp')] md:bg-[url('/assets/images/Desktop.webp')] bg-cover bg-top md:bg-center bg-no-repeat max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-20 md:py-28 flex flex-col md:flex-row md:items-center gap-12 md:gap-10">
+      <div className="relative isolate rounded-lg overflow-hidden bg-[#c9dbf5] max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-20 md:py-28 flex flex-col md:flex-row md:items-center gap-12 md:gap-10">
+        {/* absolute: out of the flex flow, so `gap` doesn't treat it as an item */}
+        <picture className="absolute inset-0 -z-10">
+          <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
+          <source srcSet={mobileSrcSet} />
+          <img
+            {...mobile}
+            alt=""
+            className="object-cover object-top md:object-center"
+          />
+        </picture>
         <ScrollReveal
           delay={100}
           animation="slide-right"

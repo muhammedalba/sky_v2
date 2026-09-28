@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { locales } from "@/i18n";
 import ProductDetailsClient from "./ProductDetailsClient";
 import { serverFetch } from "@/shared/api/server-fetch";
+import { buildAlternates } from "@/lib/seo";
 
 interface ProductPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -99,6 +100,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: buildAlternates(locale, `/products/${slug}`),
     openGraph: {
       title,
       description,

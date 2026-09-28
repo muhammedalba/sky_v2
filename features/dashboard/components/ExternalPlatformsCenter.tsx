@@ -3,7 +3,7 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { AiSparkIcon, BarChart3Icon, ChevronRightIcon, DatabaseIcon, ExternalLinkIcon, GaugeIcon, GlobeIcon, InfinityIcon, SearchIcon, ShieldIcon, ShoppingBagIcon, SnapchatBrandIcon, StoreIcon, TagsIcon, TikTokBrandIcon } from "@/shared/ui/Icons";
+import { AiSparkIcon, BarChart3Icon, ChevronRightIcon, DatabaseIcon, ExternalLinkIcon, GaugeIcon, GlobeIcon, InfinityIcon, MessageCircleIcon, SearchIcon, ShieldIcon, ShoppingBagIcon, SnapchatBrandIcon, StoreIcon, TagsIcon, TikTokBrandIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 /**
@@ -287,6 +287,18 @@ export default function ExternalPlatformsCenter() {
             bg: "bg-teal-50 ",
             border: "border",
             glow: "from-teal-500/5 via-transparent to-transparent",
+          },
+        },
+        {
+          id: "tawkTo",
+          brand: "Tawk.to",
+          url: "https://www.tawk.to/",
+          icon: MessageCircleIcon,
+          color: {
+            text: "text-lime-600 ",
+            bg: "bg-lime-50 ",
+            border: "border",
+            glow: "from-lime-500/5 via-transparent to-transparent",
           },
         },
       ],

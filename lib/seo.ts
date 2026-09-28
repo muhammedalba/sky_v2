@@ -14,6 +14,25 @@ interface GenerateMetadataProps {
   siteLogoUrl?: string;
 }
 
+/**
+ * canonical + hreflang links for a localized path (e.g. `/products/abc`).
+ * Every locale variant points at the others so Google treats /ar and /en as
+ * translations of one page rather than duplicates.
+ */
+export function buildAlternates(
+  locale: string,
+  path: string,
+): NonNullable<Metadata['alternates']> {
+  const baseUrl = env.APP_URL;
+  return {
+    canonical: `${baseUrl}/${locale}${path}`,
+    languages: {
+      'en': `${baseUrl}/en${path}`,
+      'ar': `${baseUrl}/ar${path}`,
+    },
+  };
+}
+
 export async function generatePageMetadata({
   locale,
   namespace,
@@ -37,13 +56,7 @@ export async function generatePageMetadata({
       default: t('meta.title'),
     },
     description: t('meta.description'),
-    alternates: {
-      canonical: `${baseUrl}/${locale}${path}`,
-      languages: {
-        'en': `${baseUrl}/en${path}`,
-        'ar': `${baseUrl}/ar${path}`,
-      },
-    },
+    alternates: buildAlternates(locale, path),
     openGraph: {
       title: t('meta.title'),
       description: t('meta.description'),
