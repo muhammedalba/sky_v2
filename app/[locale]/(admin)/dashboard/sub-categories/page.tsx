@@ -100,7 +100,7 @@ export default function SubCategoriesPage() {
       className: "pl-6",
       render: (sub: SubCategory) => (
         <div className="flex flex-col gap-0.5">
-          <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+          <span className="font-bold text-foreground/80 group-hover:text-primary transition-colors">
             {getTrans(sub.name)}
           </span>
           <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
@@ -112,7 +112,7 @@ export default function SubCategoriesPage() {
     {
       header: "Parent Category",
       render: (sub: SubCategory) => (
-        <Badge variant="outline" className="rounded-xl bg-muted/40 border-none font-bold text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+        <Badge variant="outline" className="rounded-xl bg-muted/40 border-none text-muted-foreground  text-xs px-3 py-1 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
           {getTrans(sub?.category?.name)}
         </Badge>
       )
