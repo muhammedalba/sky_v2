@@ -73,6 +73,7 @@ export default function LoginForm() {
   const successMessage =
     searchParams.get('signup') === 'success' ? t('signupSuccess') :
       searchParams.get('reset') === 'success' ? t('resetSuccess') :
+      searchParams.get('deleted') === 'success' ? t('accountDeleted') :
        searchParams.get('redirect')==="/checkout" ? t('loginSuccess') :
         null;
 

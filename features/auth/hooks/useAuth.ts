@@ -152,6 +152,23 @@ export function useLogout() {
   });
 }
 
+/**
+ * Permanently deletes the current account. On success the server has already
+ * cleared the auth cookies; like logout, a full reload wipes all client state.
+ * Errors (wrong password, staff account) are left to the caller to show.
+ */
+export function useDeleteAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (password?: string) => authApi.deleteMe(password),
+    onSuccess: () => {
+      queryClient.clear();
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = `/${getCurrentLocale()}/login?deleted=success`;
+    },
+  });
+}
+
 export function useAuth() {
   const { data: user, isLoading } = useMe();
   const { mutate: logout } = useLogout();

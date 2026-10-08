@@ -61,5 +61,21 @@
   "messages": {
     "profileUpdated": "Profile updated successfully",
     "passwordChanged": "Password changed successfully"
+  },
+  "deleteAccount": {
+    "title": "Delete account",
+    "description": "Permanently delete your account and data. This cannot be undone.",
+    "button": "Delete account",
+    "confirmTitle": "Delete your account?",
+    "confirmDescription": "This is permanent and cannot be undone.",
+    "consequences": {
+      "data": "Your account, photo, cart, wishlist and reviews will be deleted.",
+      "sessions": "You will be signed out on every device, including the mobile app.",
+      "orders": "Your past orders are kept as financial records."
+    },
+    "passwordLabel": "Enter your password to confirm",
+    "cancel": "Cancel",
+    "confirmButton": "Delete my account",
+    "error": "Could not delete the account. Please try again."
   }
 }

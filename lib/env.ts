@@ -96,6 +96,7 @@ export const env = {
       LOGOUT: LOGOUT_EP,
       UPDATE_ME: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_UPDATE_ME || '/auth/updateMe',
       CHANGE_PASSWORD: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_CHANGE_PASSWORD || '/auth/changeMyPassword',
+      DELETE_ME: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_DELETE_ME || '/auth/me',
       GOOGLE: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_GOOGLE || '/auth/google',
       FACEBOOK: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_FACEBOOK || '/auth/facebook',
     },

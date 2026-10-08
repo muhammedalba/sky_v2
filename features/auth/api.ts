@@ -28,6 +28,8 @@ const request = {
     data?: FormData | object,
     config?: AxiosRequestConfig,
   ) => apiClient.put(url, data, config) as unknown as Promise<ApiResponse<T>>,
+  delete: <T>(url: string, config?: AxiosRequestConfig) =>
+    apiClient.delete(url, config) as unknown as Promise<ApiResponse<T>>,
 };
 
 export const authApi = {
@@ -80,6 +82,15 @@ export const authApi = {
       throw new Error("Change password endpoint not configured");
     return request.patch<void>(ENDPOINTS.CHANGE_PASSWORD, data);
   },
+
+  /**
+   * Permanently deletes the current user's account. `password` is required
+   * for email/password accounts and ignored for social (Google/Facebook/Apple).
+   */
+  deleteMe: (password?: string) =>
+    request.delete<void>(ENDPOINTS.DELETE_ME, {
+      data: password ? { password } : {},
+    }),
 
   getGoogleAuthUrl: () => `${env.API_URL}${ENDPOINTS.GOOGLE}`,
   getFacebookAuthUrl: () => `${env.API_URL}${ENDPOINTS.FACEBOOK}`,

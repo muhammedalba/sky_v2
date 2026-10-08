@@ -12,6 +12,7 @@ import { OverviewTab } from "./_components/OverviewTab";
 import { ProfileTab } from "./_components/ProfileTab";
 import { OrdersTab } from "./_components/OrdersTab";
 import { SecurityTab } from "./_components/SecurityTab";
+import { DeleteAccountSection } from "./_components/DeleteAccountSection";
 import { VALID_TABS, type ActiveTabType } from "./_components/types";
 import RecentlyViewedSection from "../products/components/RecentlyViewedSection";
 import Breadcrumb from "@/shared/ui/Breadcrumb";
@@ -199,6 +200,7 @@ export default function AccountPage() {
                 className="space-y-4"
               >
                 <SecurityTab />
+                <DeleteAccountSection />
               </ScrollReveal>
             )}
           </main>
