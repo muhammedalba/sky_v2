@@ -2,7 +2,7 @@
       "hero": {
             "badge": "Privacy Policy",
             "title": "Privacy Policy",
-            "subtitle": "Your privacy matters to us. This page explains how Sky Galaxy collects, uses, and protects your information when you interact with our website and services.",
+            "subtitle": "Your privacy matters to us. This page explains how Sky Galaxy collects, uses, and protects your information when you interact with our website, mobile app, and services.",
             "lastUpdated": "Last updated: {date}"
       },
       "toc": {
@@ -76,8 +76,36 @@
                   "list": [
                         "Access the personal data we hold about you",
                         "Correct or update your data",
-                        "Request deletion of your data, subject to legal and accounting obligations",
+                        "Delete your account yourself at any time, as explained in the next section",
                         "Unsubscribe from marketing communications at any time"
+                  ]
+            },
+            {
+                  "id": "deletion",
+                  "title": "Deleting Your Account",
+                  "paragraphs": [
+                        "You can permanently delete your account at any time from the website (My Account › Security › Delete account) or from the same section in the mobile app. If you signed up with an email and password, you will be asked to enter your password to confirm. If you can't sign in, contact us and we will delete the account for you after verifying your identity.",
+                        "Deletion takes effect immediately and cannot be undone. You can register again later with the same email, but it will be a new, empty account.",
+                        "The following data is deleted permanently as soon as you confirm:"
+                  ],
+                  "list": [
+                        "Your account details: name, email address, phone number, password, and profile picture",
+                        "The link between your account and Google, Facebook, or Apple sign-in, if you used one",
+                        "Your shopping cart and wishlist",
+                        "Your product reviews and ratings",
+                        "All your active sessions on every device"
+                  ]
+            },
+            {
+                  "id": "retention",
+                  "title": "What We Keep After Deletion",
+                  "paragraphs": [
+                        "Some data is not deleted with your account, either because the law requires us to keep it or because it is not linked to your account. We keep it only as long as necessary and do not use it for marketing."
+                  ],
+                  "list": [
+                        "Past orders and their invoices (items, amounts, the shipping name, phone and address, and payment status) are kept as financial and tax records as required by law, and are used only for accounting, returns, and disputes",
+                        "Messages and quote requests you sent through the site's forms are not linked to your account, so they are not deleted automatically; you can ask us to delete them through the contact page",
+                        "Backup copies may hold your data for a limited period until they are overwritten in the normal backup cycle"
                   ]
             },
             {
