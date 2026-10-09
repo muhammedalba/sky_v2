@@ -73,6 +73,7 @@ interface ApiPaymentMethod {
   fixedFee: number;
   percentageFee: number;
   isActive: boolean;
+  isDefault?: boolean;
   displayOrder: number;
   icon?: string;
   supportedCurrencies?: string[];

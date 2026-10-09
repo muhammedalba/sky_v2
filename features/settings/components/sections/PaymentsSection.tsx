@@ -34,8 +34,8 @@ export default function PaymentsSection() {
               <OrdersIcon className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <span className="font-medium block">Enable Online Payments</span>
-              <span className="text-sm text-muted-foreground block">Allow users to pay online using the configured payment methods.</span>
+              <span className="font-medium block">{t("payments.enableOnline")}</span>
+              <span className="text-sm text-muted-foreground block">{t("payments.enableOnlineDesc")}</span>
             </div>
           </div>
           <Switch

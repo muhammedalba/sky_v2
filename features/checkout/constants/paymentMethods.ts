@@ -13,6 +13,8 @@ export interface ActivePaymentMethod {
   fixedFee: number;
   percentageFee: number;
   fees?: number;
+  /** Preselected on the checkout page. */
+  isDefault?: boolean;
   /** Whitelisted public config fields safe to expose to the browser. Never contains secretKey. */
   publicConfig?: PaymentMethodPublicConfig;
 }

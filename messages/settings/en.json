@@ -81,7 +81,9 @@
     "title": "Payment Gateways",
     "desc": "Manage available payment methods.",
     "bankTransfer": "Bank Transfer",
-    "cod": "Cash on Delivery"
+    "cod": "Cash on Delivery",
+    "enableOnline": "Enable Online Payments",
+    "enableOnlineDesc": "Allow users to pay online using the configured payment methods."
   },
   "bankTransfer": {
     "title": "Bank Transfer Details",

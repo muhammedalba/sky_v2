@@ -175,9 +175,11 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (currentStep >= 1 && paymentMethods.length > 0 && !selectedPaymentId) {
-      const firstId = paymentMethods[0]._id;
-      startTransition(() => setSelectedPaymentId(firstId));
-      selectPayment(firstId);
+      const defaultId = (
+        paymentMethods.find((method) => method.isDefault) ?? paymentMethods[0]
+      )._id;
+      startTransition(() => setSelectedPaymentId(defaultId));
+      selectPayment(defaultId);
     }
   }, [currentStep, paymentMethods, selectedPaymentId, selectPayment]);
 
