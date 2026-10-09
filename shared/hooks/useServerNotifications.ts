@@ -29,6 +29,8 @@ type ToastType = "success" | "error" | "info" | "warning";
  * To introduce a new notification type, append its action code here.
  */
 const ACTION_CONFIGS: Record<string, { type: ToastType; titleKey: string }> = {
+  ORDER_PROCESSING: { type: "info", titleKey: "orderUpdate" },
+  ORDER_SHIPPED: { type: "info", titleKey: "orderUpdate" },
   ORDER_COMPLETED: { type: "success", titleKey: "orderUpdate" },
   ORDER_DELIVERED: { type: "success", titleKey: "orderUpdate" },
   ORDER_CANCELLED: { type: "warning", titleKey: "orderUpdate" },
