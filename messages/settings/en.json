@@ -14,7 +14,8 @@
     "shipping": "Shipping",
     "features": "Additional Features",
     "advanced": "Advanced",
-    "bankTransfer": "Bank Transfer"
+    "bankTransfer": "Bank Transfer",
+    "mobileApp": "Mobile app"
   },
   "messages": {
     "updateSuccess": "Settings updated successfully",
@@ -179,6 +180,62 @@
   },
   "errors": {
     "cacheTitle": "Error"
+  },
+  "mobileApp": {
+    "title": "Mobile app updates",
+    "desc": "Control how iOS and Android app users are told about new versions: optional or forced updates.",
+    "rules": {
+      "optional": "Raising \"Latest version\" shows older installs an optional update they can postpone.",
+      "required": "Raising \"Minimum supported version\" blocks older versions from using the app until they update.",
+      "blocked": "\"Blocked versions\" force specific versions to update (e.g. a build with a serious bug).",
+      "storeFirst": "Only set a version here once it is actually live in that platform's store, or users will not find the update."
+    },
+    "platforms": {
+      "android": "Android (Google Play)",
+      "ios": "iOS (App Store)"
+    },
+    "updatedAt": "Last changed: {date}",
+    "fields": {
+      "latestVersion": "Latest version",
+      "latestVersionDesc": "The version currently live in the store.",
+      "minSupportedVersion": "Minimum supported version",
+      "minSupportedVersionDesc": "Any older version is forced to update.",
+      "blockedVersions": "Blocked versions",
+      "blockedVersionsDesc": "Comma-separated. Forced to update even if newer than the minimum.",
+      "storeUrl": "Store link",
+      "notesAr": "What's new (Arabic)",
+      "notesEn": "What's new (English)"
+    },
+    "stats": {
+      "total": "Registered devices",
+      "upToDate": "Up to date",
+      "optional": "Optional update",
+      "required": "Forced update",
+      "unknown": "Unknown",
+      "hint": "Counts only devices registered for notifications. Check it before raising the minimum version."
+    },
+    "forceWarning": "After saving, {count} more {platform} device(s) will be forced to update before using the app.",
+    "confirmForce": {
+      "title": "Confirm forced update",
+      "message": "{count} more {platform} device(s) will be blocked from the app until they update. Make sure the required version is live in the store. Continue?"
+    },
+    "announce": {
+      "button": "Send update notification",
+      "title": "Send update notification",
+      "message": "Every {platform} user will get a \"version {version} is available\" notification. Send it?",
+      "needsStoreUrl": "Add and save the store link first",
+      "saveFirst": "Save your changes first"
+    },
+    "messages": {
+      "saved": "{platform} update policy saved",
+      "announced": "Update notification sent"
+    },
+    "errors": {
+      "version": "Invalid version, e.g. 1.2.3",
+      "blocked": "Enter valid comma-separated versions, e.g. 1.3.1, 1.3.2",
+      "storeUrl": "The link must start with https://",
+      "minAboveLatest": "The minimum supported version cannot be higher than the latest version",
+      "notes": "Write the release notes in both languages (3+ characters) or leave both empty"
+    }
   }
 }
-

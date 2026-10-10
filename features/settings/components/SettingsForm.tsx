@@ -47,6 +47,10 @@ const ShippingSection = dynamic(() => import("./sections/ShippingSection"), {
 const AdvancedSection = dynamic(() => import("./sections/AdvancedSection"), {
   loading: () => <SectionSkeleton />,
 });
+// Saved through its own API (/app-versions), outside the settings form.
+const MobileAppSection = dynamic(() => import("./sections/MobileAppSection"), {
+  loading: () => <SectionSkeleton />,
+});
 const FeaturesSection = dynamic(() => import("./sections/FeaturesSection"), {
   loading: () => <SectionSkeleton />,
 });
@@ -325,8 +329,10 @@ export default function SettingsForm() {
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-6"
             >
-              <ActiveSectionComponent />
+              {activeSection !== "mobile-app" && <ActiveSectionComponent />}
             </form>
+            {/* Has its own forms: rendered outside, forms cannot nest. */}
+            {activeSection === "mobile-app" && <MobileAppSection />}
           </main>
         </div>
       </div>
