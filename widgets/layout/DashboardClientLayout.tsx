@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ReactNode, useState } from 'react';
-import { useUIStore } from '@/store/ui-store';
-import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetTrigger } from '@/shared/ui/sheet/Sheet';
+import { ReactNode, useState } from "react";
+import { useUIStore } from "@/store/ui-store";
+import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTrigger } from "@/shared/ui/sheet/Sheet";
 import { MenuIcon } from "@/shared/ui/Icons";
 
 interface DashboardClientLayoutProps {
@@ -28,23 +28,28 @@ export default function DashboardClientLayout({
     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
       <div className="min-h-screen bg-background">
         {/* Desktop Sidebar */}
-        <div className="hidden md:block">
-          {sidebar}
-        </div>
+        <div className="hidden md:block">{sidebar}</div>
 
         {/* Mobile Sidebar (Sheet) */}
-        <SheetContent side={isRTL ? "right" : "left"} className="p-0 border-none w-72">
+        <SheetContent
+          side={isRTL ? "right" : "left"}
+          className="p-0 border-none w-72"
+        >
           {/* Note: In a real app, you might want to wrap mobileSidebar to handle onNavigate */}
-          <div onClick={() => setMobileOpen(false)}>
+          <div
+            onClick={() => {
+              setMobileOpen(false);
+            }}
+          >
             {mobileSidebar}
           </div>
         </SheetContent>
 
         <div
           className={cn(
-            'transition-all duration-500',
-            sidebarCollapsed ? 'md:ms-20' : 'md:ms-64',
-            'ms-0'
+            "transition-all duration-500",
+            sidebarCollapsed ? "md:ms-20" : "md:ms-64",
+            "ms-0",
           )}
         >
           {/* Topbar Wrapper with Mobile Trigger */}
@@ -53,17 +58,13 @@ export default function DashboardClientLayout({
               <SheetTrigger className="md:hidden p-2 me-2 text-muted-foreground hover:bg-secondary rounded-lg">
                 <MenuIcon className="w-6 h-6" />
               </SheetTrigger>
-              <div className="flex-1">
-                 {topbar}
-              </div>
+              <div className="flex-1">{topbar}</div>
             </div>
           </div>
 
-          <main className="p-4 md:p-8 max-w-[1600px] mx-auto">
-            {children}
-          </main>
+          <main className="p-4 md:p-8 max-w-[1600px] mx-auto">{children}</main>
         </div>
       </div>
-    </Sheet> 
+    </Sheet>
   );
 }

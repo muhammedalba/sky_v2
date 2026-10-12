@@ -1,23 +1,24 @@
-'use client';
+"use client";
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { XIcon } from "@/shared/ui/Icons";
 import { cn } from "@/lib/utils";
+import { useUIStore } from "@/store/ui-store";
 
 const SheetContext = React.createContext<{
   open: boolean;
   onOpenChange: (open: boolean) => void;
 } | null>(null);
 
-const Sheet = ({ 
-  children, 
-  open, 
-  onOpenChange 
-}: { 
-  children: React.ReactNode; 
-  open?: boolean; 
-  onOpenChange?: (open: boolean) => void; 
+const Sheet = ({
+  children,
+  open,
+  onOpenChange,
+}: {
+  children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) => {
   // Uncontrolled state fallback
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
@@ -26,7 +27,9 @@ const Sheet = ({
   const handleOpenChange = isControlled ? onOpenChange : setUncontrolledOpen;
 
   return (
-    <SheetContext.Provider value={{ open: currentOpen!, onOpenChange: handleOpenChange! }}>
+    <SheetContext.Provider
+      value={{ open: currentOpen!, onOpenChange: handleOpenChange! }}
+    >
       {children}
     </SheetContext.Provider>
   );
@@ -38,13 +41,16 @@ const SheetTrigger = ({
   ...props
 }: React.HTMLAttributes<HTMLButtonElement>) => {
   const context = React.useContext(SheetContext);
-  
+  const { setSidebarCollapsed } = useUIStore();
   if (!context) throw new Error("SheetTrigger must be used within a Sheet");
 
   return (
     <button
       className={cn(className)}
-      onClick={() => context.onOpenChange(true)}
+      onClick={() => {
+        context.onOpenChange(true);
+        setSidebarCollapsed(false);
+      }}
       {...props}
     >
       {children}
@@ -57,14 +63,15 @@ const SheetContent = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof sheetVariants>
 >(({ side = "right", className, children, ...props }, ref) => {
   const context = React.useContext(SheetContext);
-  
+  const { setSidebarCollapsed } = useUIStore();
+
   if (!context) return null;
   if (!context.open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div 
-        className="fixed inset-0 bg-black/80 animate-in fade-in-0" 
+      <div
+        className="fixed inset-0 bg-black/80 animate-in fade-in-0"
         onClick={() => context.onOpenChange(false)}
       />
       <div
@@ -73,9 +80,12 @@ const SheetContent = React.forwardRef<
         {...props}
       >
         {children}
-        <button 
+        <button
           className="absolute inset-e-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
-          onClick={() => context.onOpenChange(false)}
+          onClick={() => {
+            context.onOpenChange(false);
+            setSidebarCollapsed(true);
+          }}
         >
           <XIcon className="size-5" />
           <span className="sr-only">Close</span>
@@ -94,13 +104,14 @@ const sheetVariants = cva(
         top: "inset-x-0 top-0 border-b slide-in-from-top",
         bottom: "inset-x-0 bottom-0 border-t slide-in-from-bottom",
         left: "inset-y-0 left-0 h-full w-3/4 border-r slide-in-from-left sm:max-w-sm",
-        right: "inset-y-0 right-0 h-full w-3/4 border-l slide-in-from-right sm:max-w-sm",
+        right:
+          "inset-y-0 right-0 h-full w-3/4 border-l slide-in-from-right sm:max-w-sm",
       },
     },
     defaultVariants: {
       side: "right",
     },
-  }
+  },
 );
 
 export { Sheet, SheetTrigger, SheetContent };
