@@ -107,7 +107,8 @@
     "locations": "المواقع الجغرافية",
     "roles": "الأدوار والصلاحيات",
     "notifications": "الإشعارات",
-    "paymentMethods": "طرق الدفع"
+    "paymentMethods": "طرق الدفع",
+    "backups": "النسخ الاحتياطي"
   },
   "auth": {
     "login": "تسجيل الدخول",

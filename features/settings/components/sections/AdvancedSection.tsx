@@ -114,7 +114,6 @@ export default function AdvancedSection() {
   // Axis 2.1: Use useWatch for efficient re-renders
   const maintenanceMode = useWatch({ control, name: "maintenanceMode" });
   const allowRegistration = useWatch({ control, name: "allowRegistration" });
-  const autoBackup = useWatch({ control, name: "autoBackup" });
   const enablePerformance = useWatch({ control, name: "enablePerformance" });
   const inventoryAlertsEnabled = useWatch({
     control,
@@ -139,13 +138,6 @@ export default function AdvancedSection() {
         value: allowRegistration,
       },
       {
-        id: "autoBackup",
-        name: t("advanced.backup"),
-        desc: t("advanced.backupDesc"),
-        icon: RefreshCwIcon,
-        value: autoBackup,
-      },
-      {
         id: "enablePerformance",
         name: t("advanced.performance"),
         desc: t("advanced.performanceDesc"),
@@ -168,7 +160,6 @@ export default function AdvancedSection() {
       t,
       maintenanceMode,
       allowRegistration,
-      autoBackup,
       enablePerformance,
       inventoryAlertsEnabled,
     ],

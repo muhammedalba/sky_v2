@@ -108,6 +108,39 @@ export enum Permissions {
   VIEW_REVIEWS = "view_reviews",
   MANAGE_REVIEWS = "manage_reviews",
   DELETE_REVIEW = "delete_review",
+
+  // ---- Database backups ----
+  VIEW_BACKUPS = "view_backups",
+  MANAGE_BACKUP_SETTINGS = "manage_backup_settings",
+  RUN_BACKUP = "run_backup",
+  VERIFY_BACKUP = "verify_backup",
+  RESTORE_BACKUP_TEST = "restore_backup_test",
+  RESTORE_BACKUP_FILES = "restore_backup_files",
+  DOWNLOAD_BACKUP = "download_backup",
+  UPLOAD_BACKUP = "upload_backup",
+}
+
+const BACKUP_PERMISSIONS: string[] = [
+  Permissions.VIEW_BACKUPS,
+  Permissions.MANAGE_BACKUP_SETTINGS,
+  Permissions.RUN_BACKUP,
+  Permissions.VERIFY_BACKUP,
+  Permissions.RESTORE_BACKUP_TEST,
+  Permissions.RESTORE_BACKUP_FILES,
+  Permissions.DOWNLOAD_BACKUP,
+  Permissions.UPLOAD_BACKUP,
+];
+
+/**
+ * Stored permissions plus the ones they imply — mirrors the server's
+ * `expandPermissions` (UPDATE_SETTINGS ⇒ VIEW_SETTINGS, any backup
+ * permission ⇒ VIEW_BACKUPS). The server enforces; this only keeps the UI in step.
+ */
+export function expandPermissions(permissions: readonly string[]): string[] {
+  const set = new Set(permissions);
+  if (set.has(Permissions.UPDATE_SETTINGS)) set.add(Permissions.VIEW_SETTINGS);
+  if (BACKUP_PERMISSIONS.some((p) => set.has(p))) set.add(Permissions.VIEW_BACKUPS);
+  return [...set];
 }
 
 export interface PermissionGroup {

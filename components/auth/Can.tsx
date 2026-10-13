@@ -12,6 +12,20 @@ interface CanProps {
 }
 
 /**
+ * Returns a permission checker bound to the current user.
+ * Use it when permissions are combined with other conditions or checked many times (e.g. per table row).
+ *
+ * @example
+ * const can = useCan();
+ * {can(Permissions.UPLOAD_BACKUP) && b.source === "uploaded" && <button>Delete</button>}
+ */
+export function useCan() {
+  const { data: user } = useMe();
+  return (permission: string | string[], requireAll = true) =>
+    checkUserPermission(user || null, permission, requireAll);
+}
+
+/**
  * A component that conditionally renders its children based on user permissions.
  * Supports SuperAdmin level-100 bypass, legacy role string compatibility, and multiple permissions.
  * 
