@@ -237,5 +237,240 @@
       "minAboveLatest": "The minimum supported version cannot be higher than the latest version",
       "notes": "Write the release notes in both languages (3+ characters) or leave both empty"
     }
+  },
+  "backup": {
+    "title": "Database backups",
+    "desc": "Automatic, encrypted copies of the database and the uploaded files (images, attachments) saved to Google Drive, independent of the hosting provider.",
+    "loadError": "Could not load the backup settings.",
+    "perDayOption": "{count} per day",
+    "daysOption": "{count} days",
+    "dstNote": "Times follow the store timezone, including daylight-saving changes: a skipped time runs once at the next valid time, a repeated time runs once.",
+    "fields": {
+      "enabled": "Automatic backups",
+      "enabledDesc": "Run scheduled backups. Turning this off keeps all existing backup files.",
+      "backupsPerDay": "Backups per day",
+      "backupsPerDayDesc": "How many times a day a backup runs (not how many files are kept).",
+      "scheduleTime": "First backup time (24-hour)",
+      "hour": "Hour",
+      "minute": "Minute",
+      "runTimes": "Runs at: {times}",
+      "upcoming": "Next runs: {times}",
+      "retentionDays": "Keep backups for",
+      "retentionDesc": "Older backups are deleted automatically, but the {min} newest backups are always kept.",
+      "folderName": "Google Drive folder name",
+      "folderNameDesc": "Renaming keeps the same folder and its existing backups."
+    },
+    "timezone": {
+      "label": "Timezone",
+      "source": {
+        "store-address": "from the store address",
+        "country-default": "the country's main timezone",
+        "fallback": "server default"
+      },
+      "fallbackHint": "The timezone could not be determined from the store address. Complete the country (and city) in Contact > Business address."
+    },
+    "server": {
+      "disabled": "Backups are switched off on the server (BACKUP_ENABLED). Ask your administrator to enable them.",
+      "missing": "Missing server configuration: {names}",
+      "overridden": "The schedule is overridden on the server (BACKUP_CRON); the times below are not applied."
+    },
+    "status": {
+      "title": "Backup status",
+      "desc": "Results of recent backups and the next scheduled run.",
+      "notAvailable": "Not available",
+      "lastResult": "Last result",
+      "lastSuccess": "Last successful backup",
+      "nextRun": "Next scheduled backup",
+      "size": "Size of last backup",
+      "fileId": "Google Drive file ID",
+      "uploads": "Uploaded files (images, attachments)",
+      "uploadsValue": "{count} files, {size}",
+      "retained": "Backups currently kept",
+      "lastFailure": "Last failure",
+      "lastError": "Last error",
+      "running": "Backup in progress…",
+      "queued": "Backup queued…",
+      "results": {
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "skipped": "Skipped"
+      },
+      "connection": {
+        "connected": "Connected",
+        "failed": "Connection failed",
+        "not-configured": "Not configured",
+        "unknown": "Not tested yet"
+      }
+    },
+    "actions": {
+      "testConnection": "Test Google Drive connection",
+      "runNow": "Run backup now"
+    },
+    "runNow": {
+      "title": "Run a backup now?",
+      "message": "A full encrypted backup will be created and uploaded to Google Drive in the background. You can follow its progress here."
+    },
+    "confirmDisable": {
+      "title": "Turn off automatic backups?",
+      "message": "No new backups will be created until you turn this back on. Existing backups in Google Drive are kept."
+    },
+    "messages": {
+      "saved": "Backup settings saved.",
+      "connected": "Connected to Google Drive. The backup folder is accessible.",
+      "connectedNoFolder": "Connected to Google Drive. The backup folder will be created with the first backup.",
+      "connectionFailed": "Could not connect to Google Drive. See the error in the status card.",
+      "queued": "Backup started.",
+      "runFailed": "Could not start the backup."
+    },
+    "errors": {
+      "folderName": "Use 1-100 characters without quotes or slashes."
+    },
+    "page": {
+      "title": "Database Backups",
+      "subtitle": "Schedule, verify, download and test-restore encrypted backups stored in Google Drive.",
+      "noAccess": "You do not have permission to view backups."
+    },
+    "files": {
+      "title": "Available backups",
+      "desc": "Every backup in Google Drive, made by the server or uploaded from a device.",
+      "refresh": "Refresh list",
+      "loadError": "Could not load the backups from Google Drive.",
+      "empty": "No backups yet. Run a backup or upload a backup file.",
+      "docs": "{count} documents",
+      "files": "{count} uploaded files",
+      "withFiles": "with uploaded files",
+      "noFiles": "database only",
+      "downloadHint": "Downloads one encrypted file with the database and its uploaded files. Useless without the encryption key.",
+      "source": {
+        "scheduled": "Scheduled",
+        "manual": "Manual",
+        "uploaded": "Uploaded",
+        "unknown": "Backup"
+      },
+      "verify": {
+        "none": "Not verified",
+        "running": "Verifying…",
+        "ok": "Verified",
+        "failed": "Verification failed"
+      },
+      "actions": {
+        "verify": "Verify",
+        "testRestore": "Restore to test database",
+        "download": "Download",
+        "delete": "Delete",
+        "restoreFiles": "Restore files"
+      },
+      "confirmDelete": {
+        "title": "Delete this uploaded backup?",
+        "message": "\"{name}\" and its file list will be deleted from Google Drive. Backups made by the server are not affected."
+      },
+      "messages": {
+        "verifyQueued": "Verification started.",
+        "downloadStarted": "Download started.",
+        "deleted": "Uploaded backup deleted."
+      }
+    },
+    "upload": {
+      "button": "Upload backup file",
+      "progress": "Uploading {percent}%",
+      "wrongType": "Choose a .sgbk backup file or a .backup.tar bundle.",
+      "tooLarge": "The file is larger than the allowed {max}.",
+      "done": "Backup uploaded. Verification started.",
+      "failed": "Upload failed.",
+      "processing": "Sending to Google Drive…"
+    },
+    "testRestore": {
+      "title": "Test restore",
+      "desc": "Restores a backup into the separate database \"{db}\" so you can check it. The live store is never touched.",
+      "empty": "No test restore yet. Choose \"Restore to test database\" on a backup above.",
+      "source": "Backup {id} from {date}",
+      "preparing": "Downloading and verifying the backup…",
+      "progress": "{done} of {total} documents restored",
+      "diffHint": "Highlighted rows differ from the live data now: these are the changes made after the backup (they would be lost by switching to it).",
+      "drop": "Delete test database",
+      "state": {
+        "queued": "Queued",
+        "running": "Running",
+        "succeeded": "Ready",
+        "failed": "Failed",
+        "dropped": "Deleted"
+      },
+      "table": {
+        "collection": "Collection",
+        "backup": "In backup",
+        "restored": "Restored",
+        "live": "Live now"
+      },
+      "switch": {
+        "title": "To switch the store to this backup (only if you are sure)",
+        "notTheSlot": "Never run the store on \"{db}\": this panel replaces and deletes it. Restore the backup into a new database instead.",
+        "step1": "Turn on maintenance mode.",
+        "step2": "Download this backup and, in server/, restore it into a new database:",
+        "step3": "On the server set the following, then restart the API:",
+        "step4": "Restore the uploaded files of the same backup with the \"Restore files\" button.",
+        "warning": "Everything changed after the backup (orders, payments, users) will be lost."
+      },
+      "confirm": {
+        "title": "Restore into the test database?",
+        "message": "The backup from {date} will be restored into a separate test database, replacing the previous test copy. The live store is not affected."
+      },
+      "confirmDrop": {
+        "title": "Delete the test database?",
+        "message": "The database \"{db}\" will be deleted. The live store and the backups in Google Drive are not affected."
+      },
+      "messages": {
+        "queued": "Test restore started.",
+        "dropped": "Test database deleted."
+      },
+      "inUseAsLive": "\"{db}\" has been used as the store's live database, so it cannot be replaced or deleted from here. If it is really no longer used, delete it yourself in mongosh."
+    },
+    "restoreFiles": {
+      "title": "Restore uploaded files",
+      "subtitle": "Images and attachments of the backup from {date}, into the live uploads folder on the server.",
+      "modeLabel": "Restore option",
+      "modes": {
+        "preview": {
+          "title": "Preview only",
+          "desc": "Shows what would be written, what is unchanged and what conflicts. Writes nothing."
+        },
+        "restore": {
+          "title": "Restore missing files",
+          "desc": "Writes files that are missing. Existing files with different content are left untouched and listed as conflicts."
+        },
+        "overwrite": {
+          "title": "Restore and replace different files",
+          "desc": "Also replaces existing files whose content differs with the version from the backup."
+        }
+      },
+      "overwriteConfirm": "I understand that files changed after this backup (e.g. images edited later) will be replaced by their older version.",
+      "note": "Nothing is ever deleted: files that are not in the backup stay as they are. Every file is verified before it is written.",
+      "start": {
+        "preview": "Start preview",
+        "restore": "Restore files",
+        "overwrite": "Restore and replace"
+      },
+      "close": "Close",
+      "preparing": "Reading the backup from Google Drive…",
+      "progress": "{done} of {total} files processed",
+      "done": "Files restored.",
+      "result": {
+        "wouldWrite": "Would be written",
+        "written": "Written",
+        "unchanged": "Unchanged",
+        "conflicts": "Conflicts",
+        "missing": "Missing in Drive",
+        "conflictsList": "Different from the backup ({count})",
+        "conflictsHint": "These files exist with different content (probably changed after the backup). They were not replaced.",
+        "missingList": "Missing from Google Drive ({count})",
+        "more": "and {count} more…",
+        "failed": "Failed",
+        "failedList": "Could not be restored ({count})",
+        "failedHint": "Their copy in Google Drive is corrupt or could not be read. Nothing was written for them; the other files were restored."
+      },
+      "next": {
+        "restore": "Now restore the missing files",
+        "overwrite": "Replace the different files too"
+      }
+    }
   }
 }

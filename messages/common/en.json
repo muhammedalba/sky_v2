@@ -107,7 +107,8 @@
     "locations": "Locations",
     "roles": "Roles & Permissions",
     "notifications": "Notifications",
-    "paymentMethods": "Payment Methods"
+    "paymentMethods": "Payment Methods",
+    "backups": "Backups"
   },
   "auth": {
     "login": "Sign In",

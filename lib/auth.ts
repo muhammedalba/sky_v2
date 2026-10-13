@@ -1,4 +1,5 @@
 import { User, Role } from "@/types";
+import { expandPermissions } from "@/features/roles/types";
 
 // Server-side safe helpers
 export const checkUserPermission = (
@@ -24,7 +25,7 @@ export const checkUserPermission = (
     "permissions" in user.role &&
     Array.isArray(user.role.permissions)
   ) {
-    const userPerms = user.role.permissions;
+    const userPerms = expandPermissions(user.role.permissions);
     if (Array.isArray(permission)) {
       return requireAll
         ? permission.every((p) => userPerms.includes(p))
