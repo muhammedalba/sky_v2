@@ -118,6 +118,10 @@ export enum Permissions {
   RESTORE_BACKUP_FILES = "restore_backup_files",
   DOWNLOAD_BACKUP = "download_backup",
   UPLOAD_BACKUP = "upload_backup",
+
+  // ---- Audit log ----
+  VIEW_AUDIT_LOGS = "view_audit_logs",
+  VIEW_AUDIT_LOG_DETAILS = "view_audit_log_details",
 }
 
 const BACKUP_PERMISSIONS: string[] = [
@@ -131,15 +135,22 @@ const BACKUP_PERMISSIONS: string[] = [
   Permissions.UPLOAD_BACKUP,
 ];
 
+const AUDIT_PERMISSIONS: string[] = [
+  Permissions.VIEW_AUDIT_LOGS,
+  Permissions.VIEW_AUDIT_LOG_DETAILS,
+];
+
 /**
  * Stored permissions plus the ones they imply — mirrors the server's
  * `expandPermissions` (UPDATE_SETTINGS ⇒ VIEW_SETTINGS, any backup
- * permission ⇒ VIEW_BACKUPS). The server enforces; this only keeps the UI in step.
+ * permission ⇒ VIEW_BACKUPS, any audit permission ⇒ VIEW_AUDIT_LOGS).
+ * The server enforces; this only keeps the UI in step.
  */
 export function expandPermissions(permissions: readonly string[]): string[] {
   const set = new Set(permissions);
   if (set.has(Permissions.UPDATE_SETTINGS)) set.add(Permissions.VIEW_SETTINGS);
   if (BACKUP_PERMISSIONS.some((p) => set.has(p))) set.add(Permissions.VIEW_BACKUPS);
+  if (AUDIT_PERMISSIONS.some((p) => set.has(p))) set.add(Permissions.VIEW_AUDIT_LOGS);
   return [...set];
 }
 

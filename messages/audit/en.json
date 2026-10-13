@@ -1,0 +1,58 @@
+{
+  "title": "Audit Log",
+  "subtitle": "Who did what in the dashboard, and when",
+  "noAccess": "You do not have permission to view the audit log.",
+  "system": "System",
+  "retentionNote": "Entries are kept for 365 days, then deleted automatically.",
+  "fields": {
+    "date": "Date",
+    "user": "User",
+    "module": "Section",
+    "action": "Action",
+    "ip": "IP address",
+    "details": "Details"
+  },
+  "filters": {
+    "module": "Section",
+    "action": "Action",
+    "allModules": "All sections",
+    "allActions": "All actions",
+    "emailPlaceholder": "Search by user email…",
+    "reset": "Clear filters"
+  },
+  "emptyState": {
+    "title": "No entries",
+    "description": "No audit entries match these filters."
+  },
+  "details": {
+    "title": "Entry details",
+    "open": "View details",
+    "field": "Field",
+    "before": "Before",
+    "after": "After",
+    "noData": "This entry has no recorded data.",
+    "error": "Could not load this entry."
+  },
+  "modules": {
+    "order": "Orders",
+    "payment": "Payments",
+    "backup": "Backups",
+    "app-versions": "App versions",
+    "roles": "Roles & permissions",
+    "users": "Users",
+    "settings": "Settings"
+  },
+  "actions": {
+    "CREATE": "Created",
+    "UPDATE": "Updated",
+    "DELETE": "Deleted",
+    "LOGIN": "Logged in",
+    "LOGOUT": "Logged out",
+    "ORDER_PLACED": "Order placed",
+    "PAYMENT_RECEIVED": "Payment received",
+    "PAYMENT_REFUNDED": "Payment refunded",
+    "UPDATE_APP_VERSION_POLICY": "App version policy updated",
+    "UPDATE_BACKUP_SETTINGS": "Backup settings updated",
+    "RUN_MANUAL_BACKUP": "Manual backup started"
+  }
+}

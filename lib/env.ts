@@ -183,5 +183,8 @@ export const env = {
     REVIEWS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_REVIEWS || '/reviews',
     },
+    AUDIT_LOGS: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_AUDIT_LOGS || '/audit-logs',
+    },
   },
 } as const;

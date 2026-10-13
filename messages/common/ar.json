@@ -108,7 +108,8 @@
     "roles": "الأدوار والصلاحيات",
     "notifications": "الإشعارات",
     "paymentMethods": "طرق الدفع",
-    "backups": "النسخ الاحتياطي"
+    "backups": "النسخ الاحتياطي",
+    "auditLogs": "سجل التدقيق"
   },
   "auth": {
     "login": "تسجيل الدخول",

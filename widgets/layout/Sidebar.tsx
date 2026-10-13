@@ -45,6 +45,7 @@ export default async function Sidebar({ mode = 'desktop', className, onNavigate,
     { name: t('externalPlatforms'), href: `/${l}/dashboard/external-platforms`, icon: 'Command', color: 'primary', permission: Permissions.VIEW_EXTERNAL_PLATFORMS },
     { name: t('settings'), href: `/${l}/dashboard/settings`, icon: 'Settings', color: 'muted-foreground', permission: Permissions.VIEW_SETTINGS },
     { name: t('backups'), href: `/${l}/dashboard/backups`, icon: 'Database', color: 'success', permission: Permissions.VIEW_BACKUPS },
+    { name: t('auditLogs'), href: `/${l}/dashboard/audit-logs`, icon: 'Activity', color: 'info', permission: Permissions.VIEW_AUDIT_LOGS },
   ];
 
   return (

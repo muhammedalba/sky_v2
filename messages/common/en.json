@@ -108,7 +108,8 @@
     "roles": "Roles & Permissions",
     "notifications": "Notifications",
     "paymentMethods": "Payment Methods",
-    "backups": "Backups"
+    "backups": "Backups",
+    "auditLogs": "Audit Log"
   },
   "auth": {
     "login": "Sign In",

@@ -1,0 +1,58 @@
+{
+  "title": "سجل التدقيق",
+  "subtitle": "من فعل ماذا في لوحة التحكم، ومتى",
+  "noAccess": "ليست لديك صلاحية عرض سجل التدقيق.",
+  "system": "النظام",
+  "retentionNote": "تُحفظ السجلات لمدة 365 يوماً ثم تُحذف تلقائياً.",
+  "fields": {
+    "date": "التاريخ",
+    "user": "المستخدم",
+    "module": "القسم",
+    "action": "الإجراء",
+    "ip": "عنوان IP",
+    "details": "التفاصيل"
+  },
+  "filters": {
+    "module": "القسم",
+    "action": "الإجراء",
+    "allModules": "كل الأقسام",
+    "allActions": "كل الإجراءات",
+    "emailPlaceholder": "ابحث ببريد المستخدم…",
+    "reset": "مسح الفلاتر"
+  },
+  "emptyState": {
+    "title": "لا توجد سجلات",
+    "description": "لا توجد سجلات تطابق هذه الفلاتر."
+  },
+  "details": {
+    "title": "تفاصيل السجل",
+    "open": "عرض التفاصيل",
+    "field": "الحقل",
+    "before": "قبل",
+    "after": "بعد",
+    "noData": "لا توجد بيانات مسجلة لهذا السجل.",
+    "error": "تعذر تحميل هذا السجل."
+  },
+  "modules": {
+    "order": "الطلبات",
+    "payment": "المدفوعات",
+    "backup": "النسخ الاحتياطي",
+    "app-versions": "إصدارات التطبيق",
+    "roles": "الأدوار والصلاحيات",
+    "users": "المستخدمون",
+    "settings": "الإعدادات"
+  },
+  "actions": {
+    "CREATE": "إنشاء",
+    "UPDATE": "تعديل",
+    "DELETE": "حذف",
+    "LOGIN": "تسجيل دخول",
+    "LOGOUT": "تسجيل خروج",
+    "ORDER_PLACED": "إنشاء طلب",
+    "PAYMENT_RECEIVED": "استلام دفعة",
+    "PAYMENT_REFUNDED": "استرداد دفعة",
+    "UPDATE_APP_VERSION_POLICY": "تعديل سياسة إصدار التطبيق",
+    "UPDATE_BACKUP_SETTINGS": "تعديل إعدادات النسخ الاحتياطي",
+    "RUN_MANUAL_BACKUP": "تشغيل نسخة احتياطية يدوياً"
+  }
+}
