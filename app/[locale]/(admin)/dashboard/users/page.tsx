@@ -7,7 +7,17 @@ import {
   useUpdateUser,
 } from "@/features/users/hooks/useUsers";
 import EntityDataTable from "@/shared/ui/dashboard/EntityDataTable";
-import { CheckIcon, EditIcon, MailIcon, OrdersIcon, PhoneIcon, PlusIcon, TrashIcon, UsersIcon, XIcon } from "@/shared/ui/Icons";
+import {
+  CheckIcon,
+  EditIcon,
+  MailIcon,
+  OrdersIcon,
+  PhoneIcon,
+  PlusIcon,
+  TrashIcon,
+  UsersIcon,
+  XIcon,
+} from "@/shared/ui/Icons";
 import { Badge } from "@/shared/ui/Badge";
 import { Button } from "@/shared/ui/Button";
 import { Switch } from "@/shared/ui/Switch";
@@ -68,6 +78,8 @@ export default function UsersPage() {
     keywords: search,
     isActive: activeTab === "active" ? undefined : false,
   });
+
+
   const deleteMutation = useDeleteUser();
   const updateMutation = useUpdateUser();
 
@@ -143,7 +155,6 @@ export default function UsersPage() {
     [updateMutation, toast, t, refetch],
   );
 
-  // حساب مستوى المستخدم الحالي مرة واحدة
   const currentUserLevel = useMemo(
     () => getRoleLevel(currentUser?.role),
     [currentUser],
@@ -171,7 +182,7 @@ export default function UsersPage() {
         render: (user: User) => (
           <div className="flex items-center gap-3 py-1">
             <div className="flex flex-col gap-0.5">
-              <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+              <span className="font-bold  text-foreground group-hover:text-primary transition-colors">
                 {user.name}
               </span>
               <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70">
@@ -326,7 +337,9 @@ export default function UsersPage() {
                     size="icon"
                     className="h-8 w-8 rounded-xl bg-background/50 border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
                     onClick={() =>
-                      router.push(`/${locale}/dashboard/users/${user._id}/edit`)
+                      router.push(
+                        `/${locale}/dashboard/users/${user.slug ?? user._id}/edit`,
+                      )
                     }
                     disabled={
                       deleteMutation.isPending ||
@@ -436,9 +449,10 @@ export default function UsersPage() {
             {viewTabs.map((tab) => (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => handleTabChange(tab.value)}
                 className={cn(
-                  "px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 flex items-center gap-2",
+                  "px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 flex items-center gap-2 cursor-pointer",
                   activeTab === tab.value
                     ? tab.activeClass
                     : "bg-muted/30 text-foreground/70 hover:bg-muted/60 hover:text-foreground",

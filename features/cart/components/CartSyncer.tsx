@@ -24,7 +24,10 @@ export default function CartSyncer() {
 
     syncGuestCart().then((synced) => {
       if (synced) {
-        queryClient.invalidateQueries({ queryKey: ["cart"] });
+        queryClient.invalidateQueries({
+          queryKey: ["cart"],
+          refetchType: "all",
+        });
       }
     });
   }, [user, hasGuestItems, queryClient]);

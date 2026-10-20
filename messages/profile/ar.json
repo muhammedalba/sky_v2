@@ -3,7 +3,7 @@
     "headerDescription": "إدارة حسابك وتفضيلاتك",
 
   "welcome": "أهلاً بك، {name}",
-  "lastLogin": "آخر ظهور:",
+  "lastLogin": "آخر تسجيل دخول",
   "personalInfo": "المعلومات الشخصية",
   "personalInfoDescription": "تحديث بياناتك الشخصية الأساسية",
   "changePassword": "تغيير كلمة المرور",

@@ -303,6 +303,7 @@
     "inactive": "معطلة",
     "all": "الكل",
     "searchPlaceholder": "البحث في الضرائب...",
+    "createSuccess": "تم إضافة الضريبة بنجاح",
     "updateSuccess": "تم تحديث الضريبة بنجاح",
     "updateError": "خطأ في تحديث البيانات",
     "deleteConfirm": "هل أنت متأكد من حذف هذه الضريبة؟",
@@ -314,6 +315,7 @@
     },
     "fields": {
       "name": "اسم الضريبة",
+      "namePlaceholder": "مثال: ضريبة القيمة المضافة",
       "percentage": "النسبة المئوية (%)",
       "scope": "النطاق",
       "location": "الموقع",

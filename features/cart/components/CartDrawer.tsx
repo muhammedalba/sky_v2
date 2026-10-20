@@ -9,6 +9,7 @@ import {
   useRemoveFromCart,
   useUpdateCartQuantity,
 } from "@/features/cart/hooks/useCart";
+import { useGuestCartItems } from "@/features/cart/hooks/useGuestCartItems";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import Price from "@/shared/ui/Price";
 import { useSettings } from "@/app/providers/SettingsProvider";
@@ -50,7 +51,7 @@ export default function CartDrawer() {
   const isCartUpdating = isRemoving || isUpdatingQuantity;
 
   // cart store
-  const guestCartItems = useCartStore((state) => state.items);
+  const guestCartItems = useGuestCartItems();
   const { isCartDrawerOpen, closeCartDrawer } = useCartStore();
   const updateGuestQuantity = useCartStore((state) => state.updateQuantity);
   const removeGuestItem = useCartStore((state) => state.removeItem);

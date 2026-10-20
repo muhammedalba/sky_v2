@@ -7,7 +7,7 @@ import { useMe } from "@/features/auth/hooks/useAuth";
 import { useCartStore } from "@/store/cart-store";
 import { Product } from "@/types";
 import { useSettings } from "@/app/providers/SettingsProvider";
-
+import { useLocale } from "next-intl";
 // ─── Server cart (authenticated users) ──────────────────────────────────────
 
 /**
@@ -20,9 +20,10 @@ import { useSettings } from "@/app/providers/SettingsProvider";
  */
 export function useCart() {
   const { data: user } = useMe();
-
+  const locale = useLocale();
   return useQuery({
-    queryKey: ["cart"],
+     queryKey: ["cart", locale],
+     
     queryFn: async () => {
       const response = await cartApi.getCart();
       return response?.data ?? null;
@@ -83,7 +84,7 @@ export function useAddToCart(openDrawer: boolean = true) {
       if (user) {
         await queryClient.invalidateQueries({
           queryKey: ["cart"],
-          refetchType: "all",
+          refetchType: "active",
         });
       }
       toast.success("Added to cart");
@@ -134,7 +135,7 @@ export function useUpdateCartQuantity() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["cart"],
-        refetchType: "all",
+        refetchType: "active",
       });
     },
     onError: (error: Error) => {
@@ -170,7 +171,7 @@ export function useRemoveFromCart() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["cart"],
-        refetchType: "all",
+        refetchType: "active",
       });
       toast.success("Removed from cart");
     },
@@ -201,7 +202,7 @@ export function useClearCart() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["cart"],
-        refetchType: "all",
+        refetchType: "active",
       });
       toast.success("Cart cleared");
     },

@@ -16,7 +16,7 @@ export interface User {
   email: string;
   role: Role | string;
   avatar?: FileAsset | string;
-
+  slug?: string;
   phone?: string;
   provider?: string;
   passwordChangeAt?: Date;

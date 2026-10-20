@@ -27,7 +27,7 @@ import {
 import { usePaymentRedirector } from "@/features/checkout/hooks/usePaymentRedirector";
 import { useCheckoutReviewData } from "@/features/checkout/hooks/useCheckoutReviewData";
 import { useCart } from "@/features/cart/hooks/useCart";
-import { useCartStore } from "@/store/cart-store";
+import { useGuestCartItems } from "@/features/cart/hooks/useGuestCartItems";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -97,7 +97,7 @@ export default function CheckoutPage() {
 
   /* ────── ────── ────── ────── ────── ────── Cart Data ────── ────── ────── ────── ────── ────── ────── ────── */
   // get cart items from store
-  const localCart = useCartStore((state) => state.items);
+  const localCart = useGuestCartItems();
 
   // merge cart items - wrapped in useMemo to stabilize the reference
   const cartItems = useMemo(

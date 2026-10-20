@@ -306,11 +306,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                           : "-"}
                       </span>
                     </div>
-                    {!isOnline && user.lastLogin && (
-                      <span className="text-[10px] text-muted-foreground/50 font-medium uppercase">
-                        {formatRelativeTime(user.lastLogin, locale)}
-                      </span>
-                    )}
+                  
                   </div>
                 </div>
               )}

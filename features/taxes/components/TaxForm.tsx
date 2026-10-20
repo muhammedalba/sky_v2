@@ -149,10 +149,10 @@ export default function TaxForm({
 
       if (editingTax) {
         await updateMutation.mutateAsync({ id: editingTax._id, data: payload as Partial<Tax> });
-        toastSuccess("تم", "تم تحديث الضريبة بنجاح");
+        toastSuccess(t("updateSuccess"));
       } else {
         await createMutation.mutateAsync(payload as Partial<Tax>);
-        toastSuccess("تم", "تم إضافة الضريبة بنجاح");
+        toastSuccess(t("createSuccess"));
       }
       onSuccess?.();
     } catch (err: unknown) {
@@ -162,14 +162,14 @@ export default function TaxForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label={t("fields.name")}
           {...register("name")}
           error={errors.name?.message}
           dir="rtl"
-          placeholder="مثال: ضريبة القيمة المضافة"
+          placeholder={t("fields.namePlaceholder")}
         />
 
         <Input

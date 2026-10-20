@@ -303,6 +303,7 @@
     "inactive": "Inactive",
     "all": "All",
     "searchPlaceholder": "Search taxes...",
+    "createSuccess": "Tax added successfully",
     "updateSuccess": "Tax updated successfully",
     "updateError": "Error updating tax data",
     "deleteConfirm": "Are you sure you want to delete this tax?",
@@ -314,6 +315,7 @@
     },
     "fields": {
       "name": "Tax Name",
+      "namePlaceholder": "e.g. Value Added Tax",
       "percentage": "Percentage (%)",
       "scope": "Scope",
       "location": "Location",

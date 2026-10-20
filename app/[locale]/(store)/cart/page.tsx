@@ -8,6 +8,7 @@ import {
   useClearCart,
   useUpdateCartQuantity,
 } from "@/features/cart/hooks/useCart";
+import { useGuestCartItems } from "@/features/cart/hooks/useGuestCartItems";
 import { useCartStore } from "@/store/cart-store";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useSettings } from "@/app/providers/SettingsProvider";
@@ -53,7 +54,7 @@ export default function CartPage() {
   } = useUpdateCartQuantity();
 
   // ======> cart states <======
-  const guestCartItems = useCartStore((state) => state.items);
+  const guestCartItems = useGuestCartItems();
   const updateGuestQuantity = useCartStore((state) => state.updateQuantity);
   const removeGuestItem = useCartStore((state) => state.removeItem);
   const clearGuestCart = useCartStore((state) => state.clearCart);

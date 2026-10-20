@@ -2,9 +2,10 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useToast } from "@/shared/hooks/useToast";
 import { wishlistApi } from "@/features/wishlist/api";
+import { productsApi } from "@/features/products/api";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { useSettings } from "@/app/providers/SettingsProvider";
@@ -48,15 +49,65 @@ function useHydrated() {
  */
 export function useWishlist() {
   const { data: user } = useMe();
+  const locale = useLocale();
 
   return useQuery({
-    queryKey: wishlistKeys.list,
+    // Locale in the key: populated product names are localized.
+    // Invalidating wishlistKeys.list prefix-matches every locale.
+    queryKey: [...wishlistKeys.list, locale],
     queryFn: async (): Promise<WishlistResponse> => {
       const response = await wishlistApi.getWishlist();
       return response?.data ?? { products: [], count: 0 };
     },
     enabled: !!user,
   });
+}
+
+// ─── Guest wishlist products (current locale) ───────────────────────────────
+
+/**
+ * Guest wishlist products (newest first) in the current locale.
+ *
+ * The store persists a product snapshot taken when it was wishlisted, so its
+ * name/price are frozen in the language of that moment. This refetches the
+ * products by id with the locale in the query key and overlays the fresh data;
+ * the snapshot stays as a fallback while loading, on error, or when a product
+ * no longer exists. Returns `[]` before hydration (localStorage).
+ */
+export function useGuestWishlistProducts(): Product[] {
+  const locale = useLocale();
+  const hydrated = useHydrated();
+  const guestItems = useWishlistStore((state) => state.items);
+
+  const ids = useMemo(
+    () => (hydrated ? guestItems.map((item) => item.productId) : []),
+    [hydrated, guestItems],
+  );
+
+  const { data } = useQuery({
+    queryKey: ["products", "by-ids", ids, locale],
+    queryFn: async () => {
+      const response = await productsApi.getManyByIds(ids);
+      return response.data || [];
+    },
+    enabled: ids.length > 0,
+  });
+
+  return useMemo(() => {
+    if (!hydrated) return [];
+    const byId = new Map((data ?? []).map((product) => [product._id, product]));
+    return [...guestItems].reverse().map((item) => {
+      const fresh = byId.get(item.productId);
+      if (!fresh) return item.product;
+      return {
+        ...item.product,
+        ...fresh,
+        variants: fresh.variants?.length
+          ? fresh.variants
+          : item.product?.variants,
+      };
+    });
+  }, [hydrated, guestItems, data]);
 }
 
 // ─── Wishlisted IDs (guest → Zustand/localStorage | authenticated → backend) ─
@@ -201,7 +252,7 @@ export function useClearWishlist() {
       if (user) {
         await queryClient.invalidateQueries({
           queryKey: wishlistKeys.all,
-          refetchType: "all",
+          refetchType: "active",
         });
       }
       toast.success(t("toast.cleared"));

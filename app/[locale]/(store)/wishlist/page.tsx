@@ -5,8 +5,8 @@ import { Link } from "@/navigation";
 import {
   useWishlist,
   useClearWishlist,
+  useGuestWishlistProducts,
 } from "@/features/wishlist/hooks/useWishlist";
-import { useWishlistStore } from "@/store/wishlist-store";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { Breadcrumb } from "@/shared/ui/Breadcrumb";
 import SimilarProductCard from "@/components/SimilarProductCard";
@@ -40,15 +40,14 @@ export default function WishlistPage() {
   // ======> Data <======
   const { data: user } = useMe();
   const { data: serverWishlist, isLoading } = useWishlist();
-  const guestItems = useWishlistStore((state) => state.items);
+  const guestProducts = useGuestWishlistProducts();
   const { mutate: clearWishlist, isPending: isClearing } = useClearWishlist();
 
   // ======> wishlist products (newest first) <======
   const products = useMemo<Product[]>(() => {
     if (user) return serverWishlist?.products ?? [];
-    if (!hydrated) return [];
-    return [...guestItems].reverse().map((item) => item.product);
-  }, [user, serverWishlist?.products, hydrated, guestItems]);
+    return guestProducts;
+  }, [user, serverWishlist?.products, guestProducts]);
 
   /* ── Loading ── */
   if ((isLoading && user) || !hydrated) {
