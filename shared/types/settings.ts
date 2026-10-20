@@ -87,6 +87,7 @@ export interface GoogleReviewsResult {
 export interface StoreSettings {
   siteName: LocalizedString;
   siteDescription: LocalizedString;
+  legalName?: LocalizedString;
   logo: FileAsset;
   favicon: FileAsset;
   metaTitle: LocalizedString;

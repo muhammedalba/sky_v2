@@ -95,6 +95,23 @@ export default function GeneralSection() {
               />
             </div>
           </div>
+          <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input
+                {...register('legalName.ar')}
+                label={t('general.legalName') + ' (العربية)'}
+                error={errors.legalName?.ar?.message}
+                className="rounded-xl h-11"
+              />
+              <Input
+                {...register('legalName.en')}
+                label={t('general.legalName') + ' (English)'}
+                error={errors.legalName?.en?.message}
+                className="rounded-xl h-11"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground px-1">{t('general.legalNameHint')}</p>
+          </div>
         </div>
 
         {/* Branding */}

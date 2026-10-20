@@ -28,6 +28,8 @@
     "branding": "Branding",
     "currency": "Currency Settings",
     "storeName": "Store Name",
+    "legalName": "Legal Company Name",
+    "legalNameHint": "Shown on invoices and legal documents; may differ from the store name displayed on the site",
     "storeDesc": "Store Description",
     "logoTitle": "Store Logo",
     "logoDesc": "Appears on invoices and frontend.",

@@ -277,15 +277,15 @@ export default async function StoreFooter({
               {t("support")}
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
             </h3>
-            <ul className="space-y-3 font-medium">
+            <ul className="space-y-2 font-medium">
               {phones.length > 0 &&
                 phones.map((phone, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group"
+                    className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground group"
                   >
                     <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0 mt-0.5">
-                      <PhoneIcon className="w-3.5 h-3.5 text-primary" />
+                      <PhoneIcon className="w-3 h-3 text-primary" />
                     </div>
                     <div className="flex flex-col gap-1 items-center">
                       <a

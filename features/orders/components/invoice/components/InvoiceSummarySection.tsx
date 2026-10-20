@@ -11,7 +11,7 @@ interface InvoiceSummarySectionProps {
   tax: number;
   grandTotal: number;
   siteNameAr: string;
-  crNo: string;
+  vatNo: string;
   createdAt?: string;
   arabicAmountWords: string;
   invoiceHash?: string;
@@ -26,7 +26,7 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
   tax,
   grandTotal,
   siteNameAr,
-  crNo,
+  vatNo,
   createdAt,
   arabicAmountWords,
   invoiceHash,
@@ -40,7 +40,7 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
         <div className="flex flex-col items-center justify-center p-1 bg-white">
           <ZatcaQrCode
             sellerName={siteNameAr}
-            vatNumber={crNo}
+            vatNumber={vatNo}
             invoiceDateTime={
               createdAt
                 ? new Date(createdAt).toISOString()

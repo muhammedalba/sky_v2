@@ -11,6 +11,13 @@ export const settingsSchema = z.object({
     ar: z.string().min(1, "errors.required"),
     en: z.string().min(1, "errors.required"),
   }),
+  // Legal company name for invoices (falls back to siteName when empty)
+  legalName: z
+    .object({
+      ar: z.string().default(""),
+      en: z.string().default(""),
+    })
+    .default({ ar: "", en: "" }),
   logo: optionalImageSchema,
   favicon: optionalImageSchema,
 

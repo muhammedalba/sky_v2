@@ -78,9 +78,15 @@ export function useInvoiceData(
     const arabicAmountWords = numberToArabicWords(grandTotal);
 
     // Dynamic Store Settings
-    const siteNameAr = getLocalizedValue(settings?.siteName, "ar") || "متجري";
+    // Legal company name takes priority on invoices; display name is the fallback
+    const siteNameAr =
+      getLocalizedValue(settings?.legalName, "ar") ||
+      getLocalizedValue(settings?.siteName, "ar") ||
+      "متجري";
     const siteNameEn =
-      getLocalizedValue(settings?.siteName, "en") || "My Store";
+      getLocalizedValue(settings?.legalName, "en") ||
+      getLocalizedValue(settings?.siteName, "en") ||
+      "My Store";
     const siteLogo = settings?.logo || "/assets/images/auth-logo.webp";
     const crNo = settings?.businessAddress?.crNo || "-";
     const vatNo = settings?.businessAddress?.vatNo || "-";

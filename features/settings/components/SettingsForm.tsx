@@ -65,6 +65,7 @@ function SectionSkeleton() {
 const SETTINGS_DEFAULTS: SettingsInput = {
   siteName: { ar: "", en: "" },
   siteDescription: { ar: "", en: "" },
+  legalName: { ar: "", en: "" },
   currencyCode: "SAR",
   currencySymbol: "ر.س",
   exchangeRate: 1,
@@ -193,6 +194,7 @@ export default function SettingsForm() {
         const jsonFields: (keyof SettingsInput)[] = [
           "siteName",
           "siteDescription",
+          "legalName",
           "metaTitle",
           "metaDescription",
           "socialLinks",

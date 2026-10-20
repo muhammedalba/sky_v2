@@ -243,7 +243,7 @@ export default function InvoicePreviewDialog({
               name={data.siteNameAr}
               vatTitleAr="الرقم الضريبي للمنشأة"
               vatTitleEn="Vendor VAT No"
-              vatNo={data.crNo}
+              vatNo={data.vatNo}
               address={{
                 country: `${data.companyCountryAr} | ${data.companyCountryEn}`,
                 city: `${data.companyCityAr} | ${data.companyCityEn}`,
@@ -285,7 +285,7 @@ export default function InvoicePreviewDialog({
               tax={data.tax}
               grandTotal={data.grandTotal}
               siteNameAr={data.siteNameAr}
-              crNo={data.crNo}
+              vatNo={data.vatNo}
               createdAt={order.createdAt}
               arabicAmountWords={data.arabicAmountWords}
               invoiceHash={order.invoiceHash}
