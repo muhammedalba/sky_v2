@@ -37,7 +37,7 @@ export function CartItemCard({
   const displayQty = isEditing ? localQty : item.quantity;
 
   const handleUpdate = () => {
-    const qty = Math.max(1, localQty);
+    const qty = clampQty(localQty);
     if (isEditing) setIsEditing(false);
     onUpdateQty(
       item.productId || item.product?._id || "",
@@ -53,6 +53,11 @@ export function CartItemCard({
   const { price, stock, attributes, image, isUnlimitedStock, isActive } =
     resolveItemData(item);
   const lineTotal = price * item.quantity;
+
+  // Max allowed quantity — unlimited when stock is untracked/unknown
+  const maxQty =
+    !isUnlimitedStock && stock !== null ? Math.max(1, stock) : Infinity;
+  const clampQty = (qty: number) => Math.min(maxQty, Math.max(1, qty));
 
   const isOutOfStock = !isUnlimitedStock && stock === 0;
   const isUnavailable = !isActive;
@@ -221,18 +226,19 @@ export function CartItemCard({
                   type="text"
                   inputMode="numeric"
                   min="1"
+                  max={Number.isFinite(maxQty) ? maxQty : undefined}
                   value={displayQty}
                   onChange={(e) => {
-                    setLocalQty(parseInt(e.target.value) || 1);
+                    setLocalQty(clampQty(parseInt(e.target.value) || 1));
                     setIsEditing(true);
                   }}
                   className="w-fit max-w-12 h-7 text-center text-sm font-semibold tabular-nums bg-transparent border-none focus:ring-0 focus:outline-none"
                 />
                 <button
                   type="button"
-                  disabled={isRemoving}
+                  disabled={displayQty >= maxQty || isRemoving}
                   onClick={() => {
-                    setLocalQty(Math.max(1, displayQty + 1));
+                    setLocalQty(clampQty(displayQty + 1));
                     setIsEditing(true);
                   }}
                   className="w-7 h-7 flex items-center justify-center text-foreground hover:bg-accent transition-colors disabled:opacity-30 cursor-pointer"
