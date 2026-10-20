@@ -16,7 +16,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { Link, useRouter } from "@/navigation";
 import { ChevronLeftIcon } from "@/shared/ui/Icons";
 import { getAttributeLabel } from "@/shared/constants/product-constants";
-import { formatVariantAttributesText } from "@/shared/ui/VariantAttributes";
+import { useFormatVariantAttributes } from "@/shared/hooks/useFormatVariantAttributes";
 import { ProductVariant, ProductWithVariants } from "@/types";
 import { FileAsset } from "@/shared/types/file-asset";
 
@@ -76,6 +76,7 @@ export default function ProductDetailsClient({
 }) {
   const { slug, locale } = use(params);
   const isAr = locale === "ar";
+  const formatAttrs = useFormatVariantAttributes();
   const getTrans = useTrans();
   const toast = useToast();
   const t = useTranslations("product");
@@ -223,9 +224,7 @@ export default function ProductDetailsClient({
         ? product.title
         : getTrans(product.title);
     const attrsSummary = selectedVariant
-      ? formatVariantAttributesText(selectedVariant.attributes, (key) =>
-          getAttributeLabel(key, isAr),
-        )
+      ? formatAttrs(selectedVariant.attributes)
       : "";
     const shareTitle = attrsSummary
       ? `${rawTitle} (${attrsSummary})`
@@ -241,7 +240,7 @@ export default function ProductDetailsClient({
     } catch {
       // تجاهل إلغاء نافذة المشاركة
     }
-  }, [product, selectedVariant, isAr, getTrans, t, toast]);
+  }, [product, selectedVariant, formatAttrs, getTrans, t, toast]);
 
   // --- Loading & Error Guards ---
   const isProductLoaded = Boolean(product && (product._id || product.id));

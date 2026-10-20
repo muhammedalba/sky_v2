@@ -100,14 +100,14 @@ export default function QuickAddModal({ isOpen, onClose, product }: QuickAddModa
           const prev = options.get(value);
           options.set(value, {
             value,
-            label: formatAttributeValue(attr),
+            label: formatAttributeValue(attr, isAr),
             available: (prev?.available ?? false) || isVariantAvailable(v),
           });
         });
         return { name, options: Array.from(options.values()) };
       })
       .filter((attr) => attr.options.length > 0);
-  }, [attributeNames, variants, isVariantAvailable]);
+  }, [attributeNames, variants, isVariantAvailable, isAr]);
 
   const selectedVariant = useMemo<ProductVariant | null>(() => {
     if (!hasVariants) return null;
@@ -333,7 +333,6 @@ export default function QuickAddModal({ isOpen, onClose, product }: QuickAddModa
             {selectedVariant && (
               <VariantAttributes
                 attributes={selectedVariant.attributes}
-                getLabel={(key) => getAttributeLabel(key, isAr)}
                 badgeClassName="text-[10px] px-2 py-0.5"
               />
             )}

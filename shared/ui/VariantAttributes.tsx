@@ -1,5 +1,7 @@
 import React from "react";
+import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
+import { getAttributeLabel } from "@/shared/constants/product-constants";
 import { ScrollReveal } from "./ScrollReveal";
 
 /**
@@ -10,7 +12,7 @@ import { ScrollReveal } from "./ScrollReveal";
  * - localized objects (e.g. `{ ar: "أحمر", en: "Red" }`)
  * - fallback JSON stringification
  */
-export function formatAttributeValue(val: unknown): string {
+export function formatAttributeValue(val: unknown, isAr: boolean): string {
   if (val === null || val === undefined) return "";
   if (typeof val !== "object") return String(val);
 
@@ -30,7 +32,7 @@ export function formatAttributeValue(val: unknown): string {
 
   // Handle localized objects e.g. { ar: "أحمر", en: "Red" }
   if (typeof obj.ar === "string" || typeof obj.en === "string") {
-    return (obj.ar || obj.en) as string;
+    return (isAr ? obj.ar || obj.en : obj.en || obj.ar) as string;
   }
 
   try {
@@ -41,29 +43,30 @@ export function formatAttributeValue(val: unknown): string {
 }
 
 /**
- * Formats the entire attributes object into a single comma-separated text string.
+ * Formats the entire attributes object into a single text string with localized labels.
  * Useful for tooltips, logs, exports, or plain-text representations.
  */
 export function formatVariantAttributesText(
-  attributes?: Record<string, unknown> | null,
-  getLabel?: (key: string) => string
+  attributes: Record<string, unknown> | null | undefined,
+  isAr: boolean,
+  separator = ", "
 ): string {
   if (!attributes || typeof attributes !== "object") return "";
 
   return Object.entries(attributes)
     .map(([k, v]) => {
-      const formatted = formatAttributeValue(v);
-      const label = getLabel ? getLabel(k) : k;
-      return formatted ? `${label}: ${formatted}` : "";
+      const formatted = formatAttributeValue(v, isAr);
+      return formatted ? `${getAttributeLabel(k, isAr)}: ${formatted}` : "";
     })
     .filter(Boolean)
-    .join(", ");
+    .join(separator);
 }
 
 export interface VariantAttributesProps {
   attributes?: Record<string, unknown> | null;
   className?: string;
   badgeClassName?: string;
+  /** Overrides the default label, which is localized to the current locale. */
   getLabel?: (key: string) => string;
 }
 
@@ -76,6 +79,8 @@ export function VariantAttributes({
   badgeClassName,
   getLabel,
 }: VariantAttributesProps) {
+  const isAr = useLocale() === "ar";
+
   if (
     !attributes ||
     typeof attributes !== "object" ||
@@ -87,10 +92,10 @@ export function VariantAttributes({
   return (
     <div className={cn("flex flex-wrap gap-1", className)}>
       {Object.entries(attributes).map(([key, val],index) => {
-        const valStr = formatAttributeValue(val);
+        const valStr = formatAttributeValue(val, isAr);
         if (!valStr) return null;
 
-        const label = getLabel ? getLabel(key) : key;
+        const label = getLabel ? getLabel(key) : getAttributeLabel(key, isAr);
 
         return (
           <ScrollReveal animation="fade" delay={index * 50} 

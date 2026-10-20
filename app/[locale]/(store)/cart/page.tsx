@@ -244,7 +244,6 @@ export default function CartPage() {
                         <CartItemCard
                           item={item}
                           idx={idx}
-                          isAr={isAr}
                           isRemoving={isCartUpdating}
                           onRemove={handleRemoveItem}
                           onUpdateQty={handleUpdateQuantity}

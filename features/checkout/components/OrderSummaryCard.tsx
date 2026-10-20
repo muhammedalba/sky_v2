@@ -28,7 +28,7 @@ import Price from "@/shared/ui/Price";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
-import { getAttributeLabel } from "@/shared/constants/product-constants";
+import { useFormatVariantAttributes } from "@/shared/hooks/useFormatVariantAttributes";
 
 export interface CouponFormValues {
   couponCode: string;
@@ -71,6 +71,7 @@ export function OrderSummaryCard({
   const formatCurrency = useFormatCurrency();
   const getTrans = useTrans();
   const t = useTranslations("cart");
+  const formatAttrs = useFormatVariantAttributes();
   // state local for coupon
   const { mutateAsync: validateCoupon, isPending: validateCouponPending } =
     useApplyCoupon();
@@ -252,15 +253,7 @@ export function OrderSummaryCard({
                 </p>
                 {item?.variant?.attributes && Object.keys(item?.variant?.attributes).length > 0 && (
                   <p className="text-[11px] text-muted-foreground line-clamp-1">
-                    {Object.entries(item?.variant?.attributes)
-                      .map(([key, val]) => {
-                        const attrVal =
-                          typeof val === "object" && val !== null
-                            ? String((val as { value?: string | number }).value)
-                            : String(val);
-                        return `${getAttributeLabel(key, true)}: ${attrVal}`;
-                      })
-                      .join(" · ")}
+                    {formatAttrs(item?.variant?.attributes, " · ")}
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">

@@ -39,7 +39,6 @@ import {
 } from "@/lib/utils";
 import Price from "@/shared/ui/Price";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
-import { getAttributeLabel } from "@/shared/constants/product-constants";
 import Modal from "@/shared/ui/Modal";
 import { useDownloadFile } from "@/shared/hooks/useDownloadFile";
 import { getFileUrl, getImageUrl } from "@/shared/utils/image.util";
@@ -87,7 +86,6 @@ export default function OrderDetailPage() {
   const t = useTranslations("orders");
   const { downloadFile, isDownloading } = useDownloadFile();
   const getTrans = useTrans();
-  const isAr = locale == "ar";
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const { data: order, isLoading, isError } = useMyOrder(id);
 
@@ -485,7 +483,6 @@ export default function OrderDetailPage() {
                         <VariantAttributes
                           attributes={item.variantId?.attributes}
                           className="mt-1.5"
-                          getLabel={(key) => getAttributeLabel(key, isAr)}
                         />
                         <div className="text-xs text-muted-foreground mt-1 flex gap-1">
                           {t("qty")}: {item.quantity} ×

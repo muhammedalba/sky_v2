@@ -225,7 +225,6 @@ export default function CartDrawer() {
                     <CartItemCard
                       item={item}
                       idx={idx}
-                      isAr={isAr}
                       isRemoving={isCartUpdating}
                       isCompact={true}
                       onRemove={handleRemove}
