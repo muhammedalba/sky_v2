@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Input } from "@/shared/ui/Input";
 import {
   BoxIcon,
@@ -15,19 +15,9 @@ import type {
   ProductAttributeValue,
 } from "@/features/products/types";
 import { Select } from "@/shared/ui/Select";
-
-const PACKAGE_TYPE_OPTIONS: { value: PackageType; label: string }[] = [
-  { value: "box", label: "Box (كرتون)" },
-  { value: "bag", label: "Bag (كيس)" },
-  { value: "drum", label: "Drum (برميل)" },
-  { value: "gallon", label: "Gallon (جالون / سطل)" },
-  { value: "board", label: "Board (لوح)" },
-  { value: "roll", label: "Roll (لفة / رول)" },
-  { value: "piece", label: "Piece (حبة)" },
-  { value: "pallet", label: "Pallet (طبلية)" },
-  { value: "envelope", label: "Envelope (مظروف)" },
-  { value: "custom", label: "Custom (مخصص)" },
-];
+import { PACKAGE_TYPE_OPTIONS } from "@/shared/constants/product-constants";
+import { VariantAttributes } from "@/shared/ui/VariantAttributes";
+import { formatAttributeValue } from "@/shared/utils/variant-format.util";
 
 export interface ShippingProfileRow {
   weightGrams?: number;
@@ -73,6 +63,12 @@ export default function VariantTable({
   mode = "create",
 }: VariantTableProps) {
   const t = useTranslations("products.form");
+  const isAr = useLocale() === "ar";
+  const tPackageTypes = useTranslations("product.packageTypes");
+  const packageTypeOptions = PACKAGE_TYPE_OPTIONS.map((value) => ({
+    value,
+    label: tPackageTypes(value),
+  }));
   const tError = (msg?: string) =>
     msg ? (msg.startsWith("validation.") ? t(msg) : msg) : undefined;
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
@@ -104,14 +100,9 @@ export default function VariantTable({
     attrs: Record<string, string | number | ProductAttributeValue>,
   ) => {
     return (
-      Object.entries(attrs)
-        .map(([, v]) => {
-          if (typeof v === "object" && v !== null && "value" in v) {
-            const val = v as ProductAttributeValue;
-            return `${val.value}-${val.unit ? ` ${val.unit}` : ""}`;
-          }
-          return v;
-        })
+      Object.values(attrs)
+        .map((v) => formatAttributeValue(v, isAr))
+        .filter(Boolean)
         .join("/") || "Default"
     );
   };
@@ -163,26 +154,12 @@ export default function VariantTable({
                           {variant.label || getAttrLabel(variant.attributes)}
                         </span>
                         <div className="flex gap-1.5 flex-wrap">
-                          {Object.entries(variant.attributes).map(([k, v]) => {
-                            const attrVal =
-                              typeof v === "object" &&
-                              v !== null &&
-                              "value" in v
-                                ? (v as ProductAttributeValue)
-                                : null;
-
-                            return (
-                              <span
-                                key={k}
-                                className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground font-medium border border-border/40"
-                              >
-                                {k}:{" "}
-                                {attrVal
-                                  ? `${attrVal.value}${attrVal.unit ? ` ${attrVal.unit}` : ""}`
-                                  : String(v)}
-                              </span>
-                            );
-                          })}
+                          {/* display:contents keeps the badges in this flex row */}
+                          <VariantAttributes
+                            attributes={variant.attributes}
+                            className="contents"
+                            badgeClassName="text-[9px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground font-medium border-border/40 normal-case"
+                          />
 
                           {/* Shipping Information Badge */}
                           {variant.shippingProfile?.weightGrams !== undefined &&
@@ -194,9 +171,10 @@ export default function VariantTable({
                                   expandedShippingIdx ? null : idx,
                                 )
                               }
-                              className="text-[10px] bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md font-medium border border-sky-500/20 hover:bg-sky-500/20 transition-colors flex items-center gap-1"
+                              className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-md font-medium border border-primary/40 hover:bg-primary/20 transition-colors flex items-center gap-1 cursor-pointer"
                               title={t("shippingInfo")}
                             >
+                              {t("shippingInfo")}
                               {variant.shippingProfile.dimensions?.lengthMm ? (
                                 <span className="opacity-75">
                                   ({variant.shippingProfile.dimensions.lengthMm}
@@ -244,7 +222,11 @@ export default function VariantTable({
                       <div className="flex flex-col gap-2">
                         <Input
                           type="number"
-                          value={variant.price != null ? variant.price.toString() : ""}
+                          value={
+                            variant.price != null
+                              ? variant.price.toString()
+                              : ""
+                          }
                           onChange={(e) =>
                             updateVariant(idx, "price", Number(e.target.value))
                           }
@@ -259,7 +241,11 @@ export default function VariantTable({
                       <div className="flex flex-col gap-2">
                         <Input
                           type="number"
-                          value={variant.priceAfterDiscount != null ? variant.priceAfterDiscount.toString() : ""}
+                          value={
+                            variant.priceAfterDiscount != null
+                              ? variant.priceAfterDiscount.toString()
+                              : ""
+                          }
                           onChange={(e) =>
                             updateVariant(
                               idx,
@@ -279,7 +265,9 @@ export default function VariantTable({
                     <td className="px-6 py-4">
                       <Input
                         type="number"
-                        value={variant.stock != null ? variant.stock.toString() : ""}
+                        value={
+                          variant.stock != null ? variant.stock.toString() : ""
+                        }
                         onChange={(e) =>
                           updateVariant(idx, "stock", Number(e.target.value))
                         }
@@ -368,7 +356,10 @@ export default function VariantTable({
                                 }}
                                 placeholder="e.g. 500"
                                 className="h-10 rounded-xl bg-background"
-                                error={tError(errors?.[idx]?.shippingProfile?.weightGrams?.message)}
+                                error={tError(
+                                  errors?.[idx]?.shippingProfile?.weightGrams
+                                    ?.message,
+                                )}
                               />
                               {variant.shippingProfile?.weightGrams &&
                                 variant.shippingProfile?.weightGrams > 0 && (
@@ -407,7 +398,10 @@ export default function VariantTable({
                                 }}
                                 placeholder="mm"
                                 className="h-10 rounded-xl bg-background"
-                                error={tError(errors?.[idx]?.shippingProfile?.dimensions?.lengthMm?.message)}
+                                error={tError(
+                                  errors?.[idx]?.shippingProfile?.dimensions
+                                    ?.lengthMm?.message,
+                                )}
                               />
                               {variant.shippingProfile?.dimensions?.lengthMm ? (
                                 <p className="mt-1 text-xs text-muted-foreground text-start px-3">
@@ -451,7 +445,10 @@ export default function VariantTable({
                               }}
                               placeholder="mm"
                               className="h-10 rounded-xl bg-background"
-                              error={tError(errors?.[idx]?.shippingProfile?.dimensions?.widthMm?.message)}
+                              error={tError(
+                                errors?.[idx]?.shippingProfile?.dimensions
+                                  ?.widthMm?.message,
+                              )}
                             />
                             <Input
                               label={t("shippingHeightMm")}
@@ -478,13 +475,16 @@ export default function VariantTable({
                               }}
                               placeholder="mm"
                               className="h-10 rounded-xl bg-background"
-                              error={tError(errors?.[idx]?.shippingProfile?.dimensions?.heightMm?.message)}
+                              error={tError(
+                                errors?.[idx]?.shippingProfile?.dimensions
+                                  ?.heightMm?.message,
+                              )}
                             />
 
                             {/* Package Type */}
                             <div className="flex flex-col gap-1.5">
                               <Select
-                                options={PACKAGE_TYPE_OPTIONS}
+                                options={packageTypeOptions}
                                 label={t("shippingPackageType")}
                                 value={
                                   variant.shippingProfile?.packageType || "box"
@@ -500,8 +500,10 @@ export default function VariantTable({
                                     .value as PackageType;
                                   updateVariant(idx, "shippingProfile", sp);
                                 }}
-                                error={tError(errors?.[idx]?.shippingProfile?.packageType?.message)}
-                                className="h-10 rounded-xl bg-background border border-border/40 text-sm px-3 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                                error={tError(
+                                  errors?.[idx]?.shippingProfile?.packageType
+                                    ?.message,
+                                )}
                               />
                             </div>
                             {/* Qty per package */}
@@ -527,7 +529,10 @@ export default function VariantTable({
                               }}
                               placeholder="1"
                               className="h-10 rounded-xl bg-background"
-                              error={tError(errors?.[idx]?.shippingProfile?.quantityPerPackage?.message)}
+                              error={tError(
+                                errors?.[idx]?.shippingProfile
+                                  ?.quantityPerPackage?.message,
+                              )}
                             />
                           </div>
                         </div>

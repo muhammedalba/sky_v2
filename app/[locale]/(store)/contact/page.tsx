@@ -67,7 +67,9 @@ export default async function ContactPage({ params }: Props) {
   const contactInfo = settings?.contactInfo;
 
   const email = contactInfo?.email || "hello@skygalaxy.com";
-  const phone = contactInfo?.phones?.[0] || "+1 (555) 000-0000";
+  const rawPhones =
+    contactInfo?.phones?.filter((p): p is string => Boolean(p && p.trim())) ?? [];
+  const phones = rawPhones.length > 0 ? rawPhones : ["+1 (555) 000-0000"];
   const businessAddress = settings?.businessAddress;
   const addressParts = businessAddress
     ? [
@@ -114,7 +116,7 @@ export default async function ContactPage({ params }: Props) {
       },
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: phone,
+        telephone: phones[0],
         email,
         contactType: "customer service",
         areaServed: "SA",
@@ -191,17 +193,22 @@ export default async function ContactPage({ params }: Props) {
                 iconClassName: "bg-destructive/10 text-destructive",
                 title: t("info.phone"),
                 content: (
-                  <>
-                    <a
-                      href={`tel:${phone}`}
-                      className="text-xs text-muted-foreground/80 font-medium hover:text-primary transition-colors"
-                    >
-                      {phone}
-                    </a>
-                    <p className="text-[11px] text-primary font-semibold mt-1">
+                  <div className="space-y-1">
+                    {phones.map((phoneNumber, index) => (
+                      <div key={index}>
+                        <a
+                          href={`tel:${phoneNumber.replace(/\s+/g, "")}`}
+                          className="text-xs text-muted-foreground/80 font-medium hover:text-primary transition-colors inline-block"
+                          dir="ltr"
+                        >
+                          {phoneNumber}
+                        </a>
+                      </div>
+                    ))}
+                    <p className="text-[11px] text-primary font-semibold pt-0.5">
                       {t("info.available")}
                     </p>
-                  </>
+                  </div>
                 ),
               },
               {

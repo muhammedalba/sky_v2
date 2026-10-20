@@ -71,5 +71,32 @@
     "board": "Board",
     "piece": "Piece",
     "custom": "Unit"
+  },
+  "packageTypes": {
+    "box": "Box",
+    "bag": "Bag",
+    "drum": "Drum",
+    "gallon": "Gallon",
+    "board": "Board",
+    "roll": "Roll",
+    "piece": "Piece",
+    "pallet": "Pallet",
+    "envelope": "Envelope",
+    "custom": "Custom"
+  },
+  "attributes": {
+    "weight": "Weight",
+    "volume": "Volume",
+    "thickness": "Thickness",
+    "length": "Length",
+    "diameter": "Diameter",
+    "density": "Density",
+    "size": "Size",
+    "gsm": "GSM",
+    "color": "Color",
+    "type": "Type",
+    "packaging_type": "Packaging Type",
+    "dimensions": "Dimensions",
+    "components_kit": "Components Kit"
   }
 }

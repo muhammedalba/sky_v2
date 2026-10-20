@@ -15,7 +15,7 @@ import { useTrans } from "@/shared/hooks/useTrans";
 import { useToast } from "@/shared/hooks/useToast";
 import { Link, useRouter } from "@/navigation";
 import { ChevronLeftIcon } from "@/shared/ui/Icons";
-import { getAttributeLabel } from "@/shared/constants/product-constants";
+import { useAttributeLabel } from "@/shared/hooks/useAttributeLabel";
 import { useFormatVariantAttributes } from "@/shared/hooks/useFormatVariantAttributes";
 import { ProductVariant, ProductWithVariants } from "@/types";
 import { FileAsset } from "@/shared/types/file-asset";
@@ -77,6 +77,7 @@ export default function ProductDetailsClient({
   const { slug, locale } = use(params);
   const isAr = locale === "ar";
   const formatAttrs = useFormatVariantAttributes();
+  const getAttributeLabel = useAttributeLabel();
   const getTrans = useTrans();
   const toast = useToast();
   const t = useTranslations("product");
@@ -176,7 +177,7 @@ export default function ProductDetailsClient({
 
         return {
           name,
-          label: getAttributeLabel(name, isAr),
+          label: getAttributeLabel(name),
           options: Array.from(optionsMap.entries()).map(([value, unit]) => ({
             value,
             unit,
@@ -193,7 +194,7 @@ export default function ProductDetailsClient({
         };
       })
       .filter((g) => g.options.length > 0);
-  }, [hasVariants, variants, product, isAr]);
+  }, [hasVariants, variants, product, getAttributeLabel]);
 
   // --- Handlers ---
   const handleAttributeSelect = useCallback(
@@ -262,7 +263,9 @@ export default function ProductDetailsClient({
   const subCategoryName = product.SubCategories?.[0]
     ? getTrans(product.SubCategories[0].name)
     : "-";
-  const unitLabel = selectedVariant?.shippingProfile?.packageType;
+  const unitLabel = selectedVariant?.shippingProfile?.packageType
+    ? t(`units.${selectedVariant.shippingProfile.packageType}`)
+    : undefined;
 
   const categoryId =
     typeof product.category === "object"
@@ -306,10 +309,9 @@ export default function ProductDetailsClient({
     : (product.stockSummary ?? 0);
   const isOutOfStock = currentStock <= 0 && !product.isUnlimitedStock;
 
-  const packageType = selectedVariant?.shippingProfile?.packageType || "piece";
-  const unitText = t.has(`units.${packageType}`)
-    ? t(`units.${packageType}` as "units.piece")
-    : t("units.piece");
+  const unitText = t(
+    `units.${selectedVariant?.shippingProfile?.packageType || "piece"}`,
+  );
 
   const handleQuantityChange = (delta: number) => {
     setQuantity((prev) => {
@@ -490,7 +492,7 @@ export default function ProductDetailsClient({
                 isAddingToCart={isAddingToCart}
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
-                getAttributeLabel={(key) => getAttributeLabel(key, isAr)}
+                getAttributeLabel={getAttributeLabel}
               />
             </div>
           ) : (

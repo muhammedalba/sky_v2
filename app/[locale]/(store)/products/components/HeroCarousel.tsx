@@ -108,10 +108,6 @@ export default function HeroCarousel() {
             </picture>
             <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/35 to-transparent" />
             <div className="absolute bottom-6 sm:bottom-12 lg:bottom-16 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 text-white z-20 space-y-2 sm:space-y-4 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md border border-primary/30 text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-primary-foreground">
-                <Sparkles className="w-3.5 h-3.5 fill-current" />
-                {t("featuredSpotlight")}
-              </div>
               <p className="text-sm sm:text-2xl lg:text-3xl font-black leading-tight drop-shadow-md">
                 {slideDesc}
               </p>

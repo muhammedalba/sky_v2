@@ -29,6 +29,7 @@ import OrderTimeline from "./OrderTimeline";
 import OrderInfoCard from "./OrderInfoCard";
 import OrderTotalsSummary from "./OrderTotalsSummary";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
+import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
 
 interface OrderDetailDrawerProps {
   order: Order | null;
@@ -251,19 +252,17 @@ export default function OrderDetailDrawer({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/20">
-                  {order.items?.map((item, idx) => (
+                  {order.items?.map((item, idx) => {
+                    const { title, image, sku, attributes, components } =
+                      resolveOrderItem(item);
+                    return (
                     <tr key={idx} className="hover:bg-muted/10">
                       <td className="p-3 flex items-center gap-2 min-w-0">
                         <div className="w-8 h-8 rounded-lg relative overflow-hidden shrink-0 bg-muted/40">
-                          {(item.productId?.imageCover ||
-                            item.productId?.images?.[0]) && (
+                          {image && (
                             <ImageWithFallback
-                              src={
-                                item.productId.imageCover ||
-                                item.productId.images?.[0] ||
-                                ""
-                              }
-                              alt={getTrans(item.productId.title)}
+                              src={image}
+                              alt={getTrans(title)}
                               fill
                               sizes="32px"
                               className="object-cover"
@@ -272,16 +271,17 @@ export default function OrderDetailDrawer({
                         </div>
                         <div className="flex flex-col min-w-0">
                           <span className="font-semibold text-foreground truncate max-w-37.5">
-                            {getTrans(item.productId?.title)}
+                            {getTrans(title)}
                           </span>
                           <VariantAttributes
-                            attributes={item.variantId?.attributes}
+                            attributes={attributes}
+                            components={components}
                             className="mt-1 max-w-50"
                           />
                         </div>
                       </td>
                       <td className="p-3 text-muted-foreground font-mono">
-                        {item.sku || item.variantId?.sku || "—"}
+                        {sku || "—"}
                       </td>
                       <td className="p-3 text-center font-medium">
                         {item.quantity}
@@ -293,7 +293,8 @@ export default function OrderDetailDrawer({
                         {formatCurrency(item.totalPrice)}
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

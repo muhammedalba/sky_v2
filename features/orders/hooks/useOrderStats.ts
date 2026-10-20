@@ -16,7 +16,9 @@ export function useOrderStats(params?: StatsParams) {
       const response = (await ordersApi.getStats(params)) as unknown as { data: OrderStatsResponse };
       return response.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes — matches server cache TTL
+    // No client staleTime (same as the orders list): new orders come from other users,
+    // so refetch on every visit. The server cache absorbs the load and is cleared on
+    // place-order / order updates.
     throwOnError: false,
   });
 }

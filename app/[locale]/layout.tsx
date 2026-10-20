@@ -119,13 +119,17 @@ export default async function RootLayout({
     maintenance: allMessages.maintenance,
     notifications: allMessages.notifications,
     cart: allMessages.cart,
+    product: {
+      attributes: allMessages.product.attributes,
+      packageTypes: allMessages.product.packageTypes,
+    },
   };
 
   // Use fallback settings if API fails
   const finalSettings = settings || DEFAULT_SETTINGS;
 
   // Tawk.to chat: dashboard setting first, env var as fallback
-  const tawkId =  process.env.NEXT_PUBLIC_TAWKID;
+  const tawkId = process.env.NEXT_PUBLIC_TAWKID;
 
   // 1. Structured Data Configuration
   const structuredData = {

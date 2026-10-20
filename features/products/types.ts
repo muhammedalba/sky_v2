@@ -29,6 +29,13 @@ export interface ShippingProfile {
   quantityPerPackage: number;
 }
 
+/** Part of a multi-component kit, e.g. { name: "A", value: 10.5, unit: "kg" } */
+export interface VariantComponent {
+  name: string;
+  value: number;
+  unit: string;
+}
+
 export interface ProductVariant {
   _id: string;
   productId: string | Product;
@@ -41,7 +48,7 @@ export interface ProductVariant {
   attributes: Record<string, ProductAttributeValue>;
   /** Dedicated logistics/shipping metadata, separate from customer-facing attributes */
   shippingProfile?: ShippingProfile;
-  components?: Record<string, unknown>[];
+  components?: VariantComponent[];
   label?: string;
   image?: FileAsset | string;
   isActive: boolean;

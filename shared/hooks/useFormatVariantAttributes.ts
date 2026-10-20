@@ -2,7 +2,9 @@
 
 import { useCallback } from "react";
 import { useLocale } from "next-intl";
-import { formatVariantAttributesText } from "@/shared/ui/VariantAttributes";
+import { formatVariantAttributesText } from "@/shared/utils/variant-format.util";
+import type { VariantComponent } from "@/features/products/types";
+import { useAttributeLabel } from "./useAttributeLabel";
 
 /**
  * hook to format variant attributes as text in the active language
@@ -12,10 +14,21 @@ import { formatVariantAttributesText } from "@/shared/ui/VariantAttributes";
  */
 export function useFormatVariantAttributes() {
   const isAr = useLocale() === "ar";
+  const getLabel = useAttributeLabel();
 
   return useCallback(
-    (attributes?: Record<string, unknown> | null, separator?: string) =>
-      formatVariantAttributesText(attributes, isAr, separator),
-    [isAr],
+    (
+      attributes?: Record<string, unknown> | null,
+      separator?: string,
+      components?: VariantComponent[] | null,
+    ) =>
+      formatVariantAttributesText(
+        attributes,
+        isAr,
+        getLabel,
+        separator,
+        components,
+      ),
+    [isAr, getLabel],
   );
 }

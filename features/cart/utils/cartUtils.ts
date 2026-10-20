@@ -34,9 +34,20 @@ export const resolveItemData = (item: CartItem) => {
   const sku = populatedVariant?.sku ?? guestVariant?.sku ?? null;
   const attributes =
     populatedVariant?.attributes ?? guestVariant?.attributes ?? null;
+  const components =
+    populatedVariant?.components ?? guestVariant?.components ?? null;
   const image = populatedVariant?.image ?? item.product?.imageCover ?? "";
   const isUnlimitedStock: boolean = item.product?.isUnlimitedStock ?? false;
   const isActive: boolean = item.product?.isActive ?? true;
 
-  return { price, stock, sku, attributes, image, isUnlimitedStock, isActive };
+  return {
+    price,
+    stock,
+    sku,
+    attributes,
+    components,
+    image,
+    isUnlimitedStock,
+    isActive,
+  };
 };

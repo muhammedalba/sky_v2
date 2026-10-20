@@ -64,6 +64,11 @@ export default async function DashboardLayoutWrapper({
     roles: allMessages.roles,
     users: allMessages.users,
     products: allMessages.products,
+    // Shared attribute/package-type labels (useAttributeLabel, VariantTable)
+    product: {
+      attributes: allMessages.product.attributes,
+      packageTypes: allMessages.product.packageTypes,
+    },
     categories: allMessages.categories,
     subCategories: allMessages.subCategories,
     orders: allMessages.orders,

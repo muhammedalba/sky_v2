@@ -226,7 +226,9 @@ export function OrderSummaryCard({
         {cartItems.map((item: CartItem, index: number) => {
           const product = item.product;
           if (!product) return null;
-          const { price, image } = resolveItemData(item);
+          const { price, image, attributes, components } =
+            resolveItemData(item);
+          const attrsText = formatAttrs(attributes, " · ", components);
           const title = String(getTrans(product.title));
           // Prefer a stable product id over array index as the key
           const key = String(
@@ -251,9 +253,9 @@ export function OrderSummaryCard({
                 <p className="text-sm font-semibold text-foreground truncate">
                   {title}
                 </p>
-                {item?.variant?.attributes && Object.keys(item?.variant?.attributes).length > 0 && (
+                {attrsText && (
                   <p className="text-[11px] text-muted-foreground line-clamp-1">
-                    {formatAttrs(item?.variant?.attributes, " · ")}
+                    {attrsText}
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">

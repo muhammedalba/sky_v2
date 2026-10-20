@@ -53,6 +53,7 @@ export default function ProductOrderCard({
       {selectedVariant ? (
         <VariantAttributes
           attributes={selectedVariant.attributes}
+          components={selectedVariant.components}
           getLabel={getAttributeLabel}
           badgeClassName="text-[10px] px-2 py-0.5"
         />

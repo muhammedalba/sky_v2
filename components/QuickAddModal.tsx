@@ -8,8 +8,9 @@ import { Button } from "@/shared/ui/Button";
 import { Badge } from "@/shared/ui/Badge";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import Price from "@/shared/ui/Price";
-import { VariantAttributes, formatAttributeValue } from "@/shared/ui/VariantAttributes";
-import { getAttributeLabel } from "@/shared/constants/product-constants";
+import { VariantAttributes } from "@/shared/ui/VariantAttributes";
+import { formatAttributeValue } from "@/shared/utils/variant-format.util";
+import { useAttributeLabel } from "@/shared/hooks/useAttributeLabel";
 import { FileAsset } from "@/shared/types/file-asset";
 import { useTrans } from "@/shared/hooks/useTrans";
 import { useAddToCart } from "@/features/cart/hooks/useCart";
@@ -59,6 +60,7 @@ export default function QuickAddModal({ isOpen, onClose, product }: QuickAddModa
   const locale = useLocale();
   const commonT = useTranslations("common");
   const productT = useTranslations("product");
+  const getAttributeLabel = useAttributeLabel();
   const { mutate: addToCart, isPending: adding } = useAddToCart();
 
   const isAr = locale === "ar";
@@ -295,9 +297,9 @@ export default function QuickAddModal({ isOpen, onClose, product }: QuickAddModa
             {attributeOptions.length > 0 && (
               <div className="space-y-4 px-4 md:px-8 py-4">
                 {attributeOptions.map(({ name, options }) => (
-                  <div key={name} className="space-y-2" role="group" aria-label={getAttributeLabel(name, isAr)}>
+                  <div key={name} className="space-y-2" role="group" aria-label={getAttributeLabel(name)}>
                     <span className="text-xs font-bold uppercase tracking-wider text-foreground/70">
-                      {getAttributeLabel(name, isAr)}
+                      {getAttributeLabel(name)}
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {options.map(({ value, label, available }) => {
@@ -333,6 +335,7 @@ export default function QuickAddModal({ isOpen, onClose, product }: QuickAddModa
             {selectedVariant && (
               <VariantAttributes
                 attributes={selectedVariant.attributes}
+                components={selectedVariant.components}
                 badgeClassName="text-[10px] px-2 py-0.5"
               />
             )}

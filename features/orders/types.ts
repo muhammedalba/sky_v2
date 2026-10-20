@@ -1,6 +1,11 @@
 import { User } from '@/features/users/types';
-import { Product, ProductVariant } from '@/features/products/types';
-import { Coupon } from '@/types';
+import {
+  Product,
+  ProductVariant,
+  VariantComponent,
+} from '@/features/products/types';
+import { Coupon, LocalizedString } from '@/types';
+import { FileAsset } from '@/shared/types/file-asset';
 import { ShippingProvider, ShippingRate } from '../shipping/types';
 import { City, Country } from '../locations/types';
 
@@ -28,8 +33,13 @@ export interface OrderItem {
   weight?: number;
   brand?: string | Record<string, unknown>;
   category?: string | Record<string, unknown>;
+  // Snapshot taken at order time (missing on older orders — use resolveOrderItem)
   sku?: string;
   attributes?: Record<string, unknown>;
+  components?: VariantComponent[];
+  label?: string;
+  title?: LocalizedString;
+  image?: FileAsset | string;
 }
 
 export interface Order {

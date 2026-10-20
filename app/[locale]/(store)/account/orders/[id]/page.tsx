@@ -14,6 +14,7 @@ import OrderTimeline from "@/features/orders/components/OrderTimeline";
 import OrderInfoCard from "@/features/orders/components/OrderInfoCard";
 import OrderTotalsSummary from "@/features/orders/components/OrderTotalsSummary";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
+import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
 import {
   ArrowLeftIcon,
   MapPinIcon,
@@ -455,8 +456,9 @@ export default function OrderDetailPage() {
               <div className="divide-y divide-border/40">
                 {order.items?.map((item, idx) => {
                   const product = item.productId;
-                  const image = product?.imageCover || product?.images?.[0];
-                  const title = getTrans(product?.title);
+                  const resolved = resolveOrderItem(item);
+                  const { image, sku, attributes, components } = resolved;
+                  const title = getTrans(resolved.title);
                   const content = (
                     <>
                       <div className="w-16 h-16 rounded-xl relative overflow-hidden shrink-0 bg-muted/40 border border-border/40">
@@ -473,15 +475,12 @@ export default function OrderDetailPage() {
                           {title}
                         </p>
                         <div className="text-xs text-muted-foreground mt-1 flex gap-1">
-                          {(item.sku || item.variantId?.sku) && (
-                            <span className="font-mono">
-                              {item.sku || item.variantId?.sku}
-                            </span>
-                          )}
+                          {sku && <span className="font-mono">{sku}</span>}
                           {" : "}
                         </div>
                         <VariantAttributes
-                          attributes={item.variantId?.attributes}
+                          attributes={attributes}
+                          components={components}
                           className="mt-1.5"
                         />
                         <div className="text-xs text-muted-foreground mt-1 flex gap-1">

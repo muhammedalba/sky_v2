@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Input } from "@/shared/ui/Input";
 import { Button } from "@/shared/ui/Button";
 import { CheckIcon, PlusIcon, XIcon } from "@/shared/ui/Icons";
@@ -9,8 +9,8 @@ import {
   AllowedAttributeName,
   ATTRIBUTE_CONFIG,
   ATTRIBUTE_NAME_OPTIONS,
-  getAttributeLabel,
 } from "@/shared/constants/product-constants";
+import { useAttributeLabel } from "@/shared/hooks/useAttributeLabel";
 import { Select } from "@/shared/ui/Select";
 import { useToast } from "@/shared/hooks/useToast";
 import ErrorMessage from "@/shared/ui/ErrorMessage";
@@ -58,7 +58,7 @@ const AttributeRow = React.memo(
     ) => void;
   }) => {
     const t = useTranslations("products.form.attributeBuilder");
-    const isAr = useLocale() === "ar";
+    const getAttributeLabel = useAttributeLabel();
 
     const [inputs, setInputs] = useState({ str: "", num: "", unit: "" });
     // جلب الوحدات المتاحة بناءً على اسم الخاصية المختارة
@@ -94,7 +94,7 @@ const AttributeRow = React.memo(
             onChange={(e) => onUpdate(index, "name", e.target.value)}
             options={ATTRIBUTE_NAME_OPTIONS.map((key) => ({
               value: key,
-              label: getAttributeLabel(key, isAr),
+              label: getAttributeLabel(key),
             }))}
             className="h-10 mt-3"
           />

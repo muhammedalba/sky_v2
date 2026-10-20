@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { MinusIcon, PlusIcon, ChevronDownIcon } from "@/shared/ui/Icons";
+import { MinusIcon, PlusIcon } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 
 export interface AttributeOption {
@@ -142,7 +142,6 @@ export default function ProductVariantSelector({
             </div>
             <div className="flex items-center gap-1.5 h-10 px-3.5 rounded-lg border border-border/60 bg-background text-xs font-semibold text-foreground/80">
               {unitText}
-              <ChevronDownIcon className="w-3.5 h-3.5 text-muted-foreground" />
             </div>
           </div>
         </ScrollReveal>

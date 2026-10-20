@@ -83,7 +83,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className={cn(
                 "pointer-events-none absolute inset-s-1 flex items-center gap-x-1.5 rounded-2xl bg-background z-10 px-2 py-1 transition-all duration-500 w-fit",
                 // Base state (floating - when input has value)
-                "-top-4 text-xs text-foreground/80 translate-y-0",
+                "-top-1/2 text-xs text-foreground/80 translate-y-0",
                 // State when input is empty (placeholder is shown) AND not focused
                 "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-muted-foreground peer-placeholder-shown:bg-transparent",
                 // State when focused (override placeholder-shown)

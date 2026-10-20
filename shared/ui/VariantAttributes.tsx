@@ -1,69 +1,18 @@
 import React from "react";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
-import { getAttributeLabel } from "@/shared/constants/product-constants";
+import { useAttributeLabel } from "@/shared/hooks/useAttributeLabel";
+import type { VariantComponent } from "@/features/products/types";
+import {
+  formatAttributeValue,
+  formatVariantComponents,
+} from "@/shared/utils/variant-format.util";
 import { ScrollReveal } from "./ScrollReveal";
-
-/**
- * Formats individual attribute value into human-readable string.
- * Supports:
- * - primitives (string, number, boolean)
- * - objects with `{ value, unit }` (e.g. `{ value: 100, unit: "ml" }` -> "100 ml")
- * - localized objects (e.g. `{ ar: "أحمر", en: "Red" }`)
- * - fallback JSON stringification
- */
-export function formatAttributeValue(val: unknown, isAr: boolean): string {
-  if (val === null || val === undefined) return "";
-  if (typeof val !== "object") return String(val);
-
-  const obj = val as Record<string, unknown>;
-  const parts: string[] = [];
-
-  if (obj.value !== undefined && obj.value !== null && obj.value !== "") {
-    parts.push(String(obj.value));
-  }
-  if (obj.unit !== undefined && obj.unit !== null && obj.unit !== "") {
-    parts.push(String(obj.unit));
-  }
-
-  if (parts.length > 0) {
-    return parts.join(" ");
-  }
-
-  // Handle localized objects e.g. { ar: "أحمر", en: "Red" }
-  if (typeof obj.ar === "string" || typeof obj.en === "string") {
-    return (isAr ? obj.ar || obj.en : obj.en || obj.ar) as string;
-  }
-
-  try {
-    return JSON.stringify(val);
-  } catch {
-    return String(val);
-  }
-}
-
-/**
- * Formats the entire attributes object into a single text string with localized labels.
- * Useful for tooltips, logs, exports, or plain-text representations.
- */
-export function formatVariantAttributesText(
-  attributes: Record<string, unknown> | null | undefined,
-  isAr: boolean,
-  separator = ", "
-): string {
-  if (!attributes || typeof attributes !== "object") return "";
-
-  return Object.entries(attributes)
-    .map(([k, v]) => {
-      const formatted = formatAttributeValue(v, isAr);
-      return formatted ? `${getAttributeLabel(k, isAr)}: ${formatted}` : "";
-    })
-    .filter(Boolean)
-    .join(separator);
-}
 
 export interface VariantAttributesProps {
   attributes?: Record<string, unknown> | null;
+  /** Kit components (A+B products), rendered as one extra badge. */
+  components?: VariantComponent[] | null;
   className?: string;
   badgeClassName?: string;
   /** Overrides the default label, which is localized to the current locale. */
@@ -75,40 +24,40 @@ export interface VariantAttributesProps {
  */
 export function VariantAttributes({
   attributes,
+  components,
   className,
   badgeClassName,
   getLabel,
 }: VariantAttributesProps) {
   const isAr = useLocale() === "ar";
+  const defaultGetLabel = useAttributeLabel();
+  const resolveLabel = getLabel ?? defaultGetLabel;
 
-  if (
-    !attributes ||
-    typeof attributes !== "object" ||
-    Object.keys(attributes).length === 0
-  ) {
-    return null;
+  const entries: [string, string][] = [];
+  if (attributes && typeof attributes === "object") {
+    for (const [key, val] of Object.entries(attributes)) {
+      const valStr = formatAttributeValue(val, isAr);
+      if (valStr) entries.push([key, valStr]);
+    }
   }
+  const componentsStr = formatVariantComponents(components);
+  if (componentsStr) entries.push(["components_kit", componentsStr]);
+
+  if (entries.length === 0) return null;
 
   return (
     <div className={cn("flex flex-wrap gap-1", className)}>
-      {Object.entries(attributes).map(([key, val],index) => {
-        const valStr = formatAttributeValue(val, isAr);
-        if (!valStr) return null;
-
-        const label = getLabel ? getLabel(key) : getAttributeLabel(key, isAr);
-
-        return (
-          <ScrollReveal animation="fade" delay={index * 50} 
-            key={key}
-            className={cn(
-              "inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap",
-              badgeClassName
-            )}
-          >
-            {label}: {valStr}
-          </ScrollReveal>
-        );
-      })}
+      {entries.map(([key, valStr], index) => (
+        <ScrollReveal animation="fade" delay={index * 50}
+          key={`${key}-${index}`}
+          className={cn(
+            "inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-secondary/80 text-secondary-foreground border border-border/30 capitalize whitespace-nowrap",
+            badgeClassName
+          )}
+        >
+          {resolveLabel(key)}: {valStr}
+        </ScrollReveal>
+      ))}
     </div>
   );
 }

@@ -6,10 +6,10 @@ import { Button } from "@/shared/ui/Button";
 import { Price } from "@/shared/ui/Price";
 import {
   StarIcon,
-  PackageIcon,
   ShoppingCartIcon,
   FileTextIcon,
   DownloadIcon,
+  TruckIcon,
 } from "@/shared/ui/Icons";
 import { Product } from "@/types";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
@@ -226,7 +226,7 @@ export default function ProductInfo({
                 variant="info"
                 className="rounded-full gap-1.5 px-3 py-1"
               >
-                <PackageIcon className="w-3 h-3" />
+                <TruckIcon className="w-3 h-3" />
                 {t("badges.readyToShip")}
               </Badge>
             )}

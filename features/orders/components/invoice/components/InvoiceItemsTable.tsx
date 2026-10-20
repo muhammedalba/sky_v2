@@ -3,6 +3,7 @@ import { OrderItem } from "@/features/orders/types";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { getLocalizedValue } from "../utils/invoiceUtils";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
+import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
 
 interface InvoiceItemsTableProps {
   items?: OrderItem[];
@@ -33,16 +34,17 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
         </thead>
         <tbody className="divide-y divide-black">
           {items?.map((item, idx) => {
-            const titleAr =
-              getLocalizedValue(item.productId?.title, "ar") || "منتج";
-            const titleEn = getLocalizedValue(item.productId?.title, "en");
+            const { title, sku, attributes, components } =
+              resolveOrderItem(item);
+            const titleAr = getLocalizedValue(title, "ar") || "منتج";
+            const titleEn = getLocalizedValue(title, "en");
             const itemQty = item.quantity || 1;
             const itemPrice = item.price || 0;
             const itemTotal = item.totalPrice || itemQty * itemPrice;
 
             return (
               <tr
-                key={item.productId?._id || item.sku || idx}
+                key={item.productId?._id || sku || idx}
                 className="hover:bg-slate-50"
               >
                 <td className="p-1.5 border-l border-black font-medium">
@@ -56,7 +58,8 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
                     </div>
                   )}
                   <VariantAttributes
-                    attributes={item.variantId?.attributes}
+                    attributes={attributes}
+                    components={components}
                     className="mt-1 max-w-50"
                     badgeClassName="px-1 py-0.5 text-[8px]"
                   />

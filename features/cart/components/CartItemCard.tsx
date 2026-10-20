@@ -50,8 +50,16 @@ export function CartItemCard({
   if (!product) return null;
 
   const title = getTrans(product.title);
-  const { price, stock, attributes, image, isUnlimitedStock, isActive } =
-    resolveItemData(item);
+  const {
+    price,
+    stock,
+    attributes,
+    components,
+    image,
+    isUnlimitedStock,
+    isActive,
+  } = resolveItemData(item);
+  const attrsText = formatAttrs(attributes, " · ", components);
   const lineTotal = price * item.quantity;
 
   // Max allowed quantity — unlimited when stock is untracked/unknown
@@ -89,9 +97,9 @@ export function CartItemCard({
               {title as string}
             </p>
           </Link>
-          {attributes && Object.keys(attributes).length > 0 && (
+          {attrsText && (
             <p className="text-[11px] text-muted-foreground line-clamp-1">
-              {formatAttrs(attributes, " · ")}
+              {attrsText}
             </p>
           )}
           <p className="text-xs font-bold text-primary tabular-nums inline-flex items-baseline gap-1">
@@ -202,6 +210,7 @@ export function CartItemCard({
             )}
             <VariantAttributes
               attributes={attributes}
+              components={components}
               badgeClassName="text-xs"
             />
           </div>

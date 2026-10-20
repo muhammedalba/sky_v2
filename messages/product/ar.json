@@ -71,5 +71,32 @@
     "board": "لوح",
     "piece": "قطعة",
     "custom": "وحدة"
+  },
+  "packageTypes": {
+    "box": "كرتون",
+    "bag": "كيس",
+    "drum": "برميل",
+    "gallon": "جالون / سطل",
+    "board": "لوح",
+    "roll": "لفة / رول",
+    "piece": "حبة",
+    "pallet": "طبلية",
+    "envelope": "مظروف",
+    "custom": "مخصص"
+  },
+  "attributes": {
+    "weight": "الوزن",
+    "volume": "الحجم",
+    "thickness": "السماكة",
+    "length": "الطول",
+    "diameter": "القطر",
+    "density": "الكثافة",
+    "size": "المقاس",
+    "gsm": "وزن المتر المربع",
+    "color": "اللون",
+    "type": "النوع",
+    "packaging_type": "نوع التعبئة",
+    "dimensions": "الأبعاد",
+    "components_kit": "مكونات الطقم"
   }
 }

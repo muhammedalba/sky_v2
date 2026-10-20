@@ -8,6 +8,7 @@ import type { Order } from "@/types";
 import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import { useTrans } from "@/shared/hooks/useTrans";
 import Price from "@/shared/ui/Price";
+import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
 
 // Compact order row, shared by the Overview "recent orders" list and the
 // mobile card list on the Orders tab.
@@ -26,11 +27,13 @@ export function OrderRow({ order, locale }: { order: Order; locale: string }) {
     >
       <div className="flex items-center gap-2">
         <div className="w-auto h-18 flex items-center">
-          {order.items.map((item, i) => (
+          {order.items.map((item, i) => {
+            const { image, title } = resolveOrderItem(item);
+            return (
             <ImageWithFallback
               key={i}
-              src={item?.productId?.imageCover?.url || ""}
-              alt={getTrans(item?.productId?.title || "Product image")}
+              src={image}
+              alt={getTrans(title || "Product image")}
               width={42}
               height={42}
               className={cn(
@@ -39,7 +42,8 @@ export function OrderRow({ order, locale }: { order: Order; locale: string }) {
               )}
               style={{ zIndex: order.items.length - i }}
             />
-          ))}
+            );
+          })}
         </div>
         <div>
           <h3 className="font-bold text-sm text-foreground">
