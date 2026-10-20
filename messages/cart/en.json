@@ -89,6 +89,8 @@
     "company_name_placeholder": "e.g. Elite Trading Co.",
     "vendor_vat_no": "Vendor VAT No.",
     "vendor_vat_no_placeholder": "e.g. 300XXXXXXXXX",
+    "commercial_reg_no": "Commercial Registration No. (CR)",
+    "commercial_reg_no_placeholder": "e.g. 1010XXXXXX",
     "continue": "Continue"
   },
   "shipping_payment": {

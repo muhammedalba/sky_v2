@@ -104,6 +104,7 @@ export function CheckoutAddressStep({
       "street",
       "companyName",
       "vendorVatNo",
+      "commercialRegNo",
     ]);
     if (isValid) {
       onNext();
@@ -164,7 +165,7 @@ export function CheckoutAddressStep({
             {t("address.company_info")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div className="md:col-span-2">
               <Input
                 {...register("companyName")}
                 label={t("address.company_name")}
@@ -178,6 +179,14 @@ export function CheckoutAddressStep({
                 label={t("address.vendor_vat_no")}
                 placeholder={t("address.vendor_vat_no_placeholder")}
                 error={errors.vendorVatNo?.message}
+              />
+            </div>
+            <div>
+              <Input
+                {...register("commercialRegNo")}
+                label={t("address.commercial_reg_no")}
+                placeholder={t("address.commercial_reg_no_placeholder")}
+                error={errors.commercialRegNo?.message}
               />
             </div>
           </div>

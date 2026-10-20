@@ -32,6 +32,10 @@ export default async function StoreFooter({
 
   const siteName = settings.siteName?.[locale] || "Sky Galaxy";
   const socialLinks = settings.socialLinks || {};
+  const phones =
+    settings.contactInfo?.phones
+      ?.filter((p): p is string => Boolean(p && p.trim()))
+      .slice(0, 4) ?? [];
 
   return (
     <footer className="relative border-t border-border/40 bg-linear-to-b from-background to-muted/20 text-foreground pt-16 pb-4 overflow-hidden transition-all duration-300">
@@ -274,14 +278,26 @@ export default async function StoreFooter({
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
             </h3>
             <ul className="space-y-3 font-medium">
-              {settings.contactInfo?.phones?.[0] && (
-                <li className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group">
-                  <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors">
-                    <PhoneIcon className="w-3.5 h-3.5 text-primary" />
-                  </div>
-                  <span>{settings.contactInfo.phones[0]}</span>
-                </li>
-              )}
+              {phones.length > 0 &&
+                phones.map((phone, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group"
+                  >
+                    <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0 mt-0.5">
+                      <PhoneIcon className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <div className="flex flex-col gap-1 items-center">
+                      <a
+                        href={`tel:${phone.replace(/\s+/g, "")}`}
+                        className="hover:text-primary transition-colors"
+                        dir="ltr"
+                      >
+                        {phone}
+                      </a>
+                    </div>
+                  </li>
+                ))}
               {settings.contactInfo?.email && (
                 <li className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground group min-w-0">
                   <div className="p-1.5 rounded-lg bg-card border border-border group-hover:border-primary/35 transition-colors shrink-0">

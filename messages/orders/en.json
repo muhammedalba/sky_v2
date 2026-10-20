@@ -161,7 +161,8 @@
     "shippingProvider": "Shipping Provider",
     "additionalInfo": "Additional Info",
     "companyName": "Company Name",
-    "vendorVatNo": "Vendor VAT No."
+    "vendorVatNo": "Vendor VAT No.",
+    "commercialRegNo": "Commercial Registration (CR)"
   },
   "paymentInfo": {
     "paymentInfo": "Payment Information",

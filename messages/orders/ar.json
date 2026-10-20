@@ -161,7 +161,8 @@
     "shippingProvider": "مزود الشحن",
     "shippingCost": "تكلفة الشحن",
     "companyName": "اسم الشركة",
-    "vendorVatNo": "الرقم الضريبي للمورد"
+    "vendorVatNo": "الرقم الضريبي للمورد",
+    "commercialRegNo": "السجل التجاري"
   },
   "paymentInfo": {
     "paymentInfo": "معلومات الدفع",

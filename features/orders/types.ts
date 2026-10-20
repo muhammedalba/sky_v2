@@ -22,6 +22,7 @@ export interface Address {
   addressType?: string;
   companyName?: string;
   vendorVatNo?: string;
+  commercialRegNo?: string;
 }
 
 export interface OrderItem {

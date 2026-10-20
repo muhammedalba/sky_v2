@@ -14,6 +14,7 @@ export const CheckoutAddressSchema = z.object({
   addressType: z.string().optional(),
   companyName: z.string().optional(),
   vendorVatNo: z.string().optional(),
+  commercialRegNo: z.string().optional(),
 });
 
 // Since the whole form in Address step uses these fields, 

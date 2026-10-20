@@ -150,6 +150,16 @@ export default function OrderShippingCard({ order }: OrderShippingCardProps) {
                 </span>
               </div>
             )}
+            {address?.commercialRegNo && (
+              <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
+                <span className="text-muted-foreground font-semibold">
+                  {t("shippingInfo.commercialRegNo")}
+                </span>
+                <span className="text-foreground font-bold">
+                  {address.commercialRegNo}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right Column */}
