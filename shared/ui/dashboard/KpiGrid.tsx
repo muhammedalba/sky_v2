@@ -7,6 +7,8 @@ import { BarChart3Icon, BarChartIcon, BrandsIcon, CategoriesIcon, CheckIcon, Cou
 import { StatCard, StatCardProps } from '@/shared/ui/StatCard';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatCurrency } from '@/lib/utils';
+import { useCan } from '@/components/auth/Can';
+import { Permissions } from '@/features/roles/types';
 import type { DashboardData } from './types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -19,6 +21,15 @@ interface KpiGridProps {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const SKELETON_COUNT = 8;
+
+/** Management page each card opens — only linked when the user may view it */
+const LINKS = {
+  orders:     { href: '/dashboard/orders',     permission: Permissions.VIEW_ORDERS },
+  users:      { href: '/dashboard/users',      permission: Permissions.VIEW_USERS },
+  coupons:    { href: '/dashboard/coupons',    permission: Permissions.VIEW_COUPONS },
+  categories: { href: '/dashboard/categories', permission: Permissions.VIEW_CATEGORIES },
+  brands:     { href: '/dashboard/brands',     permission: Permissions.VIEW_BRANDS },
+} as const;
 
 const ACCENT_MAP = [
   { from: 'from-indigo-500/5',  icon: 'text-indigo-500',  bg: 'bg-indigo-500/5'  },
@@ -36,6 +47,7 @@ const ACCENT_MAP = [
 export function KpiGrid({ d, isLoading }: KpiGridProps) {
   const t = useTranslations('dashboard.kpiGrid');
   const locale = useLocale();
+  const can = useCan();
 
   const oo = d?.orders?.overview;
   const uo = d?.users?.overview;
@@ -49,6 +61,7 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
     {
       Icon: ShoppingBagIcon,
       label: t('totalOrders'),
+      link: LINKS.orders,
       value: oo?.currentPeriodOrders ?? 0,
       sub: t('allOrders', { count: oo?.totalOrdersSystemWide ?? 0 }),
       badgeVariant: (oo?.currentPeriodOrders ?? 0) === 0 ? "destructive" : (oo?.currentPeriodOrders ?? 0) < 10 ? "default" : "success"
@@ -56,6 +69,7 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
     {
       Icon: BarChartIcon,
       label: t('totalRevenue'),
+      link: LINKS.orders,
       value: formatCurrency(oo?.totalRevenue ?? 0, locale),
       sub: t('aov', { amount: formatCurrency(oo?.averageOrderValue ?? 0, locale) }),
       badgeVariant: (oo?.totalRevenue ?? 0) === 0 ? "destructive" : (oo?.totalRevenue ?? 0) < 1000 ? "default" : "success"
@@ -63,40 +77,50 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
     {
       Icon: CheckIcon,
       label: t('validOrders'),
+      link: LINKS.orders,
       value: oo?.validOrdersCount ?? 0,
       badgeVariant: (oo?.validOrdersCount ?? 0) === 0 ? "destructive" : (oo?.validOrdersCount ?? 0) < 10 ? "default" : "success"
     },
     {
       Icon: UsersIcon,
       label: t('totalUsers'),
+      link: LINKS.users,
       value: uo?.totalUsers ?? 0,
+      allTime: true,
       sub: t('newUsers', { count: uo?.periodNewCustomers ?? 0 }),
       badgeVariant: (uo?.periodNewCustomers ?? 0) === 0 ? "destructive" : (uo?.periodNewCustomers ?? 0) < 5 ? "default" : "success"
     },
     {
       Icon: CouponsIcon,
       label: t('activeCoupons'),
+      link: LINKS.coupons,
       value: mo?.activeCoupons ?? 0,
+      allTime: true,
       sub: t('totalCoupons', { count: mo?.totalCoupons ?? 0 }),
       badgeVariant: (mo?.totalCoupons ?? 0) === 0 ? "destructive" : (mo?.totalCoupons ?? 0) < 5 ? "default" : "success"
     },
     {
       Icon: BarChart3Icon,
       label: t('marketingCost'),
+      link: LINKS.coupons,
       value: formatCurrency(mo?.totalMarketingCost ?? 0, locale),
       badgeVariant: (mo?.totalMarketingCost ?? 0) === 0 ? "destructive" : (mo?.totalMarketingCost ?? 0) < 100 ? "default" : "success"
     },
     {
       Icon: CategoriesIcon,
       label: t('categories'),
+      link: LINKS.categories,
       value: st?.categories ?? 0,
+      allTime: true,
       sub: t('subCategories', { count: st?.subCategories ?? 0 }),
       badgeVariant: (st?.categories ?? 0) === 0 ? "destructive" : (st?.categories ?? 0) < 10 ? "default" : "success"
     },
     {
       Icon: BrandsIcon,
       label: t('brands'),
+      link: LINKS.brands,
       value: st?.brands ?? 0,
+      allTime: true,
       sub: t('suppliers', { count: d?.suppliers?.totalSuppliers ?? 0 }),
       badgeVariant: (st?.brands ?? 0) === 0 ? "destructive" : "success"
     },
@@ -119,10 +143,12 @@ export function KpiGrid({ d, isLoading }: KpiGridProps) {
                 value={c.value}
                 Icon={c.Icon}
                 badge={c.sub}
+                description={c.allTime ? t('allTime') : undefined}
                 colorFrom={a.from}
                 colorBg={a.bg}
                 colorIcon={a.icon}
                 badgeVariant={c.badgeVariant as StatCardProps["badgeVariant"]}
+                href={can(c.link.permission) ? c.link.href : undefined}
               />
             );
           })}

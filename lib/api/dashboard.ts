@@ -18,7 +18,7 @@ const ENDPOINTS = {
 };
 
 /** Convert YYYY-MM-DD → ISO datetime (start / end of day) */
-function buildDateParams(params?: DashboardParams): Record<string, string> | undefined {
+export function buildDateParams(params?: DashboardParams): Record<string, string> | undefined {
   if (!params?.startDate && !params?.endDate) return undefined;
   const query: Record<string, string> = {};
   if (params.startDate) query.startDate = new Date(`${params.startDate}T00:00:00`).toISOString();

@@ -107,7 +107,7 @@ const periodLabel = useMemo(() => {
         {isBusy ? (
           <Skeleton className="h-32 rounded-2xl" />
         ) : (
-          <BreakdownSection d={d} />
+          <BreakdownSection d={d} params={params} />
         )}
       </SectionWrapper>
 

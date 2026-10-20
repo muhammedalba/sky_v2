@@ -228,9 +228,9 @@
                   "variableProducts": "Variable Products",
                   "variableProductsDesc": "Multi-variant",
                   "brands": "Brands",
-                  "brandsDesc": "Active brand lines",
+                  "brandsDesc": "Brands with products",
                   "suppliers": "Suppliers",
-                  "suppliersDesc": "Sourcing partners",
+                  "suppliersDesc": "Suppliers with products",
                   "newThisPeriod": "+{count} this period"
             },
             "sections": {

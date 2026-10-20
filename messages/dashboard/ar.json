@@ -79,6 +79,8 @@
             "noOrders": "لا توجد طلبات",
             "reviewStatus": "حالة التقييمات",
             "noReviews": "لا توجد تقييمات",
+            "noData": "لا توجد بيانات",
+            "allTime": "لا يتأثر بفلتر التاريخ",
             "salesChannelsTitle": "مقارنة قنوات البيع",
             "salesChannelsDesc": "العضوي مقابل التسويق — الإيرادات، الطلبات، والخصومات",
             "organic": "عضوي",
@@ -113,7 +115,8 @@
             "categories": "الفئات",
             "subCategories": "الفرعية: {count}",
             "brands": "العلامات التجارية",
-            "suppliers": "الموردون: {count}"
+            "suppliers": "الموردون: {count}",
+            "allTime": "الإجمالي — لا يتأثر بفلتر التاريخ"
       },
       "error": {
             "title": "فشل تحميل لوحة التحكم",

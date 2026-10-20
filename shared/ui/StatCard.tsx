@@ -1,5 +1,6 @@
 
 import { Card, CardContent } from '@/shared/ui/Card';
+import { Link } from '@/navigation';
 import { cn } from '@/lib/utils';
 import Badge from './Badge';
 
@@ -18,14 +19,20 @@ export interface StatCardProps {
   colorBg?: string;
   colorIcon?: string;
   badgeVariant?: "default" | "secondary" | "destructive" | "success" | "warning";
+  /** Makes the whole card a link (e.g. to the related management page) */
+  href?: string;
 }
 
 export function StatCard({
   title, value, Icon, badge, description, trend, className,
-  colorFrom = 'from-primary/5', colorBg = 'bg-primary/10 dark:bg-primary/20', colorIcon = 'text-primary', badgeVariant
+  colorFrom = 'from-primary/5', colorBg = 'bg-primary/10 dark:bg-primary/20', colorIcon = 'text-primary', badgeVariant, href
 }: StatCardProps) {
-  return (
-    <Card className={cn("relative overflow-hidden border-none shadow-md bg-background group hover:shadow-xl transition-all duration-300 flex flex-col", className)}>
+  const card = (
+    <Card className={cn(
+      "relative overflow-hidden border-none shadow-md bg-background group hover:shadow-xl transition-all duration-300 flex flex-col",
+      href && "h-full cursor-pointer group-hover/link:-translate-y-0.5",
+      className,
+    )}>
       <div className={cn("absolute inset-0 bg-linear-to-br to-transparent pointer-events-none", colorFrom)} />
       <CardContent className="p-5 relative z-10 flex flex-col flex-1">
         <div className="flex items-start justify-between mb-4">
@@ -56,5 +63,16 @@ export function StatCard({
         )}
       </CardContent>
     </Card>
+  );
+
+  if (!href) return card;
+
+  return (
+    <Link
+      href={href}
+      className="group/link block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+    >
+      {card}
+    </Link>
   );
 }

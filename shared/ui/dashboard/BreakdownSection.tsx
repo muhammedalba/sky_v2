@@ -14,6 +14,7 @@ import { Can } from '@/components/auth/Can';
 import { Permissions } from '@/features/roles/types';
 import { useReviewStats } from '@/features/reviews/hooks/useReviews';
 import type { ReviewStatus } from '@/features/reviews/types';
+import { buildDateParams, type DashboardParams } from '@/lib/api/dashboard';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -41,9 +42,13 @@ interface DonutCardProps {
   title: string;
   /** `color` overrides the name-based lookup (needed when `name` is a translated label) */
   data: { name: string; value: number; color?: string }[];
+  /** Shown instead of the chart when there is nothing to plot */
+  emptyLabel: string;
+  /** Hint shown under the title for snapshot data that ignores the date filter */
+  hint?: string;
 }
 
-function DonutCard({ title, data }: DonutCardProps) {
+function DonutCard({ title, data, emptyLabel, hint }: DonutCardProps) {
   const chartData = useMemo(
     () =>
       data.map((item, i) => ({
@@ -56,26 +61,37 @@ function DonutCard({ title, data }: DonutCardProps) {
     [data],
   );
 
+  const isEmpty = !data.some((item) => item.value > 0);
+
   return (
     <Card className="border-none shadow-md bg-background">
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-bold">{title}</CardTitle>
+        {hint && <CardDescription className="text-xs">{hint}</CardDescription>}
       </CardHeader>
       <CardContent className="flex flex-col items-center">
-        <PieCompositionChart
-          data={chartData}
-          height={200}
-          innerRadius={50}
-          outerRadius={70}
-        />
-        <div className="flex flex-wrap gap-1.5 mt-2 justify-center">
-          {chartData.map((r) => (
-            <Badge key={r.name} variant="secondary" className="text-[10px] capitalize gap-1">
-              <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: r.color }} />
-              {r.name}: {r.value}
-            </Badge>
-          ))}
-        </div>
+        {isEmpty ? (
+          <div className="h-50 w-full flex items-center justify-center">
+            <p className="text-sm text-muted-foreground">{emptyLabel}</p>
+          </div>
+        ) : (
+          <>
+            <PieCompositionChart
+              data={chartData}
+              height={200}
+              innerRadius={50}
+              outerRadius={70}
+            />
+            <div className="flex flex-wrap gap-1.5 mt-2 justify-center">
+              {chartData.map((r) => (
+                <Badge key={r.name} variant="secondary" className="text-[10px] capitalize gap-1">
+                  <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: r.color }} />
+                  {r.name}: {r.value}
+                </Badge>
+              ))}
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
@@ -89,32 +105,32 @@ const REVIEW_STATUS_COLOR: Record<ReviewStatus, string> = {
 };
 
 /** Review moderation breakdown — has its own query (GET /reviews/statistics). */
-function ReviewStatusCard() {
+function ReviewStatusCard({ params }: { params?: DashboardParams }) {
   const t = useTranslations('dashboard.breakdownSection');
   const tStatus = useTranslations('reviews.admin.status');
-  const { data: stats } = useReviewStats();
+  const { data: stats } = useReviewStats(buildDateParams(params));
 
   const reviewData = useMemo(() => {
-    if (!stats?.total) {
-      return [{ name: t('noReviews'), value: 1, color: STATUS_COLOR.unverified }];
-    }
+    if (!stats?.total) return [];
     return REVIEW_STATUSES.filter((status) => stats[status] > 0).map((status) => ({
       name: tStatus(status),
       value: stats[status],
       color: REVIEW_STATUS_COLOR[status],
     }));
-  }, [stats, t, tStatus]);
+  }, [stats, tStatus]);
 
-  return <DonutCard title={t('reviewStatus')} data={reviewData} />;
+  return <DonutCard title={t('reviewStatus')} data={reviewData} emptyLabel={t('noReviews')} />;
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 interface BreakdownSectionProps {
   d?: DashboardData;
+  /** Active date filter — forwarded to cards that fetch their own data */
+  params?: DashboardParams;
 }
 
-export function BreakdownSection({ d }: BreakdownSectionProps) {
+export function BreakdownSection({ d, params }: BreakdownSectionProps) {
   const t = useTranslations('dashboard.breakdownSection');
 
   // ─── Derived data (memoized) ─────────────────────────────────────────────
@@ -136,11 +152,6 @@ export function BreakdownSection({ d }: BreakdownSectionProps) {
   const orderStatusData = useMemo(
     () => Object.entries(d?.orders?.statusBreakdown ?? {}).map(([name, value]) => ({ name, value })),
     [d?.orders?.statusBreakdown],
-  );
-
-  const orderStatusWithFallback = useMemo(
-    () => orderStatusData.length > 0 ? orderStatusData : [{ name: t('noOrders'), value: 1 }],
-    [orderStatusData, t],
   );
 
   const salesData = useMemo(() => {
@@ -198,12 +209,12 @@ export function BreakdownSection({ d }: BreakdownSectionProps) {
     <div className="space-y-6">
       {/* auto-fit: 3 or 4 cards depending on whether the review card is visible */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-        <DonutCard title={t('userRoles')}   data={roleData} />
-        <DonutCard title={t('userStatus')}  data={statusData} />
-        <DonutCard title={t('orderStatus')} data={orderStatusWithFallback} />
+        <DonutCard title={t('userRoles')}   data={roleData}        emptyLabel={t('noData')} hint={t('allTime')} />
+        <DonutCard title={t('userStatus')}  data={statusData}      emptyLabel={t('noData')} hint={t('allTime')} />
+        <DonutCard title={t('orderStatus')} data={orderStatusData} emptyLabel={t('noOrders')} />
         {/* The stats endpoint requires VIEW_REVIEWS — mount (and fetch) only when allowed */}
         <Can permission={Permissions.VIEW_REVIEWS}>
-          <ReviewStatusCard />
+          <ReviewStatusCard params={params} />
         </Can>
       </div>
 

@@ -29,8 +29,8 @@ export const reviewsApi = {
   getAll: (params?: Record<string, unknown>) =>
     apiClient.get(BASE, { params }) as unknown as Promise<ApiResponse<Review[]>>,
 
-  getStats: () =>
-    apiClient.get(`${BASE}/statistics`) as unknown as Promise<ApiResponse<ReviewStats>>,
+  getStats: (params?: { startDate?: string; endDate?: string }) =>
+    apiClient.get(`${BASE}/statistics`, { params }) as unknown as Promise<ApiResponse<ReviewStats>>,
 
   updateStatus: (reviewId: string, status: 'approved' | 'rejected') =>
     apiClient.patch(`${BASE}/${reviewId}/status`, { status }) as unknown as Promise<ApiResponse<Review>>,

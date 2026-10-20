@@ -21,6 +21,8 @@ import {
 
 import { useProductStats } from "@/features/products/hooks/useProductStats";
 import { StatCard, StatCardProps } from "@/shared/ui/StatCard";
+import { useCan } from "@/components/auth/Can";
+import { Permissions } from "@/features/roles/types";
 import { CompositionChart } from "./CompositionChart";
 import { CategoryChart } from "./CategoryChart";
 import { DateRangeFilter } from "@/shared/ui/DateRangeFilter";
@@ -71,10 +73,14 @@ interface ProductStats {
     _id: string | null;
     productCount: number;
     brandName: string;
+    /** "Unknown" fallback group — products without a (valid) brand */
+    isUnassigned?: boolean;
   }[];
   supplierStats: {
     supplierId: string | null;
     supplierName: string;
+    /** "Direct Sourcing" fallback group — products without a (valid) supplier */
+    isUnassigned?: boolean;
     totalItems: number;
     investmentValue: number;
   }[];
@@ -91,9 +97,19 @@ interface CardDef {
   value: string | number;
   sub: string;
   badgeVariant: BadgeVariant;
+  link: { href: string; permission: Permissions };
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+
+/** Management page each card opens — only linked when the user may view it */
+const LINKS = {
+  products:       { href: "/dashboard/products",              permission: Permissions.VIEW_PRODUCTS },
+  activeProducts: { href: "/dashboard/products?tab=isActive", permission: Permissions.VIEW_PRODUCTS },
+  lowStock:       { href: "/dashboard/products?tab=lowStock", permission: Permissions.VIEW_PRODUCTS },
+  brands:         { href: "/dashboard/brands",                permission: Permissions.VIEW_BRANDS },
+  suppliers:      { href: "/dashboard/suppliers",             permission: Permissions.VIEW_SUPPLIERS },
+} as const;
 
 const SKELETON_COUNT = 8;
 
@@ -171,11 +187,13 @@ function ColoredBar(props: BarShapeProps) {
 export function ProductAnalyticsContainer() {
   const t = useTranslations("products.statistics");
   const locale = useLocale();
+  const can = useCan();
 
   const [params, setParams] = useState<{
     startDate?: string;
     endDate?: string;
   }>({});
+
   const {
     data: raw,
     isLoading,
@@ -255,11 +273,23 @@ export function ProductAnalyticsContainer() {
     [stats?.supplierStats],
   );
 
+  // Real brands/suppliers only — the fallback groups stay in the charts but aren't counted
+  const brandCount = useMemo(
+    () => (stats?.brandPerformance ?? []).filter((b) => !b.isUnassigned).length,
+    [stats?.brandPerformance],
+  );
+
+  const supplierCount = useMemo(
+    () => (stats?.supplierStats ?? []).filter((s) => !s.isUnassigned).length,
+    [stats?.supplierStats],
+  );
+
   const cards = useMemo<CardDef[]>(
     () => [
       {
         Icon: PackageIcon,
         label: t("overview.totalProducts"),
+        link: LINKS.products,
         value: summary?.totalProducts ?? 0,
         sub: t("overview.newThisPeriod", {
           count: summary?.currentPeriodProducts ?? 0,
@@ -270,6 +300,7 @@ export function ProductAnalyticsContainer() {
       {
         Icon: ActivityIcon,
         label: t("overview.activeProducts"),
+        link: LINKS.activeProducts,
         value: summary?.statusBreakdown?.["true"] ?? 0,
         sub: t("overview.activeProductsDesc"),
         badgeVariant:
@@ -280,6 +311,7 @@ export function ProductAnalyticsContainer() {
       {
         Icon: BoxIcon,
         label: t("overview.totalStock"),
+        link: LINKS.products,
         value: (summary?.totalStock ?? 0).toLocaleString(),
         sub: t("overview.totalStockDesc"),
         badgeVariant:
@@ -288,6 +320,7 @@ export function ProductAnalyticsContainer() {
       {
         Icon: AlertTriangleIcon,
         label: t("overview.lowStockItems"),
+        link: LINKS.lowStock,
         value: summary?.lowStockCount ?? 0,
         sub: t("overview.lowStockDesc"),
         badgeVariant:
@@ -296,6 +329,7 @@ export function ProductAnalyticsContainer() {
       {
         Icon: BarChart3Icon,
         label: t("overview.simpleProducts"),
+        link: LINKS.products,
         value: summary?.composition?.simple ?? 0,
         sub: t("overview.simpleProductsDesc"),
         badgeVariant:
@@ -304,6 +338,7 @@ export function ProductAnalyticsContainer() {
       {
         Icon: BarChart3Icon,
         label: t("overview.variableProducts"),
+        link: LINKS.products,
         value: summary?.composition?.variable ?? 0,
         sub: t("overview.variableProductsDesc"),
         badgeVariant:
@@ -312,21 +347,21 @@ export function ProductAnalyticsContainer() {
       {
         Icon: TrendingUpIcon,
         label: t("overview.brands"),
-        value: stats?.brandPerformance?.length ?? 0,
+        link: LINKS.brands,
+        value: brandCount,
         sub: t("overview.brandsDesc"),
-        badgeVariant:
-          (stats?.brandPerformance?.length ?? 0) > 0 ? "success" : "secondary",
+        badgeVariant: brandCount > 0 ? "success" : "secondary",
       },
       {
         Icon: PackageIcon,
         label: t("overview.suppliers"),
-        value: stats?.supplierStats?.length ?? 0,
+        link: LINKS.suppliers,
+        value: supplierCount,
         sub: t("overview.suppliersDesc"),
-        badgeVariant:
-          (stats?.supplierStats?.length ?? 0) > 0 ? "success" : "secondary",
+        badgeVariant: supplierCount > 0 ? "success" : "secondary",
       },
     ],
-    [summary, stats?.brandPerformance, stats?.supplierStats, t],
+    [summary, brandCount, supplierCount, t],
   );
 
   // ─── Handlers (memoized) ───────────────────────────────────────────────────
@@ -399,6 +434,7 @@ export function ProductAnalyticsContainer() {
                     colorBg={a.bg}
                     colorIcon={a.icon}
                     badgeVariant={c.badgeVariant ?? "success"}
+                    href={can(c.link.permission) ? c.link.href : undefined}
                   />
                 );
               })}

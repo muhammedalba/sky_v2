@@ -13,6 +13,9 @@ import { PieCompositionChart } from '@/shared/ui/charts/PieCompositionChart';
 import { CHART_COLORS } from '@/shared/ui/charts/ChartUtils';
 import { getProductTitle } from './types';
 import type { DashboardData } from './types';
+import { Link } from '@/navigation';
+import { Can } from '@/components/auth/Can';
+import { Permissions } from '@/features/roles/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,6 +51,26 @@ function StarRating({ rating, qty }: StarRatingProps) {
       <span className="text-[10px] text-muted-foreground ms-1">{rating?.toFixed(1)}</span>
       {qty != null && <span className="text-[10px] text-muted-foreground/60">({qty})</span>}
     </div>
+  );
+}
+
+interface ViewAllLinkProps {
+  href: string;
+  permission: Permissions;
+}
+
+/** "View all" header link to the related management page — hidden without view permission */
+function ViewAllLink({ href, permission }: ViewAllLinkProps) {
+  const t = useTranslations('dashboard');
+  return (
+    <Can permission={permission}>
+      <Link
+        href={href}
+        className="text-xs font-semibold text-primary hover:underline underline-offset-4 shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        {t('viewAll')}
+      </Link>
+    </Can>
   );
 }
 
@@ -104,9 +127,12 @@ export function ProductsSection({ d }: ProductsSectionProps) {
             <CardTitle className="text-base font-bold">{t('topProducts')}</CardTitle>
             <CardDescription>{t('topProductsDesc')}</CardDescription>
           </div>
-          <Badge variant="secondary" className="text-xs">
-            {t('productsCount', { count: displayProducts.length })}
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="text-xs">
+              {t('productsCount', { count: displayProducts.length })}
+            </Badge>
+            <ViewAllLink href="/dashboard/products?tab=sort" permission={Permissions.VIEW_PRODUCTS} />
+          </div>
         </CardHeader>
         <CardContent>
           {displayProducts.length === 0 ? (
@@ -217,9 +243,12 @@ export function ProductsSection({ d }: ProductsSectionProps) {
 
         {/* Top Customers */}
         <Card className="border shadow-md bg-background">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold">{t('topCustomers')}</CardTitle>
-            <CardDescription>{t('topCustomersDesc')}</CardDescription>
+          <CardHeader className="pb-2 flex flex-row items-start justify-between gap-3">
+            <div>
+              <CardTitle className="text-base font-bold">{t('topCustomers')}</CardTitle>
+              <CardDescription>{t('topCustomersDesc')}</CardDescription>
+            </div>
+            <ViewAllLink href="/dashboard/users" permission={Permissions.VIEW_USERS} />
           </CardHeader>
           <CardContent>
             {topCustomers.length === 0 ? (
@@ -265,11 +294,14 @@ export function ProductsSection({ d }: ProductsSectionProps) {
 
         {/* Suppliers */}
         <Card className="border shadow-md bg-background">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold">{t('suppliersOverview')}</CardTitle>
-            <CardDescription>
-              {t('totalSuppliers', { count: d?.suppliers?.totalSuppliers ?? 0 })}
-            </CardDescription>
+          <CardHeader className="pb-2 flex flex-row items-start justify-between gap-3">
+            <div>
+              <CardTitle className="text-base font-bold">{t('suppliersOverview')}</CardTitle>
+              <CardDescription>
+                {t('totalSuppliers', { count: d?.suppliers?.totalSuppliers ?? 0 })}
+              </CardDescription>
+            </div>
+            <ViewAllLink href="/dashboard/suppliers" permission={Permissions.VIEW_SUPPLIERS} />
           </CardHeader>
           <CardContent className="space-y-4">
             {supplierPieData.length > 0 && (

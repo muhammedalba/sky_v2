@@ -18,7 +18,8 @@ export const reviewKeys = {
   // (e.g. product.title) per request language
   admin: (locale: string, params?: Record<string, unknown>) =>
     ['reviews', 'admin', locale, params] as const,
-  stats: ['reviews', 'stats'] as const,
+  stats: (params?: { startDate?: string; endDate?: string }) =>
+    ['reviews', 'stats', params] as const,
 };
 
 // ─── Storefront ──────────────────────────────────────────
@@ -102,10 +103,11 @@ export function useAdminReviews(params?: Record<string, unknown>) {
   });
 }
 
-export function useReviewStats() {
+/** All-time counts by default; pass ISO dates to scope them to a period. */
+export function useReviewStats(params?: { startDate?: string; endDate?: string }) {
   return useQuery({
-    queryKey: reviewKeys.stats,
-    queryFn: async () => (await reviewsApi.getStats()).data,
+    queryKey: reviewKeys.stats(params),
+    queryFn: async () => (await reviewsApi.getStats(params)).data,
   });
 }
 

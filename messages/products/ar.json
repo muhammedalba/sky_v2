@@ -228,9 +228,9 @@
                   "variableProducts": "منتجات متغيرة",
                   "variableProductsDesc": "متعددة المتغيرات",
                   "brands": "العلامات التجارية",
-                  "brandsDesc": "خطوط العلامات النشطة",
+                  "brandsDesc": "علامات لديها منتجات",
                   "suppliers": "الموردون",
-                  "suppliersDesc": "شركاء التوريد",
+                  "suppliersDesc": "موردون لديهم منتجات",
                   "newThisPeriod": "+{count} هذه الفترة"
             },
             "sections": {

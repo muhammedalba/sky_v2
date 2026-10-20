@@ -79,6 +79,8 @@
             "noOrders": "No orders",
             "reviewStatus": "Review Status",
             "noReviews": "No reviews",
+            "noData": "No data",
+            "allTime": "Not affected by the date filter",
             "salesChannelsTitle": "Sales Channels Comparison",
             "salesChannelsDesc": "Organic vs Marketing — Revenue, Orders & Discounts",
             "organic": "Organic",
@@ -113,7 +115,8 @@
             "categories": "Categories",
             "subCategories": "Sub: {count}",
             "brands": "Brands",
-            "suppliers": "Suppliers: {count}"
+            "suppliers": "Suppliers: {count}",
+            "allTime": "All-time — not affected by the date filter"
       },
       "error": {
             "title": "Failed to load dashboard",
