@@ -294,7 +294,7 @@
   /* Arabic-first font stack when in RTL mode */
   [dir="rtl"] body,
   body:lang(ar) {
-    font-family: var(--font-arabic), var(--font-inter), Tahoma, sans-serif;
+    font-family: var(--font-arabic), var(--font-arabic-latin), var(--font-inter), Tahoma, sans-serif;
   }
 }
 
