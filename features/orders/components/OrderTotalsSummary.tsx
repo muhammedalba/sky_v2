@@ -7,6 +7,7 @@ import type { Order } from "@/types";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import Price from "@/shared/ui/Price";
 import { ShoppingBagIcon } from "@/shared/ui/Icons";
+import OrderTaxNotes from "./OrderTaxNotes";
 
 interface OrderTotalsSummaryProps {
   order: Order;
@@ -24,12 +25,13 @@ export default function OrderTotalsSummary({
   className,
 }: OrderTotalsSummaryProps) {
   const t = useTranslations("orders");
+  const chargedTax = order.chargedTaxAmount ?? order.taxAmount ?? 0;
 
   return (
     <ScrollReveal animation="fade">
       <Card className={cn("border-border/30 bg-muted/5", className)}>
         <div className="w-full p-4 border-b bg-accent/70 flex gap-2 items-center">
-        <ShoppingBagIcon className="text-warning w-5 h-5"/>
+          <ShoppingBagIcon className="text-warning w-5 h-5" />
           <h4 className="text-sm font-bold title-gradient ">
             {t("orderSummary")}
           </h4>
@@ -39,25 +41,17 @@ export default function OrderTotalsSummary({
             <span>{t("subtotal")}</span>
 
             <Price
-              className="tabular-nums font-semibold"
+              className={cn(
+                "tabular-nums font-semibold",
+                !!order.discountAmount && order.discountAmount > 0
+                  ? " line-through text-muted-foreground"
+                  : "text-foreground",
+              )}
               currencyClassName=" text-[1em]"
               amount={order.totalPrice}
               animate={false}
             />
           </div>
-          {!!order.shippingAmount && order.shippingAmount > 0 && (
-            <div className="flex justify-between text-muted-foreground p-2">
-              <span>{t("shippingAmount")}</span>
-              <span className="tabular-nums font-semibold">
-                <Price
-                  className="tabular-nums font-semibold"
-                  currencyClassName=" text-[1em]"
-                  amount={order.shippingAmount}
-                  animate={false}
-                />
-              </span>
-            </div>
-          )}
           {!!order.discountAmount && order.discountAmount > 0 && (
             <div className="flex justify-between text-destructive p-2">
               <span>{t("discount")}</span>
@@ -72,19 +66,20 @@ export default function OrderTotalsSummary({
               </span>
             </div>
           )}
-          {!!order.taxAmount && order.taxAmount > 0 && (
+          {!!order.shippingAmount && order.shippingAmount > 0 && (
             <div className="flex justify-between text-muted-foreground p-2">
-              <span>{t("taxAmount")}</span>
+              <span>{t("shippingAmount")}</span>
               <span className="tabular-nums font-semibold">
                 <Price
                   className="tabular-nums font-semibold"
                   currencyClassName=" text-[1em]"
-                  amount={order.taxAmount}
+                  amount={order.shippingAmount}
                   animate={false}
                 />
               </span>
             </div>
           )}
+
           {!!order.paymentFees && order.paymentFees > 0 && (
             <div className="flex justify-between text-muted-foreground p-2">
               <span>{t("paymentFees")}</span>
@@ -98,6 +93,23 @@ export default function OrderTotalsSummary({
               </span>
             </div>
           )}
+          {chargedTax > 0 && (
+            <div className="flex justify-between text-muted-foreground p-2">
+              <span>
+                {t("taxAmount")}
+                {!!order.taxPercentage && ` (${order.taxPercentage}%)`}
+              </span>
+              <span className="tabular-nums font-semibold">
+                <Price
+                  className="tabular-nums font-semibold"
+                  currencyClassName=" text-[1em]"
+                  amount={chargedTax}
+                  animate={false}
+                />
+              </span>
+            </div>
+          )}
+          <OrderTaxNotes order={order} className="px-2" />
           <div className="border-t border-border/40 mt-2 pt-2 flex justify-between text-sm font-black text-foreground p-2">
             <span>{t("grandTotal")}</span>
             <span className="tabular-nums text-primary text-base">

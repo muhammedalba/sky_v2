@@ -16,12 +16,16 @@ export interface InvoiceCalculatedData {
   paymentFees: number;
   discount: number;
   taxableSubtotal: number;
+  /** Undefined for orders placed before the backend stored these values. */
+  productsBeforeTax?: number;
+  productsAfterTax?: number;
   tax: number;
   grandTotal: number;
   orderYear: number;
   userVat: string;
   customerCountry: string;
   customerCity: string;
+  customerRegion: string;
   arabicAmountWords: string;
   siteNameAr: string;
   siteNameEn: string;
@@ -58,9 +62,15 @@ export function useInvoiceData(
     const subtotal = order.totalPrice || 0;
     const shipping = order.shippingAmount || 0;
     const discount = order.discountAmount || 0;
-    const taxableSubtotal = subtotal - discount;
-    const tax = order.taxAmount || taxableSubtotal * 0.15;
-    const grandTotal = order.grandTotal || taxableSubtotal + tax + shipping;
+    const paymentFees = order.paymentFees || 0;
+    const netBeforeTax = subtotal - discount + shipping + paymentFees;
+    const tax = order.taxAmount || netBeforeTax * 0.15;
+    const grandTotal = order.grandTotal || netBeforeTax + tax;
+    // Total excluding VAT; derived from stored totals so tax-inclusive prices are handled too
+    const taxableSubtotal =
+      order.grandTotal && order.taxAmount
+        ? order.grandTotal - order.taxAmount
+        : netBeforeTax;
     const orderYear = order.createdAt
       ? new Date(order.createdAt).getFullYear()
       : 2026;
@@ -73,6 +83,10 @@ export function useInvoiceData(
     const customerCity =
       getLocationName(order.shippingAddress?.city, "ar") ||
       getTrans(order.shippingAddress?.city as unknown as LocalizedString | undefined) ||
+      "-";
+    const customerRegion =
+      getLocationName(order.shippingAddress?.region, "ar") ||
+      getTrans(order.shippingAddress?.region as unknown as LocalizedString | undefined) ||
       "-";
 
     const arabicAmountWords = numberToArabicWords(grandTotal);
@@ -119,7 +133,6 @@ export function useInvoiceData(
       getLocalizedValue(settings?.businessAddress?.street, "en") || "-";
     const mailBox = settings?.businessAddress?.mailBox || "-";
     const poBox = settings?.businessAddress?.poBox || "-";
-    const paymentFees = order.paymentFees || 0;
 
     return {
       subtotal,
@@ -127,12 +140,15 @@ export function useInvoiceData(
       paymentFees,
       discount,
       taxableSubtotal,
+      productsBeforeTax: order.productsAmountBeforeTax,
+      productsAfterTax: order.productsAmountAfterTax,
       tax,
       grandTotal,
       orderYear,
       userVat,
       customerCountry,
       customerCity,
+      customerRegion,
       arabicAmountWords,
       siteNameAr,
       siteNameEn,

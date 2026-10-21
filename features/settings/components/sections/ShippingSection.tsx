@@ -15,6 +15,7 @@ export default function ShippingSection() {
 
   // Axis 2.1: useWatch for taxesIncluded
   const taxesIncluded = useWatch({ control, name: 'taxesIncluded' });
+  const applyTaxOnCharges = useWatch({ control, name: 'applyTaxOnCharges' });
 
   return (
     <Card className="border-border/50 shadow-xs rounded-3xl overflow-hidden">
@@ -47,7 +48,7 @@ export default function ShippingSection() {
         </div>
 
 
-        <div className="pt-6 border-t border-border/50">
+        <div className="pt-6 border-t border-border/50 space-y-4">
           <div className="flex items-center justify-between p-4 border border-border/50 rounded-2xl bg-muted/5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -61,6 +62,21 @@ export default function ShippingSection() {
             <Switch
               checked={!!taxesIncluded}
               onCheckedChange={(checked) => setValue('taxesIncluded', checked, { shouldDirty: true })}
+            />
+          </div>
+          <div className="flex items-center justify-between p-4 border border-border/50 rounded-2xl bg-muted/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <TruckIcon className="w-5 h-5 text-primary" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium">{t('shipping.applyTaxOnCharges')}</p>
+                <p className="text-xs text-muted-foreground">{t('shipping.applyTaxOnChargesDesc')}</p>
+              </div>
+            </div>
+            <Switch
+              checked={!!applyTaxOnCharges}
+              onCheckedChange={(checked) => setValue('applyTaxOnCharges', checked, { shouldDirty: true })}
             />
           </div>
         </div>

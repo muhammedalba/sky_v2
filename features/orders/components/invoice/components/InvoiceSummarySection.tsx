@@ -8,6 +8,8 @@ interface InvoiceSummarySectionProps {
   shippingAmount: number;
   paymentFees: number;
   taxableSubtotal: number;
+  productsBeforeTax?: number;
+  productsAfterTax?: number;
   tax: number;
   grandTotal: number;
   siteNameAr: string;
@@ -23,6 +25,8 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
   shippingAmount,
   paymentFees,
   taxableSubtotal,
+  productsBeforeTax,
+  productsAfterTax,
   tax,
   grandTotal,
   siteNameAr,
@@ -46,7 +50,7 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
                 ? new Date(createdAt).toISOString()
                 : new Date().toISOString()
             }
-            totalWithVat={subtotal?.toFixed(2)}
+            totalWithVat={grandTotal?.toFixed(2)}
             vatAmount={tax?.toFixed(2)}
             invoiceHash={invoiceHash}
           />
@@ -58,7 +62,7 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
             <tbody>
               <tr className="border-b border-black">
                 <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right w-3/5">
-                  إجمالي الفاتورة / Total Amount
+                  إجمالي المنتجات / Products Total
                 </td>
                 <td className="p-1.5 font-mono font-bold text-left w-2/5">
                   {formatCurrency(subtotal)}
@@ -72,14 +76,26 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
                   {formatCurrency(discount)}
                 </td>
               </tr>
-              <tr className="border-b border-black">
-                <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
-                  الصافي بعد الخصم - الخاضع للضريبة / Total Amount (Excluding VAT)
-                </td>
-                <td className="p-1.5 font-mono font-bold text-left">
-                  {formatCurrency(taxableSubtotal)}
-                </td>
-              </tr>
+              {productsBeforeTax !== undefined && (
+                <tr className="border-b border-black">
+                  <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
+                    صافي المنتجات قبل الضريبة / Net Products (Excluding VAT)
+                  </td>
+                  <td className="p-1.5 font-mono font-bold text-left">
+                    {formatCurrency(productsBeforeTax)}
+                  </td>
+                </tr>
+              )}
+              {productsAfterTax !== undefined && (
+                <tr className="border-b border-black">
+                  <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
+                    صافي المنتجات شامل الضريبة / Net Products (Including VAT)
+                  </td>
+                  <td className="p-1.5 font-mono font-bold text-left">
+                    {formatCurrency(productsAfterTax)}
+                  </td>
+                </tr>
+              )}
               <tr className="border-b border-black">
                 <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
                   تكلفة الشحن / Shipping Cost
@@ -94,6 +110,14 @@ export const InvoiceSummarySection: React.FC<InvoiceSummarySectionProps> = ({
                 </td>
                 <td className="p-1.5 font-mono font-bold text-left">
                   {formatCurrency(paymentFees)}
+                </td>
+              </tr>
+              <tr className="border-b border-black">
+                <td className="bg-sky-100 font-bold p-1.5 border-l border-black text-right">
+                  الإجمالي غير شامل الضريبة / Total Amount (Excluding VAT)
+                </td>
+                <td className="p-1.5 font-mono font-bold text-left">
+                  {formatCurrency(taxableSubtotal)}
                 </td>
               </tr>
               <tr className="border-b border-black">

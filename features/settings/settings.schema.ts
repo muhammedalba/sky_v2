@@ -156,6 +156,7 @@ export const settingsSchema = z.object({
   freeShippingThreshold: z.coerce.number().min(0).default(0),
   vatRate: z.coerce.number().min(0).max(100).default(15),
   taxesIncluded: z.boolean().default(false),
+  applyTaxOnCharges: z.boolean().default(false),
 
   // Features
   features: z.object({

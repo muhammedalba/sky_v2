@@ -26,6 +26,7 @@ import { CouponsIcon, RefreshCwIcon, ShoppingBagIcon } from "@/shared/ui/Icons";
 import { formatDate, formatOrderNumber } from "@/lib/utils";
 import { Link } from "@/navigation";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
+import { getFileUrl } from "@/shared/utils/image.util";
 
 export default function OrderDetailsPage({
   params,
@@ -134,8 +135,8 @@ export default function OrderDetailsPage({
             order={order}
             onPreviewInvoice={() => setIsInvoiceOpen(true)}
             onDownloadInvoice={() => {
-              if (order.InvoicePdf) {
-                window.open(order.InvoicePdf, "_blank");
+              if (getFileUrl(order.InvoicePdf)) {
+                window.open(getFileUrl(order.InvoicePdf), "_blank");
               } else {
                 setIsInvoiceOpen(true);
               }
@@ -176,8 +177,8 @@ export default function OrderDetailsPage({
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
                   <span>{t("discount")}</span>
                   <span className="text-foreground font-bold tabular-nums">
-                    {formatCurrency(order.couponId?.discount)}
-                    {order.currency || "SAR"}
+                    {order.couponId?.type == "percentage" ? (order.couponId?.discount + " %") : formatCurrency(order.couponId?.discount)}
+
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">

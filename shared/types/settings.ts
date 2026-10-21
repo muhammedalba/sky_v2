@@ -105,6 +105,7 @@ export interface StoreSettings {
   minOrderAmount: number;
   vatRate: number;
   taxesIncluded: boolean;
+  applyTaxOnCharges: boolean;
   maintenanceMode: boolean;
   maintenanceMessage: LocalizedString;
   allowRegistration: boolean;

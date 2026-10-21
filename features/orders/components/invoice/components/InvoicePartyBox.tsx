@@ -49,20 +49,18 @@ export const InvoicePartyBox: React.FC<InvoicePartyBoxProps> = ({
         <thead>
           <tr className="bg-slate-100 border-b border-black font-semibold">
             <th className="p-1 border-l border-black">البلد | Country</th>
-            <th className="p-1 border-l border-black">المدينة | City</th>
             <th className="p-1 border-l border-black">المنطقة | Area</th>
+            <th className="p-1 border-l border-black">المدينة | City</th>
             <th className="p-1 border-l border-black">الشارع | Street</th>
-            <th className="p-1 border-l border-black">
-              صندوق بريد | Mail Box
-            </th>
+            <th className="p-1 border-l border-black">صندوق بريد | Mail Box</th>
             <th className="p-1">الرمز البريدي | Po Box</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="p-1 border-l border-black">{address.country}</td>
-            <td className="p-1 border-l border-black">{address.city}</td>
             <td className="p-1 border-l border-black">{address.area}</td>
+            <td className="p-1 border-l border-black">{address.city}</td>
             <td className="p-1 border-l border-black">{address.street}</td>
             <td className="p-1 border-l border-black">{address.mailBox}</td>
             <td className="p-1">{address.poBox}</td>

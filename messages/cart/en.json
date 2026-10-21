@@ -8,6 +8,8 @@
   "summary": {
     "title": "Order Summary",
     "subtotal": "Subtotal",
+    "subtotalAfterDiscount": "Subtotal After Discount",
+
     "shipping": "Shipping",
     "tax": "Tax",
     "total": "Total Amount",
@@ -39,7 +41,10 @@
     "number_of_products": "Number of Products",
     "view_cart": "View Cart",
     "home": "Home",
-    "secure_encrypted": "Secure & Encrypted"
+    "secure_encrypted": "Secure & Encrypted",
+    "refund_notice_title": "Refund Policy",
+    "refund_notice_desc": "Returns and refunds are not processed through the store directly; they are handled by contacting the store's support team.",
+    "refund_notice_cta": "Contact Support"
   },
   "messages": {
     "login_to_apply_coupon": "You must be logged in to apply the coupon",
@@ -175,4 +180,3 @@
     }
   }
 }
-

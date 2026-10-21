@@ -108,6 +108,7 @@ const SETTINGS_DEFAULTS: SettingsInput = {
   freeShippingThreshold: 0,
   vatRate: 15,
   taxesIncluded: false,
+  applyTaxOnCharges: false,
   features: {
     reviews: true,
     reviewsVerifiedOnly: false,
@@ -218,6 +219,7 @@ export default function SettingsForm() {
           "freeShippingThreshold",
           "vatRate",
           "taxesIncluded",
+          "applyTaxOnCharges",
           "maintenanceMode",
           "allowRegistration",
           "autoBackup",

@@ -18,6 +18,7 @@ import {
   ClockIcon,
   TrashIcon,
   BoxIcon,
+  RotateCcwIcon,
 } from "@/shared/ui/Icons";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { getStoreSettings } from "@/shared/api/settings";
@@ -60,11 +61,12 @@ const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>>
   rights: ScaleIcon,
   deletion: TrashIcon,
   retention: BoxIcon,
+  refunds: RotateCcwIcon,
   children: HeartIcon,
   changes: RefreshCwIcon,
 };
 
-const LAST_UPDATED = new Date("2026-10-09T00:00:00Z");
+const LAST_UPDATED = new Date("2026-10-20T00:00:00Z");
 
 export default async function PrivacyPage({ params }: Props) {
   const { locale } = (await params) as { locale: "ar" | "en" };

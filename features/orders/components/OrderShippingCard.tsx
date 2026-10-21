@@ -19,6 +19,7 @@ export default function OrderShippingCard({ order }: OrderShippingCardProps) {
   const formatCurrency = useFormatCurrency();
   const t = useTranslations("orders");
   const address = order.shippingAddress;
+
   const fullName =
     `${address?.firstName || ""} ${address?.lastName || ""}`.trim() ||
     "Guest Customer";
@@ -96,7 +97,14 @@ export default function OrderShippingCard({ order }: OrderShippingCardProps) {
                 <span>{getTrans(address?.country?.name) || "N/A"}</span>
               </div>
             </div>
-
+            <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
+              <span className="text-muted-foreground font-semibold">
+                {t("shippingInfo.region")}
+              </span>
+              <span className="text-foreground font-bold">
+                {getTrans(address?.region?.name) || "N/A"}
+              </span>
+            </div>
             <div className="flex items-center justify-between text-xs font-medium border-b border-border/10 pb-2">
               <span className="text-muted-foreground font-semibold">
                 {t("shippingInfo.city")}

@@ -7,7 +7,7 @@ import {
 import { Coupon, LocalizedString } from '@/types';
 import { FileAsset } from '@/shared/types/file-asset';
 import { ShippingProvider, ShippingRate } from '../shipping/types';
-import { City, Country } from '../locations/types';
+import { City, Country, Region } from '../locations/types';
 
 export interface Address {
   firstName?: string;
@@ -15,6 +15,7 @@ export interface Address {
   phone?: string;
   country?: Country;
   city?: City;
+  region?: Region;
   street?: string;
   building?: string;
   postalCode?: string;
@@ -55,7 +56,17 @@ export interface Order {
   paymentMethod?: string;
   shippingMethod?: string;
   shippingAmount?: number;
+  /** Full VAT (invoice only — includes VAT inside tax-inclusive prices). */
   taxAmount?: number;
+  /** Tax charged on top of the total, calculated by the backend; shown on order screens. */
+  chargedTaxAmount?: number;
+  /** Products amount after coupon, excluding / including VAT (calculated by the backend). */
+  productsAmountBeforeTax?: number;
+  productsAmountAfterTax?: number;
+  /** Tax rules snapshot at purchase time. */
+  taxPercentage?: number;
+  taxesIncluded?: boolean;
+  applyTaxOnCharges?: boolean;
   paymentFees?: number;
   grandTotal?: number;
   totalPrice?: number;
@@ -71,9 +82,9 @@ export interface Order {
   status: string;
   isCheckedOut?: boolean;
   notes?: string;
-  transferReceiptImg?: string;
-  InvoicePdf?: string;
-  DeliveryReceiptImage?: string;
+  transferReceiptImg?: FileAsset;
+  InvoicePdf?: FileAsset;
+  DeliveryReceiptImage?: FileAsset;
   deliveryReceiptNumber?: string;
   deliveryDate?: string;
   deliveryName?: string;

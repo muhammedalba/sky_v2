@@ -2,7 +2,11 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Link } from "@/navigation";
-import { TagIcon as Tag, ShieldCheckIcon as ShieldCheck, LockIcon as Lock } from "@/shared/ui/Icons";
+import {
+  TagIcon as Tag,
+  ShieldCheckIcon as ShieldCheck,
+  LockIcon as Lock,
+} from "@/shared/ui/Icons";
 import { CartItem, resolveItemData } from "@/features/cart/utils/cartUtils";
 import { CouponValidationResult } from "@/features/cart/hooks/useCart";
 import ErrorMessage from "@/shared/ui/ErrorMessage";
@@ -10,6 +14,7 @@ import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import {
   ArrowRightIcon,
+  InfoIcon,
   OrdersIcon,
   ShieldIcon,
   TrashIcon,
@@ -19,7 +24,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useToast } from "@/shared/hooks/useToast";
-import { useApplyCoupon, useRemoveCoupon } from "@/features/checkout/hooks/useCheckout";
+import {
+  useApplyCoupon,
+  useRemoveCoupon,
+} from "@/features/checkout/hooks/useCheckout";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { useMe } from "@/features/auth/hooks/useAuth";
 import { useTrans } from "@/shared/hooks/useTrans";
@@ -93,7 +101,8 @@ export function OrderSummaryCard({
     (summary?.discountAmount as number | undefined) ?? 0;
   const summarySubtotal = summary?.subtotal as number | undefined;
   const summaryShippingCost = summary?.shippingCost as number | undefined;
-  const summaryTaxAmount = summary?.taxAmount as number | undefined;
+  // Tax charged on top of the total, calculated by the backend
+  const summaryTaxAmount = summary?.chargedTaxAmount as number | undefined;
   const summaryTaxPercentage = summary?.taxPercentage;
   const summaryPaymentFees = summary?.paymentFees as number | undefined;
   const summaryTotalPrice = summary?.totalPrice as number | undefined;
@@ -278,23 +287,59 @@ export function OrderSummaryCard({
         {checkoutMode && (
           <>
             {/* Subtotal */}
-            <div className="flex items-center justify-between text-sm">
+            <div className=" relative flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
                 {t("summary.subtotal")}
               </span>
               <Price
                 amount={summarySubtotal ?? subtotal}
-                className="font-semibold text-foreground tabular-nums"
+                className={cn(
+                  "font-semibold tabular-nums",
+                  parsedDiscountAmount > 0 || !!appliedCoupon
+                    ? " line-through text-muted-foreground"
+                    : "text-foreground",
+                )}
                 animate={false}
               />
+              {/* <p className="text-[10px] text-muted-foreground absolute -top-4 inset-e-0">
+                  {taxesIncluded && t("misc.tax_included")}
+                </p> */}
             </div>
-
+            {/* discount */}
+            {(parsedDiscountAmount > 0 || !!appliedCoupon) && (
+              <div className="flex justify-between text-sm">
+                <span className="text-success font-semibold flex items-center gap-1">
+                  <Tag className="w-3.5 h-3.5" />
+                  {t("coupon.discount")}
+                  <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
+                    {appliedCoupon?.couponDetails?.couponType ===
+                    "percentage" ? (
+                      `${appliedCoupon?.couponDetails?.discount} %`
+                    ) : (
+                      <Price
+                        amount={appliedCoupon?.couponDetails?.discount ?? 0}
+                        animate={false}
+                      />
+                    )}
+                  </span>
+                </span>
+                <span className="font-bold text-success tabular-nums inline-flex items-baseline">
+                  -
+                  <Price
+                    amount={
+                      parsedDiscountAmount || appliedCoupon?.discountAmount || 0
+                    }
+                    animate={false}
+                  />
+                </span>
+              </div>
+            )}
             {/* shippingCost */}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
                 {t("summary.shipping")}
               </span>
-              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
+              <span className="text-xs text-muted-foreground">
                 {(summaryShippingCost ?? 0) > 0 ? (
                   <Price amount={summaryShippingCost!} animate={false} />
                 ) : summaryShippingCost === 0 ? (
@@ -304,14 +349,27 @@ export function OrderSummaryCard({
                 )}
               </span>
             </div>
+            {/* paymentFees */}
+            {(summaryPaymentFees ?? 0) > 0 && checkoutMode && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {t("summary.payment_fees")}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  <Price amount={summaryPaymentFees!} animate={false} />
+                </span>
+              </div>
+            )}
             {/* tax */}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
                 {t("summary.tax")} ({String(summaryTaxPercentage ?? "")}%)
               </span>
-              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-lg">
+              <span className="text-xs text-muted-foreground ">
                 {(summaryTaxAmount ?? 0) > 0 ? (
                   <Price amount={summaryTaxAmount!} animate={false} />
+                ) : taxesIncluded ? (
+                  t("misc.tax_included")
                 ) : (
                   t("summary.calculated_at_checkout")
                 )}
@@ -320,49 +378,10 @@ export function OrderSummaryCard({
           </>
         )}
 
-        {/* paymentFees */}
-        {(summaryPaymentFees ?? 0) > 0 && checkoutMode && (
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">
-              {t("summary.payment_fees")}
-            </span>
-            <span className="font-semibold">
-              <Price amount={summaryPaymentFees!} animate={false} />
-            </span>
-          </div>
-        )}
-
-        {/* discount */}
-        {(parsedDiscountAmount > 0 || !!appliedCoupon) && (
-          <div className="flex justify-between text-sm">
-            <span className="text-success font-semibold flex items-center gap-1">
-              <Tag className="w-3.5 h-3.5" />
-              {t("coupon.discount")}
-              <span className="text-[11px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-md uppercase">
-                {appliedCoupon?.couponDetails?.couponType === "percentage" ? (
-                  `${appliedCoupon?.couponDetails?.discount} %`
-                ) : (
-                  <Price
-                    amount={appliedCoupon?.couponDetails?.discount ?? 0}
-                    animate={false}
-                  />
-                )}
-              </span>
-            </span>
-            <span className="font-bold text-success tabular-nums inline-flex items-baseline">
-              -
-              <Price
-                amount={parsedDiscountAmount || appliedCoupon?.discountAmount || 0}
-                animate={false}
-              />
-            </span>
-          </div>
-        )}
-
         {/* Divider */}
         <div className="h-px bg-border/50 my-1" />
         {/* Total */}
-        <div className="flex items-end justify-between">
+        <div className="flex items-center justify-between">
           <span className="font-semibold text-foreground text-base">
             {t("summary.total")}
           </span>
@@ -372,15 +391,23 @@ export function OrderSummaryCard({
                 <s className="text-xs tabular-nums">
                   {/* Original price = final total + discount amount (mathematically guaranteed regardless of tax mode) */}
                   <Price
-                    amount={(summaryTotalPrice ?? totalAmount) + parsedDiscountAmount}
+                    amount={
+                      (summaryTotalPrice ?? totalAmount) + parsedDiscountAmount
+                    }
                     numberClassName="text-muted-foreground"
                     currencyClassName="text-muted-foreground"
                     animate={false}
+                    className={cn(
+                      "font-semibold tabular-nums",
+                      parsedDiscountAmount > 0 || !!appliedCoupon
+                        ? " line-through text-muted-foreground"
+                        : "text-foreground",
+                    )}
                   />
                 </s>
                 <Price
                   amount={totalAmount}
-                  className="text-xl text-success tabular-nums leading-tight"
+                  className="text-base text-success tabular-nums leading-tight"
                   animate={false}
                 />
               </div>
@@ -560,6 +587,27 @@ export function OrderSummaryCard({
           </div>
         </div>
       )}
+
+      {/* ── Refund notice (both modes) — refunds go through store support ── */}
+      <div className={checkoutMode ? "px-5 pb-5" : "px-6 pb-6"}>
+        <div className="flex items-start gap-3 rounded-2xl p-3 bg-primary/5 border border-primary/20">
+          <InfoIcon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-foreground">
+              {t("misc.refund_notice_title")}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t("misc.refund_notice_desc")}{" "}
+              <Link
+                href="/contact"
+                className="font-semibold text-primary hover:underline"
+              >
+                {t("misc.refund_notice_cta")}
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

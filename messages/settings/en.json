@@ -108,7 +108,9 @@
     "vatRate": "VAT Rate (%)",
     "vatWarning": "Note: These settings will be ignored if specific tax rules are defined in the Taxes section.",
     "taxesIncluded": "Prices Include Tax",
-    "taxesIncludedDesc": "Treat prices as tax-inclusive."
+    "taxesIncludedDesc": "Treat prices as tax-inclusive.",
+    "applyTaxOnCharges": "Apply Tax on Shipping & Fees",
+    "applyTaxOnChargesDesc": "When on, VAT is calculated on the net amount after discount including shipping and payment fees; when off, on products only."
   },
   "features": {
     "title": "Store Features",

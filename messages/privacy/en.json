@@ -109,6 +109,19 @@
                   ]
             },
             {
+                  "id": "refunds",
+                  "title": "Returns & Refunds",
+                  "paragraphs": [
+                        "Returns and refunds are not processed directly through the store. To return a product or request a refund for an order, please contact the store's support team through the contact page or by email, including your order number and the reason for your request.",
+                        "When handling a refund request, we use your order details and the contact information you provide only to verify the request, communicate with you about it, and complete the refund."
+                  ],
+                  "list": [
+                        "Refunded amounts are returned to the same payment method used for the order, through the approved payment provider",
+                        "It may take a few business days for the amount to appear in your account, depending on your bank or payment provider",
+                        "We keep a record of refund requests as part of the order's financial records for accounting and dispute purposes"
+                  ]
+            },
+            {
                   "id": "children",
                   "title": "Children's Privacy",
                   "paragraphs": [

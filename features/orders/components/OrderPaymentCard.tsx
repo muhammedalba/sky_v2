@@ -12,7 +12,7 @@ import { useDownloadFile } from "@/shared/hooks/useDownloadFile";
 import { useTranslations } from "next-intl";
 import Modal from "@/shared/ui/Modal";
 import { FileTextIcon, EyeIcon, ExternalLinkIcon, DownloadIcon } from "@/shared/ui/Icons";
-import { getImageUrl } from "@/shared/utils/image.util";
+import { getFileUrl, getImageUrl } from "@/shared/utils/image.util";
 import { Can } from "@/components/auth/Can";
 import { Permissions } from "@/features/roles/types";
 import OrderRefundDialog from "@/features/orders/components/OrderRefundDialog";
@@ -44,7 +44,7 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
 
   const handleDownloadReceipt = () => {
     const ext =getImageUrl( order.transferReceiptImg)?.split(".").pop()?.split("?")[0] || "jpg";
-    downloadFile(order.transferReceiptImg, {
+    downloadFile(getFileUrl(order.transferReceiptImg), {
       fileName: `receipt-${order.user?.name || "transfer"}.${ext}`,
     });
   };
@@ -185,7 +185,7 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
                       {t("paymentInfo.viewReceipt")}
                     </Button>
                     <a
-                      href={order.transferReceiptImg}
+                      href={getFileUrl(order.transferReceiptImg)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg border border-border/60 bg-background text-muted-foreground hover:text-foreground text-xs transition-colors"

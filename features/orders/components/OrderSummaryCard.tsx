@@ -1,9 +1,11 @@
 "use client";
 
 import { Order } from "@/features/orders/types";
+import { cn } from "@/lib/utils";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { useTranslations } from "next-intl";
+import OrderTaxNotes from "./OrderTaxNotes";
 
 interface OrderSummaryCardProps {
   order: Order;
@@ -18,7 +20,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
   const subtotal = order.totalPrice || 0;
   const shipping = order.shippingAmount || 0;
   const discount = order.discountAmount || 0;
-  const tax = order.taxAmount || 0;
+  const tax = order.chargedTaxAmount ?? order.taxAmount ?? 0;
   const paymentFees = order.paymentFees || 0;
   const grandTotal = order.grandTotal || subtotal;
   const refunded = order.refundedAmount || 0;
@@ -38,29 +40,37 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
         <div className="space-y-3.5">
           <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
             <span>{t("subtotal")}</span>
-            <span className="text-foreground tabular-nums">
+            <span
+              className={cn(
+                "text-foreground tabular-nums",
+                discount > 0 && "line-through",
+              )}
+            >
               {formatCurrency(subtotal)}
             </span>
           </div>
-
+          {discount > 0 && (
+            <>
+              <div className="flex items-center justify-between text-xs font-bold text-destructive">
+                <span>{t("discount")}</span>
+                <span className="tabular-nums">
+                  -{formatCurrency(discount)}
+                </span>
+              </div>
+               <div className="h-px bg-border/40 my-1" />
+              <div className="flex items-center justify-between text-xs font-bold ">
+                <span>{t("subtotalAfterDiscount")}</span>
+                <span className="tabular-nums">
+                  {formatCurrency(subtotal-discount)}
+                </span>
+              </div>
+            </>
+          )}
+         
           <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
             <span>{t("shipping")}</span>
             <span className="text-foreground tabular-nums">
               {formatCurrency(shipping)}
-            </span>
-          </div>
-
-          {discount > 0 && (
-            <div className="flex items-center justify-between text-xs font-bold text-red-500">
-              <span>{t("discount")}</span>
-              <span className="tabular-nums">-{formatCurrency(discount)}</span>
-            </div>
-          )}
-          <div className="h-px bg-border/40 my-1" />
-          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-            <span className="text-success">{t("tax")}</span>
-            <span className="text-success tabular-nums">
-              {formatCurrency(tax)}
             </span>
           </div>
 
@@ -70,6 +80,16 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
               {formatCurrency(paymentFees)}
             </span>
           </div>
+          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+            <span className="text-success">
+              {t("tax")}
+              {!!order.taxPercentage && ` (${order.taxPercentage}%)`}
+            </span>
+            <span className="text-success tabular-nums">
+              {formatCurrency(tax)}
+            </span>
+          </div>
+          <OrderTaxNotes order={order} />
         </div>
 
         <div className="h-px bg-border/40 my-1" />

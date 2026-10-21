@@ -122,6 +122,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   minOrderAmount: 0,
   vatRate: 15,
   taxesIncluded: true,
+  applyTaxOnCharges: false,
   maintenanceMode: false,
   maintenanceMessage: {
     ar: "الموقع قيد الصيانة حالياً",

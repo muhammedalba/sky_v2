@@ -182,7 +182,8 @@ export default function InvoicePreviewDialog({
             className="gap-2"
             disabled={isSettingsLoading}
           >
-            <PrinterIcon className="w-4 h-4" />Print Invoice
+            <PrinterIcon className="w-4 h-4" />
+            Print Invoice
           </Button>
           <Button
             variant="default"
@@ -197,7 +198,8 @@ export default function InvoicePreviewDialog({
               </>
             ) : (
               <>
-                <DownloadIcon className="w-4 h-4" />Download PDF
+                <DownloadIcon className="w-4 h-4" />
+                Download PDF
               </>
             )}
           </Button>
@@ -265,7 +267,7 @@ export default function InvoicePreviewDialog({
               address={{
                 country: data.customerCountry,
                 city: data.customerCity,
-                area: order.shippingAddress?.building || "-",
+                area: data.customerRegion,
                 street: order.shippingAddress?.street || "-",
                 mailBox: "-",
                 poBox: order.shippingAddress?.postalCode || "-",
@@ -282,6 +284,8 @@ export default function InvoicePreviewDialog({
               shippingAmount={data.shipping}
               paymentFees={data.paymentFees}
               taxableSubtotal={data.taxableSubtotal}
+              productsBeforeTax={data.productsBeforeTax}
+              productsAfterTax={data.productsAfterTax}
               tax={data.tax}
               grandTotal={data.grandTotal}
               siteNameAr={data.siteNameAr}

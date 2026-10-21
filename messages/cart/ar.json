@@ -8,6 +8,7 @@
   "summary": {
     "title": "ملخص الطلب",
     "subtotal": "المجموع الفرعي",
+    "subtotalAfterDiscount": "المجموع  بعد الخصم",
     "shipping": "الشحن",
     "tax": "الضريبة",
     "total": "المجموع الإجمالي",
@@ -39,7 +40,10 @@
     "number_of_products": "عدد المنتجات",
     "view_cart": "عرض السلة",
     "home": "الرئيسية",
-    "secure_encrypted": "دفع آمن ومشفر"
+    "secure_encrypted": "دفع آمن ومشفر",
+    "refund_notice_title": "سياسة الاسترجاع",
+    "refund_notice_desc": "لا تتم عمليات الاسترجاع أو استرداد المبالغ عبر المتجر مباشرةً، وإنما عن طريق التواصل مع فريق دعم المتجر.",
+    "refund_notice_cta": "تواصل مع الدعم"
   },
   "messages": {
     "login_to_apply_coupon": "يجب تسجيل الدخول لتطبيق الكوبون",

@@ -29,14 +29,15 @@
   "coupon": "Coupon",
   "usedCount": "Used Count",
   "notes": "Notes",
-  "notNotes":"No notes added",
-  "addNotes":"Add internal notes about this order...",
+  "notNotes": "No notes added",
+  "addNotes": "Add internal notes about this order...",
   "timeline": "Order Timeline",
   "product": "Product",
   "sku": "SKU",
   "qty": "Qty",
   "unitPrice": "Unit Price",
   "subtotal": "Subtotal",
+  "subtotalAfterDiscount": "Subtotal After Discount",
   "tax": "Tax",
   "shipping": "Shipping",
   "grandTotal": "Grand Total",
@@ -59,6 +60,12 @@
   "paymentFees": "Payment Fees",
   "shippingAmount": "Shipping Amount",
   "taxAmount": "Tax Amount",
+  "taxInfo": {
+    "pricesIncludeTax": "Product prices include VAT ({percentage}%)",
+    "pricesExcludeTax": "Product prices exclude VAT ({percentage}%)",
+    "taxOnCharges": "VAT applied to shipping and payment fees",
+    "noTaxOnCharges": "VAT not applied to shipping and payment fees"
+  },
   "updating": "Updating...",
   "viewCustomer": "View Customer",
   "paidOn": "Paid on {date}",
@@ -106,9 +113,9 @@
   },
   "messages": {
     "statusUpdated": "Order status updated successfully",
-    "successNotes":" Add internal notes about this order...",
-    "notNotes":"No notes added",
-    "errorNotes":"Failed to update notes"
+    "successNotes": " Add internal notes about this order...",
+    "notNotes": "No notes added",
+    "errorNotes": "Failed to update notes"
   },
   "filters": {
     "search": "Search orders, customers, emails...",
@@ -144,6 +151,7 @@
   "shippingInfo": {
     "country": "Country",
     "city": "City",
+    "region": "Region",
     "street": "Street",
     "building": "Building",
     "postalCode": "Postal Code",

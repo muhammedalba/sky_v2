@@ -26,6 +26,7 @@ import {
   TruckIcon,
   TrashIcon,
 } from "@/shared/ui/Icons";
+import { getFileUrl } from "@/shared/utils/image.util";
 
 interface OrderDeliveryCardProps {
   order: Order;
@@ -139,8 +140,9 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
 
   const handleDownloadReceipt = () => {
     if (!order.DeliveryReceiptImage) return;
-    const ext = order.DeliveryReceiptImage.split(".").pop()?.split("?")[0] || "jpg";
-    downloadFile(order.DeliveryReceiptImage, {
+    const ext =
+      order.DeliveryReceiptImage?.url.split(".").pop()?.split("?")[0] || "jpg";
+    downloadFile(order.DeliveryReceiptImage?.url, {
       fileName: `delivery-receipt-${order._id.slice(0, 8)}.${ext}`,
     });
   };
@@ -173,12 +175,12 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
                 {t("deliveryInfo.deliveryName")}
               </span>
               {isEditingName ? (
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-1 md:gap-2 flex-wrap mt-1">
                   <input
                     type="text"
                     value={deliveryName}
                     onChange={(e) => setDeliveryName(e.target.value)}
-                    className="flex-1 px-3 py-1 text-xs border rounded-lg outline-hidden focus:border-primary bg-background"
+                    className="flex-1 px-3 py-1 text-xs border rounded-md outline-hidden focus:border-primary bg-background"
                     placeholder={t("deliveryInfo.deliveryName")}
                     disabled={updateDetailsMutation.isPending}
                   />
@@ -225,12 +227,12 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
                 {t("deliveryInfo.receiptNumber")}
               </span>
               {isEditingNumber ? (
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-1 md:gap-2 flex-wrap mt-1">
                   <input
                     type="text"
                     value={deliveryReceiptNumber}
                     onChange={(e) => setDeliveryReceiptNumber(e.target.value)}
-                    className="flex-1 px-3 py-1 text-xs border rounded-lg outline-hidden focus:border-primary bg-background"
+                    className="flex-1 px-3 py-1 text-xs border rounded-md outline-hidden focus:border-primary bg-background"
                     placeholder={t("deliveryInfo.receiptNumber")}
                     disabled={updateDetailsMutation.isPending}
                   />
@@ -247,7 +249,9 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
                     variant="outline"
                     className="h-8 rounded-lg px-2.5 font-bold"
                     onClick={() => {
-                      setDeliveryReceiptNumber(order.deliveryReceiptNumber || "");
+                      setDeliveryReceiptNumber(
+                        order.deliveryReceiptNumber || "",
+                      );
                       setIsEditingNumber(false);
                     }}
                     disabled={updateDetailsMutation.isPending}
@@ -264,7 +268,9 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
                     </span>
                     {order.deliveryReceiptNumber && (
                       <button
-                        onClick={() => copyToClipboard(order.deliveryReceiptNumber!)}
+                        onClick={() =>
+                          copyToClipboard(order.deliveryReceiptNumber!)
+                        }
                         className="text-muted-foreground hover:text-primary transition-colors focus:outline-hidden"
                       >
                         {copiedNumber ? (
@@ -296,7 +302,7 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
               <div className="rounded-xl border border-border/40 bg-muted/20 p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <div className="p-2 rounded-lg bg-emerald-500/10 text-success">
                       <FileTextIcon className="w-4 h-4" />
                     </div>
                     <div>
@@ -316,7 +322,7 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
                       {t("deliveryInfo.viewReceipt")}
                     </Button>
                     <a
-                      href={order.DeliveryReceiptImage}
+                      href={getFileUrl(order.DeliveryReceiptImage)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg border border-border/60 bg-background text-muted-foreground hover:text-foreground text-xs transition-colors"
@@ -340,14 +346,14 @@ export default function OrderDeliveryCard({ order }: OrderDeliveryCardProps) {
                   className="relative group cursor-pointer overflow-hidden rounded-lg border border-border/50 bg-background/60 h-48 flex items-center justify-center transition-all duration-200 hover:border-emerald-500/50 hover:shadow-md"
                 >
                   <ImageWithFallback
-                    src={order.DeliveryReceiptImage || ""}
+                    src={getFileUrl(order.DeliveryReceiptImage || "")}
                     alt={t("deliveryInfo.receiptImage")}
                     fill
                     className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 backdrop-blur-[2px]">
                     <span className="bg-background/90 text-foreground text-xs font-semibold px-3 py-1.5 rounded-full shadow-xs flex items-center gap-1.5 z-10">
-                      <EyeIcon className="w-3.5 h-3.5 text-emerald-500" />
+                      <EyeIcon className="w-3.5 h-3.5 text-success" />
                       {t("deliveryInfo.viewReceipt")}
                     </span>
                   </div>
