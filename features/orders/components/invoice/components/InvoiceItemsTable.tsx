@@ -1,7 +1,7 @@
 import React from "react";
 import { OrderItem } from "@/features/orders/types";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
-import { getLocalizedValue } from "../utils/invoiceUtils";
+import { getLocalizedValue } from "@/lib/utils";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
 
@@ -36,8 +36,8 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
           {items?.map((item, idx) => {
             const { title, sku, attributes, components } =
               resolveOrderItem(item);
-            const titleAr = getLocalizedValue(title, "ar") || "منتج";
-            const titleEn = getLocalizedValue(title, "en");
+            const titleAr = getLocalizedValue<string>(title, "ar") || "منتج";
+            const titleEn = getLocalizedValue<string>(title, "en");
             const itemQty = item.quantity || 1;
             const itemPrice = item.price || 0;
             const itemTotal = item.totalPrice || itemQty * itemPrice;

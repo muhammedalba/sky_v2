@@ -1,14 +1,10 @@
 import { useMemo } from "react";
 import { Order } from "@/features/orders/types";
-import { LocalizedString } from "@/types";
 import { SettingsInput } from "@/features/settings/settings.schema";
 import { FileAsset } from "@/shared/types/file-asset";
-import { useTrans } from "@/shared/hooks/useTrans";
-import {
-  getLocalizedValue,
-  getLocationName,
-  numberToArabicWords,
-} from "../utils/invoiceUtils";
+import { getLocalizedValue } from "@/lib/utils";
+import { getLocationName } from "../utils/invoiceUtils";
+import { amountToArabicWords } from "../utils/arabicAmountWords";
 
 export interface InvoiceCalculatedData {
   subtotal: number;
@@ -54,8 +50,6 @@ export function useInvoiceData(
   order: Order | null,
   settings: Partial<SettingsInput> | null | undefined,
 ): InvoiceCalculatedData | null {
-  const getTrans = useTrans();
-
   return useMemo(() => {
     if (!order) return null;
 
@@ -78,28 +72,27 @@ export function useInvoiceData(
 
     const customerCountry =
       getLocationName(order.shippingAddress?.country, "ar") ||
-      getTrans(order.shippingAddress?.country as unknown as LocalizedString | undefined) ||
       "المملكة العربية السعودية";
     const customerCity =
-      getLocationName(order.shippingAddress?.city, "ar") ||
-      getTrans(order.shippingAddress?.city as unknown as LocalizedString | undefined) ||
-      "-";
+      getLocationName(order.shippingAddress?.city, "ar") || "-";
     const customerRegion =
-      getLocationName(order.shippingAddress?.region, "ar") ||
-      getTrans(order.shippingAddress?.region as unknown as LocalizedString | undefined) ||
-      "-";
+      getLocationName(order.shippingAddress?.region, "ar") || "-";
 
-    const arabicAmountWords = numberToArabicWords(grandTotal);
+    // The order's currency is the store's at checkout; settings cover old orders
+    const arabicAmountWords = amountToArabicWords(
+      grandTotal,
+      order.currency || settings?.currencyCode,
+    );
 
     // Dynamic Store Settings
     // Legal company name takes priority on invoices; display name is the fallback
     const siteNameAr =
-      getLocalizedValue(settings?.legalName, "ar") ||
-      getLocalizedValue(settings?.siteName, "ar") ||
+      getLocalizedValue<string>(settings?.legalName, "ar") ||
+      getLocalizedValue<string>(settings?.siteName, "ar") ||
       "متجري";
     const siteNameEn =
-      getLocalizedValue(settings?.legalName, "en") ||
-      getLocalizedValue(settings?.siteName, "en") ||
+      getLocalizedValue<string>(settings?.legalName, "en") ||
+      getLocalizedValue<string>(settings?.siteName, "en") ||
       "My Store";
     const siteLogo = settings?.logo || "/assets/images/auth-logo.webp";
     const crNo = settings?.businessAddress?.crNo || "-";
@@ -114,23 +107,23 @@ export function useInvoiceData(
     const phone = settings?.contactInfo?.phones?.[0] || "";
 
     const companyCountryAr =
-      getLocalizedValue(settings?.businessAddress?.country, "ar") ||
+      getLocalizedValue<string>(settings?.businessAddress?.country, "ar") ||
       "المملكة العربية السعودية";
     const companyCountryEn =
-      getLocalizedValue(settings?.businessAddress?.country, "en") ||
+      getLocalizedValue<string>(settings?.businessAddress?.country, "en") ||
       "Saudi Arabia";
     const companyCityAr =
-      getLocalizedValue(settings?.businessAddress?.city, "ar") || "-";
+      getLocalizedValue<string>(settings?.businessAddress?.city, "ar") || "-";
     const companyCityEn =
-      getLocalizedValue(settings?.businessAddress?.city, "en") || "-";
+      getLocalizedValue<string>(settings?.businessAddress?.city, "en") || "-";
     const companyAreaAr =
-      getLocalizedValue(settings?.businessAddress?.area, "ar") || "-";
+      getLocalizedValue<string>(settings?.businessAddress?.area, "ar") || "-";
     const companyAreaEn =
-      getLocalizedValue(settings?.businessAddress?.area, "en") || "-";
+      getLocalizedValue<string>(settings?.businessAddress?.area, "en") || "-";
     const companyStreetAr =
-      getLocalizedValue(settings?.businessAddress?.street, "ar") || "-";
+      getLocalizedValue<string>(settings?.businessAddress?.street, "ar") || "-";
     const companyStreetEn =
-      getLocalizedValue(settings?.businessAddress?.street, "en") || "-";
+      getLocalizedValue<string>(settings?.businessAddress?.street, "en") || "-";
     const mailBox = settings?.businessAddress?.mailBox || "-";
     const poBox = settings?.businessAddress?.poBox || "-";
 
@@ -172,5 +165,5 @@ export function useInvoiceData(
       mailBox,
       poBox,
     };
-  }, [order, settings, getTrans]);
+  }, [order, settings]);
 }

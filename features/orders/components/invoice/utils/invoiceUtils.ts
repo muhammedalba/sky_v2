@@ -2,106 +2,22 @@
  * Utility functions for Invoice rendering, ZATCA Phase-1 TLV encoding, and Arabic currency spelling.
  */
 
-export const getLocalizedValue = (
-  val?: string | { en?: string; ar?: string },
-  locale = "ar",
-): string => {
-  if (!val) return "";
-  if (typeof val === "string") return val;
-  return val[locale as "en" | "ar"] || val.ar || val.en || "";
-};
+import { getLocalizedValue } from "@/lib/utils";
 
+type LocalizedText = string | { en?: string; ar?: string };
+
+/**
+ * Name of a country/city/region in a fixed locale (the invoice shows both).
+ * Accepts a location `{ name }`, a bare `{ ar, en }`, or a plain string.
+ */
 export const getLocationName = (
-  loc?: string | { name?: string | { en?: string; ar?: string } },
+  loc?: LocalizedText | { name?: LocalizedText },
   locale = "ar",
 ): string => {
   if (!loc) return "";
-  if (typeof loc === "string") return loc;
-  if (typeof loc.name === "string") return loc.name;
-  if (loc.name && typeof loc.name === "object")
-    return loc.name[locale as "en" | "ar"] || loc.name.ar || loc.name.en || "";
-  return "";
+  const name = typeof loc === "object" && "name" in loc ? loc.name : loc;
+  return getLocalizedValue<string>(name, locale) || "";
 };
-
-/**
- * Helper for Arabic amount in words (تفقيط المبلغ)
- */
-export function numberToArabicWords(amount: number): string {
-  const rounded = Math.round(amount);
-  if (rounded <= 0) return "صفر ريال سعودي";
-
-  const units = [
-    "",
-    "واحد",
-    "اثنان",
-    "ثلاثة",
-    "أربعة",
-    "خمسة",
-    "ستة",
-    "سبعة",
-    "ثمانية",
-    "تسعة",
-  ];
-  const tens = [
-    "",
-    "عشرة",
-    "عشرون",
-    "ثلاثون",
-    "أربعون",
-    "خمسون",
-    "ستون",
-    "سبعون",
-    "ثمانون",
-    "تسعون",
-  ];
-  const hundreds = [
-    "",
-    "مائة",
-    "مائتان",
-    "ثلاثمائة",
-    "أربعمائة",
-    "خمسمائة",
-    "ستمائة",
-    "سبعمائة",
-    "ثمانمائة",
-    "تسعمائة",
-  ];
-  const thousands = [
-    "",
-    "ألف",
-    "ألفان",
-    "ثلاثة آلاف",
-    "أربعة آلاف",
-    "خمسة آلاف",
-    "ستة آلاف",
-    "سبعة آلاف",
-    "ثمانية آلاف",
-    "تسعة آلاف",
-  ];
-
-  if (rounded < 10) return `${units[rounded]} ريال سعودي`;
-  if (rounded < 100) {
-    const u = rounded % 10;
-    const t = Math.floor(rounded / 10);
-    return u === 0
-      ? `${tens[t]} ريال سعودي`
-      : `${units[u]} و${tens[t]} ريال سعودي`;
-  }
-  if (rounded < 1000) {
-    const h = Math.floor(rounded / 100);
-    const rem = rounded % 100;
-    if (rem === 0) return `${hundreds[h]} ريال سعودي`;
-    return `${hundreds[h]} و${numberToArabicWords(rem)}`;
-  }
-  if (rounded < 10000) {
-    const th = Math.floor(rounded / 1000);
-    const rem = rounded % 1000;
-    if (rem === 0) return `${thousands[th]} ريال سعودي`;
-    return `${thousands[th]} و${numberToArabicWords(rem)}`;
-  }
-
-  return `${amount.toLocaleString("ar-SA")} ريال سعودي`;
-}
 
 /**
  * Synchronous pure SHA-256 hex generator for ZATCA invoice hashing.
