@@ -42,7 +42,7 @@ import Price from "@/shared/ui/Price";
 import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import Modal from "@/shared/ui/Modal";
 import { useDownloadFile } from "@/shared/hooks/useDownloadFile";
-import { getFileUrl, getImageUrl } from "@/shared/utils/image.util";
+import { getFileUrl } from "@/shared/utils/image.util";
 import { useSettings } from "@/app/providers/SettingsProvider";
 import { useMyReviewsForProducts } from "@/features/reviews/hooks/useReviews";
 import OrderItemReview from "@/features/reviews/components/storefront/OrderItemReview";
@@ -176,9 +176,9 @@ export default function OrderDetailPage() {
   }
   const handleDownloadReceipt = () => {
     const ext =
-      getImageUrl(order.transferReceiptImg)?.split(".").pop()?.split("?")[0] ||
+      getFileUrl(order.transferReceiptImg)?.split(".").pop()?.split("?")[0] ||
       "jpg";
-    downloadFile(order.transferReceiptImg, {
+    downloadFile(getFileUrl(order.transferReceiptImg), {
       fileName: `receipt-${order.user?.name || "transfer"}.${ext}`,
     });
   };
