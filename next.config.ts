@@ -1,6 +1,17 @@
+import os from "os";
 import path from "path";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+
+// Shared hosting reports many CPUs (64 on Hostinger) but caps the threads an
+// account may run: one build worker per CPU, each with its own native thread
+// pool, exceeds it ("OS can't spawn worker thread", os error 11).
+// Override with NEXT_BUILD_CPUS / TOKIO_WORKER_THREADS.
+const buildCpus =
+  Number(process.env.NEXT_BUILD_CPUS) ||
+  Math.min(4, Math.max(1, os.cpus().length - 1));
+// Build workers inherit this: caps the native (tokio) thread pool per worker.
+process.env.TOKIO_WORKER_THREADS ??= "2";
 
 const isProd =
   process.env.NODE_ENV === "production" ||
@@ -21,6 +32,7 @@ const nextConfig: NextConfig = {
     root: path.resolve(process.cwd()),
   },
   experimental: {
+    cpus: buildCpus,
     // Retry a page whose prerender fails (e.g. a transient API error) instead
     // of failing the whole build on the first error.
     staticGenerationRetryCount: 2,
