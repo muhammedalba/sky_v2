@@ -1,24 +1,33 @@
 "use client";
 
-
 import { useSearchParams } from "next/navigation";
-import { CheckIcon as CheckCircle, AlertCircleIcon as XCircle, SpinnerIcon as Loader2 } from "@/shared/ui/Icons";
+import {
+  CheckIcon as CheckCircle,
+  AlertCircleIcon as XCircle,
+  SpinnerIcon as Loader2,
+} from "@/shared/ui/Icons";
 import { useClearCart } from "@/features/cart/hooks/useCart";
 import { useCartStore } from "@/store/cart-store";
 import { useEffect } from "react";
-import {  useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { usePaymentVerification } from "@/features/checkout/hooks/usePaymentVerification";
 import { Link } from "@/navigation";
+import { formatOrderNumber } from "@/lib/utils";
 
 // The server only sends a coarse category, never the issuer's raw message.
-const FAILURE_CATEGORIES = ["insufficient_funds", "card_expired", "authentication", "declined"] as const;
+const FAILURE_CATEGORIES = [
+  "insufficient_funds",
+  "card_expired",
+  "authentication",
+  "declined",
+] as const;
 type FailureCategory = (typeof FAILURE_CATEGORIES)[number];
 
 export default function CheckoutCallbackPage() {
   const searchParams = useSearchParams();
 
   const t = useTranslations("cart.payment_pages.callback");
-  
+
   // Extract provider payment ID (invoice_id or id)
   const invoiceId = searchParams.get("invoice_id") || searchParams.get("id");
 
@@ -28,13 +37,19 @@ export default function CheckoutCallbackPage() {
   // Poll backend for payment status securely
   const { data: verificationStatus } = usePaymentVerification(invoiceId);
 
-  const paymentState = 
+  const paymentState =
     // A partial refund means the payment went through and the order goes on.
-    verificationStatus?.paymentStatus === "PAID" || verificationStatus?.paymentStatus === "PARTIALLY_REFUNDED" ? "paid" :
-    verificationStatus?.paymentStatus === "REFUNDED" ? "refunded" :
-    verificationStatus?.paymentStatus === "FAILED" ? "failed" :
-    (verificationStatus?.paymentStatus === "EXPIRED" || verificationStatus?.orderStatus === "expired") ? "expired" :
-    "verifying";
+    verificationStatus?.paymentStatus === "PAID" ||
+    verificationStatus?.paymentStatus === "PARTIALLY_REFUNDED"
+      ? "paid"
+      : verificationStatus?.paymentStatus === "REFUNDED"
+        ? "refunded"
+        : verificationStatus?.paymentStatus === "FAILED"
+          ? "failed"
+          : verificationStatus?.paymentStatus === "EXPIRED" ||
+              verificationStatus?.orderStatus === "expired"
+            ? "expired"
+            : "verifying";
 
   useEffect(() => {
     if (paymentState === "paid") {
@@ -47,7 +62,9 @@ export default function CheckoutCallbackPage() {
     }
   }, [paymentState, clearServerCart, clearGuestCart]);
 
-  const failureCategory = FAILURE_CATEGORIES.includes(verificationStatus?.failureCategory)
+  const failureCategory = FAILURE_CATEGORIES.includes(
+    verificationStatus?.failureCategory,
+  )
     ? (verificationStatus.failureCategory as FailureCategory)
     : null;
 
@@ -57,13 +74,14 @@ export default function CheckoutCallbackPage() {
       <div className="min-h-screen bg-accent/30 flex flex-col items-center justify-center px-4 pt-32 pb-24 text-center">
         <div className="bg-card p-8 rounded-3xl shadow-lg border border-border/50 max-w-md w-full">
           <XCircle className="w-16 h-16 text-destructive mx-auto mb-6" />
-          <h1 className="text-2xl font-bold mb-3">
-            {t("invalid_request")}
-          </h1>
+          <h1 className="text-2xl font-bold mb-3">{t("invalid_request")}</h1>
           <p className="text-muted-foreground mb-8 text-sm">
             {t("no_reference")}
           </p>
-          <Link href={`/checkout`} className="block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition">
+          <Link
+            href={`/checkout`}
+            className="block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-medium hover:bg-primary/90 transition"
+          >
             {t("return_to_checkout")}
           </Link>
         </div>
@@ -71,15 +89,17 @@ export default function CheckoutCallbackPage() {
     );
   }
 
-  // Helper to safely format order ID for display
-  const displayOrderId = verificationStatus?.orderId 
-    ? `#${verificationStatus.orderId.slice(-6).toUpperCase()}`
-    : "---";
+  // Undefined until the first verification response; it carries `orderId`, not `_id`
+  const displayOrderId = verificationStatus
+    ? formatOrderNumber({
+        _id: verificationStatus.orderId,
+        invoiceNumber: verificationStatus.invoiceNumber,
+      })
+    : "";
 
   return (
     <div className="min-h-screen bg-accent/30 flex flex-col items-center justify-center px-4 pt-32 pb-24 text-center">
       <div className="max-w-md w-full p-8 md:p-10 bg-card rounded-3xl shadow-xl border border-border/50 relative overflow-hidden">
-        
         {paymentState === "verifying" && (
           <div className="flex flex-col items-center py-8 animate-in fade-in zoom-in duration-500">
             <Loader2 className="w-14 h-14 text-primary animate-spin mb-6" />
@@ -103,7 +123,7 @@ export default function CheckoutCallbackPage() {
             <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
               {t("payment_success_desc")}
               <span className="block mt-3 text-sm font-medium text-foreground bg-accent/50 py-2 rounded-lg">
-                {t("order_id")} 
+                {t("order_id")}
                 <span className="tracking-wider">{displayOrderId}</span>
               </span>
             </p>
@@ -157,7 +177,7 @@ export default function CheckoutCallbackPage() {
             <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
               {t("payment_refunded_desc")}
               <span className="block mt-3 text-sm font-medium text-foreground bg-accent/50 py-2 rounded-lg">
-                {t("order_id")} 
+                {t("order_id")}
                 <span className="tracking-wider">{displayOrderId}</span>
               </span>
             </p>

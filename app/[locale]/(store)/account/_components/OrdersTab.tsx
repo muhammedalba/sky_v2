@@ -35,7 +35,6 @@ export function OrdersTab({ locale }: OrdersTabProps) {
     sort: "-createdAt",
   });
   const orders = ordersResponse?.data ?? [];
-
   const orderColumns: Column<Order>[] = [
     {
       header: tOrders("fields.orderNumber"),

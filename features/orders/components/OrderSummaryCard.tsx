@@ -36,7 +36,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
           {t("orderSummary")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6 space-y-4">
+      <CardContent className="p-6 space-y-2">
         <div className="space-y-3.5">
           <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
             <span>{t("subtotal")}</span>
@@ -123,7 +123,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
         <div className="h-px bg-border/40 my-1" />
 
         <div className="space-y-3.5">
-          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground pt-2">
             <span>{t("totalQuantity")}</span>
             <span className="text-foreground font-bold tabular-nums">
               {totalQuantity}
