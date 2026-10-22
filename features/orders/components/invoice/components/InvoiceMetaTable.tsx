@@ -66,7 +66,7 @@ export const InvoiceMetaTable: React.FC<InvoiceMetaTableProps> = ({
               البيان / Description:
             </td>
             <td colSpan={3} className="p-1.5 text-right font-semibold">
-              {`طلب شراء من العميل :  ${customerName}- ${order.deliveryReceiptNumber}`}
+              {`طلب شراء من العميل :  ${customerName}- ${order.deliveryReceiptNumber ?? ""}`}
             </td>
           </tr>
         </tbody>

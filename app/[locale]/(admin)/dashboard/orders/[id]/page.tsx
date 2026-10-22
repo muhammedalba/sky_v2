@@ -27,6 +27,7 @@ import { formatDate, formatOrderNumber } from "@/lib/utils";
 import { Link } from "@/navigation";
 import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { getFileUrl } from "@/shared/utils/image.util";
+import { useDownloadFile } from "@/shared/hooks/useDownloadFile";
 
 export default function OrderDetailsPage({
   params,
@@ -40,6 +41,7 @@ export default function OrderDetailsPage({
   const { data: order, isLoading, refetch } = useOrder(id);
 
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+  const { downloadFile } = useDownloadFile();
   const t = useTranslations("orders");
   const formatCurrency = useFormatCurrency();
   const handleRefresh = () => {
@@ -136,7 +138,9 @@ export default function OrderDetailsPage({
             onPreviewInvoice={() => setIsInvoiceOpen(true)}
             onDownloadInvoice={() => {
               if (getFileUrl(order.InvoicePdf)) {
-                window.open(getFileUrl(order.InvoicePdf), "_blank");
+                downloadFile(getFileUrl(order.InvoicePdf), {
+                  fileName: `invoice-${formatOrderNumber(order)}.pdf`,
+                });
               } else {
                 setIsInvoiceOpen(true);
               }

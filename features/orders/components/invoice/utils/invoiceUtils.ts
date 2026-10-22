@@ -47,7 +47,8 @@ export function sha256Hex(str: string): string {
   const len = bytes.length;
   const bitLen = len * 8;
 
-  const k = (448 - ((len + 1) % 64) + 64) % 64;
+  // Zero bytes so that message + 0x80 + zeros ends 8 bytes short of a 64-byte block
+  const k = (56 - ((len + 1) % 64) + 64) % 64;
   const padded = new Uint8Array(len + 1 + k + 8);
   padded.set(bytes);
   padded[len] = 0x80;

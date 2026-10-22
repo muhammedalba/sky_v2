@@ -58,8 +58,10 @@ export function useInvoiceData(
     const discount = order.discountAmount || 0;
     const paymentFees = order.paymentFees || 0;
     const netBeforeTax = subtotal - discount + shipping + paymentFees;
-    const tax = order.taxAmount || netBeforeTax * 0.15;
-    const grandTotal = order.grandTotal || netBeforeTax + tax;
+    // A stored 0 is a VAT-free order: estimate only for orders that never
+    // stored the field (the API reads orders lean, so it is then undefined)
+    const tax = order.taxAmount ?? netBeforeTax * 0.15;
+    const grandTotal = order.grandTotal ?? netBeforeTax + tax;
     // Total excluding VAT; derived from stored totals so tax-inclusive prices are handled too
     const taxableSubtotal =
       order.grandTotal && order.taxAmount

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
 import { DownloadIcon, FileTextIcon } from '@/shared/ui/Icons';
 import { Button } from '@/shared/ui/Button';
 import { useTranslations } from 'next-intl';
+import { getFileUrl } from '@/shared/utils/image.util';
 
 interface InvoicePreviewProps {
   order: Order;
@@ -18,6 +19,7 @@ export default function InvoicePreview({
   onDownloadInvoice,
 }: InvoicePreviewProps) {
   const t = useTranslations('orders.invoicePreview');
+
 
   return (
     <Card className="border border-border/40 shadow-xs bg-card rounded-2xl overflow-hidden">
@@ -38,10 +40,10 @@ export default function InvoicePreview({
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        {order.InvoicePdf ? (
+        {order?.InvoicePdf ? (
           <div className="w-full h-100 relative bg-secondary/5">
             <iframe
-              src={`${order.InvoicePdf}#toolbar=0&navpanes=0`}
+              src={`${getFileUrl(order?.InvoicePdf)}#toolbar=0&navpanes=0`}
               className="w-full h-full border-none"
               title={t('pdfTitle')}
             />

@@ -13,6 +13,7 @@ import ImageWithFallback from "@/shared/ui/image/ImageWithFallback";
 import OrderTimeline from "@/features/orders/components/OrderTimeline";
 import OrderInfoCard from "@/features/orders/components/OrderInfoCard";
 import OrderTotalsSummary from "@/features/orders/components/OrderTotalsSummary";
+import InvoicePreview from "@/features/orders/components/InvoicePreview";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
 import {
@@ -183,6 +184,12 @@ export default function OrderDetailPage() {
     });
   };
   const invoiceUrl = getFileUrl(order.InvoicePdf);
+  // Saves the PDF (the link used to open it in a tab), named after the order
+  const handleDownloadInvoice = () => {
+    downloadFile(invoiceUrl, {
+      fileName: `invoice-${formatOrderNumber(order)}.pdf`,
+    });
+  };
   const receiptUrl = getFileUrl(order.DeliveryReceiptImage);
   const transferReceiptUrl = getFileUrl(order.transferReceiptImg);
 
@@ -242,16 +249,15 @@ export default function OrderDetailPage() {
 
               {invoiceUrl && (
                 <ScrollReveal animation="fade">
-                  <a
-                    href={invoiceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    onClick={handleDownloadInvoice}
+                    disabled={isDownloading}
                   >
-                    <Button variant="outline" className="gap-2">
-                      <DownloadIcon className="w-4 h-4 text-primary" />
-                      {t("downloadInvoice")}
-                    </Button>
-                  </a>
+                    <DownloadIcon className="w-4 h-4 text-primary" />
+                    {t("downloadInvoice")}
+                  </Button>
                 </ScrollReveal>
               )}
             </div>
@@ -558,6 +564,15 @@ export default function OrderDetailPage() {
           )}
           {/* Order Summary */}
           <OrderTotalsSummary order={order} className={INFO_CARD_CLASS} />
+          {/* Tax invoice: the issued PDF, shown inline and downloadable */}
+          {invoiceUrl && (
+            <ScrollReveal animation="fade">
+              <InvoicePreview
+                order={order}
+                onDownloadInvoice={handleDownloadInvoice}
+              />
+            </ScrollReveal>
+          )}
           {/* Order Timeline */}
           <OrderTimeline order={order} />
           {/* Support */}
