@@ -1,19 +1,21 @@
 /**
  * Centralized environment variable configuration.
- * Next.js requires static references (process.env.VARIABLE_NAME) for NEXT_PUBLIC_ 
+ * Next.js requires static references (process.env.VARIABLE_NAME) for NEXT_PUBLIC_
  * variables to be correctly inlined into client-side bundles.
  */
 
-const isServer = typeof window === 'undefined';
-const isProd = process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_NODE_ENV === 'production';
-
-
+const isServer = typeof window === "undefined";
+const isProd =
+  process.env.NODE_ENV === "production" ||
+  process.env.NEXT_PUBLIC_NODE_ENV === "production";
 
 // --- Required Variables Validation ---
 // In production client-side, use relative path '/api/v1' for Next.js rewrites (Proxy).
 // In server-side or development, use absolute URL.
 const API_URL = isProd
-  ? (isServer ? (process.env.NEXT_PUBLIC_PRO_API_URL || process.env.NEXT_PUBLIC_API_URL) : '/api/v1')
+  ? isServer
+    ? process.env.NEXT_PUBLIC_PRO_API_URL || process.env.NEXT_PUBLIC_API_URL
+    : "/api/v1"
   : process.env.NEXT_PUBLIC_API_URL;
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
@@ -30,20 +32,24 @@ const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 // 1. Validate Public Variables (Required in both environments)
 if (!API_URL || !APP_URL || !LOGIN_EP || !REGISTER_EP || !ME_EP || !LOGOUT_EP) {
   const missing = [
-    !API_URL && 'NEXT_PUBLIC_API_URL',
-    !APP_URL && 'NEXT_PUBLIC_APP_URL',
-    !LOGIN_EP && 'NEXT_PUBLIC_ENDPOINT_AUTH_LOGIN',
-    !REGISTER_EP && 'NEXT_PUBLIC_ENDPOINT_AUTH_REGISTER',
-    !ME_EP && 'NEXT_PUBLIC_ENDPOINT_AUTH_ME',
-    !LOGOUT_EP && 'NEXT_PUBLIC_ENDPOINT_AUTH_LOGOUT',
+    !API_URL && "NEXT_PUBLIC_API_URL",
+    !APP_URL && "NEXT_PUBLIC_APP_URL",
+    !LOGIN_EP && "NEXT_PUBLIC_ENDPOINT_AUTH_LOGIN",
+    !REGISTER_EP && "NEXT_PUBLIC_ENDPOINT_AUTH_REGISTER",
+    !ME_EP && "NEXT_PUBLIC_ENDPOINT_AUTH_ME",
+    !LOGOUT_EP && "NEXT_PUBLIC_ENDPOINT_AUTH_LOGOUT",
   ].filter(Boolean);
 
-  throw new Error(`❌ Missing required public environment variables: ${missing.join(', ')}`);
+  throw new Error(
+    `❌ Missing required public environment variables: ${missing.join(", ")}`,
+  );
 }
 
 // 2. Validate Server-only Variables (Only on the server)
 if (isServer && !NEXTAUTH_SECRET) {
-  throw new Error(`❌ Missing required server-side environment variable: NEXTAUTH_SECRET`);
+  throw new Error(
+    `❌ Missing required server-side environment variable: NEXTAUTH_SECRET`,
+  );
 }
 
 export const env = {
@@ -52,142 +58,186 @@ export const env = {
 
   // App Configuration
   APP_URL: APP_URL,
-  APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || 'Sky Galaxy',
-  APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION || '',
+  APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || "Sky Galaxy",
+  APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION || "",
 
   // Internationalization
-  DEFAULT_LOCALE: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'ar',
+  DEFAULT_LOCALE: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || "ar",
 
   // Authentication (NextAuth) - Secret is only available on server
   NEXTAUTH_URL: process.env.NEXTAUTH_URL || APP_URL,
-  NEXTAUTH_SECRET: NEXTAUTH_SECRET || '',
+  NEXTAUTH_SECRET: NEXTAUTH_SECRET || "",
 
   // SEO & Social Presence
   SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || APP_URL,
-  SITE_KEYWORDS: process.env.NEXT_PUBLIC_SITE_KEYWORDS || '',
-  FACEBOOK_URL: process.env.NEXT_PUBLIC_FACEBOOK_URL || '',
-  TWITTER_URL: process.env.NEXT_PUBLIC_TWITTER_URL || '',
-  INSTAGRAM_URL: process.env.NEXT_PUBLIC_INSTAGRAM_URL || '',
-  LINKEDIN_URL: process.env.NEXT_PUBLIC_LINKEDIN_URL || '',
+  SITE_KEYWORDS: process.env.NEXT_PUBLIC_SITE_KEYWORDS || "",
+  FACEBOOK_URL: process.env.NEXT_PUBLIC_FACEBOOK_URL || "",
+  TWITTER_URL: process.env.NEXT_PUBLIC_TWITTER_URL || "",
+  INSTAGRAM_URL: process.env.NEXT_PUBLIC_INSTAGRAM_URL || "",
+  LINKEDIN_URL: process.env.NEXT_PUBLIC_LINKEDIN_URL || "",
 
   // Contact Information
-  SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || '',
-  SUPPORT_PHONE: process.env.NEXT_PUBLIC_SUPPORT_PHONE || '',
-  COMPANY_ADDRESS: process.env.NEXT_PUBLIC_COMPANY_ADDRESS || '',
+  SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "",
+  SUPPORT_PHONE: process.env.NEXT_PUBLIC_SUPPORT_PHONE || "",
+  COMPANY_ADDRESS: process.env.NEXT_PUBLIC_COMPANY_ADDRESS || "",
 
   // App Settings
-  DEFAULT_CURRENCY: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY || 'USD',
-  PAGINATION_LIMIT: parseInt(process.env.NEXT_PUBLIC_PAGINATION_LIMIT || '10', 10),
-  MAX_UPLOAD_SIZE: parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || '5242880', 10),
+  DEFAULT_CURRENCY: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY || "USD",
+  PAGINATION_LIMIT: parseInt(
+    process.env.NEXT_PUBLIC_PAGINATION_LIMIT || "10",
+    10,
+  ),
+  MAX_UPLOAD_SIZE: parseInt(
+    process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || "5242880",
+    10,
+  ),
 
   // Analytics
-  GA_ID: process.env.NEXT_PUBLIC_GA_ID || '',
+  GA_ID: process.env.NEXT_PUBLIC_GA_ID || "",
 
   // API Endpoints - Auth
   ENDPOINTS: {
     AUTH: {
       LOGIN: LOGIN_EP,
       REGISTER: REGISTER_EP,
-      REFRESH: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_REFRESH || '/auth/refresh-token',
-      FORGOT_PASSWORD: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_FORGOT_PASSWORD || '/auth/forgot-password',
-      VERIFY_CODE: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_VERIFY_CODE || '/auth/verify-Pass-Reset-Code',
-      RESET_PASSWORD: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_RESET_PASSWORD || '/auth/reset-password',
+      REFRESH:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_REFRESH || "/auth/refresh-token",
+      FORGOT_PASSWORD:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_FORGOT_PASSWORD ||
+        "/auth/forgot-password",
+      VERIFY_CODE:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_VERIFY_CODE ||
+        "/auth/verify-Pass-Reset-Code",
+      RESET_PASSWORD:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_RESET_PASSWORD ||
+        "/auth/reset-password",
       ME: ME_EP,
       LOGOUT: LOGOUT_EP,
-      UPDATE_ME: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_UPDATE_ME || '/auth/updateMe',
-      CHANGE_PASSWORD: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_CHANGE_PASSWORD || '/auth/changeMyPassword',
-      DELETE_ME: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_DELETE_ME || '/auth/me',
-      GOOGLE: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_GOOGLE || '/auth/google',
-      FACEBOOK: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_FACEBOOK || '/auth/facebook',
+      UPDATE_ME:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_UPDATE_ME || "/auth/updateMe",
+      CHANGE_PASSWORD:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_CHANGE_PASSWORD ||
+        "/auth/changeMyPassword",
+      DELETE_ME: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_DELETE_ME || "/auth/me",
+      GOOGLE: process.env.NEXT_PUBLIC_ENDPOINT_AUTH_GOOGLE || "/auth/google",
+      FACEBOOK:
+        process.env.NEXT_PUBLIC_ENDPOINT_AUTH_FACEBOOK || "/auth/facebook",
     },
     PRODUCTS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS || '/products',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS_STATS || '/products/statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS || "/products",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_PRODUCTS_STATS ||
+        "/products/statistics",
     },
     CATEGORIES: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES || '/categories',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES_STATS || '/categories/statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES || "/categories",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_CATEGORIES_STATS ||
+        "/categories/statistics",
     },
     ORDERS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS || '/order',
-      MY_ORDERS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_MY_ORDERS || '/order/my-orders',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_STATS || '/order/statistics',
-      MARKETING_STATS: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_MARKETING_STATS || '/order/marketing-statistics',
-      COUPON: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_COUPON || '/order/applyCoupon',
-      BANK_TRANSFER: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_BANK_TRANSFER || '/order/PaymentByBankTransfer',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_ORDERS || "/order",
+      MY_ORDERS:
+        process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_MY_ORDERS || "/order/my-orders",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_STATS || "/order/statistics",
+      MARKETING_STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_MARKETING_STATS ||
+        "/order/marketing-statistics",
+      COUPON:
+        process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_COUPON || "/order/applyCoupon",
+      BANK_TRANSFER:
+        process.env.NEXT_PUBLIC_ENDPOINT_ORDERS_BANK_TRANSFER ||
+        "/order/PaymentByBankTransfer",
     },
     USERS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_USERS || '/users',
-      CREATE: process.env.NEXT_PUBLIC_ENDPOINT_USERS_CREATE || '/users',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_USERS_STATS || '/users/statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_USERS || "/users",
+      CREATE: process.env.NEXT_PUBLIC_ENDPOINT_USERS_CREATE || "/users",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_USERS_STATS || "/users/statistics",
     },
     BRANDS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_BRANDS || '/brands',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_BRANDS_STATS || '/brands/statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_BRANDS || "/brands",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_BRANDS_STATS || "/brands/statistics",
     },
     SUPPLIERS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUPPLIERS || '/supplier',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_SUPPLIERS_STATS || '/supplier/statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUPPLIERS || "/supplier",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_SUPPLIERS_STATS ||
+        "/supplier/statistics",
     },
     COUPONS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_COUPONS || '/coupons',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_COUPONS || "/coupons",
     },
     CAROUSEL: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CAROUSEL || '/carousel',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CAROUSEL || "/carousel",
     },
     SUP_CATEGORIES: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES || '/sub-category',
-      STATS: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES_STATS || '/sub-category/statistics',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES || "/sub-category",
+      STATS:
+        process.env.NEXT_PUBLIC_ENDPOINT_SUP_CATEGORIES_STATS ||
+        "/sub-category/statistics",
     },
     PROMO_BANNER: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER || '/promo-banner',
-      ACTIVE: process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER_ACTIVE || '/promo-banner/active',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER || "/promo-banner",
+      ACTIVE:
+        process.env.NEXT_PUBLIC_ENDPOINT_PROMO_BANNER_ACTIVE ||
+        "/promo-banner/active",
     },
     CART: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CART || '/cart',
-      ADD: process.env.NEXT_PUBLIC_ENDPOINT_CART_ADD || '/cart/add',
-      CLEAR: process.env.NEXT_PUBLIC_ENDPOINT_CART_CLEAR || '/cart/clear',
-      REMOVE: process.env.NEXT_PUBLIC_ENDPOINT_CART_REMOVE || '/cart/remove',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CART || "/cart",
+      ADD: process.env.NEXT_PUBLIC_ENDPOINT_CART_ADD || "/cart/add",
+      CLEAR: process.env.NEXT_PUBLIC_ENDPOINT_CART_CLEAR || "/cart/clear",
+      REMOVE: process.env.NEXT_PUBLIC_ENDPOINT_CART_REMOVE || "/cart/remove",
     },
     WISHLIST: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST || '/wishlist',
-      IDS: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_IDS || '/wishlist/ids',
-      ADD: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_ADD || '/wishlist/add',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST || "/wishlist",
+      IDS: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_IDS || "/wishlist/ids",
+      ADD: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_ADD || "/wishlist/add",
       REMOVE:
-        process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_REMOVE || '/wishlist/remove',
-      CLEAR: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_CLEAR || '/wishlist/clear',
-      SYNC: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_SYNC || '/wishlist/sync',
+        process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_REMOVE || "/wishlist/remove",
+      CLEAR:
+        process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_CLEAR || "/wishlist/clear",
+      SYNC: process.env.NEXT_PUBLIC_ENDPOINT_WISHLIST_SYNC || "/wishlist/sync",
     },
     SETTINGS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SETTINGS || '/settings',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_SETTINGS || "/settings",
     },
     ROLES: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_ROLES || '/roles',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_ROLES || "/roles",
     },
     PAYMENTS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PAYMENTS || '/payments',
-      ALL: process.env.NEXT_PUBLIC_ENDPOINT_PAYMENTS_ALL || '/payments/all',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_PAYMENTS || "/payments",
+      ALL: process.env.NEXT_PUBLIC_ENDPOINT_PAYMENTS_ALL || "/payments/all",
     },
     NOTIFICATIONS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS || '/notifications',
-      ADMIN_DELETE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_DELETE || '/notifications/admin',
-      ADMIN_SEND: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_SEND || '/notifications/admin/send',
-      STREAM: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_STREAM || '/notifications/stream',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS || "/notifications",
+      ADMIN_DELETE:
+        process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_DELETE ||
+        "/notifications/admin",
+      ADMIN_SEND:
+        process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_ADMIN_SEND ||
+        "/notifications/admin/send",
+      STREAM:
+        process.env.NEXT_PUBLIC_ENDPOINT_NOTIFICATIONS_STREAM ||
+        "/notifications/stream",
     },
     CONTACT: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CONTACT || '/contact',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_CONTACT || "/contact",
     },
     QUOTE_REQUESTS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_QUOTE_REQUESTS || '/quote-requests',
+      BASE:
+        process.env.NEXT_PUBLIC_ENDPOINT_QUOTE_REQUESTS || "/quote-requests",
     },
     REVIEWS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_REVIEWS || '/reviews',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_REVIEWS || "/reviews",
     },
     AUDIT_LOGS: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_AUDIT_LOGS || '/audit-logs',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_AUDIT_LOGS || "/audit-logs",
     },
     INVOICES: {
-      BASE: process.env.NEXT_PUBLIC_ENDPOINT_INVOICES || '/invoices',
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_INVOICES || "/invoices",
     },
   },
 } as const;

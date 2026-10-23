@@ -9,7 +9,6 @@ import { DEFAULT_CAROUSEL_PARAMS } from "@/features/products/storefrontQueryDefa
 import {
   ChevronLeftIcon as ChevronLeft,
   ChevronRightIcon as ChevronRight,
-  SparklesIcon as Sparkles,
 } from "@/shared/ui/Icons";
 
 // ─── Skeleton ────────────────────────────────────────────────────
