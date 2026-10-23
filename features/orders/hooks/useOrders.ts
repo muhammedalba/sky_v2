@@ -3,6 +3,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse, Order } from "@/types";
 import { ordersApi } from "@/features/orders/api";
+import {
+  CreditNoteLineInput,
+  ReturnReasonType,
+  ReturnRequestStatus,
+} from "@/features/orders/types";
 
 interface OrderQueryParams {
   page?: number;
@@ -110,21 +115,183 @@ export function useUpdateOrderStatus() {
   });
 }
 
+/** What the return dialog can offer; fetched while it is open. */
+export function useCreditNoteSummary(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ["orders", id, "credit-note-summary"],
+    queryFn: async () => (await ordersApi.creditNoteSummary(id)).data,
+    enabled: enabled && !!id,
+    staleTime: 0,
+  });
+}
+
+/** A return's amounts computed by the server (nothing saved). */
+export function usePreviewCreditNote() {
+  return useMutation({
+    mutationFn: async ({
+      id,
+      lines,
+      reasonType,
+    }: {
+      id: string;
+      lines: CreditNoteLineInput[];
+      reasonType: ReturnReasonType;
+    }) => (await ordersApi.previewCreditNote(id, lines, reasonType)).data,
+  });
+}
+
 /**
- * Refunds a Moyasar-paid order. A full refund of an order that has not shipped
- * cancels it and returns its stock, so products are refreshed too.
+ * Returns items: the server refunds them, issues the credit note, restocks
+ * and emails the customer, so the order, stats and products are refreshed.
  */
-export function useRefundOrder() {
+export function useCreateCreditNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string; amount?: number; reason: string }) =>
-      ordersApi.refund(id, data),
+    mutationFn: async ({
+      id,
+      ...data
+    }: {
+      id: string;
+      lines: CreditNoteLineInput[];
+      reason: string;
+      reasonType: ReturnReasonType;
+      restock: boolean;
+    }) => (await ordersApi.createCreditNote(id, data)).data,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["order-stats"] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      // The invoices page (its credit notes and totals)
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+    },
+  });
+}
+
+/** Customer: what a return would give back (nothing saved). */
+export function usePreviewMyReturn() {
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...data
+    }: {
+      id: string;
+      lines: CreditNoteLineInput[];
+      reasonType: ReturnReasonType;
+    }) => (await ordersApi.previewMyReturn(id, data)).data,
+  });
+}
+
+/** Customer: sends a return request; their order shows it. */
+export function useCreateReturnRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...data
+    }: {
+      id: string;
+      lines: CreditNoteLineInput[];
+      reasonType: ReturnReasonType;
+      note: string;
+    }) => (await ordersApi.createReturnRequest(id, data)).data,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["orders", "my-orders", variables.id],
+      });
+    },
+  });
+}
+
+/** Customer: withdraws a pending return request. */
+export function useCancelReturnRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, requestId }: { id: string; requestId: string }) =>
+      ordersApi.cancelReturnRequest(id, requestId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["orders", "my-orders", variables.id],
+      });
+    },
+  });
+}
+
+/** Dashboard: the return requests, filtered by status. */
+export function useReturnRequests(params: {
+  status?: ReturnRequestStatus;
+  page?: number;
+  limit?: number;
+}) {
+  return useQuery({
+    queryKey: ["return-requests", params],
+    queryFn: () => ordersApi.getReturnRequests(params),
+  });
+}
+
+/**
+ * Dashboard: approves a request; like a return, the order, stats and
+ * products are refreshed.
+ */
+export function useApproveReturnRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      requestId,
+      ...data
+    }: {
+      id: string;
+      requestId: string;
+      lines?: CreditNoteLineInput[];
+      restock?: boolean;
+    }) => (await ordersApi.approveReturnRequest(id, requestId, data)).data,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["return-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      // The invoices page (its credit notes and totals)
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+    },
+  });
+}
+
+/** Dashboard: rejects a request with a reason. */
+export function useRejectReturnRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      requestId,
+      reason,
+    }: {
+      id: string;
+      requestId: string;
+      reason: string;
+    }) => ordersApi.rejectReturnRequest(id, requestId, reason),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["return-requests"] });
+    },
+  });
+}
+
+/** Retries a credit note PDF that could not be rendered. */
+export function useRegenerateCreditNote() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, noteId }: { id: string; noteId: string }) =>
+      ordersApi.regenerateCreditNote(id, noteId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.id] });
     },
   });
 }

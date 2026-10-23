@@ -13,6 +13,7 @@ import { SettingsInput } from '../../settings.schema';
 import { CURRENCY_SELECT_OPTIONS } from '@/shared/constants/currencies';
 import { useSettings } from '../../hooks/useSettings';
 import { formatDateTime } from '@/lib/utils';
+import ErrorMessage from '@/shared/ui/ErrorMessage';
 
 
 
@@ -31,6 +32,12 @@ export default function GeneralSection() {
   };
 
   const { onChange: onCurrencyCodeChange, ...currencyCodeReg } = register('currencyCode');
+
+  // Switching the store currency converts nothing: warn before it is saved
+  const currencyCode = useWatch({ control, name: 'currencyCode' });
+  const savedCurrency = liveSettings?.currencyCode;
+  const currencyChanged =
+    !!savedCurrency && !!currencyCode && currencyCode !== savedCurrency;
 
   const logoValue = useWatch({ control, name: 'logo' });
   const faviconValue = useWatch({ control, name: 'favicon' });
@@ -193,6 +200,27 @@ export default function GeneralSection() {
               </p>
             </div>
           </div>
+          {currencyChanged && (
+            <div
+              role="alert"
+              className="space-y-2 rounded-2xl border border-warning/40 bg-warning/5 p-4 text-sm text-warning"
+            >
+              <ErrorMessage
+                message={t('general.currencyChange.title', {
+                  from: savedCurrency,
+                  to: currencyCode,
+                })}
+                showIcon
+                className="items-start gap-3 font-bold text-warning"
+              />
+              <ul className="list-disc space-y-1 ps-9 text-xs leading-relaxed">
+                <li>{t('general.currencyChange.prices', { to: currencyCode })}</li>
+                <li>{t('general.currencyChange.amounts')}</li>
+                <li>{t('general.currencyChange.pastOrders')}</li>
+                <li>{t('general.currencyChange.gateway')}</li>
+              </ul>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

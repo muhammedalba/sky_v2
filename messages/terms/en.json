@@ -50,13 +50,16 @@
                   "id": "returns",
                   "title": "Return Policy",
                   "paragraphs": [
-                        "Returns of sold materials are not accepted after 15 days from the invoice date. Items must be in their original packaging or containers and in good condition suitable for resale, and are subject to inspection by our factories' quality department.",
-                        "No product that has been used or opened by the customer may be returned. If a return is accepted, 15% of the original goods' value is deducted to cover handling, repackaging, and return-shipping costs to the main warehouses."
+                        "You can request a return within {days} days of delivery, from the order page in your account (\"Request a return\"), choosing the items, quantities and the reason. Items must be in their original packaging and in a condition suitable for resale, and are inspected before the request is approved.",
+                        "Returns for a defect, a fault or a store error: the store pays the shipping. If the whole order is returned, everything you paid is refunded; if some items are returned, their price, VAT and shipping (by their weight and the delivery address) are refunded.",
+                        "Returns for other reasons (such as a change of mind): the customer pays the shipping and refund costs. The price of the returned items and their VAT are refunded without the shipping and payment fees paid, and the return shipping (by the items' weight and the delivery address) is deducted from the refund. The return shipping is charged even if the order shipped free, and the amount deducted and its reason are stated on the tax credit note.",
+                        "If a coupon was used, each returned item gives back only its own share of the discount."
                   ],
                   "list": [
-                        "To request a return, send us: the invoice number, date, and total value",
-                        "The amount requested for refund, the product name to be returned, and the reason for the return",
-                        "Allow 72 hours (excluding official and weekly holidays) for a customer service representative to contact you to arrange a time and place for product pickup, inspection, and refund"
+                        "Items used or opened for any reason other than a defect cannot be returned",
+                        "Our customer service team contacts you after your request to arrange the pickup and inspection of the items",
+                        "Once approved, a tax credit note is issued and emailed to you with the amount refunded",
+                        "Online payments are refunded to the same payment method; cash on delivery and bank transfers are refunded by transfer"
                   ]
             },
             {

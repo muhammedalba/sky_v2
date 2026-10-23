@@ -88,6 +88,8 @@
     "products": "Products",
     "categories": "Categories",
     "orders": "Orders",
+    "returnRequests": "Return requests",
+    "invoices": "Invoices & Credit Notes",
     "reviews": "Reviews",
     "users": "Users",
     "settings": "Settings",

@@ -290,7 +290,7 @@ export default function InvoicePreviewDialog({
               grandTotal={data.grandTotal}
               siteNameAr={data.siteNameAr}
               vatNo={data.vatNo}
-              createdAt={order.createdAt}
+              createdAt={order.paidAt ?? order.createdAt}
               arabicAmountWords={data.arabicAmountWords}
               invoiceHash={order.invoiceHash}
             />

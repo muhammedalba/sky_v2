@@ -154,6 +154,8 @@ export const settingsSchema = z.object({
 
   // Shipping
   freeShippingThreshold: z.coerce.number().min(0).default(0),
+  // Days after delivery a customer may request a return (0: closed)
+  returnWindowDays: z.coerce.number().int().min(0).max(365).default(5),
   vatRate: z.coerce.number().min(0).max(100).default(15),
   taxesIncluded: z.boolean().default(false),
   applyTaxOnCharges: z.boolean().default(false),

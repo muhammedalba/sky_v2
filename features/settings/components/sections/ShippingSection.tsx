@@ -5,7 +5,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Input } from '@/shared/ui/Input';
 import { Switch } from '@/shared/ui/Switch';
-import { OrdersIcon, TruckIcon } from "@/shared/ui/Icons";
+import { OrdersIcon, RotateCcwIcon, TruckIcon } from "@/shared/ui/Icons";
 import { SettingsInput } from '../../settings.schema';
 import ErrorMessage from '@/shared/ui/ErrorMessage';
 
@@ -45,6 +45,22 @@ export default function ShippingSection() {
             error={errors.vatRate?.message}
             className="rounded-xl h-11"
           />
+          <div className="space-y-1.5">
+            <Input
+              {...register('returnWindowDays', { valueAsNumber: true })}
+              type="number"
+              min={0}
+              max={365}
+              step={1}
+              label={t('shipping.returnWindowDays')}
+              icon={RotateCcwIcon}
+              error={errors.returnWindowDays?.message}
+              className="rounded-xl h-11"
+            />
+            <p className="text-xs text-muted-foreground">
+              {t('shipping.returnWindowDaysDesc')}
+            </p>
+          </div>
         </div>
 
 

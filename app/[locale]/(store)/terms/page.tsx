@@ -71,7 +71,14 @@ export default async function TermsPage({ params }: Props) {
   const siteName = settings?.siteName?.[locale];
   const email = settings?.contactInfo?.email || "hello@skygalaxy.com";
 
-  const sections = t.raw("sections") as TermsSection[];
+  // The return window: the store setting returnWindowDays
+  const days = String(settings?.returnWindowDays ?? 5);
+  const withDays = (text: string) => text.replaceAll("{days}", days);
+  const sections = (t.raw("sections") as TermsSection[]).map((section) => ({
+    ...section,
+    paragraphs: section.paragraphs.map(withDays),
+    list: section.list?.map(withDays),
+  }));
   const lastUpdatedLabel = t("hero.lastUpdated", {
     date: new Intl.DateTimeFormat(locale, {
       year: "numeric",

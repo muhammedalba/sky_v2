@@ -39,7 +39,14 @@
     "currencySymbol": "Currency Symbol (e.g. ر.س)",
     "exchangeRate": "Dollar Exchange Rate",
     "exchangeRateLastSync": "Last auto-synced",
-    "exchangeRateNeverSynced": "Not auto-synced yet"
+    "exchangeRateNeverSynced": "Not auto-synced yet",
+    "currencyChange": {
+      "title": "Warning: the store currency will change from {from} to {to} when you save",
+      "prices": "Product prices are not converted: a product priced 100 will cost 100 {to}. Update the prices after saving.",
+      "amounts": "Update the fixed amounts too: shipping rates, fixed-amount coupons, the minimum order, the free-shipping threshold and payment method fees.",
+      "pastOrders": "Past orders, invoices and credit notes keep their original currency; refunds are made in the currency paid.",
+      "gateway": "Make sure the payment gateway (Moyasar) supports the new currency before taking orders."
+    }
   },
   "seo": {
     "title": "SEO Settings",
@@ -104,6 +111,8 @@
     "title": "Shipping & Taxes",
     "desc": "Configure costs and tax settings.",
     "freeThreshold": "Free Shipping Threshold",
+    "returnWindowDays": "Return window (days after delivery)",
+    "returnWindowDaysDesc": "Customers request a return from their order page within this period; it is shown in the return policy. 0 closes customer requests; returns from the dashboard stay available.",
     "taxes": "Tax Settings",
     "vatRate": "VAT Rate (%)",
     "vatWarning": "Note: These settings will be ignored if specific tax rules are defined in the Taxes section.",

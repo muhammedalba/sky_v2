@@ -47,6 +47,9 @@ export enum Permissions {
   DELETE_ORDER = "delete_order",
   REFUND_ORDER = "refund_order",
 
+  // ---- Tax invoices & credit notes ----
+  VIEW_INVOICES = "view_invoices",
+
   // ---- Categories ----
   VIEW_CATEGORIES = "view_categories",
   CREATE_CATEGORY = "create_category",

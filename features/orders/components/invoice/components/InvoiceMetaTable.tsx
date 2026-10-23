@@ -39,7 +39,8 @@ export const InvoiceMetaTable: React.FC<InvoiceMetaTableProps> = ({
               التاريخ / Date:
             </td>
             <td className="p-1.5 border-l border-black w-2/6 font-bold">
-              {formatDate(order.createdAt, "en-US", "numeric")}
+              {/* Issued on payment: dated then, like the server's invoice */}
+              {formatDate(order.paidAt ?? order.createdAt, "en-US", "numeric")}
             </td>
             <td className="bg-slate-100 font-bold border-l border-black p-1.5 w-1/6">
               الرقم / No:

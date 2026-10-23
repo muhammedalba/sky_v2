@@ -16,9 +16,13 @@ export function normalizeCurrency(currency: string | null | undefined): string {
   return code === "ر.س" || code === "ر.س." ? "SAR" : code;
 }
 
+/** How many decimals the currency has (ISO 4217): 2, 3 (KWD, BHD, …) or 0 (JPY, …). */
+export function currencyDecimals(currency: string | null | undefined): number {
+  const code = normalizeCurrency(currency);
+  return THREE_DECIMAL_CURRENCIES.has(code) ? 3 : ZERO_DECIMAL_CURRENCIES.has(code) ? 0 : 2;
+}
+
 /** Converts a major-unit amount (e.g. 100.5 SAR) to Moyasar's integer minor units. */
 export function toMinorUnits(amount: number, currency: string): number {
-  const code = normalizeCurrency(currency);
-  const factor = THREE_DECIMAL_CURRENCIES.has(code) ? 1000 : ZERO_DECIMAL_CURRENCIES.has(code) ? 1 : 100;
-  return Math.round(amount * factor);
+  return Math.round(amount * 10 ** currencyDecimals(currency));
 }

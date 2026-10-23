@@ -1,5 +1,6 @@
 import { CURRENCIES } from "@/shared/constants/currencies";
 import { env } from "./env";
+import { currencyDecimals } from "@/features/checkout/utils/currency";
 
 export interface CurrencyParts {
   formattedNumber: string;
@@ -40,22 +41,25 @@ export function getCurrencyParts(
     finalAmount = finalAmount / (exchangeRate as number);
   }
 
+  const displayedCode = isConverted ? "USD" : currencyCode || "SAR";
+  // The currency's own decimals: 2 for SAR/USD, 3 for KWD (fils), 0 for JPY
+  const decimals = currencyDecimals(displayedCode);
+
   const isInteger = Number.isInteger(finalAmount);
   let minDigits = 0;
   if (showDecimals === true) {
-    minDigits = 2;
+    minDigits = decimals;
   } else if (showDecimals === false) {
     minDigits = 0;
   } else {
-    minDigits = isInteger ? 0 : 2;
+    minDigits = isInteger ? 0 : decimals;
   }
 
   const formattedNumber = new Intl.NumberFormat(isArabic ? "ar-SA-u-nu-latn" : "en-US", {
     minimumFractionDigits: minDigits,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: decimals,
   }).format(finalAmount);
 
-  const displayedCode = isConverted ? "USD" : currencyCode || "SAR";
   const { symbol, symbolPosition } = resolveCurrency(displayedCode);
 
   return { formattedNumber, symbol, symbolPosition, currencyCode: displayedCode };

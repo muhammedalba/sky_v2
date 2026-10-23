@@ -4,6 +4,7 @@ import { useFormatCurrency } from "@/shared/hooks/useFormatCurrency";
 import { getLocalizedValue } from "@/lib/utils";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
+import { getUnitLabel } from "../utils/invoiceUtils";
 
 interface InvoiceItemsTableProps {
   items?: OrderItem[];
@@ -24,6 +25,7 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
               البيان / Description
             </th>
             <th className="p-1.5 border-l border-black w-14">الكمية / Qty</th>
+            <th className="p-1.5 border-l border-black w-14">الوحدة / UNT</th>
             <th className="p-1.5 border-l border-black w-20">
               الأفرادي / Price
             </th>
@@ -34,7 +36,7 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
         </thead>
         <tbody className="divide-y divide-black">
           {items?.map((item, idx) => {
-            const { title, sku, attributes, components } =
+            const { title, sku, attributes, components, packageType } =
               resolveOrderItem(item);
             const titleAr = getLocalizedValue<string>(title, "ar") || "منتج";
             const titleEn = getLocalizedValue<string>(title, "en");
@@ -66,6 +68,9 @@ export const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
                 </td>
                 <td className="p-1.5 border-l border-black font-medium">
                   {itemQty}
+                </td>
+                <td className="p-1.5 border-l border-black font-medium">
+                  {getUnitLabel(packageType)}
                 </td>
                 <td className="p-1.5 border-l border-black font-mono">
                   {formatCurrency(itemPrice)}

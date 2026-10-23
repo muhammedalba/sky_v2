@@ -89,6 +89,19 @@ export function OrderSummaryCard({
   const [appliedCouponLocal, setAppliedCouponLocal] =
     useState<CouponValidationResult | null>(null);
 
+  // Editing cart lines cancels the coupon (server drops it too) — reset the local copy
+  const cartSignature = cartItems
+    .map(
+      (item) =>
+        `${typeof item.variant === "object" ? item.variant?._id : item.variantId}:${item.quantity}`,
+    )
+    .join("|");
+  const [prevCartSignature, setPrevCartSignature] = useState(cartSignature);
+  if (prevCartSignature !== cartSignature) {
+    setPrevCartSignature(cartSignature);
+    setAppliedCouponLocal(null);
+  }
+
   // Simple boolean — no useMemo needed for a single property access
   const enableCoupons = !!settings?.features?.coupons;
 
@@ -588,7 +601,7 @@ export function OrderSummaryCard({
         </div>
       )}
 
-      {/* ── Refund notice (both modes) — refunds go through store support ── */}
+      {/* ── Return notice (both modes): returns are requested from the order page ── */}
       <div className={checkoutMode ? "px-5 pb-5" : "px-6 pb-6"}>
         <div className="flex items-start gap-3 rounded-2xl p-3 bg-primary/5 border border-primary/20">
           <InfoIcon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -597,9 +610,11 @@ export function OrderSummaryCard({
               {t("misc.refund_notice_title")}
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {t("misc.refund_notice_desc")}{" "}
+              {t("misc.refund_notice_desc", {
+                days: settings?.returnWindowDays ?? 5,
+              })}{" "}
               <Link
-                href="/contact"
+                href="/terms#returns"
                 className="font-semibold text-primary hover:underline"
               >
                 {t("misc.refund_notice_cta")}

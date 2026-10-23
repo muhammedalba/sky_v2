@@ -20,6 +20,27 @@ export const getLocationName = (
 };
 
 /**
+ * Package types as the invoice line's unit (the server's invoice uses the same
+ * words: server/src/invoice/invoice-data.builder.ts UNIT_LABELS_AR).
+ */
+const UNIT_LABELS_AR: Record<string, string> = {
+  piece: "حبة",
+  box: "كرتون",
+  bag: "كيس",
+  roll: "لفة / رول",
+  drum: "برميل",
+  gallon: "جالون / سطل",
+  board: "لوح",
+  pallet: "طبلية",
+  envelope: "مظروف",
+  custom: "وحدة",
+};
+
+/** The line's unit for the invoice ("حبة", "كرتون", …), or "-" when unknown. */
+export const getUnitLabel = (packageType?: string): string =>
+  (packageType && UNIT_LABELS_AR[packageType]) || "-";
+
+/**
  * Synchronous pure SHA-256 hex generator for ZATCA invoice hashing.
  */
 export function sha256Hex(str: string): string {

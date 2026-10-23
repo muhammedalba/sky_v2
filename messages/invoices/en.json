@@ -1,0 +1,82 @@
+{
+  "title": "Invoices & Credit Notes",
+  "subtitle": "Issued tax invoices and credit notes: search, period totals and export for the accountant.",
+  "noAccess": "You do not have permission to view invoices.",
+  "immutableNote": "Issued invoices and credit notes are never edited or deleted. To correct or cancel an invoice, issue a credit note.",
+  "tabs": {
+    "invoices": "Invoices",
+    "credit-notes": "Credit notes"
+  },
+  "export": "Export CSV",
+  "exporting": "Exporting…",
+  "exportError": "Export failed.",
+  "resent": "Emailed to the customer.",
+  "resendError": "Could not send it.",
+  "regenerated": "The file was regenerated.",
+  "regenerateError": "Could not regenerate it.",
+  "stats": {
+    "invoices": "Invoices",
+    "creditNotes": "Credit notes",
+    "net": "Net",
+    "failed": "Not issued",
+    "countTax": "{count} · VAT {tax}",
+    "netTax": "VAT {tax}",
+    "failedDetail": "{invoices} invoices · {creditNotes} credit notes",
+    "noneFailed": "None"
+  },
+  "actions": {
+    "view": "View",
+    "download": "Download",
+    "resend": "Email the customer again",
+    "regenerate": "Regenerate",
+    "issueCreditNote": "Issue credit note"
+  },
+  "fields": {
+    "number": "Number",
+    "date": "Date",
+    "customer": "Customer",
+    "total": "Total",
+    "taxValue": "VAT {tax}",
+    "credited": "Credited",
+    "creditedValue": "{count} · {total}",
+    "status": "Status",
+    "actions": "Actions",
+    "ofInvoice": "For invoice {number}",
+    "reason": "Reason",
+    "refund": "Refunded",
+    "returnShippingValue": "Return shipping deducted {amount}"
+  },
+  "status": {
+    "generated": "Issued",
+    "failed": "Failed",
+    "pending": "Issuing",
+    "generating": "Issuing",
+    "awaiting_refund": "Awaiting refund"
+  },
+  "email": {
+    "smtp_accepted": "Emailed",
+    "smtp_accepted_without_invoice": "Emailed without the PDF"
+  },
+  "reasonTypes": {
+    "defect": "Defective product",
+    "other": "Other reasons"
+  },
+  "refundVia": {
+    "moyasar": "Moyasar",
+    "manual": "Manual",
+    "already_refunded": "Already refunded",
+    "none": "No refund"
+  },
+  "filters": {
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "reason": "Reason",
+    "allReasons": "All reasons",
+    "reset": "Reset filters",
+    "searchPlaceholder": "Invoice or credit note number, customer name, order number, email or phone"
+  },
+  "empty": {
+    "invoices": "No invoices",
+    "creditNotes": "No credit notes"
+  }
+}

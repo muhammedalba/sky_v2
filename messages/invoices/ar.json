@@ -1,0 +1,82 @@
+{
+  "title": "الفواتير والمرتجعات",
+  "subtitle": "الفواتير الضريبية والمرتجعات الصادرة: البحث، والإجماليات حسب الفترة، والتصدير للمحاسب.",
+  "noAccess": "لا تملك صلاحية عرض الفواتير.",
+  "immutableNote": "الفاتورة والمرتجع الضريبي الصادران لا يُعدّلان ولا يُحذفان. لتصحيح فاتورة أو إلغائها أصدر مرتجعاً.",
+  "tabs": {
+    "invoices": "الفواتير",
+    "credit-notes": "المرتجعات"
+  },
+  "export": "تصدير CSV",
+  "exporting": "جارٍ التصدير…",
+  "exportError": "تعذّر التصدير.",
+  "resent": "أُرسلت للعميل بالبريد.",
+  "resendError": "تعذّر الإرسال.",
+  "regenerated": "أُعيد إنشاء الملف.",
+  "regenerateError": "تعذّرت إعادة الإنشاء.",
+  "stats": {
+    "invoices": "الفواتير",
+    "creditNotes": "المرتجعات",
+    "net": "الصافي",
+    "failed": "لم تصدر",
+    "countTax": "{count} · ضريبة {tax}",
+    "netTax": "ضريبة {tax}",
+    "failedDetail": "{invoices} فاتورة · {creditNotes} مرتجع",
+    "noneFailed": "لا يوجد"
+  },
+  "actions": {
+    "view": "عرض",
+    "download": "تحميل",
+    "resend": "إعادة الإرسال للعميل",
+    "regenerate": "إعادة الإنشاء",
+    "issueCreditNote": "إصدار مرتجع"
+  },
+  "fields": {
+    "number": "الرقم",
+    "date": "التاريخ",
+    "customer": "العميل",
+    "total": "الإجمالي",
+    "taxValue": "ضريبة {tax}",
+    "credited": "المرتجع منها",
+    "creditedValue": "{count} مرتجع · {total}",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "ofInvoice": "للفاتورة {number}",
+    "reason": "السبب",
+    "refund": "المسترد",
+    "returnShippingValue": "خُصم شحن عكسي {amount}"
+  },
+  "status": {
+    "generated": "صادرة",
+    "failed": "فشل الإصدار",
+    "pending": "قيد الإصدار",
+    "generating": "قيد الإصدار",
+    "awaiting_refund": "بانتظار الاسترداد"
+  },
+  "email": {
+    "smtp_accepted": "أُرسلت للعميل",
+    "smtp_accepted_without_invoice": "أُرسل الإيميل بلا مرفق"
+  },
+  "reasonTypes": {
+    "defect": "عيب في المنتج",
+    "other": "أسباب أخرى"
+  },
+  "refundVia": {
+    "moyasar": "ميسر",
+    "manual": "يدوي",
+    "already_refunded": "مسترد مسبقاً",
+    "none": "بدون استرداد"
+  },
+  "filters": {
+    "status": "الحالة",
+    "allStatuses": "كل الحالات",
+    "reason": "السبب",
+    "allReasons": "كل الأسباب",
+    "reset": "مسح الفلاتر",
+    "searchPlaceholder": "رقم الفاتورة أو المرتجع، اسم العميل، رقم الطلب، البريد أو الجوال"
+  },
+  "empty": {
+    "invoices": "لا توجد فواتير",
+    "creditNotes": "لا توجد مرتجعات"
+  }
+}

@@ -186,5 +186,8 @@ export const env = {
     AUDIT_LOGS: {
       BASE: process.env.NEXT_PUBLIC_ENDPOINT_AUDIT_LOGS || '/audit-logs',
     },
+    INVOICES: {
+      BASE: process.env.NEXT_PUBLIC_ENDPOINT_INVOICES || '/invoices',
+    },
   },
 } as const;

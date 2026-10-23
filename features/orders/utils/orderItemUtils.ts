@@ -13,4 +13,7 @@ export const resolveOrderItem = (item: OrderItem) => ({
   attributes: item.attributes ?? item.variantId?.attributes,
   components: item.components ?? item.variantId?.components,
   label: item.label ?? item.variantId?.label,
+  packageType:
+    item.shippingSnapshot?.packageType ??
+    item.variantId?.shippingProfile?.packageType,
 });

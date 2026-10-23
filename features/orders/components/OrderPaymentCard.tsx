@@ -15,7 +15,7 @@ import { FileTextIcon, EyeIcon, ExternalLinkIcon, DownloadIcon } from "@/shared/
 import { getFileUrl, getImageUrl } from "@/shared/utils/image.util";
 import { Can } from "@/components/auth/Can";
 import { Permissions } from "@/features/roles/types";
-import OrderRefundDialog from "@/features/orders/components/OrderRefundDialog";
+import OrderReturnDialog from "@/features/orders/components/OrderReturnDialog";
 
 interface OrderPaymentCardProps {
   order: Order;
@@ -26,19 +26,14 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
   const t = useTranslations("orders");
   const { downloadFile, isDownloading } = useDownloadFile();
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
-  const [isRefundOpen, setIsRefundOpen] = useState(false);
+  const [isReturnOpen, setIsReturnOpen] = useState(false);
+  // The only refund action: every refund (part of the items or the whole
+  // order) issues a tax credit note against the invoice, so only once it
+  // exists (the server checks it is issued; the dialog says so otherwise).
+  // Moyasar orders are refunded through Moyasar by the server.
+  const canReturn = Boolean(order.InvoicePdf);
 
   const refundedAmount = order.refundedAmount ?? 0;
-  const remainingToRefund = Math.max(
-    0,
-    Math.round(((order.grandTotal ?? 0) - refundedAmount) * 1000) / 1000,
-  );
-  // Only Moyasar card payments can be refunded from here; COD / bank transfer
-  // are settled outside the store.
-  const canRefund =
-    order.paymentMethodCode === "moyasar" &&
-    ["PAID", "PARTIALLY_REFUNDED"].includes(order.paymentStatus ?? "") &&
-    remainingToRefund > 0;
 
   const hasReceipt = Boolean(order.transferReceiptImg);
 
@@ -144,15 +139,15 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
                 </div>
               )}
 
-              {canRefund && (
+              {canReturn && (
                 <Can permission={Permissions.REFUND_ORDER}>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsRefundOpen(true)}
+                    onClick={() => setIsReturnOpen(true)}
                     className="w-full h-9 text-xs font-semibold rounded-lg border-destructive/40 text-destructive hover:bg-destructive/10"
                   >
-                    {t("refund.button")}
+                    {t("returnDialog.button")}
                   </Button>
                 </Can>
               )}
@@ -220,12 +215,11 @@ export default function OrderPaymentCard({ order }: OrderPaymentCardProps) {
         </CardContent>
       </Card>
 
-      {canRefund && (
-        <OrderRefundDialog
+      {canReturn && (
+        <OrderReturnDialog
           order={order}
-          remaining={remainingToRefund}
-          isOpen={isRefundOpen}
-          onClose={() => setIsRefundOpen(false)}
+          isOpen={isReturnOpen}
+          onClose={() => setIsReturnOpen(false)}
         />
       )}
 

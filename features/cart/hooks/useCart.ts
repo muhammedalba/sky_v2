@@ -86,6 +86,8 @@ export function useAddToCart(openDrawer: boolean = true) {
           queryKey: ["cart"],
           refetchType: "active",
         });
+        // The server drops the applied coupon whenever cart lines change
+        queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
       }
       toast.success("Added to cart");
       if (openDrawer) {
@@ -137,6 +139,7 @@ export function useUpdateCartQuantity() {
         queryKey: ["cart"],
         refetchType: "active",
       });
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update quantity");
@@ -173,6 +176,7 @@ export function useRemoveFromCart() {
         queryKey: ["cart"],
         refetchType: "active",
       });
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
       toast.success("Removed from cart");
     },
     onError: (error: Error) => {
@@ -204,6 +208,7 @@ export function useClearCart() {
         queryKey: ["cart"],
         refetchType: "active",
       });
+      queryClient.invalidateQueries({ queryKey: ["checkout", "summary"] });
       toast.success("Cart cleared");
     },
     onError: (error: Error) => {

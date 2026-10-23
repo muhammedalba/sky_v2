@@ -118,6 +118,8 @@ export interface StoreSettings {
   enablePerformance: boolean;
   hasCustomShippingRates?: boolean;
   hasCustomTaxes?: boolean;
+  /** Days after delivery a customer may request a return (store setting). */
+  returnWindowDays?: number;
   bankTransferDetails?: BankTransferDetails;
 
   // Legacy support for common fields

@@ -14,8 +14,11 @@ import OrderTimeline from "@/features/orders/components/OrderTimeline";
 import OrderInfoCard from "@/features/orders/components/OrderInfoCard";
 import OrderTotalsSummary from "@/features/orders/components/OrderTotalsSummary";
 import InvoicePreview from "@/features/orders/components/InvoicePreview";
+import CreditNotesCard from "@/features/orders/components/CreditNotesCard";
+import ReturnRequestsCard from "@/features/orders/components/ReturnRequestsCard";
 import { VariantAttributes } from "@/shared/ui/VariantAttributes";
 import { resolveOrderItem } from "@/features/orders/utils/orderItemUtils";
+import { returnedQuantities } from "@/features/orders/utils/returnUtils";
 import {
   ArrowLeftIcon,
   MapPinIcon,
@@ -199,6 +202,8 @@ export default function OrderDetailPage() {
       : undefined;
 
   const isActiveOrder = ACTIVE_STATUSES.includes(order.status);
+  // Per line, how many came back through credit notes
+  const returned = returnedQuantities(order);
 
   return (
     <>
@@ -462,6 +467,7 @@ export default function OrderDetailPage() {
               <div className="divide-y divide-border/40">
                 {order.items?.map((item, idx) => {
                   const product = item.productId;
+                  const returnedQty = returned[idx] ?? 0;
                   const resolved = resolveOrderItem(item);
                   const { image, sku, attributes, components } = resolved;
                   const title = getTrans(resolved.title);
@@ -493,6 +499,21 @@ export default function OrderDetailPage() {
                           {t("qty")}: {item.quantity} ×
                           <Price amount={item.price} animate={false} />
                         </div>
+                        {/* Returned through credit notes: what is kept */}
+                        {returnedQty > 0 && (
+                          <div className="mt-1.5 flex flex-wrap gap-1.5 text-[11px] font-semibold">
+                            <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">
+                              {t("returnRequests.returnedBadge", {
+                                count: returnedQty,
+                              })}
+                            </span>
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                              {t("returnRequests.keptBadge", {
+                                count: item.quantity - returnedQty,
+                              })}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </>
                   );
@@ -571,6 +592,18 @@ export default function OrderDetailPage() {
                 order={order}
                 onDownloadInvoice={handleDownloadInvoice}
               />
+            </ScrollReveal>
+          )}
+          {/* Tax credit notes (returns), each viewable and downloadable */}
+          {!!order.creditNotes?.length && (
+            <ScrollReveal animation="fade">
+              <CreditNotesCard order={order} />
+            </ScrollReveal>
+          )}
+          {/* Return requests: ask for a return within the return window */}
+          {(!!order.returnRequests?.length || !!order.returnPolicy?.endsAt) && (
+            <ScrollReveal animation="fade">
+              <ReturnRequestsCard order={order} />
             </ScrollReveal>
           )}
           {/* Order Timeline */}

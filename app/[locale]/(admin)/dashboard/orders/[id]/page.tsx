@@ -18,6 +18,8 @@ import OrderPaymentCard from "@/features/orders/components/OrderPaymentCard";
 import OrderDeliveryCard from "@/features/orders/components/OrderDeliveryCard";
 import OrderSummaryCard from "@/features/orders/components/OrderSummaryCard";
 import InvoicePreview from "@/features/orders/components/InvoicePreview";
+import CreditNotesCard from "@/features/orders/components/CreditNotesCard";
+import ReturnRequestsCard from "@/features/orders/components/ReturnRequestsCard";
 import OrderNotes from "@/features/orders/components/OrderNotes";
 import OrderActions from "@/features/orders/components/OrderActions";
 import InvoicePreviewDialog from "@/features/orders/components/InvoicePreviewDialog";
@@ -146,6 +148,12 @@ export default function OrderDetailsPage({
               }
             }}
           />
+
+          {/* The customer's return requests: approve or reject */}
+          <ReturnRequestsCard order={order} admin />
+
+          {/* Tax credit notes (returns) */}
+          <CreditNotesCard order={order} admin />
         </div>
 
         {/* Right Sticky Sidebar Column */}

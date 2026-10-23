@@ -43,8 +43,8 @@
     "home": "Home",
     "secure_encrypted": "Secure & Encrypted",
     "refund_notice_title": "Refund Policy",
-    "refund_notice_desc": "Returns and refunds are not processed through the store directly; they are handled by contacting the store's support team.",
-    "refund_notice_cta": "Contact Support"
+    "refund_notice_desc": "You can request a return from your order page within {days} days of delivery.",
+    "refund_notice_cta": "Return policy"
   },
   "messages": {
     "login_to_apply_coupon": "You must be logged in to apply the coupon",

@@ -210,7 +210,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
         <Input
           label={t('fields.basePrice')}
           type="number"
-          step="0.01"
+          step="any"
           {...register('basePrice')}
           error={errors.basePrice?.message}
         />
@@ -224,7 +224,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
         <Input
           label={t('fields.additionalKgPrice')}
           type="number"
-          step="0.01"
+          step="any"
           {...register('additionalKgPrice')}
           error={errors.additionalKgPrice?.message}
         />
@@ -233,7 +233,7 @@ export default function ShippingRateForm({ editingRate, onSuccess, onCancel }: S
          <Input
           label={t('fields.freeShippingThreshold')}
           type="number"
-          step="0.01"
+          step="any"
           min={0}
           {...register('freeShippingThreshold')}
           error={errors.freeShippingThreshold?.message}

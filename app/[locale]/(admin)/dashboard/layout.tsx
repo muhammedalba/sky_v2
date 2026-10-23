@@ -84,6 +84,7 @@ export default async function DashboardLayoutWrapper({
     paymentMethods: allMessages.paymentMethods,
     reviews: allMessages.reviews,
     audit: allMessages.audit,
+    invoices: allMessages.invoices,
   };
 
   return (
