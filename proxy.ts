@@ -62,12 +62,30 @@ function getClientIp(request: NextRequest): string {
 }
 
 /**
+ * A page on another site calling /api/v1 from a visitor's browser (fetch, XHR,
+ * form POST), which would otherwise be relayed with the internal key. Browsers
+ * always send Sec-Fetch-Site; non-browser clients don't, and are left to the
+ * API's rate limit and auth. Top-level GET navigations (an OAuth provider
+ * redirecting back, a link) are allowed.
+ */
+function isCrossSiteApiCall(request: NextRequest): boolean {
+  if (request.headers.get("sec-fetch-site") !== "cross-site") return false;
+  const isNavigation =
+    request.headers.get("sec-fetch-mode") === "navigate" && request.method === "GET";
+  return !isNavigation;
+}
+
+/**
  * Browser calls to /api/v1/* are relayed to the API by the next.config rewrite,
  * so the API only sees this server's IP. Attach the visitor's IP plus the
  * shared internal key so the API rate-limits per visitor. Client-sent values
  * of both headers are always replaced, so they can't be spoofed.
  */
 function relayApiRequest(request: NextRequest): NextResponse {
+  if (isCrossSiteApiCall(request)) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+
   const headers = new Headers(request.headers);
   headers.delete("x-internal-key");
   headers.delete("x-client-ip");
